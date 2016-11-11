@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="7">
+    <createTable tableName="mapview">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_mapview" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="8">
+    <addColumn tableName="mapview">
+      <column name="owner" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="owner" baseTableName="mapview" constraintName="fk_mapview_owner" referencedColumnNames="id" referencedTableName="beholderuser"/>
+  <createIndex indexName="idx_mapview_owner" tableName="mapview">
+      <column name="owner"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="9">
+    <addColumn tableName="mapview">
+      <column name="identifier" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="10">
+    <addColumn tableName="mapview">
+      <column name="width" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="11">
+    <addColumn tableName="mapview">
+      <column name="height" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="13">
+    <addColumn tableName="mapview">
+      <column name="screendiagonalininches" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="14">
+    <addColumn tableName="mapview">
+      <column name="selectedmap" type="BIGINT">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="selectedmap" baseTableName="mapview" constraintName="fk_mapview_selectedmap" referencedColumnNames="id" referencedTableName="scaledmap"/>
+  <createIndex indexName="idx_mapview_selectedmap" tableName="mapview">
+      <column name="selectedmap"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>

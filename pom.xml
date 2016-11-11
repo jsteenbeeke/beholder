@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.jeroensteenbeeke</groupId>
+		<artifactId>hyperion-parent</artifactId>
+		<version>1.5-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.jeroensteenbeeke.topiroll</groupId>
+	<artifactId>beholder-web</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-solitary</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-solstice</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
+		
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-tardis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-ducktape</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-heinlein</artifactId>
+		</dependency>
+		
+			<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-social-slack</artifactId>
+		</dependency>
+
+		<!-- Enable if using BBCode tools <dependency> <groupId>com.jeroensteenbeeke</groupId> 
+			<artifactId>hyperion-bbcode</artifactId> </dependency> -->
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-spring</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+
+
+
+
+		<!-- Testing Dependencies -->
+		<dependency>
+			<groupId>org.eclipse.jetty.aggregate</groupId>
+			<artifactId>jetty-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.less</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/test/resources</directory>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/webapp</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<filtering>false</filtering>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.jeroensteenbeeke</groupId>
+										<artifactId>confighelper-maven-plugin</artifactId>
+										<versionRange>${hyperion.version}</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>com.jeroensteenbeeke</groupId>
+				<artifactId>filtergen-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.jeroensteenbeeke.andalite</groupId>
+				<artifactId>andalite-maven-plugin</artifactId>
+				<configuration>
+					<recipes>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.AddPropertyWithLiquibase</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.CreateEntityWithLiquibase</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.LinkEntityWithLiquibase</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.ExtendEntityWithLiquibase</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateSpringBean</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateTaskGroup</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateWicketBasedBackgroundJob</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPage</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPanel</recipe>
+					</recipes>
+					<extraConfiguration>
+						<basePackage>com.jeroensteenbeeke.topiroll.beholder</basePackage>
+						<entitySuperclass>com.jeroensteenbeeke.hyperion.data.BaseDomainObject</entitySuperclass>
+						<liquibasePackage>com.jeroensteenbeeke.topiroll.beholder.entities.liquibase</liquibasePackage>
+						<taskGroupEnum>com.jeroensteenbeeke.topiroll.beholder.Jobs</taskGroupEnum>
+						<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication</wicketApplication>
+						<wicketBasePage>com.jeroensteenbeeke.topiroll.beholder.web.pages.AuthenticatedPage</wicketBasePage>
+						<customPageParams>super String ""</customPageParams>
+					</extraConfiguration>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-recipes-hibernate</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-recipes-spring</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-recipes-wicket</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.lesscss</groupId>
+				<artifactId>lesscss-maven-plugin</artifactId>
+				<version>1.3.3</version>
+				<configuration>
+					<lessJs>src/main/compile/less-1.7.0.min.js</lessJs>
+					<sourceDirectory>${project.basedir}/target/generated-sources/less</sourceDirectory>
+					<outputDirectory>${project.basedir}/src/main/webapp/css</outputDirectory>
+					<compress>true</compress>
+					<force>true</force>
+					<includes>
+						<include>beholder-web.less</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.jeroensteenbeeke.maven</groupId>
+				<artifactId>less-collector-maven-plugin</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-heinlein</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<baseSourceDirectory>${basedir}/src/main/resources/</baseSourceDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>collect-less-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>collect</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<processors>
+								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+								<processor>com.jeroensteenbeeke.hyperion.filtergen.SearchFilterGenerator</processor>
+							</processors>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-jpamodelgen</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-filtergen</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>
