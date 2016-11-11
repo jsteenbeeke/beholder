@@ -19,6 +19,7 @@ import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
 
 public class BeholderApplication extends WebApplication implements
@@ -44,6 +45,7 @@ public class BeholderApplication extends WebApplication implements
 		
 		Slack.integration.initialize(this, "");
 		
+		mountPage("views/${identifier}", MapViewPage.class);
 		mountResource("maps/${mapId}", new ResourceReference(BeholderApplication.class, "maps") {
 			private static final long serialVersionUID = 1L;
 

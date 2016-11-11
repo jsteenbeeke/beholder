@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-</body>
+<html xmlns:wicket>
+	<wicket:extend>
+			<div class="btn-group btn-group-justified" role="group">
+		<div class="btn-group" role="group">
+			<button type="button" wicket:id="addview"
+				class="btn btn-info btn-lg ">
+				<i class="glyphicon glyphicon-picture"></i> Add view
+			</button>
+		</div>
+		
+	</div>
+	
+		<table class="table">
+		<thead>
+			<tr>
+				<th>Identifier</th>
+				<th>URL</th>
+				<th>Width</th>
+				<th>Height</th>
+				<th>Diagonal</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="views">
+				<td wicket:id="identifier"></td>
+				<td><a wicket:id="url"></a></td>
+				<td wicket:id="width"></td>
+				<td wicket:id="height"></td>
+				<td><span wicket:id="diagonal"></span>&quot;</td>
+				<td></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="6">
+					<div wicket:id="viewnav"></div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	
+		
+	</wicket:extend>
 </html>

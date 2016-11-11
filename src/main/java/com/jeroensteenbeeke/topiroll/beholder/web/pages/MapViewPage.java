@@ -7,6 +7,7 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.UrlUtils;
@@ -51,6 +52,8 @@ public class MapViewPage extends WebPage {
 		if (viewModel.getObject() == null) {
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
+		
+		add(new Label("title", "Map View"));
 
 		WebMarkupContainer element = new WebMarkupContainer("view");
 		element.setOutputMarkupId(true);

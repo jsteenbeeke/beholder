@@ -220,10 +220,6 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>com.jeroensteenbeeke</groupId>
-				<artifactId>filtergen-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>com.jeroensteenbeeke.andalite</groupId>
 				<artifactId>andalite-maven-plugin</artifactId>
 				<configuration>
