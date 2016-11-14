@@ -2,15 +2,11 @@ package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
 import java.awt.Dimension;
 
-import org.apache.wicket.request.IRequestParameters;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
-import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.string.StringValueConversionException;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
-import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import com.jeroensteenbeeke.topiroll.beholder.util.SimpleResolution;
@@ -19,47 +15,32 @@ public class ToScaleMapResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
 
+	private final IModel<MapView> viewModel;
+
+	public ToScaleMapResource(final IModel<MapView> viewModel) {
+		this.viewModel = viewModel;
+	}
+
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
-		PageParameters parameters = attributes.getParameters();
-		IRequestParameters queryParams = attributes.getRequest()
-				.getQueryParameters();
+		MapView view = viewModel.getObject();
 
-		StringValue mapId = parameters.get("mapId");
-		StringValue widthValue = queryParams.getParameterValue("w");
-		StringValue heightValue = queryParams.getParameterValue("h");
-		StringValue diagValue = queryParams.getParameterValue("d");
+		ScaledMap map = view.getSelectedMap();
 
-		if (!widthValue.isNull() && !widthValue.isEmpty()
-				&& !heightValue.isNull() && !heightValue.isEmpty()
-				&& !mapId.isNull() && !mapId.isEmpty() && !diagValue.isEmpty()
-				&& !diagValue.isNull()) {
-			try {
-				long id = mapId.toLong();
+		if (map != null) {
+			byte[] data = map.getData();
 
-				ScaledMapDAO scaledMapDAO = BeholderApplication.get()
-						.getApplicationContext().getBean(ScaledMapDAO.class);
-				ScaledMap map = scaledMapDAO.load(id);
+			Dimension dimensions = ImageUtil.getImageDimensions(data);
 
-				if (map != null) {
-					byte[] data = map.getData();
+			setFormat(ImageUtil.getWicketFormatType(data));
 
-					Dimension dimensions = ImageUtil.getImageDimensions(data);
-
-					setFormat(ImageUtil.getWicketFormatType(data));
-
-					double factor = Calculations.scale(map.getSquareSize())
-							.toResolution(new SimpleResolution(
-									widthValue.toInt(), heightValue.toInt()))
-							.onScreenWithDiagonalSize(diagValue.toDouble());
-					return ImageUtil.resize(data,
-							(int) (dimensions.getWidth() * factor),
-							(int) (dimensions.getHeight() * factor));
-				}
-
-			} catch (StringValueConversionException e) {
-				// Do not log, just fall through to default return
-			}
+			double factor = Calculations.scale(map.getSquareSize())
+					.toResolution(new SimpleResolution(view.getWidth(),
+							view.getHeight()))
+					.onScreenWithDiagonalSize(view.getScreenDiagonalInInches());
+			return ImageUtil.resize(data,
+					(int) (dimensions.getWidth() * factor),
+					(int) (dimensions.getHeight() * factor));
 		}
 
 		setFormat("gif");

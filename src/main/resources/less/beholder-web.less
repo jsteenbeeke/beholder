@@ -94,8 +94,15 @@ body.mapview {
 	background-color: @kuler-right;
 }
 
-div.mapview {
-	padding: 0px;
-	margin: 0px;
+.base--container {
+	.make-lg-column-offset(2);
+	.row();
+}
+
+.base--panel {
+	.make-md-column(6);
+	.make-md-column-offset(3);
+	
 	
 }
+

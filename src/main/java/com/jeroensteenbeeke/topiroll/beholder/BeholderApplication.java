@@ -5,8 +5,6 @@ import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -20,7 +18,6 @@ import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
 
 public class BeholderApplication extends WebApplication implements
 	ApplicationContextProvider {
@@ -46,14 +43,6 @@ public class BeholderApplication extends WebApplication implements
 		Slack.integration.initialize(this, "");
 		
 		mountPage("views/${identifier}", MapViewPage.class);
-		mountResource("maps/${mapId}", new ResourceReference(BeholderApplication.class, "maps") {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public IResource getResource() {
-				return new ToScaleMapResource();
-			}
-		});
 		
 	}
 	

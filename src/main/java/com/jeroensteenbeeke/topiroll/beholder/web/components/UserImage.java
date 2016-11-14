@@ -20,7 +20,7 @@ public class UserImage extends ExternalImage {
 	
 	@Override
 	public boolean isVisible() {
-		return getSrcSetModel().getObject().size() >= 1;
+		return getDefaultModelObject() != null;
 	}
 
 	private static final class UserImageModel
@@ -40,7 +40,7 @@ public class UserImage extends ExternalImage {
 
 			}
 
-			return "";
+			return null;
 		}
 	}
 }

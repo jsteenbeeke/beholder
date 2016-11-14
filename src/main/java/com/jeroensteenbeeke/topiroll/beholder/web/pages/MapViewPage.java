@@ -2,24 +2,21 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.time.Duration;
 
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
 
 public class MapViewPage extends WebPage {
 	private static final long serialVersionUID = 1L;
@@ -55,36 +52,13 @@ public class MapViewPage extends WebPage {
 		
 		add(new Label("title", "Map View"));
 
-		WebMarkupContainer element = new WebMarkupContainer("view");
-		element.setOutputMarkupId(true);
-		element.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
+		Image image = new Image("view", new ToScaleMapResource(viewModel));
+		image.setOutputMarkupId(true);
+		image.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 		
-		element.add(AttributeModifier.replace("style", new LoadableDetachableModel<String>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected String load() {
-				MapView view = viewModel.getObject();
-				
-				StringBuilder builder = new StringBuilder();
-				
-				builder.append("width: ").append(view.getWidth()).append("; ");
-				builder.append("height: ").append(view.getHeight()).append("; ");
-				
-				ScaledMap selectedMap = view.getSelectedMap();
-				
-				if (selectedMap != null) {
-					final String rewritten = UrlUtils.rewriteToContextRelative(String.format("maps/%d.png?w=%d&h=%d&d=%d", selectedMap.getId(), view.getWidth(), view.getHeight(), view.getScreenDiagonalInInches()), RequestCycle.get());
-					
-					builder.append("background-image: url('").append(rewritten).append("');");
-				}
-				
-				return builder.toString();
-			}
-		}));
 		
-		add(element);
+		
+		add(image);
 		
 	}
 	

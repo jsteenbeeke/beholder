@@ -23,4 +23,12 @@
       </column>
     </addColumn>
   </changeSet>
+
+<changeSet author="jeroen" id="19">
+    <addColumn tableName="scaledmap">
+      <column name="name" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
