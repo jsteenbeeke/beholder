@@ -32,6 +32,12 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
+	
+ 	@Column(nullable=false)
+ 	@Version
+	private long version;
+
+
  	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="selectedMap")
 
 	private ScaledMap selectedMap;
@@ -118,6 +124,16 @@ public class MapView extends BaseDomainObject {
 	public void setSelectedMap( @Nullable ScaledMap selectedMap) {
 		this.selectedMap = selectedMap;
 	}
+
+	@Nonnull
+	public long getVersion() {
+		return version;
+	}
+	public void setVersion( @Nonnull long version) {
+		this.version = version;
+	}
+
+
 
 
 

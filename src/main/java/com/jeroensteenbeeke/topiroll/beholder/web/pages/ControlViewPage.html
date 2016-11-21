@@ -1,0 +1,31 @@
+<html xmlns:wicket>
+	<wicket:extend>
+		<canvas wicket:id="preview"></canvas>
+	
+	<h2>Maps</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Thumbnail</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="maps">
+				<td wicket:id="name"></td>
+				<td><img wicket:id="thumb" /></td>
+				<td></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3">
+					<div wicket:id="mapnav"></div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	</wicket:extend>
+
+</html>

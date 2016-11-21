@@ -67,7 +67,7 @@ public class OverviewPage extends AuthenticatedPage {
 
 					@Override
 					public void onClick() {
-						
+						setResponsePage(new ControlViewPage(item.getModelObject()));
 						
 					}
 				});

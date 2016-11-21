@@ -2,10 +2,13 @@ package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
 import java.awt.Dimension;
 
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.util.string.StringValue;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
@@ -15,32 +18,42 @@ public class ToScaleMapResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
 
-	private final IModel<MapView> viewModel;
-
-	public ToScaleMapResource(final IModel<MapView> viewModel) {
-		this.viewModel = viewModel;
-	}
-
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
-		MapView view = viewModel.getObject();
+		PageParameters parameters = attributes.getParameters();
 
-		ScaledMap map = view.getSelectedMap();
+		StringValue viewId = parameters.get("viewId");
 
-		if (map != null) {
-			byte[] data = map.getData();
+		if (!viewId.isNull() && !viewId.isEmpty()) {
 
-			Dimension dimensions = ImageUtil.getImageDimensions(data);
+			long id = viewId.toLong();
 
-			setFormat(ImageUtil.getWicketFormatType(data));
+			MapViewDAO viewDAO = BeholderApplication.get()
+					.getApplicationContext().getBean(MapViewDAO.class);
+			MapView view = viewDAO.load(id);
 
-			double factor = Calculations.scale(map.getSquareSize())
-					.toResolution(new SimpleResolution(view.getWidth(),
-							view.getHeight()))
-					.onScreenWithDiagonalSize(view.getScreenDiagonalInInches());
-			return ImageUtil.resize(data,
-					(int) (dimensions.getWidth() * factor),
-					(int) (dimensions.getHeight() * factor));
+			if (view != null) {
+
+				ScaledMap map = view.getSelectedMap();
+
+				if (map != null) {
+					byte[] data = map.getData();
+
+					Dimension dimensions = ImageUtil.getImageDimensions(data);
+
+					setFormat(ImageUtil.getWicketFormatType(data));
+
+					double factor = Calculations.scale(map.getSquareSize())
+							.toResolution(new SimpleResolution(view.getWidth(),
+									view.getHeight()))
+							.onScreenWithDiagonalSize(
+									view.getScreenDiagonalInInches());
+					return ImageUtil.resize(data,
+							(int) (dimensions.getWidth() * factor),
+							(int) (dimensions.getHeight() * factor));
+				}
+			}
+
 		}
 
 		setFormat("gif");
