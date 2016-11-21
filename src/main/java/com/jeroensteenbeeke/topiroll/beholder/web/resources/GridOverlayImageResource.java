@@ -11,11 +11,11 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.danekja.java.util.function.serializable.SerializableSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.SerializableSupplier;
 
 public class GridOverlayImageResource extends DynamicImageResource {
 

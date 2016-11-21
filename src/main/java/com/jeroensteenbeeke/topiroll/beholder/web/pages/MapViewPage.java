@@ -6,7 +6,6 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -16,6 +15,7 @@ import org.apache.wicket.util.time.Duration;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
 
 public class MapViewPage extends WebPage {
@@ -52,7 +52,7 @@ public class MapViewPage extends WebPage {
 		
 		add(new Label("title", "Map View"));
 
-		Image image = new Image("view", new ToScaleMapResource(viewModel));
+		ImageCanvas image = new ImageCanvas("view", new ToScaleMapResource(viewModel));
 		image.setOutputMarkupId(true);
 		image.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
 		

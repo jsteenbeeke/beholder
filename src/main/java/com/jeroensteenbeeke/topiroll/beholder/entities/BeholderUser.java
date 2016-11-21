@@ -1,20 +1,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
-import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import javax.annotation.Nonnull;
-import javax.persistence.Column;
-import java.util.List;
 import java.util.ArrayList;
-import javax.persistence.OneToMany;
-import javax.persistence.FetchType;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.persistence.*;
+
+import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
 	@Entity 
 public class BeholderUser extends BaseDomainObject {

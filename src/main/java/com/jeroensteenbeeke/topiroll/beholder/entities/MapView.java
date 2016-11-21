@@ -2,14 +2,14 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 
 @Entity
 public class MapView extends BaseDomainObject {
