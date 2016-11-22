@@ -46,7 +46,7 @@ public class BeholderApplication extends WebApplication implements
 		Slack.integration.initialize(this, "");
 		
 		mountPage("views/${identifier}", MapViewPage.class);
-		mountResource("maps/${viewId}", new ResourceReference(BeholderApplication.class, "maps") {
+		mountResource("maps/${noise}/${viewId}", new ResourceReference(BeholderApplication.class, "maps") {
 			private static final long serialVersionUID = 1L;
 
 			@Override

@@ -31,4 +31,15 @@
       </column>
     </addColumn>
   </changeSet>
+<changeSet author="jeroen" id="21">
+    <addColumn tableName="scaledmap">
+      <column name="owner" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="owner" baseTableName="scaledmap" constraintName="fk_scaledmap_owner" referencedColumnNames="id" referencedTableName="beholderuser"/>
+  <createIndex indexName="idx_scaledmap_owner" tableName="scaledmap">
+      <column name="owner"/>
+    </createIndex>
+  </changeSet>
 </databaseChangeLog>

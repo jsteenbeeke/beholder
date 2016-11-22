@@ -19,6 +19,6 @@ public class StartBeholderApplication {
 
 	public static Optional<Handler> createApplicationHandler(String[] args) throws Exception {
 		return InMemory.run("beholder-web").withContextPath("/beholder/").withProperty("slack.clientid", args[0])
-				.withProperty("slack.clientsecret", args[1]).atPort(8081);
+				.withProperty("slack.clientsecret", args[1]).withProperty("url.prefix", "http://localhost:8081/beholder/").atPort(8081);
 	}
 }

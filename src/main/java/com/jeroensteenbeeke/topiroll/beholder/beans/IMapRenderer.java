@@ -12,5 +12,5 @@ public interface IMapRenderer {
 	 */
 	int getPriority();
 	
-	void onRefresh(@Nonnull String canvasId, @Nonnull JavaScriptHandler handler, @Nonnull MapView mapView);
+	void onRefresh(@Nonnull String canvasId, @Nonnull JavaScriptHandler handler, @Nonnull MapView mapView, boolean previewMode);
 }

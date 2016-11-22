@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeroensteenbeeke.hyperion.solstice.api.Any;
+import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.BeholderUserDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -16,6 +18,9 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter
 class IdentityServiceImpl implements IdentityService {
 	@Autowired
 	private BeholderUserDAO userDAO;
+	
+	@Autowired
+	private Any<IAccountInitializer> initializers;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -33,6 +38,10 @@ class IdentityServiceImpl implements IdentityService {
 			user.setUserId(descriptor.getUserId());
 			user.setUsername(descriptor.getUserName());
 			userDAO.save(user);
+			
+			for (IAccountInitializer initializer : initializers.all()) {
+				initializer.onAccountCreated(user);
+			}
 		} else {
 			user.setAccessToken(descriptor.getAccessToken());
 			user.setAvatar(descriptor.getAvatar());

@@ -21,6 +21,15 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+	private List<FogOfWarShape> fogOfWarShapes = new ArrayList<FogOfWarShape>();
+
+
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
+
+	private BeholderUser owner;
+
+
 
 	@Column(nullable = false)
 	private String name;
@@ -82,5 +91,25 @@ public class ScaledMap extends BaseDomainObject {
 	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
+
+	@Nonnull
+	public BeholderUser getOwner() {
+		return owner;
+	}
+	public void setOwner( @Nonnull BeholderUser owner) {
+		this.owner = owner;
+	}
+
+	@Nonnull
+	public List<FogOfWarShape> getFogOfWarShapes() {
+		return fogOfWarShapes;
+	}
+	public void setFogOfWarShapes( @Nonnull List<FogOfWarShape> fogOfWarShapes) {
+		this.fogOfWarShapes = fogOfWarShapes;
+	}
+
+
+
+
 
 }

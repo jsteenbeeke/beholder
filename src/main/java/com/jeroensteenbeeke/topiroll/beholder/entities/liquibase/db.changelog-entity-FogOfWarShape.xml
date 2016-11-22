@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="22">
+    <createTable tableName="fogofwarshape">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_fogofwarshape" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="23">
+    <addColumn tableName="fogofwarshape">
+      <column name="map" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="map" baseTableName="fogofwarshape" constraintName="fk_fogofwarshape_map" referencedColumnNames="id" referencedTableName="scaledmap"/>
+  <createIndex indexName="idx_fogofwarshape_map" tableName="fogofwarshape">
+      <column name="map"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="25">
+    <addColumn tableName="fogofwarshape">
+      <column name="group" type="BIGINT">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="group" baseTableName="fogofwarshape" constraintName="fk_fogofwarshape_group" referencedColumnNames="id" referencedTableName="fogofwargroup"/>
+  <createIndex indexName="idx_fogofwarshape_group" tableName="fogofwarshape">
+      <column name="group"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>

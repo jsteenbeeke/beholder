@@ -2,8 +2,11 @@ package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
 import java.awt.Dimension;
 
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
@@ -21,8 +24,10 @@ public class ToScaleMapResource extends DynamicImageResource {
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
+		IRequestParameters qp = attributes.getRequest().getQueryParameters();
 
 		StringValue viewId = parameters.get("viewId");
+		StringValue preview = qp.getParameterValue("preview");
 
 		if (!viewId.isNull() && !viewId.isEmpty()) {
 
@@ -48,9 +53,24 @@ public class ToScaleMapResource extends DynamicImageResource {
 									view.getHeight()))
 							.onScreenWithDiagonalSize(
 									view.getScreenDiagonalInInches());
+					int targetWidth = (int) (dimensions.getWidth() * factor);
+					int targetHeight = (int) (dimensions.getHeight() * factor);
+					
+					if (!preview.isNull() && !preview.isEmpty()) {
+						boolean isPreview = preview.toBoolean(false);
+						
+						if (isPreview) {
+							// Decrease width and height by 10% until preview size has been achieved
+							while (targetWidth > 640) {
+								targetWidth = (int) (targetWidth * 0.9);
+								targetHeight = (int) (targetHeight * 0.9);
+							}
+						}
+					}
+					
 					return ImageUtil.resize(data,
-							(int) (dimensions.getWidth() * factor),
-							(int) (dimensions.getHeight() * factor));
+							targetWidth,
+							targetHeight);
 				}
 			}
 
@@ -65,5 +85,10 @@ public class ToScaleMapResource extends DynamicImageResource {
 				0x00, 0x01, 0x00, 0x00, 0x02
 
 		};
+	}
+	
+	@Override
+	protected IResourceCachingStrategy getCachingStrategy() {
+		return NoOpResourceCachingStrategy.INSTANCE;
 	}
 }

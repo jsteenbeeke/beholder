@@ -7,9 +7,11 @@ import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.time.Duration;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
@@ -22,42 +24,42 @@ public class MapCanvas extends WebComponent {
 
 	@Inject
 	private MapRenderers renderers;
-	
+
 	private IModel<MapView> viewModel;
 
-	private long lastVersion;
-	
-	public MapCanvas(String id, IModel<MapView> viewModel, boolean previewMode) {
+	private final boolean previewMode;
+
+
+	public MapCanvas(String id, IModel<MapView> viewModel,
+			boolean previewMode) {
 		super(id);
+		setOutputMarkupId(true);
 		this.viewModel = viewModel;
-		this.lastVersion = viewModel.getObject().getVersion();
-		
-		add(AttributeModifier.replace("width", new LoadableDetachableModel<String>() {
-			@Override
-			protected String load() {
-				int width = viewModel.getObject().getWidth();
-				
-				if (previewMode) {
-					width = width / 4;
-				}
-				
-				return Integer.toString(width);
-			}
-		}));
-		add(AttributeModifier.replace("height", new LoadableDetachableModel<String>() {
-			@Override
-			protected String load() {
-				int height = viewModel.getObject().getHeight();
-				
-				if (previewMode) {
-					height = height /4;
-				}
-				
-				return Integer.toString(height);
-			}
-		}));
-		
-		add(new AbstractAjaxTimerBehavior(Duration.seconds(1)) {
+		this.previewMode = previewMode;
+
+		// Hack
+		add(AttributeModifier.replace("id",
+				new LoadableDetachableModel<String>() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected String load() {
+						return getMarkupId();
+					}
+				}));
+	}
+
+	@Override
+	protected void onRender() {
+		super.onRender();
+	}
+
+	@Override
+	protected void onInitialize() {
+
+		super.onInitialize();
+
+		add(new AbstractAjaxTimerBehavior(Duration.seconds(5)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -66,19 +68,16 @@ public class MapCanvas extends WebComponent {
 
 				MapView view = viewModel.getObject();
 
-				if (view.getVersion() > lastVersion) {
-					lastVersion = view.getVersion();
+				if (target != null) {
+					AjaxRequestTargetJavaScriptHandler handler = new AjaxRequestTargetJavaScriptHandler(
+							target);
 
-					if (target != null) {
-						AjaxRequestTargetJavaScriptHandler handler = new AjaxRequestTargetJavaScriptHandler(
-								target);
-						
-						renderers.getRenderers().forEach(r -> {
-							r.onRefresh(canvasId, handler, view);
-						});
-					}
+					renderers.getRenderers().forEach(r -> {
+						r.onRefresh(canvasId, handler, view, previewMode);
+					});
 				}
-
+				
+				
 			}
 		});
 	}
@@ -88,11 +87,11 @@ public class MapCanvas extends WebComponent {
 		checkComponentTag(tag, "canvas");
 
 	}
-	
+
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		
+
 		viewModel.detach();
 	}
 
@@ -100,11 +99,16 @@ public class MapCanvas extends WebComponent {
 	public void renderHead(IHeaderResponse response) {
 
 		super.renderHead(response);
-		
-		OnDomReadyJavaScriptHandler handler = new OnDomReadyJavaScriptHandler(response);
-		
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/renderstate.js")));
+
+		OnDomReadyJavaScriptHandler handler = new OnDomReadyJavaScriptHandler(
+				response);
+
 		renderers.getRenderers().forEach(r -> {
-			r.onRefresh(getMarkupId(), handler, viewModel.getObject());
+			r.onRefresh(getMarkupId(), handler, viewModel.getObject(), previewMode);
 		});
 	}
 }

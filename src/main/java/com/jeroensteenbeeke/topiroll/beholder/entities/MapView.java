@@ -10,6 +10,9 @@ import javax.persistence.*;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import com.jeroensteenbeeke.hyperion.util.HashUtil;
+import com.jeroensteenbeeke.topiroll.beholder.util.Resolution;
+import com.jeroensteenbeeke.topiroll.beholder.util.SimpleResolution;
 
 @Entity
 public class MapView extends BaseDomainObject {
@@ -131,6 +134,20 @@ public class MapView extends BaseDomainObject {
 	}
 	public void setVersion( @Nonnull long version) {
 		this.version = version;
+	}
+
+	public Resolution toResolution() {
+		return new SimpleResolution(getWidth(), getHeight());
+	}
+
+	public String calculateState() {
+		StringBuilder data = new StringBuilder();
+		
+		if (selectedMap != null) {
+			data.append(selectedMap.getName());
+		}
+		
+		return HashUtil.sha512Hash(data.toString());
 	}
 
 
