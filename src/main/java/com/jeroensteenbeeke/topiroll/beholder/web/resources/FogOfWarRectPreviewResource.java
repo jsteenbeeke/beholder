@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 
-public class FogOfWarSquarePreviewResource extends DynamicImageResource {
+public class FogOfWarRectPreviewResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,7 +35,7 @@ public class FogOfWarSquarePreviewResource extends DynamicImageResource {
 
 	
 
-	private FogOfWarSquarePreviewResource(byte[] baseImage,
+	public FogOfWarRectPreviewResource(byte[] baseImage,
 			SerializableSupplier<Integer> widthSupplier,
 			SerializableSupplier<Integer> heightSupplier,
 			SerializableSupplier<Integer> offsetX,

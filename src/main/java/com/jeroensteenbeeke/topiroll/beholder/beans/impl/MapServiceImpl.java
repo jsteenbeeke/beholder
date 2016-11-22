@@ -45,4 +45,18 @@ class MapServiceImpl implements MapService {
 		viewDAO.update(view);
 	}
 
+	@Override
+	public void addFogOfWarCircle(ScaledMap map, int radius, int offsetX,
+			int offsetY) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addFogOfWarRect(ScaledMap map, int width, int height,
+			int offsetX, int offsetY) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

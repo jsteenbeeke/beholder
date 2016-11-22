@@ -16,6 +16,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarRectPreviewResource;
 
 public class AddRectFogOfWarPage extends AuthenticatedPage {
 
@@ -81,7 +82,8 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 		final Image previewImage = new Image("preview",
 				new FogOfWarRectPreviewResource(image,
-						getRadiusField()::getModelObject,
+						getWidthField()::getModelObject,
+						getHeightField()::getModelObject,
 						getOffsetXField()::getModelObject,
 						getOffsetYField()::getModelObject));
 		previewImage.setOutputMarkupId(true);
@@ -122,8 +124,12 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 		mapModel.detach();
 	}
 
-	public NumberTextField<Integer> getRadiusField() {
+	public NumberTextField<Integer> getWidthField() {
 		return widthField;
+	}
+	
+	public NumberTextField<Integer> getHeightField() {
+		return heightField;
 	}
 
 	public NumberTextField<Integer> getOffsetXField() {
