@@ -26,14 +26,12 @@ public class FogOfWarRectPreviewResource extends DynamicImageResource {
 	private final byte[] baseImage;
 
 	private final SerializableSupplier<Integer> widthSupplier;
-	
+
 	private final SerializableSupplier<Integer> heightSupplier;
 
 	private final SerializableSupplier<Integer> offsetX;
 
 	private final SerializableSupplier<Integer> offsetY;
-
-	
 
 	public FogOfWarRectPreviewResource(byte[] baseImage,
 			SerializableSupplier<Integer> widthSupplier,
@@ -47,12 +45,9 @@ public class FogOfWarRectPreviewResource extends DynamicImageResource {
 		this.offsetY = offsetY;
 	}
 
-
-
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 
-		
 		InputStream imageStream = new ByteArrayInputStream(baseImage);
 
 		BufferedImage sourceImage;
