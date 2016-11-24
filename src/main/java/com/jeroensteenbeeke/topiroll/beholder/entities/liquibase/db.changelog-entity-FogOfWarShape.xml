@@ -22,13 +22,13 @@
   </changeSet>
 <changeSet author="jeroen" id="25">
     <addColumn tableName="fogofwarshape">
-      <column name="group" type="BIGINT">
+      <column name="groupId" type="BIGINT">
         <constraints nullable="true"/>
       </column>
     </addColumn>
-  <addForeignKeyConstraint baseColumnNames="group" baseTableName="fogofwarshape" constraintName="fk_fogofwarshape_group" referencedColumnNames="id" referencedTableName="fogofwargroup"/>
+  <addForeignKeyConstraint baseColumnNames="groupId" baseTableName="fogofwarshape" constraintName="fk_fogofwarshape_group" referencedColumnNames="id" referencedTableName="fogofwargroup"/>
   <createIndex indexName="idx_fogofwarshape_group" tableName="fogofwarshape">
-      <column name="group"/>
+      <column name="groupId"/>
     </createIndex>
   </changeSet>
 </databaseChangeLog>

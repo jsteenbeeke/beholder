@@ -13,9 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarRect;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
@@ -26,6 +29,9 @@ public class TestViewInitializer implements IAccountInitializer {
 	
 	@Autowired
 	private MapViewDAO viewDAO;
+	
+	@Autowired
+	private FogOfWarShapeDAO shapeDAO;
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
@@ -48,7 +54,15 @@ public class TestViewInitializer implements IAccountInitializer {
 			
 			byte[] image = bos.toByteArray();
 			
-			mapService.createMap(user, "temple", 18, image);
+			ScaledMap map = mapService.createMap(user, "temple", 18, image);
+			
+			FogOfWarRect rect = new FogOfWarRect();
+			rect.setOffsetX(187);
+			rect.setOffsetY(153);
+			rect.setWidth(147);
+			rect.setHeight(74);
+			rect.setMap(map);
+			shapeDAO.save(rect);
 			
 			log.info("Test data created for user {}", user.getUsername());
 			

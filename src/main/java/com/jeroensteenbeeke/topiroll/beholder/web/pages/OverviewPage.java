@@ -94,7 +94,16 @@ public class OverviewPage extends AuthenticatedPage {
 						
 						item.add(new Label("name", map.getName()));
 						item.add(new Image("thumb", new ThumbnailResource(128, map.getData())));
-						
+						item.add(new IconLink<ScaledMap>("view", item.getModel(), GlyphIcon.eyeOpen) {
+
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void onClick() {
+								setResponsePage(new ViewMapPage(item.getModelObject()));
+								
+							}
+						});
 					}
 			
 		};

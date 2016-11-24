@@ -1,5 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
+import java.awt.Dimension;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -13,6 +15,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -48,8 +51,7 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 	private IModel<ScaledMap> mapModel;
 
-	public AddCircleFogOfWarPage(ScaledMap map, final byte[] image,
-			final String originalName) {
+	public AddCircleFogOfWarPage(ScaledMap map) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -63,19 +65,25 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 			}
 		});
+		
+		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
+		final int imageWidth = (int) dimensions.getWidth();
+		final int imageHeight = (int) dimensions.getHeight();
 
-		radiusField = new NumberTextField<>("radius", Model.of(5));
+		radiusField = new NumberTextField<>("radius", Model.of(imageWidth / 8));
 		radiusField.setMinimum(1);
 		radiusField.setRequired(true);
 
-		offsetXField = new NumberTextField<>("offsetX", Model.of(0));
+		offsetXField = new NumberTextField<>("offsetX", Model.of(imageHeight / 2));
 		offsetXField.setMinimum(0);
+		offsetXField.setMaximum(imageWidth);
 
-		offsetYField = new NumberTextField<>("offsetY", Model.of(0));
+		offsetYField = new NumberTextField<>("offsetY", Model.of(imageHeight / 2));
 		offsetYField.setMinimum(0);
+		offsetYField.setMaximum(imageHeight);
 
 		final Image previewImage = new Image("preview",
-				new FogOfWarCirclePreviewResource(image,
+				new FogOfWarCirclePreviewResource(mapModel,
 						getRadiusField()::getModelObject,
 						getOffsetXField()::getModelObject,
 						getOffsetYField()::getModelObject));
@@ -93,8 +101,9 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
-				mapService.addFogOfWarCircle(mapModel.getObject(), radiusField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject());
-				setResponsePage(new OverviewPage());
+				ScaledMap map = mapModel.getObject();
+				mapService.addFogOfWarCircle(map, radiusField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject());
+				setResponsePage(new ViewMapPage(map));
 			}
 		};
 

@@ -1,5 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
+import java.awt.Dimension;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -13,6 +15,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -50,8 +53,7 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 	private IModel<ScaledMap> mapModel;
 
-	public AddRectFogOfWarPage(ScaledMap map, final byte[] image,
-			final String originalName) {
+	public AddRectFogOfWarPage(ScaledMap map) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -65,29 +67,38 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 			}
 		});
-
-		widthField = new NumberTextField<>("width", Model.of(5));
+		
+		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
+		final int imageWidth = (int) dimensions.getWidth();
+		final int imageHeight = (int) dimensions.getHeight();
+		
+		widthField = new NumberTextField<>("width", Model.of(imageWidth / 4));
 		widthField.setMinimum(1);
+		widthField.setMaximum(imageWidth);
 		widthField.setRequired(true);
 		
-		heightField = new NumberTextField<>("height", Model.of(5));
+		heightField = new NumberTextField<>("height", Model.of(imageHeight / 4));
 		heightField.setMinimum(1);
+		heightField.setMaximum(imageHeight);
 		heightField.setRequired(true);
 
-		offsetXField = new NumberTextField<>("offsetX", Model.of(0));
+		offsetXField = new NumberTextField<>("offsetX", Model.of(imageWidth / 2));
 		offsetXField.setMinimum(0);
+		offsetXField.setMaximum(imageWidth);
 
-		offsetYField = new NumberTextField<>("offsetY", Model.of(0));
+		offsetYField = new NumberTextField<>("offsetY", Model.of(imageHeight / 2));
 		offsetYField.setMinimum(0);
+		offsetYField.setMaximum(imageHeight);
 
 		final Image previewImage = new Image("preview",
-				new FogOfWarRectPreviewResource(image,
+				new FogOfWarRectPreviewResource(mapModel,
 						getWidthField()::getModelObject,
 						getHeightField()::getModelObject,
 						getOffsetXField()::getModelObject,
 						getOffsetYField()::getModelObject));
 		previewImage.setOutputMarkupId(true);
 
+		heightField.add(new UpdatePreviewBehavior(previewImage));
 		widthField.add(new UpdatePreviewBehavior(previewImage));
 		offsetXField.add(new UpdatePreviewBehavior(previewImage));
 		offsetYField.add(new UpdatePreviewBehavior(previewImage));
@@ -100,12 +111,13 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
-				mapService.addFogOfWarRect(mapModel.getObject(), widthField.getModelObject(), heightField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject());
-				setResponsePage(new OverviewPage());
+				ScaledMap map = mapModel.getObject();
+				mapService.addFogOfWarRect(map, widthField.getModelObject(), heightField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject());
+				setResponsePage(new ViewMapPage(map));
 			}
 		};
 
-		configureForm.add(widthField);
+		configureForm.add(widthField, heightField);
 		configureForm.add(offsetXField);
 		configureForm.add(offsetYField);
 

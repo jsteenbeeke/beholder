@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html xmlns:wicket>
+<wicket:extend>
+	<div class="btn-group btn-group-justified">
+		<div class="btn-group">
+			<button type="button" wicket:id="back" class="btn btn-info">Back</button>
+		</div>
+	</div>
+	
+	<img wicket:id="preview" />
 
-</body>
+	<h2>Fog of War</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Shape</th>
+				<th>Thumbnail</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="shapes">
+				<td wicket:id="shape"></td>
+				<td><img wicket:id="thumb" /></td>
+				<td></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="2">
+					<div wicket:id="shapenav"></div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><span wicket:id="addcircle"></span> <span
+					wicket:id="addrect"></span></td>
+			</tr>
+
+		</tfoot>
+	</table>
+</wicket:extend>
 </html>

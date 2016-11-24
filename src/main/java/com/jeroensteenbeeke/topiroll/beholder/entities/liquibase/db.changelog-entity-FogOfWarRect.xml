@@ -9,4 +9,32 @@
     </createTable>
   <createSequence incrementBy="1" sequenceName="seq_id_fogofwarrect" startValue="1"/>
   </changeSet>
+<changeSet author="jeroen" id="31">
+    <addColumn tableName="fogofwarrect">
+      <column name="offsetx" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="32">
+    <addColumn tableName="fogofwarrect">
+      <column name="offsety" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="33">
+    <addColumn tableName="fogofwarrect">
+      <column name="width" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="34">
+    <addColumn tableName="fogofwarrect">
+      <column name="height" type="java.sql.Types.INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

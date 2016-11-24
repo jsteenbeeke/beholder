@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-BeholderUser.xml"/>
-	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-ScaledMap.xml"/>
-	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-MapView.xml"/>
-<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarShape.xml"/>
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-BeholderUser.xml" />
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-ScaledMap.xml" />
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-MapView.xml" />
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarGroup.xml" />
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarShape.xml" />
 
-<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarGroup.xml"/>
-<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarRect.xml"/>
-<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarCircle.xml"/>
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarRect.xml" />
+	<include
+		file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarCircle.xml" />
 </databaseChangeLog>

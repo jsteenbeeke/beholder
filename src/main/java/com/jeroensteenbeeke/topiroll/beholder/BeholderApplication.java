@@ -85,4 +85,8 @@ public class BeholderApplication extends WebApplication implements
 	
 		return new BeholderSession(request);
 	}
+
+	public <T> T getBean(Class<T> beanClass) {
+		return getApplicationContext().getBean(beanClass);
+	}
 }
