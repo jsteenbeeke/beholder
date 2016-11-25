@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import org.apache.wicket.model.IModel;
@@ -64,6 +65,7 @@ public abstract class AbstractFogOfWarPreviewResource
 					.getBean(FogOfWarShapeDAO.class);
 			FogOfWarShapeFilter filter = new FogOfWarShapeFilter();
 			filter.map().set(map);
+			decorateFilter(filter);
 
 			shapeDAO.findByFilter(filter).forEach(s -> {
 				s.drawPreviewTo(graphics2D);
@@ -89,6 +91,10 @@ public abstract class AbstractFogOfWarPreviewResource
 
 	}
 		
+	protected void decorateFilter(@Nonnull FogOfWarShapeFilter filter) {
+		
+	}
+
 	protected boolean shouldDrawExistingShapes() {
 		return true;
 	}

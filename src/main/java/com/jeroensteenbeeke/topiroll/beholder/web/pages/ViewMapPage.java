@@ -16,7 +16,9 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
@@ -28,6 +30,9 @@ public class ViewMapPage extends AuthenticatedPage {
 
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
+	
+	@Inject
+	private FogOfWarGroupDAO groupDAO;
 
 	private IModel<ScaledMap> mapModel;
 	
@@ -60,6 +65,19 @@ public class ViewMapPage extends AuthenticatedPage {
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		groupFilter.map().set(map);
 		
+		DataView<FogOfWarGroup> groupsView = new DataView<FogOfWarGroup>("groups", FilterDataProvider.of(groupFilter, groupDAO)) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(Item<FogOfWarGroup> item) {
+				
+			}
+		};
+		groupsView.setItemsPerPage(10L);
+		add(groupsView);
+		add(new BootstrapPagingNavigator("groupnav", groupsView));
+
+		
 		FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
 		shapeFilter.map().set(map);
 		shapeFilter.group().isNull();
@@ -86,9 +104,7 @@ public class ViewMapPage extends AuthenticatedPage {
 			
 		};
 		shapesView.setItemsPerPage(10L);
-		
 		add(shapesView);
-		
 		add(new BootstrapPagingNavigator("shapenav", shapesView));
 		
 		add(new Link<ScaledMap>("addcircle", mapModel) {
