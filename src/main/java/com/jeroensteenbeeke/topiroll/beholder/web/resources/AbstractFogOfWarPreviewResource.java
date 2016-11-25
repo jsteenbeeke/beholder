@@ -12,7 +12,9 @@ import javax.imageio.ImageIO;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
-import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.version.MessageDigestResourceVersion;
+import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +30,13 @@ public abstract class AbstractFogOfWarPreviewResource
 
 	private static final Logger log = LoggerFactory.getLogger(ImageUtil.class);
 
+	private static final IResourceCachingStrategy strategy = new QueryStringWithVersionResourceCachingStrategy(new MessageDigestResourceVersion());
+
 	private final IModel<ScaledMap> mapModel;
 
 	protected AbstractFogOfWarPreviewResource(IModel<ScaledMap> mapModel) {
 		this.mapModel = mapModel;
+		
 	}
 
 	@Override
@@ -41,6 +46,8 @@ public abstract class AbstractFogOfWarPreviewResource
 
 		BufferedImage sourceImage;
 
+		setLastModifiedTime(Time.now());
+		
 		try {
 			sourceImage = (BufferedImage) ImageIO.read(imageStream);
 		} catch (IOException e) {
@@ -81,11 +88,7 @@ public abstract class AbstractFogOfWarPreviewResource
 		}
 
 	}
-
-	protected boolean isFillRequired() {
-		return false;
-	}
-	
+		
 	protected boolean shouldDrawExistingShapes() {
 		return true;
 	}
@@ -99,6 +102,6 @@ public abstract class AbstractFogOfWarPreviewResource
 	@Override
 	protected IResourceCachingStrategy getCachingStrategy() {
 	
-		return NoOpResourceCachingStrategy.INSTANCE;
+		return strategy;
 	}
 }

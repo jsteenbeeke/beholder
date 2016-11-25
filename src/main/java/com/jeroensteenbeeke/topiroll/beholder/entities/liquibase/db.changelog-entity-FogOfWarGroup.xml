@@ -9,4 +9,22 @@
     </createTable>
   <createSequence incrementBy="1" sequenceName="seq_id_fogofwargroup" startValue="1"/>
   </changeSet>
+<changeSet author="jeroen" id="35">
+    <addColumn tableName="fogofwargroup">
+      <column name="map" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="map" baseTableName="fogofwargroup" constraintName="fk_fogofwargroup_map" referencedColumnNames="id" referencedTableName="scaledmap"/>
+  <createIndex indexName="idx_fogofwargroup_map" tableName="fogofwargroup">
+      <column name="map"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="36">
+    <addColumn tableName="fogofwargroup">
+      <column name="name" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

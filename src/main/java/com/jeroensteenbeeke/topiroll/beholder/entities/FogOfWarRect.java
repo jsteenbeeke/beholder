@@ -1,6 +1,5 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 import javax.annotation.Nonnull;
@@ -72,8 +71,8 @@ public class FogOfWarRect extends FogOfWarShape {
 
 	@Override
 	public void drawPreviewTo(Graphics2D graphics2d) {
-		graphics2d.setColor(Color.BLUE);
-		graphics2d.drawRect(getOffsetX(), getOffsetY(), getWidth(),
+		graphics2d.setColor(FogOfWarShape.TRANSPARENT_BLUE);
+		graphics2d.fillRect(getOffsetX(), getOffsetY(), getWidth(),
 				getHeight());
 	}
 
@@ -84,11 +83,6 @@ public class FogOfWarRect extends FogOfWarShape {
 				this::getWidth, this::getHeight, this::getOffsetX,
 				this::getOffsetY) {
 			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean isFillRequired() {
-				return true;
-			}
 
 			@Override
 			protected boolean shouldDrawExistingShapes() {

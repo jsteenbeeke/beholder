@@ -1,46 +1,37 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.time.Time;
 
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarCirclePreviewResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 public class AddCircleFogOfWarPage extends AuthenticatedPage {
-
-	private final class UpdatePreviewBehavior
-			extends AjaxFormComponentUpdatingBehavior {
-		private final Image previewImage;
-
-		private static final long serialVersionUID = 1L;
-
-		private UpdatePreviewBehavior(Image previewImage) {
-			super("change");
-			this.previewImage = previewImage;
-		}
-
-		@Override
-		protected void onUpdate(AjaxRequestTarget target) {
-			target.add(previewImage);
-
-		}
-	}
-
 	private static final long serialVersionUID = 1L;
 
 	private NumberTextField<Integer> radiusField;
@@ -65,7 +56,7 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
 		final int imageWidth = (int) dimensions.getWidth();
 		final int imageHeight = (int) dimensions.getHeight();
@@ -74,24 +65,98 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 		radiusField.setMinimum(1);
 		radiusField.setRequired(true);
 
-		offsetXField = new NumberTextField<>("offsetX", Model.of(imageHeight / 2));
+		offsetXField = new NumberTextField<>("offsetX",
+				Model.of(imageHeight / 2));
 		offsetXField.setMinimum(0);
 		offsetXField.setMaximum(imageWidth);
 
-		offsetYField = new NumberTextField<>("offsetY", Model.of(imageHeight / 2));
+		offsetYField = new NumberTextField<>("offsetY",
+				Model.of(imageHeight / 2));
 		offsetYField.setMinimum(0);
 		offsetYField.setMaximum(imageHeight);
 
-		final Image previewImage = new Image("preview",
-				new FogOfWarCirclePreviewResource(mapModel,
-						getRadiusField()::getModelObject,
-						getOffsetXField()::getModelObject,
-						getOffsetYField()::getModelObject));
+		final ImageContainer previewImage = new ImageContainer("preview",
+				new ResourceReference(String.format("preview-%d", map.getId())) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public IResource getResource() {
+						AbstractFogOfWarPreviewResource resource = new AbstractFogOfWarPreviewResource(
+								mapModel) {
+
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void drawShape(Graphics2D graphics2d) {
+								setLastModifiedTime(Time.now());
+							}
+						};
+
+						return resource;
+					}
+
+				}, dimensions);
 		previewImage.setOutputMarkupId(true);
 
-		radiusField.add(new UpdatePreviewBehavior(previewImage));
-		offsetXField.add(new UpdatePreviewBehavior(previewImage));
-		offsetYField.add(new UpdatePreviewBehavior(previewImage));
+		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
+		areaMarker.add(AttributeModifier.replace("style", String.format(
+				"background-color: rgba(255, 0, 0, 0.5); border-radius: 100%%; width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
+				radiusField.getModelObject(), radiusField.getModelObject(),
+				offsetXField.getModelObject(), offsetYField.getModelObject())));
+
+		Options draggableOptions = new Options();
+		draggableOptions.set("containment", Options.asString("parent"));
+		areaMarker.add(
+				new DraggableBehavior(draggableOptions, new DraggableAdapter() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public boolean isStopEventEnabled() {
+
+						return true;
+					}
+
+					@Override
+					public void onDragStop(AjaxRequestTarget target, int top,
+							int left) {
+						super.onDragStop(target, top, left);
+
+						offsetXField.setModelObject(left);
+						offsetYField.setModelObject(top);
+
+						target.add(offsetXField, offsetYField);
+					}
+				}));
+		Options resizableOptions = new Options();
+		resizableOptions.set("containment", Options.asString("parent"));
+		resizableOptions.set("handles", Options.asString("se"));
+		resizableOptions.set("aspectRatio", "1.0");
+		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
+				resizableOptions, new ResizableAdapter() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public boolean isResizeStopEventEnabled() {
+						return true;
+					}
+
+					@Override
+					public void onResizeStop(AjaxRequestTarget target, int top,
+							int left, int width, int height) {
+						super.onResizeStop(target, top, left, width, height);
+
+						int radius = (width + height) / 4;
+
+						offsetXField.setModelObject(left);
+						offsetYField.setModelObject(top);
+						radiusField.setModelObject(radius);
+
+						target.add(offsetXField, offsetYField, radiusField);
+
+					}
+
+				}));
+		previewImage.add(areaMarker);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
 			private static final long serialVersionUID = 1L;
@@ -102,7 +167,9 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 			@Override
 			protected void onSubmit() {
 				ScaledMap map = mapModel.getObject();
-				mapService.addFogOfWarCircle(map, radiusField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject());
+				mapService.addFogOfWarCircle(map, radiusField.getModelObject(),
+						offsetXField.getModelObject(),
+						offsetYField.getModelObject());
 				setResponsePage(new ViewMapPage(map));
 			}
 		};
@@ -117,12 +184,12 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 		add(new SubmitLink("submit", configureForm));
 	}
-	
+
 	@Override
 	protected void onDetach() {
-	
+
 		super.onDetach();
-		
+
 		mapModel.detach();
 	}
 

@@ -21,6 +21,15 @@ public class FogOfWarGroup extends BaseDomainObject {
 			strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="map")
+
+	private ScaledMap map;
+ 	@Column(nullable=false)
+	private String name;
+
+
+
+
 
 	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<FogOfWarShape> shapes = new ArrayList<FogOfWarShape>();
@@ -46,5 +55,25 @@ public class FogOfWarGroup extends BaseDomainObject {
 	public void setShapes(@Nonnull List<FogOfWarShape> shapes) {
 		this.shapes = shapes;
 	}
+
+	@Nonnull
+	public ScaledMap getMap() {
+		return map;
+	}
+	public void setMap( @Nonnull ScaledMap map) {
+		this.map = map;
+	}
+
+	@Nonnull
+	public String getName() {
+		return name;
+	}
+	public void setName( @Nonnull String name) {
+		this.name = name;
+	}
+
+
+
+
 
 }

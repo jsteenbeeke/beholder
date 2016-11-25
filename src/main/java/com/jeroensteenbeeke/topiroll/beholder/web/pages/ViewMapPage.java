@@ -9,15 +9,17 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconTextLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
@@ -26,9 +28,13 @@ public class ViewMapPage extends AuthenticatedPage {
 
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
+
+	private IModel<ScaledMap> mapModel;
 	
 	public ViewMapPage(ScaledMap map) {
 		super(String.format("View Map - %s", map.getName()));
+		
+
 		
 		add(new Link<Void>("back") {
 			private static final long serialVersionUID = 1L;
@@ -40,7 +46,8 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		});
 		
-		add(new Image("preview", new AbstractFogOfWarPreviewResource(ModelMaker.wrap(map)) {
+		mapModel = ModelMaker.wrap(map);
+		add(new Image("preview", new AbstractFogOfWarPreviewResource(mapModel) {
 			
 			private static final long serialVersionUID = 1L;
 
@@ -50,10 +57,14 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		}));
 		
-		FogOfWarShapeFilter filter = new FogOfWarShapeFilter();
-		filter.map().set(map);
+		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
+		groupFilter.map().set(map);
 		
-		DataView<FogOfWarShape> shapesView = new DataView<FogOfWarShape>("shapes", FilterDataProvider.of(filter, shapeDAO)) {
+		FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
+		shapeFilter.map().set(map);
+		shapeFilter.group().isNull();
+		
+		DataView<FogOfWarShape> shapesView = new DataView<FogOfWarShape>("shapes", FilterDataProvider.of(shapeFilter, shapeDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -62,6 +73,15 @@ public class ViewMapPage extends AuthenticatedPage {
 				
 				item.add(new Label("shape", shape.getDescription()));
 				item.add(new Image("thumb", shape.createThumbnailResource(400)));
+				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(), GlyphIcon.trash) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						shapeDAO.delete(getModelObject());
+						setResponsePage(new ViewMapPage(mapModel.getObject()));
+					}
+				});
 			}
 			
 		};
@@ -71,7 +91,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		
 		add(new BootstrapPagingNavigator("shapenav", shapesView));
 		
-		add(new IconTextLink<ScaledMap>("addcircle", ModelMaker.wrap(map), GlyphIcon.plusSign, m -> "Add Circle") {
+		add(new Link<ScaledMap>("addcircle", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -82,7 +102,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		});
 		
 		
-		add(new IconTextLink<ScaledMap>("addrect", ModelMaker.wrap(map), GlyphIcon.plusSign, m -> "Add Rectangle") {
+		add(new Link<ScaledMap>("addrect", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -92,5 +112,11 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		});
 
+	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		mapModel.detach();
 	}
 }

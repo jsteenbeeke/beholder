@@ -22,6 +22,10 @@ public class ScaledMap extends BaseDomainObject {
 
 	private Long id;
  	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+	private List<FogOfWarGroup> groups = new ArrayList<FogOfWarGroup>();
+
+
+ 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
 	private List<FogOfWarShape> fogOfWarShapes = new ArrayList<FogOfWarShape>();
 
 
@@ -107,6 +111,16 @@ public class ScaledMap extends BaseDomainObject {
 	public void setFogOfWarShapes( @Nonnull List<FogOfWarShape> fogOfWarShapes) {
 		this.fogOfWarShapes = fogOfWarShapes;
 	}
+
+	@Nonnull
+	public List<FogOfWarGroup> getGroups() {
+		return groups;
+	}
+	public void setGroups( @Nonnull List<FogOfWarGroup> groups) {
+		this.groups = groups;
+	}
+
+
 
 
 
