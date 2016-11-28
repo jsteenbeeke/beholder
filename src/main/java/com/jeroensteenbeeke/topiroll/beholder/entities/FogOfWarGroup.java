@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import java.awt.Graphics2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +8,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 
+import org.apache.wicket.model.IModel;
+
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 @Entity
-public class FogOfWarGroup extends BaseDomainObject {
+public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibilityStatus {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,15 +26,18 @@ public class FogOfWarGroup extends BaseDomainObject {
 			strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
- 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="map")
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "map")
 
 	private ScaledMap map;
- 	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String name;
 
-
-
-
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private VisibilityStatus status;
 
 	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<FogOfWarShape> shapes = new ArrayList<FogOfWarShape>();
@@ -60,7 +68,8 @@ public class FogOfWarGroup extends BaseDomainObject {
 	public ScaledMap getMap() {
 		return map;
 	}
-	public void setMap( @Nonnull ScaledMap map) {
+
+	public void setMap(@Nonnull ScaledMap map) {
 		this.map = map;
 	}
 
@@ -68,12 +77,48 @@ public class FogOfWarGroup extends BaseDomainObject {
 	public String getName() {
 		return name;
 	}
-	public void setName( @Nonnull String name) {
+
+	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
 
+	@Nonnull
+	@Override
+	public VisibilityStatus getStatus() {
+		return status;
+	}
 
+	@Override
+	public void setStatus(@Nonnull VisibilityStatus status) {
+		this.status = status;
+	}
+	
+	@Override
+	public String getDescription() {
+		return getName();
+	}
+	
+	@Override
+	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
+		IModel<List<FogOfWarShape>> shapesModel = ModelMaker.wrapList(getShapes());
+		
+		return new AbstractFogOfWarPreviewResource(ModelMaker.wrap(getMap())) {
+			private static final long serialVersionUID = 1L;
 
-
+			@Override
+			protected boolean shouldDrawExistingShapes() {
+				return false;
+			}
+			
+			@Override
+			public void drawShape(Graphics2D graphics2d) {
+				shapesModel.detach();
+				shapesModel.getObject().forEach(s -> {
+					s.createThumbnailResource(size).drawShape(graphics2d);
+				});
+				shapesModel.detach();
+			}
+		};
+	}
 
 }

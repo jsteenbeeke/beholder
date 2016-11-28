@@ -25,10 +25,19 @@ public class ImageContainer extends WebMarkupContainer {
 
 					@Override
 					protected String load() {
+						String url = RequestCycle.get().urlFor(reference,
+								new PageParameters()).toString();
+						
+						if (url.contains("?")) {
+							url = url + "&antiCache=" + System.currentTimeMillis();
+						} else {
+							url = url + "?antiCache=" + System.currentTimeMillis();
+						}
+						
+						
 						return String.format(
 								"width: %dpx; height: %dpx; background-image: url('%s')",
-								width, height, RequestCycle.get().urlFor(reference,
-										new PageParameters()));
+								width, height, url);
 					}
 
 				}));

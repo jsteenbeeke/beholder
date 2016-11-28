@@ -37,7 +37,7 @@ public class FogOfWarCirclePreviewResource
 		int centerY = offsetY.get();
 		int radius = radiusSupplier.get();
 
-		Shape circle = new Ellipse2D.Double(centerX - radius, centerY - radius,
+		Shape circle = new Ellipse2D.Double(centerX, centerY,
 				2.0 * radius, 2.0 * radius);
 
 		graphics2D.setColor(new Color(1.0f, 0.0f, 0.0f, 0.5f));

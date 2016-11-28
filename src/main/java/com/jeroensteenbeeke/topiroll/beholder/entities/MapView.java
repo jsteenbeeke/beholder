@@ -1,6 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -35,17 +36,15 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
-	
- 	@Column(nullable=false)
- 	@Version
+
+	@Column(nullable = false)
+	@Version
 	private long version;
 
-
- 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="selectedMap")
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "selectedMap")
 
 	private ScaledMap selectedMap;
-
-
 
 	@Column(nullable = false)
 	@EntityFormField(label = "Width", required = true)
@@ -124,7 +123,8 @@ public class MapView extends BaseDomainObject {
 	public ScaledMap getSelectedMap() {
 		return selectedMap;
 	}
-	public void setSelectedMap( @Nullable ScaledMap selectedMap) {
+
+	public void setSelectedMap(@Nullable ScaledMap selectedMap) {
 		this.selectedMap = selectedMap;
 	}
 
@@ -132,7 +132,8 @@ public class MapView extends BaseDomainObject {
 	public long getVersion() {
 		return version;
 	}
-	public void setVersion( @Nonnull long version) {
+
+	public void setVersion(@Nonnull long version) {
 		this.version = version;
 	}
 
@@ -142,16 +143,35 @@ public class MapView extends BaseDomainObject {
 
 	public String calculateState() {
 		StringBuilder data = new StringBuilder();
-		
+
 		if (selectedMap != null) {
 			data.append(selectedMap.getName());
+
+			selectedMap.getFogOfWarShapes().stream()
+					.sorted(Comparator.comparing(FogOfWarShape::getId))
+					.forEach(s -> {
+						if (s.getGroup() == null) {
+							data.append(";");
+							data.append(s.getId());
+							data.append("=");
+							data.append(s.getStatus().toString());
+							
+						}
+
+					});
+			selectedMap.getGroups().stream()
+			.sorted(Comparator.comparing(FogOfWarGroup::getId))
+			.forEach(s -> {
+					data.append(";");
+					data.append(s.getName());
+					data.append("=");
+					data.append(s.getStatus().toString());
+					
+
+			});
 		}
-		
+
 		return HashUtil.sha512Hash(data.toString());
 	}
-
-
-
-
 
 }

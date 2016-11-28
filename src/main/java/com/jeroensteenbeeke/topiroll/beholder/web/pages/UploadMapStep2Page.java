@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.Model;
 
@@ -70,7 +71,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 				Model.of(0));
 		offsetYField.setMinimum(0);
 
-		final Image previewImage = new Image("preview", new GridOverlayImageResource(
+		final Image previewImage = new NonCachingImage("preview", new GridOverlayImageResource(
 				image, getSquareSizeField()::getModelObject,
 				getOffsetXField()::getModelObject, getOffsetYField()::getModelObject));
 		previewImage.setOutputMarkupId(true);

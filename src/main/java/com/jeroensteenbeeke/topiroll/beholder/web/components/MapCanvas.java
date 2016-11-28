@@ -11,6 +11,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.time.Duration;
 
@@ -36,6 +37,17 @@ public class MapCanvas extends WebComponent {
 		setOutputMarkupId(true);
 		this.viewModel = viewModel;
 		this.previewMode = previewMode;
+		
+		add(AttributeModifier.replace("style",
+				new LoadableDetachableModel<String>() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected String load() {
+						return String.format("background-image: url('%s');", UrlUtils.rewriteToContextRelative("img/fog-of-war.png",
+								getRequestCycle()));
+					}
+				}));
 
 		// Hack
 		add(AttributeModifier.replace("id",

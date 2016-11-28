@@ -2,11 +2,14 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
@@ -22,7 +25,6 @@ public class MapViewPage extends WebPage {
 	private MapViewDAO viewDAO;
 
 	private MapViewFilter filter;
-
 
 	public MapViewPage(PageParameters params) {
 		StringValue identifier = params.get("identifier");
@@ -49,7 +51,13 @@ public class MapViewPage extends WebPage {
 
 		add(new Label("title", "Map View"));
 
-		add(new MapCanvas("view", viewModel, false));
+		WebMarkupContainer container = new WebMarkupContainer("container");
+		container.add(AttributeModifier.replace("style",
+				String.format("background-image: url('%s');",
+						UrlUtils.rewriteToContextRelative("img/fog-of-war.png",
+								getRequestCycle()))));
+		container.add(new MapCanvas("view", viewModel, false));
+		add(container);
 
 	}
 

@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import javax.inject.Inject;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -52,7 +52,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		});
 		
 		mapModel = ModelMaker.wrap(map);
-		add(new Image("preview", new AbstractFogOfWarPreviewResource(mapModel) {
+		add(new NonCachingImage("preview", new AbstractFogOfWarPreviewResource(mapModel) {
 			
 			private static final long serialVersionUID = 1L;
 
@@ -64,13 +64,17 @@ public class ViewMapPage extends AuthenticatedPage {
 		
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		groupFilter.map().set(map);
+		groupFilter.name().orderBy(true);
 		
 		DataView<FogOfWarGroup> groupsView = new DataView<FogOfWarGroup>("groups", FilterDataProvider.of(groupFilter, groupDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(Item<FogOfWarGroup> item) {
+				FogOfWarGroup group = item.getModelObject();
 				
+				item.add(new Label("name", group.getName()));
+				item.add(new NonCachingImage("thumb", group.createThumbnailResource(200)));
 			}
 		};
 		groupsView.setItemsPerPage(10L);
@@ -90,7 +94,7 @@ public class ViewMapPage extends AuthenticatedPage {
 				FogOfWarShape shape = item.getModelObject();
 				
 				item.add(new Label("shape", shape.getDescription()));
-				item.add(new Image("thumb", shape.createThumbnailResource(400)));
+				item.add(new NonCachingImage("thumb", shape.createThumbnailResource(200)));
 				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(), GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
 
@@ -124,6 +128,16 @@ public class ViewMapPage extends AuthenticatedPage {
 			@Override
 			public void onClick() {
 				setResponsePage(new AddRectFogOfWarPage(getModelObject()));
+				
+			}
+		});
+		
+		add(new Link<ScaledMap>("group", mapModel) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new CreateGroupPage(getModelObject()));
 				
 			}
 		});

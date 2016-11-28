@@ -60,6 +60,9 @@ public class ToScaleMapResource extends DynamicImageResource {
 						boolean isPreview = preview.toBoolean(false);
 						
 						if (isPreview) {
+							targetWidth = (int) dimensions.getWidth();
+							targetHeight = (int) dimensions.getHeight();
+							
 							// Decrease width and height by 10% until preview size has been achieved
 							while (targetWidth > 640) {
 								targetWidth = (int) (targetWidth * 0.9);

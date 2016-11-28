@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarRectPreviewResource;
 
@@ -63,10 +64,11 @@ public class FogOfWarRect extends FogOfWarShape {
 	public void setHeight(@Nonnull int height) {
 		this.height = height;
 	}
-	
+
 	@Override
 	public String getDescription() {
-		return String.format("Rectangle (x: %d, y: %d, w: %d, h: %d)", getOffsetX(), getOffsetY(), getWidth(), getHeight());
+		return String.format("Rectangle (x: %d, y: %d, w: %d, h: %d)",
+				getOffsetX(), getOffsetY(), getWidth(), getHeight());
 	}
 
 	@Override
@@ -96,5 +98,17 @@ public class FogOfWarRect extends FogOfWarShape {
 			}
 
 		};
+	}
+
+	@Override
+	public void renderTo(JSBuilder js, String contextVariable, double multiplier, 
+			boolean previewMode) {
+		if (shouldRender(previewMode)) {
+			js.__("%s.moveTo(%d, %d);", contextVariable, rel(getOffsetX(), multiplier),
+					rel(getOffsetY(), multiplier));
+			js.__("%s.rect(%d, %d, %d, %d);", contextVariable, rel(getOffsetX(), multiplier),
+					rel(getOffsetY(), multiplier), rel(getWidth(), multiplier), rel(getHeight(), multiplier));
+		}
+
 	}
 }

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -93,7 +93,7 @@ public class OverviewPage extends AuthenticatedPage {
 						ScaledMap map = item.getModelObject();
 						
 						item.add(new Label("name", map.getName()));
-						item.add(new Image("thumb", new ThumbnailResource(128, map.getData())));
+						item.add(new NonCachingImage("thumb", new ThumbnailResource(128, map.getData())));
 						item.add(new IconLink<ScaledMap>("view", item.getModel(), GlyphIcon.eyeOpen) {
 
 							private static final long serialVersionUID = 1L;

@@ -5,7 +5,9 @@ import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jeroensteenbeeke.hyperion.solstice.api.Any;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
+import com.jeroensteenbeeke.topiroll.beholder.beans.IClipPathContributor;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
@@ -17,6 +19,9 @@ public class FloorPlanRenderer implements IMapRenderer {
 
 	@Autowired
 	private URLService urlService;
+	
+	@Autowired
+	private Any<IClipPathContributor> clipPaths;
 
 	@Override
 	public int getPriority() {
@@ -37,7 +42,27 @@ public class FloorPlanRenderer implements IMapRenderer {
 		js = js.objFunction("imageObj.onload");
 		js.__("canvas.width = imageObj.width;");
 		js.__("canvas.height = imageObj.height;");
+		
+		if (clipPaths.isSatisfied()) {
+			js.__("context.save();");
+			js.__("context.beginPath();");
+			
+			for (IClipPathContributor contributor : clipPaths.all()) {
+				contributor.contribute(js, "context", mapView, previewMode);
+			}
+			js.__("context.closePath();");
+
+		 
+			js.__("context.clip();");
+			
+		}
+		
 		js.__("context.drawImage(imageObj, 0, 0);");
+		
+		if (clipPaths.isSatisfied()) {
+			js.__("context.restore();");
+		}
+		
 		js.__("renderState.set('floorplan', '%s');", state);
 		js = js.close();
 		js.__("imageObj.src = '%s';", urlService.contextRelative(String.format("/maps/%s/%d?%s", Randomizer.random(44), mapView.getId(), previewMode ? "preview=true&" : "")));

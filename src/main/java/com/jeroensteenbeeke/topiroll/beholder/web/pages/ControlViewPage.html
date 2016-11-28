@@ -1,7 +1,9 @@
 <html xmlns:wicket>
-	<wicket:extend>
-		<canvas wicket:id="preview"></canvas>
-	
+<wicket:extend>
+	<canvas wicket:id="preview"></canvas>
+
+	<div wicket:id="controller"></div>
+
 	<h2>Maps</h2>
 	<table class="table">
 		<thead>
@@ -15,16 +17,12 @@
 			<tr wicket:id="maps">
 				<td wicket:id="name"></td>
 				<td><img wicket:id="thumb" /></td>
-				<td>
-					<span wicket:id="select"></span>
-				</td>
+				<td><span wicket:id="select"></span></td>
 			</tr>
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="3">
-					<span wicket:id="unselect"></span>
-				</td>
+				<td colspan="3"><span wicket:id="unselect"></span></td>
 			</tr>
 			<tr>
 				<td colspan="3">
@@ -33,6 +31,6 @@
 			</tr>
 		</tfoot>
 	</table>
-	</wicket:extend>
+</wicket:extend>
 
 </html>

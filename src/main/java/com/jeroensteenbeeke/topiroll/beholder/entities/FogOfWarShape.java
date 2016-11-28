@@ -10,11 +10,11 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
+import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class FogOfWarShape extends BaseDomainObject {
+public abstract class FogOfWarShape extends BaseDomainObject implements ICanHazVisibilityStatus {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -37,6 +37,10 @@ public abstract class FogOfWarShape extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "groupId")
 	private FogOfWarGroup group;
+	
+	@Column(nullable=false)
+	@Enumerated(EnumType.STRING)
+	private VisibilityStatus status = VisibilityStatus.INVISIBLE;
 
 	public Long getId() {
 		return id;
@@ -68,12 +72,31 @@ public abstract class FogOfWarShape extends BaseDomainObject {
 	public void setGroup(@Nullable FogOfWarGroup group) {
 		this.group = group;
 	}
+	
+	@Nonnull
+	public VisibilityStatus getStatus() {
+		return status;
+	}
+	
+	public void setStatus(@Nonnull VisibilityStatus status) {
+		this.status = status;
+	}
 
 	@Transient
 	public abstract String getDescription();
 	
 	public abstract void drawPreviewTo(@Nonnull Graphics2D graphics2d);
 
-	public abstract AbstractFogOfWarPreviewResource createThumbnailResource(int size);
+	public abstract void renderTo(JSBuilder builder, String contextVariable, double multiplier, 
+			boolean previewMode);
+	
+	public boolean shouldRender(boolean previewMode) {
+		FogOfWarGroup _group = getGroup();
+		
+		return getStatus().isVisible(previewMode) || (_group != null && _group.getStatus().isVisible(previewMode));
+	}
 
+	protected final int rel(int input, double multiplier) {
+		return (int) (input * multiplier);
+	}
 }

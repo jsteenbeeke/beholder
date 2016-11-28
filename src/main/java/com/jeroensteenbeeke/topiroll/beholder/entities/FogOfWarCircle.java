@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarCirclePreviewResource;
 
@@ -53,19 +54,20 @@ public class FogOfWarCircle extends FogOfWarShape {
 	public void setOffsetY(@Nonnull int offsetY) {
 		this.offsetY = offsetY;
 	}
-	
+
 	@Override
 	public String getDescription() {
-		return String.format("Circle (x: %d, y: %d, r: %d)", getOffsetX(), getOffsetY(), getRadius());
+		return String.format("Circle (x: %d, y: %d, r: %d)", getOffsetX(),
+				getOffsetY(), getRadius());
 	}
 
 	@Override
 	public void drawPreviewTo(Graphics2D graphics2d) {
 		graphics2d.setColor(TRANSPARENT_BLUE);
-		Shape circle = new Ellipse2D.Double(getOffsetX() - getRadius(),
-				getOffsetY() - getRadius(), 2.0 * getRadius(),
+		Shape circle = new Ellipse2D.Double(getOffsetX(),
+				getOffsetY(), 2.0 * getRadius(),
 				2.0 * getRadius());
-		graphics2d.draw(circle);
+		graphics2d.fill(circle);
 
 	}
 
@@ -88,6 +90,18 @@ public class FogOfWarCircle extends FogOfWarShape {
 			}
 
 		};
+	}
+
+	@Override
+	public void renderTo(JSBuilder js, String contextVariable, double multiplier,
+			boolean previewMode) {
+		if (shouldRender(previewMode)) {
+			js.__("%s.moveTo(%d, %d);", contextVariable, rel(getOffsetX(), multiplier),
+					rel(getOffsetY(), multiplier));
+			js.__("%s.arc(%d, %d, %d, 0, 2 * Math.PI);", contextVariable,
+					rel(getOffsetX() + getRadius(), multiplier), rel(getOffsetY() + getRadius(), multiplier), rel(getRadius(), multiplier));
+		}
+
 	}
 
 }

@@ -2,9 +2,11 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
@@ -21,6 +23,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapController;
 
 public class ControlViewPage extends AuthenticatedPage {
 
@@ -28,7 +31,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
 	@Inject
 	private ScaledMapDAO mapDAO;
-	
+
 	@Inject
 	private MapService mapService;
 
@@ -39,6 +42,13 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		viewModel = ModelMaker.wrap(view);
 		add(new MapCanvas("preview", viewModel, true));
+
+		if (view.getSelectedMap() == null) {
+			add(new WebMarkupContainer("controller")
+					.setOutputMarkupPlaceholderTag(true).setVisible(false));
+		} else {
+			add(new MapController("controller", view.getSelectedMap()));
+		}
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.name().orderBy(true);
@@ -53,14 +63,22 @@ public class ControlViewPage extends AuthenticatedPage {
 				ScaledMap map = item.getModelObject();
 
 				item.add(new Label("name", map.getName()));
-				item.add(new Image("thumb",
+				item.add(new NonCachingImage("thumb",
 						new ThumbnailResource(128, map.getData())));
-				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(), GlyphIcon.screenshot) {
+				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
+						GlyphIcon.screenshot) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						mapService.selectMap(viewModel.getObject(), getModelObject());
+						mapService.selectMap(viewModel.getObject(),
+								getModelObject());
+						MapController newController = new MapController(
+								"controller", getModelObject());
+						newController.setOutputMarkupId(true);
+						ControlViewPage.this.get("controller")
+								.replaceWith(newController);
+						target.add(newController);
 					}
 				});
 			}
@@ -70,13 +88,19 @@ public class ControlViewPage extends AuthenticatedPage {
 		mapView.setItemsPerPage(10);
 		add(mapView);
 		add(new BootstrapPagingNavigator("mapnav", mapView));
-		
-		add(new AjaxIconLink<MapView>("unselect", viewModel, GlyphIcon.removeCircle) {
+
+		add(new AjaxIconLink<MapView>("unselect", viewModel,
+				GlyphIcon.removeCircle) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.unselectMap(getModelObject());
+				Component newController = new WebMarkupContainer("controller")
+						.setOutputMarkupPlaceholderTag(true).setVisible(false);
+				ControlViewPage.this.get("controller")
+						.replaceWith(newController);
+				target.add(newController);
 			}
 		});
 	}

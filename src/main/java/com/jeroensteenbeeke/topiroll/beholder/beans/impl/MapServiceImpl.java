@@ -1,31 +1,33 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import javax.inject.Inject;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarCircle;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarRect;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 @Component
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
-	@Inject
+	@Autowired
 	private ScaledMapDAO mapDAO;
 
-	@Inject
+	@Autowired
 	private MapViewDAO viewDAO;
 
-	@Inject
+	@Autowired
 	private FogOfWarShapeDAO shapeDAO;
+	
+	@Autowired
+	private FogOfWarGroupDAO groupDAO;
 
 	@Override
 	public ScaledMap createMap(BeholderUser user, String name, int squareSize,
@@ -74,6 +76,27 @@ class MapServiceImpl implements MapService {
 		rect.setOffsetX(offsetX);
 		rect.setOffsetY(offsetY);
 		shapeDAO.save(rect);
+	}
+	
+	@Override
+	public TypedActionResult<FogOfWarGroup> createGroup(ScaledMap map,
+			String name, List<FogOfWarShape> shapes) {
+		if (shapes.isEmpty()) {
+			return TypedActionResult.fail("No shapes selected");
+		}
+		
+		FogOfWarGroup group = new FogOfWarGroup();
+		group.setMap(map);
+		group.setName(name);
+		group.setStatus(VisibilityStatus.INVISIBLE);
+		groupDAO.save(group);
+		
+		shapes.forEach(shape -> {
+			shape.setGroup(group);
+			shapeDAO.update(shape);
+		});
+		
+		return TypedActionResult.ok(group);
 	}
 
 }
