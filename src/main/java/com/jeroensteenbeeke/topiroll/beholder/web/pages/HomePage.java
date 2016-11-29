@@ -11,13 +11,13 @@ public class HomePage extends BootstrapBasePage {
 
 	public HomePage() {
 		super("Beholder");
-		
+
 		if (BeholderSession.get().getUser() != null) {
-			throw new RestartResponseAtInterceptPageException(new OverviewPage());
+			throw new RestartResponseAtInterceptPageException(
+					new OverviewPage());
 		}
-		
+
 		add(new SlackLink("slack"));
 	}
-	
-	
+
 }

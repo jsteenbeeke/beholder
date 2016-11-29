@@ -30,22 +30,23 @@ public class MapCanvas extends WebComponent {
 
 	private final boolean previewMode;
 
-
 	public MapCanvas(String id, IModel<MapView> viewModel,
 			boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
 		this.viewModel = viewModel;
 		this.previewMode = previewMode;
-		
+
 		add(AttributeModifier.replace("style",
 				new LoadableDetachableModel<String>() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					protected String load() {
-						return String.format("background-image: url('%s');", UrlUtils.rewriteToContextRelative("img/fog-of-war.png",
-								getRequestCycle()));
+						return String.format("background-image: url('%s');",
+								UrlUtils.rewriteToContextRelative(
+										"img/fog-of-war.png",
+										getRequestCycle()));
 					}
 				}));
 
@@ -88,8 +89,7 @@ public class MapCanvas extends WebComponent {
 						r.onRefresh(canvasId, handler, view, previewMode);
 					});
 				}
-				
-				
+
 			}
 		});
 	}
@@ -120,7 +120,8 @@ public class MapCanvas extends WebComponent {
 				response);
 
 		renderers.getRenderers().forEach(r -> {
-			r.onRefresh(getMarkupId(), handler, viewModel.getObject(), previewMode);
+			r.onRefresh(getMarkupId(), handler, viewModel.getObject(),
+					previewMode);
 		});
 	}
 }

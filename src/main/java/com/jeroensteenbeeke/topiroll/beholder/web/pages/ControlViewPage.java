@@ -47,7 +47,7 @@ public class ControlViewPage extends AuthenticatedPage {
 			add(new WebMarkupContainer("controller")
 					.setOutputMarkupPlaceholderTag(true).setVisible(false));
 		} else {
-			add(new MapController("controller", view.getSelectedMap()));
+			add(new MapController("controller", view, view.getSelectedMap()));
 		}
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
@@ -74,7 +74,8 @@ public class ControlViewPage extends AuthenticatedPage {
 						mapService.selectMap(viewModel.getObject(),
 								getModelObject());
 						MapController newController = new MapController(
-								"controller", getModelObject());
+								"controller", viewModel.getObject(),
+								getModelObject());
 						newController.setOutputMarkupId(true);
 						ControlViewPage.this.get("controller")
 								.replaceWith(newController);

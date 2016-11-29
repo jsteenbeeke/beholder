@@ -31,7 +31,7 @@ public class JSBuilder {
 		return this;
 	}
 
-	public JSBuilder ifBlock(String condition, Object...params) {
+	public JSBuilder ifBlock(String condition, Object... params) {
 		if (params.length == 0) {
 			__("if (%s) {", condition);
 		} else {
@@ -43,7 +43,7 @@ public class JSBuilder {
 				if (parent != null) {
 					builder.append(parent.getIndent());
 				}
-				
+
 				builder.append("}\n");
 			}
 		};
@@ -60,7 +60,7 @@ public class JSBuilder {
 			}
 		};
 	}
-	
+
 	public JSBuilder objFunction(String objName, String... params) {
 		__("%s = function(%s) {", objName,
 				Arrays.stream(params).collect(Collectors.joining(", ")));
@@ -72,15 +72,14 @@ public class JSBuilder {
 			}
 		};
 	}
-	
+
 	public JSBuilder close() {
 		if (parent == null) {
 			return this;
 		}
-		
+
 		terminateCurrent();
-		
-		
+
 		return parent;
 	}
 

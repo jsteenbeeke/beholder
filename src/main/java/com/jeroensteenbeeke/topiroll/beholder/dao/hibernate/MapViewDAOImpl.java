@@ -7,8 +7,8 @@ import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 
-	@Component
-	@Scope(value="request")  
+@Component
+@Scope(value = "request")
 class MapViewDAOImpl extends HibernateDAO<MapView> implements MapViewDAO {
 
 }

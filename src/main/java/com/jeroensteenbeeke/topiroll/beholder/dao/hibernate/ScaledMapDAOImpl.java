@@ -7,8 +7,8 @@ import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 
-	@Component
-	@Scope(value="request")  
+@Component
+@Scope(value = "request")
 class ScaledMapDAOImpl extends HibernateDAO<ScaledMap> implements ScaledMapDAO {
 
 }

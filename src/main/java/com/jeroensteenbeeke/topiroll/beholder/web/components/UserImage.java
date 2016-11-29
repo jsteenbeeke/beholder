@@ -15,9 +15,9 @@ public class UserImage extends ExternalImage {
 		super(id);
 		UserImageModel model = new UserImageModel();
 		setDefaultModel(model);
-		
+
 	}
-	
+
 	@Override
 	public boolean isVisible() {
 		return getDefaultModelObject() != null;

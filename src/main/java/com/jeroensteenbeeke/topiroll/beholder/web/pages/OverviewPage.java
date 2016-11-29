@@ -32,7 +32,7 @@ public class OverviewPage extends AuthenticatedPage {
 
 	@Inject
 	private MapViewDAO mapViewDAO;
-	
+
 	@Inject
 	private ScaledMapDAO mapDAO;
 
@@ -61,14 +61,16 @@ public class OverviewPage extends AuthenticatedPage {
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",
 						mapView.getScreenDiagonalInInches()));
-				item.add(new IconLink<MapView>("control", item.getModel(), GlyphIcon.eyeOpen) {
+				item.add(new IconLink<MapView>("control", item.getModel(),
+						GlyphIcon.eyeOpen) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
-						setResponsePage(new ControlViewPage(item.getModelObject()));
-						
+						setResponsePage(
+								new ControlViewPage(item.getModelObject()));
+
 					}
 				});
 
@@ -79,39 +81,40 @@ public class OverviewPage extends AuthenticatedPage {
 		viewView.setItemsPerPage(5);
 		add(viewView);
 		add(new BootstrapPagingNavigator("viewnav", viewView));
-		
+
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.name().orderBy(true);
-		
+
 		DataView<ScaledMap> mapView = new DataView<ScaledMap>("maps",
 				FilterDataProvider.of(mapFilter, mapDAO)) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(Item<ScaledMap> item) {
+				ScaledMap map = item.getModelObject();
+
+				item.add(new Label("name", map.getName()));
+				item.add(new NonCachingImage("thumb",
+						new ThumbnailResource(128, map.getData())));
+				item.add(new IconLink<ScaledMap>("view", item.getModel(),
+						GlyphIcon.eyeOpen) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected void populateItem(Item<ScaledMap> item) {
-						ScaledMap map = item.getModelObject();
-						
-						item.add(new Label("name", map.getName()));
-						item.add(new NonCachingImage("thumb", new ThumbnailResource(128, map.getData())));
-						item.add(new IconLink<ScaledMap>("view", item.getModel(), GlyphIcon.eyeOpen) {
+					public void onClick() {
+						setResponsePage(new ViewMapPage(item.getModelObject()));
 
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void onClick() {
-								setResponsePage(new ViewMapPage(item.getModelObject()));
-								
-							}
-						});
 					}
-			
+				});
+			}
+
 		};
 
 		mapView.setItemsPerPage(10);
 		add(mapView);
 		add(new BootstrapPagingNavigator("mapnav", mapView));
-
 
 		add(new Link<MapView>("addview") {
 			private static final long serialVersionUID = 1L;
@@ -146,7 +149,7 @@ public class OverviewPage extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		add(new Link<ScaledMap>("addmap") {
 			private static final long serialVersionUID = 1L;
 
@@ -158,6 +161,5 @@ public class OverviewPage extends AuthenticatedPage {
 		});
 
 	}
-
 
 }

@@ -95,15 +95,15 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 		offsetYField.setRequired(true);
 		offsetYField.setEnabled(false);
 
-
-
 		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(String.format("preview-%d", map.getId())) {
+				new ResourceReference(
+						String.format("preview-%d", map.getId())) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public IResource getResource() {
-						AbstractFogOfWarPreviewResource resource = new AbstractFogOfWarPreviewResource(mapModel) {
+						AbstractFogOfWarPreviewResource resource = new AbstractFogOfWarPreviewResource(
+								mapModel) {
 
 							private static final long serialVersionUID = 1L;
 
@@ -112,67 +112,71 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 								setLastModifiedTime(Time.now());
 							}
 						};
-						
-						
-						
+
 						return resource;
 					}
-					
+
 				}, dimensions);
 		previewImage.setOutputMarkupId(true);
-		
+
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
-		areaMarker.add(AttributeModifier.replace("style", String.format("background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;", widthField.getModelObject(), heightField.getModelObject(), offsetXField.getModelObject(), offsetYField.getModelObject())));
-		
+		areaMarker.add(AttributeModifier.replace("style", String.format(
+				"background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
+				widthField.getModelObject(), heightField.getModelObject(),
+				offsetXField.getModelObject(), offsetYField.getModelObject())));
+
 		Options draggableOptions = new Options();
 		draggableOptions.set("opacity", "0.5");
 		draggableOptions.set("containment", Options.asString("parent"));
-		areaMarker.add(new DraggableBehavior(draggableOptions, new DraggableAdapter() {
-			private static final long serialVersionUID = 1L;
+		areaMarker.add(
+				new DraggableBehavior(draggableOptions, new DraggableAdapter() {
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public boolean isStopEventEnabled() {
-			
-				return true;
-			}
-			
-			@Override
-			public void onDragStop(AjaxRequestTarget target, int top,
-					int left) {
-				super.onDragStop(target, top, left);
-				
-				offsetXField.setModelObject(left);
-				offsetYField.setModelObject(top);
-				
-				target.add(offsetXField, offsetYField);
-			}
-		}));
+					@Override
+					public boolean isStopEventEnabled() {
+
+						return true;
+					}
+
+					@Override
+					public void onDragStop(AjaxRequestTarget target, int top,
+							int left) {
+						super.onDragStop(target, top, left);
+
+						offsetXField.setModelObject(left);
+						offsetYField.setModelObject(top);
+
+						target.add(offsetXField, offsetYField);
+					}
+				}));
 		Options resizableOptions = new Options();
 		resizableOptions.set("containment", Options.asString("parent"));
 		resizableOptions.set("handles", Options.asString("se"));
-		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(), resizableOptions, new ResizableAdapter() {
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public boolean isResizeStopEventEnabled() {
-				return true;
-			}
-			
-			@Override
-			public void onResizeStop(AjaxRequestTarget target, int top,
-					int left, int width, int height) {
-				super.onResizeStop(target, top, left, width, height);
-				
-				offsetXField.setModelObject(left);
-				offsetYField.setModelObject(top);
-				widthField.setModelObject(width);
-				heightField.setModelObject(height);
-				
-				target.add(offsetXField, offsetYField, widthField, heightField);
-				
-			}
-			
-		}));
+		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
+				resizableOptions, new ResizableAdapter() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public boolean isResizeStopEventEnabled() {
+						return true;
+					}
+
+					@Override
+					public void onResizeStop(AjaxRequestTarget target, int top,
+							int left, int width, int height) {
+						super.onResizeStop(target, top, left, width, height);
+
+						offsetXField.setModelObject(left);
+						offsetYField.setModelObject(top);
+						widthField.setModelObject(width);
+						heightField.setModelObject(height);
+
+						target.add(offsetXField, offsetYField, widthField,
+								heightField);
+
+					}
+
+				}));
 		previewImage.add(areaMarker);
 
 		// heightField.add(new UpdatePreviewBehavior(previewImage));
@@ -207,7 +211,7 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 		add(new SubmitLink("submit", configureForm));
 	}
-	
+
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);

@@ -1,7 +1,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -36,6 +38,9 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
+	private List<FogOfWarVisibility> visibilities = new ArrayList<FogOfWarVisibility>();
 
 	@Column(nullable = false)
 	@Version
@@ -154,24 +159,33 @@ public class MapView extends BaseDomainObject {
 							data.append(";");
 							data.append(s.getId());
 							data.append("=");
-							data.append(s.getStatus().toString());
-							
+							data.append(s.getStatus(this).toString());
+
 						}
 
 					});
 			selectedMap.getGroups().stream()
-			.sorted(Comparator.comparing(FogOfWarGroup::getId))
-			.forEach(s -> {
-					data.append(";");
-					data.append(s.getName());
-					data.append("=");
-					data.append(s.getStatus().toString());
-					
+					.sorted(Comparator.comparing(FogOfWarGroup::getId))
+					.forEach(s -> {
+						data.append(";");
+						data.append(s.getName());
+						data.append("=");
+						data.append(s.getStatus(this).toString());
 
-			});
+					});
 		}
 
 		return HashUtil.sha512Hash(data.toString());
+	}
+
+	@Nonnull
+	public List<FogOfWarVisibility> getVisibilities() {
+		return visibilities;
+	}
+
+	public void setVisibilities(
+			@Nonnull List<FogOfWarVisibility> visibilities) {
+		this.visibilities = visibilities;
 	}
 
 }

@@ -31,13 +31,14 @@ public abstract class AbstractFogOfWarPreviewResource
 
 	private static final Logger log = LoggerFactory.getLogger(ImageUtil.class);
 
-	private static final IResourceCachingStrategy strategy = new QueryStringWithVersionResourceCachingStrategy(new MessageDigestResourceVersion());
+	private static final IResourceCachingStrategy strategy = new QueryStringWithVersionResourceCachingStrategy(
+			new MessageDigestResourceVersion());
 
 	private final IModel<ScaledMap> mapModel;
 
 	protected AbstractFogOfWarPreviewResource(IModel<ScaledMap> mapModel) {
 		this.mapModel = mapModel;
-		
+
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public abstract class AbstractFogOfWarPreviewResource
 		BufferedImage sourceImage;
 
 		setLastModifiedTime(Time.now());
-		
+
 		try {
 			sourceImage = (BufferedImage) ImageIO.read(imageStream);
 		} catch (IOException e) {
@@ -90,24 +91,24 @@ public abstract class AbstractFogOfWarPreviewResource
 		}
 
 	}
-		
+
 	protected void decorateFilter(@Nonnull FogOfWarShapeFilter filter) {
-		
+
 	}
 
 	protected boolean shouldDrawExistingShapes() {
 		return true;
 	}
-	
+
 	protected byte[] postProcess(byte[] image) {
 		return image;
 	}
 
 	public abstract void drawShape(Graphics2D graphics2D);
-	
+
 	@Override
 	protected IResourceCachingStrategy getCachingStrategy() {
-	
+
 		return strategy;
 	}
 }

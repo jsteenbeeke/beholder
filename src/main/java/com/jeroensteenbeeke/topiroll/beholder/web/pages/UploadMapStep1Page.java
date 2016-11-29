@@ -21,7 +21,7 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 
 	public UploadMapStep1Page() {
 		super("Upload Map");
-		
+
 		add(new Link<BeholderUser>("back") {
 			private static final long serialVersionUID = 1L;
 
@@ -58,21 +58,20 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 					bos.close();
 
 					byte[] image = bos.toByteArray();
-					
+
 					if (ImageUtil.isWebImage(image)) {
-						setResponsePage(new UploadMapStep2Page(image, upload.getClientFileName()));	
+						setResponsePage(new UploadMapStep2Page(image,
+								upload.getClientFileName()));
 					} else {
 						error("Unrecognized image format");
 					}
-					
-					
+
 				} catch (IOException e) {
 					error(String.format("Could not convert file input: %s",
 							e.getMessage()));
 				}
 
 			}
-
 
 		};
 		uploadForm.setMultiPart(true);

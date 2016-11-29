@@ -89,14 +89,16 @@ public class BeholderSlackHandler extends SlackHandler {
 					String teamName = (String) team.get("name");
 					String avatar = (String) user.get("image_48");
 
-					BeholderUser beholderUser = identityService.getOrCreateUser(new UserDescriptor()
-							.setAccessToken(tokenString).setAvatar(avatar)
-							.setTeamId(teamId).setTeamName(teamName)
-							.setUserId(userId).setUserName(userName));
-					
+					BeholderUser beholderUser = identityService.getOrCreateUser(
+							new UserDescriptor().setAccessToken(tokenString)
+									.setAvatar(avatar).setTeamId(teamId)
+									.setTeamName(teamName).setUserId(userId)
+									.setUserName(userName));
+
 					BeholderSession.get().setUser(beholderUser);
-					
-					throw new RestartResponseAtInterceptPageException(OverviewPage.class);
+
+					throw new RestartResponseAtInterceptPageException(
+							OverviewPage.class);
 				}
 			}
 

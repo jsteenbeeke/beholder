@@ -15,7 +15,8 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 @Entity
-public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibilityStatus {
+public class FogOfWarGroup extends BaseDomainObject
+		implements ICanHazVisibilityStatus {
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,12 +33,11 @@ public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibility
 
 	private ScaledMap map;
 
-	@Column(nullable = false)
-	private String name;
+	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+	private List<FogOfWarGroupVisibility> visibilities = new ArrayList<FogOfWarGroupVisibility>();
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private VisibilityStatus status;
+	private String name;
 
 	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<FogOfWarShape> shapes = new ArrayList<FogOfWarShape>();
@@ -82,26 +82,16 @@ public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibility
 		this.name = name;
 	}
 
-	@Nonnull
-	@Override
-	public VisibilityStatus getStatus() {
-		return status;
-	}
-
-	@Override
-	public void setStatus(@Nonnull VisibilityStatus status) {
-		this.status = status;
-	}
-	
 	@Override
 	public String getDescription() {
 		return getName();
 	}
-	
+
 	@Override
 	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-		IModel<List<FogOfWarShape>> shapesModel = ModelMaker.wrapList(getShapes());
-		
+		IModel<List<FogOfWarShape>> shapesModel = ModelMaker
+				.wrapList(getShapes());
+
 		return new AbstractFogOfWarPreviewResource(ModelMaker.wrap(getMap())) {
 			private static final long serialVersionUID = 1L;
 
@@ -109,7 +99,7 @@ public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibility
 			protected boolean shouldDrawExistingShapes() {
 				return false;
 			}
-			
+
 			@Override
 			public void drawShape(Graphics2D graphics2d) {
 				shapesModel.detach();
@@ -119,6 +109,24 @@ public class FogOfWarGroup extends BaseDomainObject implements ICanHazVisibility
 				shapesModel.detach();
 			}
 		};
+	}
+
+	@Nonnull
+	public List<FogOfWarGroupVisibility> getVisibilities() {
+		return visibilities;
+	}
+
+	public void setVisibilities(
+			@Nonnull List<FogOfWarGroupVisibility> visibilities) {
+		this.visibilities = visibilities;
+	}
+
+	@Override
+	public VisibilityStatus getStatus(MapView view) {
+
+		return getVisibilities().stream().filter(v -> v.getView().equals(view))
+				.findAny().map(FogOfWarGroupVisibility::getStatus)
+				.orElse(VisibilityStatus.INVISIBLE);
 	}
 
 }

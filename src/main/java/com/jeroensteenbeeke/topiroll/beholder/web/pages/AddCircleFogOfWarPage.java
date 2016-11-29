@@ -76,7 +76,8 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 		offsetYField.setMaximum(imageHeight);
 
 		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(String.format("preview-%d", map.getId())) {
+				new ResourceReference(
+						String.format("preview-%d", map.getId())) {
 					private static final long serialVersionUID = 1L;
 
 					@Override

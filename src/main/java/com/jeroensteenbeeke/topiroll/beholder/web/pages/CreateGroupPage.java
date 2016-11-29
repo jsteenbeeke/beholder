@@ -47,8 +47,8 @@ public class CreateGroupPage extends AuthenticatedPage {
 				FogOfWarShape shape = item.getModelObject();
 
 				item.add(new CheckBox("check", Model.of(false)));
-				item.add(
-						new NonCachingImage("thumb", shape.createThumbnailResource(200)));
+				item.add(new NonCachingImage("thumb",
+						shape.createThumbnailResource(200)));
 				item.add(new Label("description", shape.getDescription()));
 
 			}

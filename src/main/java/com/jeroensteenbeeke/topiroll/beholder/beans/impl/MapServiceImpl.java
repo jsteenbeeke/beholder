@@ -8,11 +8,10 @@ import org.springframework.stereotype.Component;
 
 import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
 
 @Component
 @Scope(value = "request")
@@ -25,9 +24,15 @@ class MapServiceImpl implements MapService {
 
 	@Autowired
 	private FogOfWarShapeDAO shapeDAO;
-	
+
 	@Autowired
 	private FogOfWarGroupDAO groupDAO;
+
+	@Autowired
+	private FogOfWarGroupVisibilityDAO groupVisibilityDAO;
+
+	@Autowired
+	private FogOfWarShapeVisibilityDAO shapeVisibilityDAO;
 
 	@Override
 	public ScaledMap createMap(BeholderUser user, String name, int squareSize,
@@ -77,26 +82,69 @@ class MapServiceImpl implements MapService {
 		rect.setOffsetY(offsetY);
 		shapeDAO.save(rect);
 	}
-	
+
 	@Override
 	public TypedActionResult<FogOfWarGroup> createGroup(ScaledMap map,
 			String name, List<FogOfWarShape> shapes) {
 		if (shapes.isEmpty()) {
 			return TypedActionResult.fail("No shapes selected");
 		}
-		
+
 		FogOfWarGroup group = new FogOfWarGroup();
 		group.setMap(map);
 		group.setName(name);
-		group.setStatus(VisibilityStatus.INVISIBLE);
 		groupDAO.save(group);
-		
+
 		shapes.forEach(shape -> {
 			shape.setGroup(group);
 			shapeDAO.update(shape);
 		});
-		
+
 		return TypedActionResult.ok(group);
+	}
+
+	@Override
+	public void setGroupVisibility(MapView view, FogOfWarGroup group,
+			VisibilityStatus status) {
+		FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();
+		filter.view().set(view);
+		filter.group().set(group);
+
+		FogOfWarGroupVisibility visibility = groupVisibilityDAO
+				.getUniqueByFilter(filter);
+
+		if (visibility == null) {
+			visibility = new FogOfWarGroupVisibility();
+			visibility.setGroup(group);
+			visibility.setView(view);
+			visibility.setStatus(status);
+			groupVisibilityDAO.save(visibility);
+		} else {
+			visibility.setStatus(status);
+			groupVisibilityDAO.update(visibility);
+		}
+	}
+
+	@Override
+	public void setShapeVisibility(MapView view, FogOfWarShape shape,
+			VisibilityStatus status) {
+		FogOfWarShapeVisibilityFilter filter = new FogOfWarShapeVisibilityFilter();
+		filter.view().set(view);
+		filter.shape().set(shape);
+
+		FogOfWarShapeVisibility visibility = shapeVisibilityDAO
+				.getUniqueByFilter(filter);
+
+		if (visibility == null) {
+			visibility = new FogOfWarShapeVisibility();
+			visibility.setShape(shape);
+			visibility.setView(view);
+			visibility.setStatus(status);
+			shapeVisibilityDAO.save(visibility);
+		} else {
+			visibility.setStatus(status);
+			shapeVisibilityDAO.update(visibility);
+		}
 	}
 
 }

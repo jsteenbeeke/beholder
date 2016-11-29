@@ -18,10 +18,10 @@ import com.jeroensteenbeeke.hyperion.data.DomainObject;
 @Transactional(propagation = Propagation.NESTED, readOnly = true)
 @Scope("request")
 class EntityFinderImpl implements BaseEntityFinder {
-	@PersistenceContext(type=PersistenceContextType.TRANSACTION)
+	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	private EntityManager entityManager;
 
-		@Override
+	@Override
 	public <T extends DomainObject> T getEntity(Class<T> entityClass,
 			Serializable id) {
 		return (T) entityManager.find(entityClass, id);

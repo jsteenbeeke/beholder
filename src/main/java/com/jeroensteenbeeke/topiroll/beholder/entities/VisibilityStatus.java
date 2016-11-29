@@ -6,17 +6,19 @@ public enum VisibilityStatus {
 		public boolean isVisible(boolean previewMode) {
 			return true;
 		}
-	}, DM_ONLY {
+	},
+	DM_ONLY {
 		@Override
 		public boolean isVisible(boolean previewMode) {
 			return previewMode;
 		}
-	}, INVISIBLE {
+	},
+	INVISIBLE {
 		@Override
 		public boolean isVisible(boolean previewMode) {
 			return false;
 		}
 	};
-	
+
 	public abstract boolean isVisible(boolean previewMode);
 }

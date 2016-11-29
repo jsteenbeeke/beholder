@@ -21,19 +21,17 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
- 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+
+	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
 	private List<FogOfWarGroup> groups = new ArrayList<FogOfWarGroup>();
 
-
- 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
 	private List<FogOfWarShape> fogOfWarShapes = new ArrayList<FogOfWarShape>();
 
-
- 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "owner")
 
 	private BeholderUser owner;
-
-
 
 	@Column(nullable = false)
 	private String name;
@@ -100,7 +98,8 @@ public class ScaledMap extends BaseDomainObject {
 	public BeholderUser getOwner() {
 		return owner;
 	}
-	public void setOwner( @Nonnull BeholderUser owner) {
+
+	public void setOwner(@Nonnull BeholderUser owner) {
 		this.owner = owner;
 	}
 
@@ -108,7 +107,8 @@ public class ScaledMap extends BaseDomainObject {
 	public List<FogOfWarShape> getFogOfWarShapes() {
 		return fogOfWarShapes;
 	}
-	public void setFogOfWarShapes( @Nonnull List<FogOfWarShape> fogOfWarShapes) {
+
+	public void setFogOfWarShapes(@Nonnull List<FogOfWarShape> fogOfWarShapes) {
 		this.fogOfWarShapes = fogOfWarShapes;
 	}
 
@@ -116,14 +116,9 @@ public class ScaledMap extends BaseDomainObject {
 	public List<FogOfWarGroup> getGroups() {
 		return groups;
 	}
-	public void setGroups( @Nonnull List<FogOfWarGroup> groups) {
+
+	public void setGroups(@Nonnull List<FogOfWarGroup> groups) {
 		this.groups = groups;
 	}
-
-
-
-
-
-
 
 }

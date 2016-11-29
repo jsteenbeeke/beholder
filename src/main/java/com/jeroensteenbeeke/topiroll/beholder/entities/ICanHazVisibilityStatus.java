@@ -6,13 +6,11 @@ import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPrev
 
 public interface ICanHazVisibilityStatus {
 	@Nonnull
-	VisibilityStatus getStatus();
-	
-	void setStatus(@Nonnull VisibilityStatus status);
-	
+	VisibilityStatus getStatus(@Nonnull MapView view);
+
 	@Nonnull
 	String getDescription();
-	
+
 	@Nonnull
 	AbstractFogOfWarPreviewResource createThumbnailResource(int size);
 }

@@ -8,19 +8,17 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
 
 import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ICanHazVisibilityStatus;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.VisibilityStatus;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 
@@ -30,26 +28,33 @@ public class MapController extends TypedPanel<ScaledMap> {
 
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
-	
+
 	@Inject
 	private FogOfWarGroupDAO groupDAO;
 
-	public MapController(String id, ScaledMap map) {
+	@Inject
+	private MapService mapService;
+
+	private IModel<MapView> mapViewModel;
+
+	public MapController(String id, MapView mapView, ScaledMap map) {
 		super(id, ModelMaker.wrap(map));
-		
+
+		this.mapViewModel = ModelMaker.wrap(mapView);
+
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		groupFilter.map().set(map);
 		groupFilter.name().orderBy(true);
-		
+
 		add(new VisibilityControlView<FogOfWarGroup>("groups",
 				FilterDataProvider.of(groupFilter, groupDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void applyStatus(FogOfWarGroup object,
+			public void applyStatus(FogOfWarGroup group,
 					VisibilityStatus status) {
-				object.setStatus(status);
-				groupDAO.update(object);
+				mapService.setGroupVisibility(mapViewModel.getObject(), group,
+						status);
 			}
 		});
 
@@ -62,17 +67,24 @@ public class MapController extends TypedPanel<ScaledMap> {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void applyStatus(FogOfWarShape object,
+			public void applyStatus(FogOfWarShape shape,
 					VisibilityStatus status) {
-				object.setStatus(status);
-				shapeDAO.update(object);
+				mapService.setShapeVisibility(mapViewModel.getObject(), shape,
+						status);
 			}
 		});
-		
+
 		setOutputMarkupId(true);
 	}
 
-	private static abstract class VisibilityControlView<T extends ICanHazVisibilityStatus>
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+
+		mapViewModel.detach();
+	}
+
+	private abstract class VisibilityControlView<T extends ICanHazVisibilityStatus>
 			extends DataView<T> {
 		private static final long serialVersionUID = 1L;
 
@@ -102,7 +114,8 @@ public class MapController extends TypedPanel<ScaledMap> {
 		protected void populateItem(Item<T> item) {
 			T shape = item.getModelObject();
 
-			item.add(new NonCachingImage("thumb", shape.createThumbnailResource(100)));
+			item.add(new NonCachingImage("thumb",
+					shape.createThumbnailResource(100)));
 			item.add(new Label("description", shape.getDescription()));
 
 			AjaxIconLink<T> hideLink = new AjaxIconLink<T>("hide",
@@ -144,15 +157,17 @@ public class MapController extends TypedPanel<ScaledMap> {
 
 		}
 
-		private void updateVisibility(AjaxRequestTarget target, T shape, AjaxIconLink<T> hideLink,
-				AjaxIconLink<T> dmLink, AjaxIconLink<T> showLink) {
+		private void updateVisibility(AjaxRequestTarget target, T shape,
+				AjaxIconLink<T> hideLink, AjaxIconLink<T> dmLink,
+				AjaxIconLink<T> showLink) {
+			MapView mapView = mapViewModel.getObject();
 			hideLink.setVisibilityAllowed(
-					shape.getStatus() != VisibilityStatus.INVISIBLE);
+					shape.getStatus(mapView) != VisibilityStatus.INVISIBLE);
 			dmLink.setVisibilityAllowed(
-					shape.getStatus() != VisibilityStatus.DM_ONLY);
+					shape.getStatus(mapView) != VisibilityStatus.DM_ONLY);
 			showLink.setVisibilityAllowed(
-					shape.getStatus() != VisibilityStatus.VISIBLE);
-			
+					shape.getStatus(mapView) != VisibilityStatus.VISIBLE);
+
 			if (target != null) {
 				target.add(hideLink, dmLink, showLink);
 			}

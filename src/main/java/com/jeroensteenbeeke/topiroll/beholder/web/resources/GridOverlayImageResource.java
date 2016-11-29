@@ -44,7 +44,8 @@ public class GridOverlayImageResource extends DynamicImageResource {
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 
-		return overlay(baseImage, squareSize.get(), offsetX.get(), offsetY.get());
+		return overlay(baseImage, squareSize.get(), offsetX.get(),
+				offsetY.get());
 	}
 
 	public static byte[] overlay(byte[] image, int squareSize, int offsetX,

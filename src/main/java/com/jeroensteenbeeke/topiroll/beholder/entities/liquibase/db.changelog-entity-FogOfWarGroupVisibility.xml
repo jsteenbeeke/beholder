@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="jeroen" failOnError="true" id="40">
+		<createTable tableName="fogofwargroupvisibility">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+		<createSequence incrementBy="1"
+			sequenceName="seq_id_fogofwargroupvisibility" startValue="1" />
+	</changeSet>
+	<changeSet author="jeroen" id="47">
+		<addColumn tableName="fogofwargroupvisibility">
+			<column name="group_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="group_id"
+			baseTableName="fogofwargroupvisibility" constraintName="fk_fogofwargroupvisibility_group"
+			referencedColumnNames="id" referencedTableName="fogofwargroup" />
+		<createIndex indexName="idx_fogofwargroupvisibility_group"
+			tableName="fogofwargroupvisibility">
+			<column name="group_id" />
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

@@ -15,9 +15,11 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
 class MapRenderersImpl implements MapRenderers {
 	@Autowired
 	private Any<IMapRenderer> renderers;
-	
+
 	@Override
 	public List<IMapRenderer> getRenderers() {
-		return renderers.stream().sorted(Comparator.comparing(IMapRenderer::getPriority)).collect(Collectors.toList());
+		return renderers.stream()
+				.sorted(Comparator.comparing(IMapRenderer::getPriority))
+				.collect(Collectors.toList());
 	}
 }

@@ -18,7 +18,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter
 class IdentityServiceImpl implements IdentityService {
 	@Autowired
 	private BeholderUserDAO userDAO;
-	
+
 	@Autowired
 	private Any<IAccountInitializer> initializers;
 
@@ -38,7 +38,7 @@ class IdentityServiceImpl implements IdentityService {
 			user.setUserId(descriptor.getUserId());
 			user.setUsername(descriptor.getUserName());
 			userDAO.save(user);
-			
+
 			for (IAccountInitializer initializer : initializers.all()) {
 				initializer.onAccountCreated(user);
 			}

@@ -7,15 +7,15 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 public interface IdentityService {
 	public static class UserDescriptor {
 		private String userId;
-		
+
 		private String teamId;
-		
+
 		private String userName;
-		
+
 		private String teamName;
-		
+
 		private String avatar;
-		
+
 		private String accessToken;
 
 		public String getUserId() {
@@ -71,8 +71,7 @@ public interface IdentityService {
 			this.accessToken = accessToken;
 			return this;
 		}
-		
-		
+
 	}
 
 	@Nonnull

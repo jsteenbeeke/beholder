@@ -55,25 +55,24 @@ public class ToScaleMapResource extends DynamicImageResource {
 									view.getScreenDiagonalInInches());
 					int targetWidth = (int) (dimensions.getWidth() * factor);
 					int targetHeight = (int) (dimensions.getHeight() * factor);
-					
+
 					if (!preview.isNull() && !preview.isEmpty()) {
 						boolean isPreview = preview.toBoolean(false);
-						
+
 						if (isPreview) {
 							targetWidth = (int) dimensions.getWidth();
 							targetHeight = (int) dimensions.getHeight();
-							
-							// Decrease width and height by 10% until preview size has been achieved
+
+							// Decrease width and height by 10% until preview
+							// size has been achieved
 							while (targetWidth > 640) {
 								targetWidth = (int) (targetWidth * 0.9);
 								targetHeight = (int) (targetHeight * 0.9);
 							}
 						}
 					}
-					
-					return ImageUtil.resize(data,
-							targetWidth,
-							targetHeight);
+
+					return ImageUtil.resize(data, targetWidth, targetHeight);
 				}
 			}
 
@@ -89,7 +88,7 @@ public class ToScaleMapResource extends DynamicImageResource {
 
 		};
 	}
-	
+
 	@Override
 	protected IResourceCachingStrategy getCachingStrategy() {
 		return NoOpResourceCachingStrategy.INSTANCE;

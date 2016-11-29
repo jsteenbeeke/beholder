@@ -44,12 +44,13 @@ public class BeholderApplicationConfig {
 			HikariDataSource dataSource, JpaVendorAdapter vendorAdapter) {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setDataSource(dataSource);
-		factory.setPackagesToScan("com.jeroensteenbeeke.topiroll.beholder.entities");
+		factory.setPackagesToScan(
+				"com.jeroensteenbeeke.topiroll.beholder.entities");
 		factory.setJpaVendorAdapter(vendorAdapter);
 
 		return factory;
 	}
-	
+
 	@Bean
 	public JpaTransactionManager transactionManager(
 			EntityManagerFactory factory) {

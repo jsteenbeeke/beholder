@@ -7,8 +7,9 @@ import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.BeholderUserDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 
-	@Component
-	@Scope(value="request")  
-class BeholderUserDAOImpl extends HibernateDAO<BeholderUser> implements BeholderUserDAO {
+@Component
+@Scope(value = "request")
+class BeholderUserDAOImpl extends HibernateDAO<BeholderUser>
+		implements BeholderUserDAO {
 
 }

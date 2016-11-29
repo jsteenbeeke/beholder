@@ -22,16 +22,16 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
 
-public class BeholderApplication extends WebApplication implements
-	ApplicationContextProvider {
+public class BeholderApplication extends WebApplication
+		implements ApplicationContextProvider {
 	private ApplicationContext ctx;
-	
+
 	@Override
 	protected void init() {
 		super.init();
 
-		getComponentInstantiationListeners().add(
-				new SpringComponentInjector(this));
+		getComponentInstantiationListeners()
+				.add(new SpringComponentInjector(this));
 		ctx = WebApplicationContextUtils
 				.getWebApplicationContext(getServletContext());
 
@@ -42,35 +42,35 @@ public class BeholderApplication extends WebApplication implements
 		getMarkupSettings().setStripWicketTags(true);
 
 		Heinlein.init(this, "css/beholder-web.css");
-		
+
 		Slack.integration.initialize(this, "");
-		
+
 		mountPage("views/${identifier}", MapViewPage.class);
-		mountResource("maps/${noise}/${viewId}", new ResourceReference(BeholderApplication.class, "maps") {
-			private static final long serialVersionUID = 1L;
+		mountResource("maps/${noise}/${viewId}",
+				new ResourceReference(BeholderApplication.class, "maps") {
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public IResource getResource() {
-				
-				
-				return new ToScaleMapResource();
-			}
-		});
-		
+					@Override
+					public IResource getResource() {
+
+						return new ToScaleMapResource();
+					}
+				});
+
 	}
-	
-	@Override
-    protected void onDestroy() {
-    	super.onDestroy();
 
-        HyperionScheduler.getScheduler().shutdown();
-    }
-	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		HyperionScheduler.getScheduler().shutdown();
+	}
+
 	@Override
 	public Class<? extends Page> getHomePage() {
 		return HomePage.class;
 	}
-	
+
 	public static BeholderApplication get() {
 		return (BeholderApplication) WebApplication.get();
 	}
@@ -79,10 +79,10 @@ public class BeholderApplication extends WebApplication implements
 	public ApplicationContext getApplicationContext() {
 		return ctx;
 	}
-	
+
 	@Override
 	public Session newSession(Request request, Response response) {
-	
+
 		return new BeholderSession(request);
 	}
 

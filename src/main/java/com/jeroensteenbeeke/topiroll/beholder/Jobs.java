@@ -6,11 +6,11 @@ public enum Jobs implements TaskGroup {
 	;
 
 	private final String descriptor;
-	
+
 	private Jobs(String descriptor) {
 		this.descriptor = descriptor;
 	}
-	
+
 	@Override
 	public String getDescriptor() {
 		return descriptor;

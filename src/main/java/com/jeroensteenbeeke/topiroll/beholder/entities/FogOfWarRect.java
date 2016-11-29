@@ -101,13 +101,19 @@ public class FogOfWarRect extends FogOfWarShape {
 	}
 
 	@Override
-	public void renderTo(JSBuilder js, String contextVariable, double multiplier, 
-			boolean previewMode) {
-		if (shouldRender(previewMode)) {
-			js.__("%s.moveTo(%d, %d);", contextVariable, rel(getOffsetX(), multiplier),
+	public void renderTo(@Nonnull JSRenderContext context) {
+		if (shouldRender(context.getView(), context.isPreviewMode())) {
+			final JSBuilder js = context.getJavaScriptBuilder();
+			final double multiplier = context.getMultiplier();
+			final String contextVariable = context.getContextVariable();
+
+			js.__("%s.moveTo(%d, %d);", contextVariable,
+					rel(getOffsetX(), multiplier),
 					rel(getOffsetY(), multiplier));
-			js.__("%s.rect(%d, %d, %d, %d);", contextVariable, rel(getOffsetX(), multiplier),
-					rel(getOffsetY(), multiplier), rel(getWidth(), multiplier), rel(getHeight(), multiplier));
+			js.__("%s.rect(%d, %d, %d, %d);", contextVariable,
+					rel(getOffsetX(), multiplier),
+					rel(getOffsetY(), multiplier), rel(getWidth(), multiplier),
+					rel(getHeight(), multiplier));
 		}
 
 	}

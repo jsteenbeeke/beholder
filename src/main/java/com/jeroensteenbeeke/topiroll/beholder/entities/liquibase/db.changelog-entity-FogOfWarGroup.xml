@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-<changeSet author="jeroen" failOnError="true" id="24">
-    <createTable tableName="fogofwargroup">
-      <column name="id" type="bigint">
-        <constraints primaryKey="true"/>
-      </column>
-    </createTable>
-  <createSequence incrementBy="1" sequenceName="seq_id_fogofwargroup" startValue="1"/>
-  </changeSet>
-<changeSet author="jeroen" id="35">
-    <addColumn tableName="fogofwargroup">
-      <column name="map" type="BIGINT">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  <addForeignKeyConstraint baseColumnNames="map" baseTableName="fogofwargroup" constraintName="fk_fogofwargroup_map" referencedColumnNames="id" referencedTableName="scaledmap"/>
-  <createIndex indexName="idx_fogofwargroup_map" tableName="fogofwargroup">
-      <column name="map"/>
-    </createIndex>
-  </changeSet>
-<changeSet author="jeroen" id="36">
-    <addColumn tableName="fogofwargroup">
-      <column name="name" type="java.sql.Types.VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-  <changeSet author="jeroen" id="38">
-    <addColumn tableName="fogofwargroup">
-      <column name="status" type="java.sql.Types.VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
+	<changeSet author="jeroen" failOnError="true" id="24">
+		<createTable tableName="fogofwargroup">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_fogofwargroup"
+			startValue="1" />
+	</changeSet>
+	<changeSet author="jeroen" id="35">
+		<addColumn tableName="fogofwargroup">
+			<column name="map" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="map"
+			baseTableName="fogofwargroup" constraintName="fk_fogofwargroup_map"
+			referencedColumnNames="id" referencedTableName="scaledmap" />
+		<createIndex indexName="idx_fogofwargroup_map" tableName="fogofwargroup">
+			<column name="map" />
+		</createIndex>
+	</changeSet>
+	<changeSet author="jeroen" id="36">
+		<addColumn tableName="fogofwargroup">
+			<column name="name" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

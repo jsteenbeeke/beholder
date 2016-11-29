@@ -64,9 +64,8 @@ public class FogOfWarCircle extends FogOfWarShape {
 	@Override
 	public void drawPreviewTo(Graphics2D graphics2d) {
 		graphics2d.setColor(TRANSPARENT_BLUE);
-		Shape circle = new Ellipse2D.Double(getOffsetX(),
-				getOffsetY(), 2.0 * getRadius(),
-				2.0 * getRadius());
+		Shape circle = new Ellipse2D.Double(getOffsetX(), getOffsetY(),
+				2.0 * getRadius(), 2.0 * getRadius());
 		graphics2d.fill(circle);
 
 	}
@@ -93,13 +92,20 @@ public class FogOfWarCircle extends FogOfWarShape {
 	}
 
 	@Override
-	public void renderTo(JSBuilder js, String contextVariable, double multiplier,
-			boolean previewMode) {
-		if (shouldRender(previewMode)) {
-			js.__("%s.moveTo(%d, %d);", contextVariable, rel(getOffsetX(), multiplier),
+	public void renderTo(@Nonnull JSRenderContext context) {
+
+		if (shouldRender(context.getView(), context.isPreviewMode())) {
+			final JSBuilder js = context.getJavaScriptBuilder();
+			final double multiplier = context.getMultiplier();
+			final String contextVariable = context.getContextVariable();
+
+			js.__("%s.moveTo(%d, %d);", contextVariable,
+					rel(getOffsetX(), multiplier),
 					rel(getOffsetY(), multiplier));
 			js.__("%s.arc(%d, %d, %d, 0, 2 * Math.PI);", contextVariable,
-					rel(getOffsetX() + getRadius(), multiplier), rel(getOffsetY() + getRadius(), multiplier), rel(getRadius(), multiplier));
+					rel(getOffsetX() + getRadius(), multiplier),
+					rel(getOffsetY() + getRadius(), multiplier),
+					rel(getRadius(), multiplier));
 		}
 
 	}

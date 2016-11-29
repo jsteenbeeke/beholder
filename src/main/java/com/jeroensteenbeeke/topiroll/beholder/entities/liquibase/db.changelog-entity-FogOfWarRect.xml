@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-<changeSet author="jeroen" failOnError="true" id="26">
-    <createTable tableName="fogofwarrect">
-      <column name="id" type="bigint">
-        <constraints primaryKey="true"/>
-      </column>
-    </createTable>
-  <createSequence incrementBy="1" sequenceName="seq_id_fogofwarrect" startValue="1"/>
-  </changeSet>
-<changeSet author="jeroen" id="31">
-    <addColumn tableName="fogofwarrect">
-      <column name="offsetx" type="java.sql.Types.INTEGER">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-<changeSet author="jeroen" id="32">
-    <addColumn tableName="fogofwarrect">
-      <column name="offsety" type="java.sql.Types.INTEGER">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-<changeSet author="jeroen" id="33">
-    <addColumn tableName="fogofwarrect">
-      <column name="width" type="java.sql.Types.INTEGER">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-<changeSet author="jeroen" id="34">
-    <addColumn tableName="fogofwarrect">
-      <column name="height" type="java.sql.Types.INTEGER">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
+	<changeSet author="jeroen" failOnError="true" id="26">
+		<createTable tableName="fogofwarrect">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_fogofwarrect"
+			startValue="1" />
+	</changeSet>
+	<changeSet author="jeroen" id="31">
+		<addColumn tableName="fogofwarrect">
+			<column name="offsetx" type="java.sql.Types.INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroen" id="32">
+		<addColumn tableName="fogofwarrect">
+			<column name="offsety" type="java.sql.Types.INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroen" id="33">
+		<addColumn tableName="fogofwarrect">
+			<column name="width" type="java.sql.Types.INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroen" id="34">
+		<addColumn tableName="fogofwarrect">
+			<column name="height" type="java.sql.Types.INTEGER">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
