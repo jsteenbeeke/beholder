@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="48">
+    <createTable tableName="tokendefinition">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_tokendefinition" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="53">
+    <addColumn tableName="tokendefinition">
+      <column name="owner" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="owner" baseTableName="tokendefinition" constraintName="fk_tokendefinition_owner" referencedColumnNames="id" referencedTableName="beholderuser"/>
+  <createIndex indexName="idx_tokendefinition_owner" tableName="tokendefinition">
+      <column name="owner"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="54">
+    <addColumn tableName="tokendefinition">
+      <column name="imagedata" type="BLOB">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="55">
+    <addColumn tableName="tokendefinition">
+      <column name="size" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="57">
+    <addColumn tableName="tokendefinition">
+      <column name="name" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

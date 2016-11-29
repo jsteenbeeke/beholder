@@ -52,7 +52,6 @@ public class FloorPlanRenderer implements IMapRenderer {
 				contributor.contribute(js, "context", mapView, previewMode);
 			}
 			js.__("context.closePath();");
-
 			js.__("context.clip();");
 
 		}

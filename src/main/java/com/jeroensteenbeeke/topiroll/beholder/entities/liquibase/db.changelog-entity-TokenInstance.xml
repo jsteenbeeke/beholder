@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="49">
+    <createTable tableName="tokeninstance">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_tokeninstance" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="51">
+    <addColumn tableName="tokeninstance">
+      <column name="definition" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="definition" baseTableName="tokeninstance" constraintName="fk_tokeninstance_definition" referencedColumnNames="id" referencedTableName="tokendefinition"/>
+  <createIndex indexName="idx_tokeninstance_definition" tableName="tokeninstance">
+      <column name="definition"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="52">
+    <addColumn tableName="tokeninstance">
+      <column name="view" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="view" baseTableName="tokeninstance" constraintName="fk_tokeninstance_view" referencedColumnNames="id" referencedTableName="mapview"/>
+  <createIndex indexName="idx_tokeninstance_view" tableName="tokeninstance">
+      <column name="view"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="56">
+    <addColumn tableName="tokeninstance">
+      <column name="badge" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

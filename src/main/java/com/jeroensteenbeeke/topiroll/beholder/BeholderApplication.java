@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleTokenResource;
 
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
@@ -54,6 +55,16 @@ public class BeholderApplication extends WebApplication
 					public IResource getResource() {
 
 						return new ToScaleMapResource();
+					}
+				});
+		mountResource("tokens/${noise}/${viewId}/${tokenId}",
+				new ResourceReference(BeholderApplication.class, "tokens") {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public IResource getResource() {
+
+						return new ToScaleTokenResource();
 					}
 				});
 

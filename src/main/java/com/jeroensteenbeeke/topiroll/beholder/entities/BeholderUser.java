@@ -31,6 +31,10 @@ public class BeholderUser extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String username;
+ 	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
+	private List<TokenDefinition> tokens = new ArrayList<TokenDefinition>();
+
+
 
 	@OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
 	private List<ScaledMap> maps = new ArrayList<ScaledMap>();
@@ -119,5 +123,15 @@ public class BeholderUser extends BaseDomainObject {
 	public void setMaps(@Nonnull List<ScaledMap> maps) {
 		this.maps = maps;
 	}
+
+	@Nonnull
+	public List<TokenDefinition> getTokens() {
+		return tokens;
+	}
+	public void setTokens( @Nonnull List<TokenDefinition> tokens) {
+		this.tokens = tokens;
+	}
+
+
 
 }

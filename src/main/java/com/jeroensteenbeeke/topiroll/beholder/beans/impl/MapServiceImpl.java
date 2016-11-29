@@ -33,6 +33,9 @@ class MapServiceImpl implements MapService {
 
 	@Autowired
 	private FogOfWarShapeVisibilityDAO shapeVisibilityDAO;
+	
+	@Autowired
+	private TokenDefinitionDAO tokenDefinitionDAO;
 
 	@Override
 	public ScaledMap createMap(BeholderUser user, String name, int squareSize,
@@ -145,6 +148,20 @@ class MapServiceImpl implements MapService {
 			visibility.setStatus(status);
 			shapeVisibilityDAO.update(visibility);
 		}
+	}
+	
+	@Override
+	public TokenDefinition createToken(BeholderUser user, String name, TokenSize size,
+			byte[] image) {
+		TokenDefinition def = new TokenDefinition();
+		def.setImageData(image);
+		def.setOwner(user);
+		def.setSize(size);
+		def.setName(name);
+		
+		tokenDefinitionDAO.save(def);
+		
+		return def;
 	}
 
 }

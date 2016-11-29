@@ -13,7 +13,12 @@
 				<i class="glyphicon glyphicon-picture"></i> Add map
 			</button>
 		</div>
-
+	<div class="btn-group" role="group">
+			<button type="button" wicket:id="addtoken"
+				class="btn btn-info btn-lg ">
+				<i class="glyphicon glyphicon-pushpin"></i> Add token
+			</button>
+		</div>
 	</div>
 
 	<h2>Views</h2>
@@ -68,6 +73,33 @@
 			<tr>
 				<td colspan="3">
 					<div wicket:id="mapnav"></div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	<h2>Tokens</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Size</th>
+				<th>Thumbnail</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="tokens">
+				<td wicket:id="name"></td>
+				<td wicket:id="size"></td>
+				<td><img wicket:id="thumb" class="img-token" /></td>
+				<td></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4">
+					<div wicket:id="tokennav"></div>
 				</td>
 			</tr>
 		</tfoot>
