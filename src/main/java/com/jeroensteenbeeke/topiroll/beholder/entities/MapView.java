@@ -156,27 +156,20 @@ public class MapView extends BaseDomainObject {
 		if (selectedMap != null) {
 			data.append(selectedMap.getName());
 
-			selectedMap.getFogOfWarShapes().stream()
-					.sorted(Comparator.comparing(FogOfWarShape::getId))
+			getVisibilities().stream()
+					.sorted(Comparator.comparing(FogOfWarVisibility::getId))
 					.forEach(s -> {
-						if (s.getGroup() == null) {
-							data.append(";");
+						
+							data.append(";V");
 							data.append(s.getId());
 							data.append("=");
-							data.append(s.getStatus(this).toString());
-
-						}
+							data.append(s.getStatus().toString());
 
 					});
-			selectedMap.getGroups().stream()
-					.sorted(Comparator.comparing(FogOfWarGroup::getId))
-					.forEach(s -> {
-						data.append(";");
-						data.append(s.getName());
-						data.append("=");
-						data.append(s.getStatus(this).toString());
-
-					});
+			getTokens().stream().sorted(Comparator.comparing(TokenInstance::getId)).forEach(t -> {
+				data.append(";T");
+				data.append(t.getId());
+			});
 		}
 
 		return HashUtil.sha512Hash(data.toString());

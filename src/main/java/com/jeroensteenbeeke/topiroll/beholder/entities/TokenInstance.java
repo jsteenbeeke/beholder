@@ -21,6 +21,14 @@ public class TokenInstance extends BaseDomainObject {
 			strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
+ 	@Column(nullable=false)
+	private int offsetY;
+
+
+ 	@Column(nullable=false)
+	private int offsetX;
+
+
 
 	@Column(nullable = true)
 	private String badge;
@@ -71,6 +79,26 @@ public class TokenInstance extends BaseDomainObject {
 	public void setBadge( @Nullable String badge) {
 		this.badge = badge;
 	}
+
+	@Nonnull
+	public int getOffsetX() {
+		return offsetX;
+	}
+	public void setOffsetX( @Nonnull int offsetX) {
+		this.offsetX = offsetX;
+	}
+
+	@Nonnull
+	public int getOffsetY() {
+		return offsetY;
+	}
+	public void setOffsetY( @Nonnull int offsetY) {
+		this.offsetY = offsetY;
+	}
+
+
+
+
 
 
 
