@@ -204,7 +204,7 @@
 					<groupId>com.spotify</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
 					<configuration>
-						<imageName>jeroensteenbeeke_com/thirdeye</imageName>
+						<imageName>jeroensteenbeeke_com/beholder</imageName>
 						<dockerDirectory>src/main/docker</dockerDirectory>
 						<resources>
 							<resource>
