@@ -1,7 +1,7 @@
 FROM jetty:latest
 MAINTAINER Jeroen Steenbeeke,j.steenbeeke@gmail.com
 
-COPY beholder-web.war $JETTY_BASE/webapps/
+COPY beholder.war $JETTY_BASE/webapps/
 COPY jetty.forward /root/jetty.forward
 COPY xmlinsert.jar /root/
 RUN mkdir -p /home/jetty

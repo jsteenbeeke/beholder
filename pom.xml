@@ -153,6 +153,7 @@
 
 
 	<build>
+		<finalName>beholder</finalName>
 		<resources>
 			<resource>
 				<filtering>false</filtering>
