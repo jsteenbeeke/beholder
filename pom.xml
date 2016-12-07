@@ -201,6 +201,37 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>com.spotify</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<configuration>
+						<imageName>jeroensteenbeeke_com/thirdeye</imageName>
+						<dockerDirectory>src/main/docker</dockerDirectory>
+						<resources>
+							<resource>
+								<targetPath>/</targetPath>
+								<directory>${project.build.directory}</directory>
+								<include>${project.build.finalName}.war</include>
+							</resource>
+							<resource>
+								<targetPath>/</targetPath>
+								<directory>${project.build.directory}</directory>
+								<include>initExt.sh</include>
+							</resource>
+						<resource>
+								<targetPath>/</targetPath>
+								<directory>${project.build.directory}</directory>
+								<include>xmlinsert.jar</include>
+							</resource>
+						</resources>
+						<imageTags>
+							<imageTag>latest</imageTag>
+							<imageTag>${project.version}</imageTag>
+						</imageTags>
+						<forceTags>true</forceTags>
+					</configuration>
+				</plugin>
+
+				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
 					<configuration>

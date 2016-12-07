@@ -1,0 +1,48 @@
+{
+	"apiVersion": "v1",
+	"kind": "ReplicationController",
+	"metadata": {
+		"name": "beholder"
+	},
+	"spec": {
+		"replicas": 1,
+		"selector": {
+			"app": "beholder"
+		},
+		"template": {
+			"metadata": {
+				"name": "beholder",
+				"labels": {
+					"app": "beholder"
+				}
+			},
+			"spec": {
+				"containers": [{
+					"name": "beholder",
+					"image": "docker-registry:5000/beholder",
+					"imagePullPolicy": "Always",
+					"volumeMounts": [{
+						"name": "hyperion",
+						"mountPath": "/home/jetty/.hyperion/",
+						"readOnly": true
+					}],
+					"ports": [{
+						"containerPort": 8080
+					}],
+					"resources": {
+						"limits": {
+							"memory": "256Mi"
+						}
+					}
+				}],
+				"volumes": [{
+					"name": "hyperion",
+					"secret": {
+						"secretName": "beholder-config"
+					}
+				}],
+				"restartPolicy": "Always"
+			}
+		}
+	}
+}
