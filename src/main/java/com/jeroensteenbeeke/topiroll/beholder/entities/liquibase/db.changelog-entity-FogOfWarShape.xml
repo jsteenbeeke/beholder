@@ -27,7 +27,7 @@
 	</changeSet>
 	<changeSet author="jeroen" id="25">
 		<addColumn tableName="fogofwarshape">
-			<column name="groupId" type="BIGINT">
+			<column name="group_id" type="BIGINT">
 				<constraints nullable="true" />
 			</column>
 		</addColumn>

@@ -36,7 +36,7 @@ public abstract class FogOfWarShape extends BaseDomainObject
 	private ScaledMap map;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "groupId")
+	@JoinColumn(name = "group_id")
 	private FogOfWarGroup group;
 
 	@OneToMany(mappedBy = "shape", fetch = FetchType.LAZY)
