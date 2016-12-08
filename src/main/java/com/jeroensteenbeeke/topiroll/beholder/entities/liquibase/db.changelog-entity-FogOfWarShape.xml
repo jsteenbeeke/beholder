@@ -27,7 +27,7 @@
 	</changeSet>
 	<changeSet author="jeroen" id="25">
 		<addColumn tableName="fogofwarshape">
-			<column name="group_id" type="BIGINT">
+			<column name="groupId" type="BIGINT">
 				<constraints nullable="true" />
 			</column>
 		</addColumn>
@@ -38,5 +38,8 @@
 			tableName="fogofwarshape">
 			<column name="groupId" />
 		</createIndex>
+	</changeSet>
+	<changeSet id="25b" author="jeroen">
+		<renameColumn tableName="fogofwarshape" oldColumnName="groupId" newColumnName="group_id"/>
 	</changeSet>
 </databaseChangeLog>
