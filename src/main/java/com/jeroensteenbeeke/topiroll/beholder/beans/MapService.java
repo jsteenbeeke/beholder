@@ -31,5 +31,7 @@ public interface MapService {
 			@Nonnull VisibilityStatus status);
 
 	TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
-			@Nonnull TokenSize size, @Nonnull byte[] image);
+			@Nonnull int diameter, @Nonnull byte[] image);
+
+	void ungroup(@Nonnull FogOfWarGroup group);
 }

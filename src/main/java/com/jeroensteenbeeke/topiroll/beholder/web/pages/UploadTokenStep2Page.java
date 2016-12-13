@@ -2,23 +2,19 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import com.google.common.collect.Lists;
-import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenSize;
 
 public class UploadTokenStep2Page extends AuthenticatedPage {
 
@@ -41,12 +37,10 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 				Model.of(originalName));
 		nameField.setRequired(true);
 
-		final DropDownChoice<TokenSize> sizeSelect = new DropDownChoice<>(
-				"size", Model.of(TokenSize.MEDIUM),
-				new ListModel<TokenSize>(
-						Lists.newArrayList(TokenSize.values())),
-				LambdaRenderer.forEnum(TokenSize.class, TokenSize::name));
-		sizeSelect.setRequired(true);
+		final NumberTextField<Integer> sizeField = new NumberTextField<>(
+				"size", Model.of(1));
+		sizeField.setRequired(true);
+		sizeField.setMinimum(1);
 
 		final Image previewImage = new NonCachingImage("preview",
 				new DynamicImageResource() {
@@ -69,13 +63,13 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 			protected void onSubmit() {
 
 				mapService.createToken(getUser(), nameField.getModelObject(),
-						sizeSelect.getModelObject(), image);
+						sizeField.getModelObject(), image);
 
 				setResponsePage(new OverviewPage());
 			}
 		};
 
-		configureForm.add(sizeSelect);
+		configureForm.add(sizeField);
 		configureForm.add(nameField);
 
 		add(configureForm);

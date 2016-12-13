@@ -7,7 +7,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 
 @Component
 class URLServiceImpl implements URLService {
-	@Value("${url.prefix}")
+	@Value("${application.baseurl}")
 	private String urlPrefix;
 
 	@Override

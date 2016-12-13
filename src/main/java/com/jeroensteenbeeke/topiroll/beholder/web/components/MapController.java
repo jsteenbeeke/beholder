@@ -115,7 +115,7 @@ public class MapController extends TypedPanel<ScaledMap> {
 			T shape = item.getModelObject();
 
 			item.add(new NonCachingImage("thumb",
-					shape.createThumbnailResource(100)));
+					shape.createThumbnailResource(200)));
 			item.add(new Label("description", shape.getDescription()));
 
 			AjaxIconLink<T> hideLink = new AjaxIconLink<T>("hide",

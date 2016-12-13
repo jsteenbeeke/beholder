@@ -1,12 +1,14 @@
 package com.jeroensteenbeeke.topiroll.beholder.util;
 
+import java.awt.Dimension;
+
 public final class Calculations {
 	public static final class ScaleCalculationFinalizer {
 		private final int pixels;
 
-		private final Resolution resolution;
+		private final Dimension resolution;
 
-		private ScaleCalculationFinalizer(int pixels, Resolution resolution) {
+		private ScaleCalculationFinalizer(int pixels, Dimension resolution) {
 			this.pixels = pixels;
 			this.resolution = resolution;
 		}
@@ -27,7 +29,7 @@ public final class Calculations {
 			this.pixels = pixels;
 		}
 
-		public ScaleCalculationFinalizer toResolution(Resolution resolution) {
+		public ScaleCalculationFinalizer toResolution(Dimension resolution) {
 			return new ScaleCalculationFinalizer(pixels, resolution);
 		}
 
@@ -48,7 +50,7 @@ public final class Calculations {
 	 *            The screen's diagonal length in inches
 	 * @return The number of pixels (length and width) of a 1 inch
 	 */
-	public static long oneInchSquareInPixels(Resolution resolution,
+	public static long oneInchSquareInPixels(Dimension resolution,
 			double screenDiagonalInInches) {
 		final double horizontalInches = horizontalInches(screenDiagonalInInches,
 				resolution);
@@ -76,12 +78,12 @@ public final class Calculations {
 		return Math.round(1.0 / inchesPerPixel);
 	}
 
-	public static double screenDiagonalTheta(Resolution resolution) {
+	public static double screenDiagonalTheta(Dimension resolution) {
 		return Math.atan2(resolution.getHeight(), resolution.getWidth());
 	}
 
 	public static double verticalInches(final double screenDiagonalInInches,
-			final Resolution resolution) {
+			final Dimension resolution) {
 		// SOH CAH TOA
 		// sin theta = Opposite / Hypothenuse -> Opposite = hypothenuse * sin
 		// theta
@@ -90,7 +92,7 @@ public final class Calculations {
 	}
 
 	public static double horizontalInches(final double screenDiagonalInInches,
-			final Resolution resolution) {
+			final Dimension resolution) {
 		// SOH CAH TOA
 		// cos theta = Adjacent / Hypothenuse -> Adjacent = hypothenuse * cos
 		// theta

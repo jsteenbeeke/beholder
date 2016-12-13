@@ -12,6 +12,7 @@ import org.apache.wicket.model.IModel;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 @Entity
@@ -98,6 +99,11 @@ public class FogOfWarGroup extends BaseDomainObject
 			@Override
 			protected boolean shouldDrawExistingShapes() {
 				return false;
+			}
+			
+			@Override
+			protected byte[] postProcess(byte[] image) {
+				return ImageUtil.resize(image, size, size);
 			}
 
 			@Override

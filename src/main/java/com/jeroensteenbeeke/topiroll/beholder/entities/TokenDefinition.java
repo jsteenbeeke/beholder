@@ -23,13 +23,14 @@ public class TokenDefinition extends BaseDomainObject {
 
 	private Long id;
  	@Column(nullable=false)
+	private int diameterInSquares;
+
+
+ 	@Column(nullable=false)
 	private String name;
 
 
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private TokenSize size;
 
 	@Column(nullable = false)
 	private byte[] imageData;
@@ -82,15 +83,7 @@ public class TokenDefinition extends BaseDomainObject {
 		this.imageData = imageData;
 	}
 
-	@Nonnull
-	public TokenSize getSize() {
-		return size;
-	}
-
-	public void setSize(@Nonnull TokenSize size) {
-		this.size = size;
-	}
-
+	
 	@Nonnull
 	public String getName() {
 		return name;
@@ -98,6 +91,16 @@ public class TokenDefinition extends BaseDomainObject {
 	public void setName( @Nonnull String name) {
 		this.name = name;
 	}
+
+	@Nonnull
+	public int getDiameterInSquares() {
+		return diameterInSquares;
+	}
+	public void setDiameterInSquares( @Nonnull int diameterInSquares) {
+		this.diameterInSquares = diameterInSquares;
+	}
+
+
 
 
 

@@ -145,7 +145,7 @@ public class OverviewPage extends AuthenticatedPage {
 				TokenDefinition definition = item.getModelObject();
 
 				item.add(new Label("name", definition.getName()));
-				item.add(new Label("size", definition.getSize().name()));
+				item.add(new Label("size", String.format("%d squares (diameter)",definition.getDiameterInSquares())));
 
 				byte[] imageData = definition.getImageData();
 				Dimension dimension = ImageUtil.getImageDimensions(imageData);

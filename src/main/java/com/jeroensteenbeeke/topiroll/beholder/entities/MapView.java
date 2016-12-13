@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,13 +15,13 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
 import com.jeroensteenbeeke.hyperion.util.HashUtil;
-import com.jeroensteenbeeke.topiroll.beholder.util.Resolution;
-import com.jeroensteenbeeke.topiroll.beholder.util.SimpleResolution;
 
 @Entity
 public class MapView extends BaseDomainObject {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Dimension DEFAULT_DIMENSION = new Dimension(320, 240);
 
 	@Id
 	@SequenceGenerator(sequenceName = "SEQ_ID_MapView", name = "MapView",
@@ -146,8 +147,8 @@ public class MapView extends BaseDomainObject {
 		this.version = version;
 	}
 
-	public Resolution toResolution() {
-		return new SimpleResolution(getWidth(), getHeight());
+	public Dimension toResolution() {
+		return new Dimension(getWidth(), getHeight());
 	}
 
 	public String calculateState() {
@@ -193,6 +194,13 @@ public class MapView extends BaseDomainObject {
 		this.tokens = tokens;
 	}
 
-
+	@Transient
+	public Dimension getPreviewDimensions() {
+		if (getSelectedMap() == null) {
+			return DEFAULT_DIMENSION;
+		}
+		
+		return getSelectedMap().getPreviewDimension();
+	}
 
 }

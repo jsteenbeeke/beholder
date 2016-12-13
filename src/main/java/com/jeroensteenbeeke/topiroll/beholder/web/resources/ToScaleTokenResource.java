@@ -1,5 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
+import java.awt.Dimension;
+
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -13,6 +15,7 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 
 public class ToScaleTokenResource extends DynamicImageResource {
 
@@ -45,14 +48,32 @@ public class ToScaleTokenResource extends DynamicImageResource {
 
 				byte[] data = definition.getImageData();
 
-				boolean isPreview = false;
+				final long square = Calculations.oneInchSquareInPixels(
+						view.toResolution(), view.getScreenDiagonalInInches());
 
+				setFormat(ImageUtil.getWicketFormatType(data));
+
+				int target = (int) (square
+						* definition.getDiameterInSquares());
+				
 				if (!preview.isNull() && !preview.isEmpty()) {
-					isPreview = preview.toBoolean(false);
+					boolean isPreview = preview.toBoolean(false);
+
+					if (isPreview) {
+						int originalWidth = (int) view.toResolution().getWidth();
+						
+						Dimension previewDimensions = view.getPreviewDimensions();
+						
+						double factor = previewDimensions.getWidth() / originalWidth;
+						
+						if (factor < 1.0) {
+							target = (int) (factor * target);
+						}
+						
+					}
 				}
 
-				byte[] resizedData = definition.getSize().resizeFor(data, view,
-						isPreview);
+				byte[] resizedData = ImageUtil.resize(data, target, target);
 
 				setFormat(ImageUtil.getWicketFormatType(resizedData));
 

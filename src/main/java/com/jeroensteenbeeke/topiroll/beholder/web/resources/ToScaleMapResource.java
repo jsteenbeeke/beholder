@@ -15,7 +15,6 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
-import com.jeroensteenbeeke.topiroll.beholder.util.SimpleResolution;
 
 public class ToScaleMapResource extends DynamicImageResource {
 
@@ -49,7 +48,7 @@ public class ToScaleMapResource extends DynamicImageResource {
 					setFormat(ImageUtil.getWicketFormatType(data));
 
 					double factor = Calculations.scale(map.getSquareSize())
-							.toResolution(new SimpleResolution(view.getWidth(),
+							.toResolution(new Dimension(view.getWidth(),
 									view.getHeight()))
 							.onScreenWithDiagonalSize(
 									view.getScreenDiagonalInInches());
@@ -60,15 +59,10 @@ public class ToScaleMapResource extends DynamicImageResource {
 						boolean isPreview = preview.toBoolean(false);
 
 						if (isPreview) {
-							targetWidth = (int) dimensions.getWidth();
-							targetHeight = (int) dimensions.getHeight();
-
-							// Decrease width and height by 10% until preview
-							// size has been achieved
-							while (targetWidth > 640) {
-								targetWidth = (int) (targetWidth * 0.9);
-								targetHeight = (int) (targetHeight * 0.9);
-							}
+							Dimension previewDimension = view.getPreviewDimensions();
+							
+							targetWidth = (int) Math.min(previewDimension.getWidth(), targetWidth);
+							targetHeight = (int) Math.min(previewDimension.getHeight(), targetHeight);
 						}
 					}
 

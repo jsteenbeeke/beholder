@@ -61,7 +61,7 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 		final int imageWidth = (int) dimensions.getWidth();
 		final int imageHeight = (int) dimensions.getHeight();
 
-		radiusField = new NumberTextField<>("radius", Model.of(imageWidth / 8));
+		radiusField = new NumberTextField<>("radius", Model.of(imageWidth / 16));
 		radiusField.setMinimum(1);
 		radiusField.setRequired(true);
 
@@ -102,7 +102,7 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 		areaMarker.add(AttributeModifier.replace("style", String.format(
 				"background-color: rgba(255, 0, 0, 0.5); border-radius: 100%%; width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
-				radiusField.getModelObject(), radiusField.getModelObject(),
+				radiusField.getModelObject()*2, radiusField.getModelObject()*2,
 				offsetXField.getModelObject(), offsetYField.getModelObject())));
 
 		Options draggableOptions = new Options();

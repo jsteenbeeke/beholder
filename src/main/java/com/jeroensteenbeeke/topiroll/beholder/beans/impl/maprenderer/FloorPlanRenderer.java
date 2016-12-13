@@ -37,7 +37,7 @@ public class FloorPlanRenderer implements IMapRenderer {
 		JSBuilder js = JSBuilder.create();
 		js.__("var canvas = document.getElementById('%s');", canvasId);
 		js = js.ifBlock("canvas");
-		js = js.ifBlock("!renderState.check('floorplan', '%s')", state);
+		js = js.ifBlock("renderState.check('floorplan', '%s') === false", state);
 		js.__("var context = canvas.getContext('2d');");
 		js.__("var imageObj = new Image();");
 		js = js.objFunction("imageObj.onload");

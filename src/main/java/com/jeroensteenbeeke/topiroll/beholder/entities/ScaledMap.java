@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,14 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 
 @Entity
 public class ScaledMap extends BaseDomainObject {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final int MAX_PREVIEW_SIZE = 640;
 
 	@Id
 	@SequenceGenerator(sequenceName = "SEQ_ID_ScaledMap", name = "ScaledMap",
@@ -119,6 +123,21 @@ public class ScaledMap extends BaseDomainObject {
 
 	public void setGroups(@Nonnull List<FogOfWarGroup> groups) {
 		this.groups = groups;
+	}
+
+	@Transient
+	public Dimension getPreviewDimension() {
+		Dimension dimensions = ImageUtil.getImageDimensions(getData());
+
+		int w = (int) dimensions.getWidth();
+		int h = (int) dimensions.getHeight();
+
+		while (w > MAX_PREVIEW_SIZE) {
+			w = (int) (w * 0.9);
+			h = (int) (h * 0.9);
+		}
+
+		return new Dimension(w, h);
 	}
 
 }

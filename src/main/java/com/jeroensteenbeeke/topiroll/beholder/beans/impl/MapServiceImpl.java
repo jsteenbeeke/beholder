@@ -151,17 +151,30 @@ class MapServiceImpl implements MapService {
 	}
 	
 	@Override
-	public TokenDefinition createToken(BeholderUser user, String name, TokenSize size,
+	public TokenDefinition createToken(BeholderUser user, String name, int diameter,
 			byte[] image) {
 		TokenDefinition def = new TokenDefinition();
 		def.setImageData(image);
 		def.setOwner(user);
-		def.setSize(size);
+		def.setDiameterInSquares(diameter);
 		def.setName(name);
 		
 		tokenDefinitionDAO.save(def);
 		
 		return def;
+	}
+
+	@Override
+	public void ungroup(FogOfWarGroup group) {
+		group.getShapes().forEach(s -> {
+			s.setGroup(null);
+			shapeDAO.update(s);
+		});
+		
+		group.getVisibilities().forEach(groupVisibilityDAO::delete);
+		
+		groupDAO.delete(group);
+		
 	}
 
 }

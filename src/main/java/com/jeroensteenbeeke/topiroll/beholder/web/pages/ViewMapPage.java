@@ -16,6 +16,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
@@ -79,10 +80,13 @@ public class ViewMapPage extends AuthenticatedPage {
 				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
 						GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
+					
+					@Inject
+					private MapService mapService;
 
 					@Override
 					public void onClick() {
-						groupDAO.delete(getModelObject());
+						mapService.ungroup(getModelObject());
 						setResponsePage(new ViewMapPage(mapModel.getObject()));
 					}
 				});
