@@ -76,6 +76,16 @@ public class ViewMapPage extends AuthenticatedPage {
 				item.add(new Label("name", group.getName()));
 				item.add(new NonCachingImage("thumb",
 						group.createThumbnailResource(200)));
+				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
+						GlyphIcon.trash) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						groupDAO.delete(getModelObject());
+						setResponsePage(new ViewMapPage(mapModel.getObject()));
+					}
+				});
 			}
 		};
 		groupsView.setItemsPerPage(10L);
