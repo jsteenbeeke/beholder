@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.NonCachingImage;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
@@ -33,6 +34,16 @@ public class CreateGroupPage extends AuthenticatedPage {
 
 	public CreateGroupPage(ScaledMap map) {
 		super("Create Group");
+		
+		add(new Link<ScaledMap>("back", ModelMaker.wrap(map)) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new ViewMapPage(getModelObject()));
+				
+			}
+		});
 
 		FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
 		shapeFilter.map().set(map);

@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
@@ -179,11 +178,6 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 				}));
 		previewImage.add(areaMarker);
 
-		// heightField.add(new UpdatePreviewBehavior(previewImage));
-		// widthField.add(new UpdatePreviewBehavior(previewImage));
-		// offsetXField.add(new UpdatePreviewBehavior(previewImage));
-		// offsetYField.add(new UpdatePreviewBehavior(previewImage));
-
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
 			private static final long serialVersionUID = 1L;
 
@@ -212,10 +206,6 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 		add(new SubmitLink("submit", configureForm));
 	}
 
-	@Override
-	public void renderHead(IHeaderResponse response) {
-		super.renderHead(response);
-	}
 
 	@Override
 	protected void onDetach() {

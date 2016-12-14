@@ -7,6 +7,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
@@ -42,6 +43,15 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		viewModel = ModelMaker.wrap(view);
 		add(new MapCanvas("preview", viewModel, true));
+		
+		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(OverviewPage.class);
+			}
+		});
 
 		if (view.getSelectedMap() == null) {
 			add(new WebMarkupContainer("controller")
@@ -52,6 +62,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.name().orderBy(true);
+		mapFilter.owner().set(getUser());
 
 		DataView<ScaledMap> mapView = new DataView<ScaledMap>("maps",
 				FilterDataProvider.of(mapFilter, mapDAO)) {

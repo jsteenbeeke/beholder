@@ -23,6 +23,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.hyperion.util.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
@@ -145,7 +146,9 @@ public class OverviewPage extends AuthenticatedPage {
 				TokenDefinition definition = item.getModelObject();
 
 				item.add(new Label("name", definition.getName()));
-				item.add(new Label("size", String.format("%d squares (diameter)",definition.getDiameterInSquares())));
+				item.add(
+						new Label("size", String.format("%d squares (diameter)",
+								definition.getDiameterInSquares())));
 
 				byte[] imageData = definition.getImageData();
 				Dimension dimension = ImageUtil.getImageDimensions(imageData);
@@ -179,6 +182,18 @@ public class OverviewPage extends AuthenticatedPage {
 				setResponsePage(new BSEntityFormPage<MapView>(create(view)
 						.onPage("Create Map View").using(mapViewDAO)) {
 					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected ActionResult validateEntity(MapView entity) {
+						MapViewFilter filter = new MapViewFilter();
+						filter.identifier().set(entity.getIdentifier());
+
+						if (mapViewDAO.countByFilter(filter) > 0) {
+							return ActionResult.error("Identifier '%s' already in use", entity.getIdentifier());
+						}
+
+						return super.validateEntity(entity);
+					}
 
 					@Override
 					protected void onBeforeSave(MapView entity) {
