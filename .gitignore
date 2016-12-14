@@ -5,3 +5,4 @@ target
 .settings
 src/main/webapp/css/
 .factorypath
+beholder-docker.tar.gz
