@@ -6,13 +6,11 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -32,24 +30,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
 
 public class UploadMapStep2Page extends AuthenticatedPage {
-
-	private final class UpdatePreviewBehavior
-			extends AjaxFormComponentUpdatingBehavior {
-		private final Image previewImage;
-
-		private static final long serialVersionUID = 1L;
-
-		private UpdatePreviewBehavior(Image previewImage) {
-			super("change");
-			this.previewImage = previewImage;
-		}
-
-		@Override
-		protected void onUpdate(AjaxRequestTarget target) {
-			target.add(previewImage);
-
-		}
-	}
 
 	private static final long serialVersionUID = 1L;
 
