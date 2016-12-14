@@ -34,4 +34,8 @@ public interface MapService {
 			@Nonnull int diameter, @Nonnull byte[] image);
 
 	void ungroup(@Nonnull FogOfWarGroup group);
+
+	TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+			@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
+			@Nonnull List<FogOfWarShape> remove);
 }

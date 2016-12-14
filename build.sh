@@ -8,5 +8,6 @@ maven() {
     fi
 }
 
-maven clean package docker:build -U
+maven clean package -U
+maven docker:build
 docker save jeroensteenbeeke_com/beholder:latest > beholder-docker.tar.gz

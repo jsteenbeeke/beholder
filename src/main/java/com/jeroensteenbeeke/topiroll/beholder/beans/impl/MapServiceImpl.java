@@ -107,6 +107,30 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
+	public TypedActionResult<FogOfWarGroup> editGroup(FogOfWarGroup group,
+			String name, List<FogOfWarShape> keep, List<FogOfWarShape> remove) {
+		if (keep.isEmpty()) {
+			return TypedActionResult.fail("No shapes selected");
+		}
+
+		
+		group.setName(name);
+		groupDAO.update(group);
+
+		keep.forEach(shape -> {
+			shape.setGroup(group);
+			shapeDAO.update(shape);
+		});
+		
+		remove.forEach(shape -> {
+			shape.setGroup(null);
+			shapeDAO.update(shape);
+		});
+
+		return TypedActionResult.ok(group);
+	}
+	
+	@Override
 	public void setGroupVisibility(MapView view, FogOfWarGroup group,
 			VisibilityStatus status) {
 		FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();

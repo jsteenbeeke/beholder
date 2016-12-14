@@ -7,6 +7,8 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
@@ -23,6 +25,7 @@ import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -184,6 +187,13 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 		add(previewImage);
 
 		add(new SubmitLink("submit", configureForm));
+	}
+	
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		
+		response.render(JavaScriptHeaderItem.forReference(TouchPunchJavaScriptReference.get()));
 	}
 
 	@Override
