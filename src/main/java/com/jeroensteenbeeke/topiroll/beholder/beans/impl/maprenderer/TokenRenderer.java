@@ -44,75 +44,80 @@ public class TokenRenderer implements IMapRenderer {
 		js.__("var context = canvas.getContext('2d');");
 
 		ScaledMap map = mapView.getSelectedMap();
-		
+
 		double ratio = 1.0;
-		
+
 		if (map != null) {
 			if (previewMode) {
 				ratio = map.getPreviewFactor();
 			} else {
-				ratio = map.getDisplayFactor(mapView); 
+				ratio = map.getDisplayFactor(mapView);
 			}
 		}
-		
+
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter);
 
 		for (TokenInstance token : tokens) {
 			js.__("var imageObj = new Image();");
 			js = js.objFunction("imageObj.onload");
 
-			
-			
-
-			
-			
 			final int diameter = token.getDefinition().getDiameterInSquares();
-			final long pixels = Calculations.oneInchSquareInPixels(mapView.toResolution(), mapView.getScreenDiagonalInInches());
+			final long pixels = Calculations.oneInchSquareInPixels(
+					mapView.toResolution(),
+					mapView.getScreenDiagonalInInches());
 			final int radius = (int) ((diameter * pixels) / 2);
-			
+
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
-			js.__("context.moveTo(%d, %d);", 
-					rel(token.getOffsetX(), ratio),
+			js.__("context.moveTo(%d, %d);", rel(token.getOffsetX(), ratio),
 					rel(token.getOffsetY(), ratio));
-			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);", 
+			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);",
 					rel(token.getOffsetX() + radius, ratio),
 					rel(token.getOffsetY() + radius, ratio),
 					rel(radius, ratio));
-			
+
 			js.__("context.closePath();");
 			js.__("context.clip();");
 
-			
 			int x = (int) (token.getOffsetX() * ratio);
 			int y = (int) (token.getOffsetY() * ratio);
 			int wh = (int) (diameter * pixels * ratio);
-			
-			js.__("context.drawImage(imageObj, %d, %d, %d, %d);",
-					x, y, wh, wh);
+
+			js.__("context.drawImage(imageObj, %d, %d, %d, %d);", x, y, wh, wh);
 
 			js.__("context.restore();");
-			
+
 			js.__("context.beginPath();");
 
-			js.__("context.moveTo(%d, %d);", 
-					rel(token.getOffsetX(), ratio),
+			js.__("context.moveTo(%d, %d);", rel(token.getOffsetX(), ratio),
 					rel(token.getOffsetY(), ratio));
-			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);", 
+			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);",
 					rel(token.getOffsetX() + radius, ratio),
 					rel(token.getOffsetY() + radius, ratio),
 					rel(radius, ratio));
-			
+
 			js.__("context.lineWidth = 5;");
+			js.__("context.strokeStyle = '';", "#000000"); // TODO: placeholder
 			js.__("context.stroke();");
 
-			
-			js.__("context.drawImage(imageObj, %d, %d);",
-					x, y);
-
+			js.__("context.drawImage(imageObj, %d, %d);", x, y);
 			js.__("context.restore();");
-			
+
+			String badge = token.getBadge();
+			if (badge != null) {
+				js.__("context.lineWidth = 5;");
+				js.__("context.strokeStyle = '';", "#000000"); // TODO:
+																// placeholder
+				js.__("context.fillRect(%d, %d, %d, %d);", x, y + 3 * (wh / 4),
+						wh, wh / 4);
+				js.__("context.strokeRect(%d, %d, %d, %d);", x,
+						y + 3 * (wh / 4), wh, wh / 4);
+				js.__("context.fillText('%s', %d, %d)", badge, x, y);
+
+				js.__("context.restore();");
+			}
+
 			js = js.close();
 
 			js.__("imageObj.src = '%s';",
@@ -127,7 +132,7 @@ public class TokenRenderer implements IMapRenderer {
 
 		handler.execute(js.toString());
 	}
-	
+
 	protected final int rel(int input, double multiplier) {
 		return (int) (input * multiplier);
 	}
