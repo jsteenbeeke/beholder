@@ -47,4 +47,29 @@
 			<column name="owner" />
 		</createIndex>
 	</changeSet>
+	<changeSet author="jeroen" id="62">
+		<addColumn tableName="scaledmap">
+			<column name="basicwidth" type="java.sql.Types.INTEGER">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroen" id="63">
+		<addColumn tableName="scaledmap">
+			<column name="basicheight" type="java.sql.Types.INTEGER">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroen" id="64">
+		<customChange
+			class="com.jeroensteenbeeke.topiroll.beholder.entities.liquibase.CalculateWidthHeightFieldsTask" />
+		<rollback />
+	</changeSet>
+	<changeSet id="65" author="jeroen">
+		<addNotNullConstraint tableName="scaledmap"
+			columnName="basicwidth" columnDataType="java.sql.Types.INTEGER" />
+		<addNotNullConstraint tableName="scaledmap"
+			columnName="basicheight" columnDataType="java.sql.Types.INTEGER" />
+	</changeSet>
 </databaseChangeLog>

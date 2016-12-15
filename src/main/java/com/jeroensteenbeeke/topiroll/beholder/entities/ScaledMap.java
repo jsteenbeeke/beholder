@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 
 @Entity
 public class ScaledMap extends BaseDomainObject {
@@ -25,6 +25,12 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+
+	@Column(nullable = false)
+	private int basicHeight;
+
+	@Column(nullable = false)
+	private int basicWidth;
 
 	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
 	private List<FogOfWarGroup> groups = new ArrayList<FogOfWarGroup>();
@@ -126,18 +132,58 @@ public class ScaledMap extends BaseDomainObject {
 	}
 
 	@Transient
-	public Dimension getPreviewDimension() {
-		Dimension dimensions = ImageUtil.getImageDimensions(getData());
-
-		int w = (int) dimensions.getWidth();
-		int h = (int) dimensions.getHeight();
+	public double getPreviewFactor() {
+		int w = (int) getBasicWidth();
+		double factor = 1.0;
 
 		while (w > MAX_PREVIEW_SIZE) {
 			w = (int) (w * 0.9);
-			h = (int) (h * 0.9);
+			factor = 0.9 * factor;
 		}
 
-		return new Dimension(w, h);
+		return factor;
+	}
+
+	@Transient
+	public Dimension getPreviewDimension() {
+
+		return new Dimension((int) (getPreviewFactor() * getBasicWidth()),
+				(int) (getPreviewFactor() * getBasicHeight()));
+	}
+
+	@Transient
+	public Dimension getDisplayDimension(MapView mapView) {
+		double factor = getDisplayFactor(mapView);
+
+		return new Dimension((int) (getBasicWidth() * factor),
+				(int) (getBasicHeight() * factor));
+	}
+
+	@Transient
+	public double getDisplayFactor(MapView mapView) {
+		return Calculations.scale(getSquareSize())
+				.toResolution(mapView.toResolution())
+				.onScreenWithDiagonalSize(mapView.getScreenDiagonalInInches());
+	}
+	
+	
+
+	@Nonnull
+	public int getBasicWidth() {
+		return basicWidth;
+	}
+
+	public void setBasicWidth(@Nonnull int basicWidth) {
+		this.basicWidth = basicWidth;
+	}
+
+	@Nonnull
+	public int getBasicHeight() {
+		return basicHeight;
+	}
+
+	public void setBasicHeight(@Nonnull int basicHeight) {
+		this.basicHeight = basicHeight;
 	}
 
 }

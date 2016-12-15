@@ -1,11 +1,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import java.awt.Dimension;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
@@ -40,11 +42,15 @@ class MapServiceImpl implements MapService {
 	@Override
 	public ScaledMap createMap(BeholderUser user, String name, int squareSize,
 			byte[] data) {
+		Dimension dimension = ImageUtil.getImageDimensions(data);
+		
 		ScaledMap map = new ScaledMap();
 		map.setData(data);
 		map.setName(name);
 		map.setSquareSize(squareSize);
 		map.setOwner(user);
+		map.setBasicHeight((int) dimension.getHeight());
+		map.setBasicWidth((int) dimension.getWidth());
 		mapDAO.save(map);
 
 		return map;

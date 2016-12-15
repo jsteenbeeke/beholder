@@ -1,32 +1,25 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
-import java.awt.Dimension;
-
-import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
 
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 
-public class ToScaleMapResource extends DynamicImageResource {
+public class MapResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
-		IRequestParameters qp = attributes.getRequest().getQueryParameters();
 
 		StringValue viewId = parameters.get("viewId");
-		StringValue preview = qp.getParameterValue("preview");
 
 		if (!viewId.isNull() && !viewId.isEmpty()) {
 
@@ -41,32 +34,7 @@ public class ToScaleMapResource extends DynamicImageResource {
 				ScaledMap map = view.getSelectedMap();
 
 				if (map != null) {
-					byte[] data = map.getData();
-
-					Dimension dimensions = ImageUtil.getImageDimensions(data);
-
-					setFormat(ImageUtil.getWicketFormatType(data));
-
-					double factor = Calculations.scale(map.getSquareSize())
-							.toResolution(new Dimension(view.getWidth(),
-									view.getHeight()))
-							.onScreenWithDiagonalSize(
-									view.getScreenDiagonalInInches());
-					int targetWidth = (int) (dimensions.getWidth() * factor);
-					int targetHeight = (int) (dimensions.getHeight() * factor);
-
-					if (!preview.isNull() && !preview.isEmpty()) {
-						boolean isPreview = preview.toBoolean(false);
-
-						if (isPreview) {
-							Dimension previewDimension = view.getPreviewDimensions();
-							
-							targetWidth = (int) Math.min(previewDimension.getWidth(), targetWidth);
-							targetHeight = (int) Math.min(previewDimension.getHeight(), targetHeight);
-						}
-					}
-
-					return ImageUtil.resize(data, targetWidth, targetHeight);
+					return map.getData();
 				}
 			}
 

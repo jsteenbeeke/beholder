@@ -20,8 +20,8 @@ import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleMapResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.ToScaleTokenResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.MapResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
 
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
@@ -54,7 +54,7 @@ public class BeholderApplication extends WebApplication
 					@Override
 					public IResource getResource() {
 
-						return new ToScaleMapResource();
+						return new MapResource();
 					}
 				});
 		mountResource("tokens/${noise}/${viewId}/${tokenId}",
@@ -64,7 +64,7 @@ public class BeholderApplication extends WebApplication
 					@Override
 					public IResource getResource() {
 
-						return new ToScaleTokenResource();
+						return new TokenResource();
 					}
 				});
 

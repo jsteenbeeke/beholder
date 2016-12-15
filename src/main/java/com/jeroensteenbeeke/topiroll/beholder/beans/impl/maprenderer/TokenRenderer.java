@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
@@ -46,21 +45,13 @@ public class TokenRenderer implements IMapRenderer {
 
 		ScaledMap map = mapView.getSelectedMap();
 		
-		double ratio = Calculations.scale(mapView.getSelectedMap().getSquareSize())
-				.toResolution(mapView.toResolution())
-				.onScreenWithDiagonalSize(
-						mapView.getScreenDiagonalInInches());
-
+		double ratio = 1.0;
 		
-		if (previewMode) {
-			
-
-			int width = (int) ImageUtil.getImageDimensions(map.getData())
-					.getWidth();
-
-			while (width > 640) {
-				width = (int) (width * 0.9);
-				ratio = ratio * 0.9;
+		if (map != null) {
+			if (previewMode) {
+				ratio = map.getPreviewFactor();
+			} else {
+				ratio = map.getDisplayFactor(mapView); 
 			}
 		}
 		
@@ -78,6 +69,7 @@ public class TokenRenderer implements IMapRenderer {
 			final int diameter = token.getDefinition().getDiameterInSquares();
 			final long pixels = Calculations.oneInchSquareInPixels(mapView.toResolution(), mapView.getScreenDiagonalInInches());
 			final int radius = (int) ((diameter * pixels) / 2);
+			
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
@@ -93,8 +85,12 @@ public class TokenRenderer implements IMapRenderer {
 			js.__("context.clip();");
 
 			
-			js.__("context.drawImage(imageObj, %d, %d);",
-					(int) (token.getOffsetX() * ratio), (int) (token.getOffsetY() * ratio));
+			int x = (int) (token.getOffsetX() * ratio);
+			int y = (int) (token.getOffsetY() * ratio);
+			int wh = (int) (diameter * pixels * ratio);
+			
+			js.__("context.drawImage(imageObj, %d, %d, %d, %d);",
+					x, y, wh, wh);
 
 			js.__("context.restore();");
 			
@@ -113,7 +109,7 @@ public class TokenRenderer implements IMapRenderer {
 
 			
 			js.__("context.drawImage(imageObj, %d, %d);",
-					(int) (token.getOffsetX() * ratio), (int) (token.getOffsetY() * ratio));
+					x, y);
 
 			js.__("context.restore();");
 			

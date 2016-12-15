@@ -1,5 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl.maprenderer;
 
+import java.awt.Dimension;
+
 import javax.annotation.Nonnull;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.IClipPathContributor;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.util.JavaScriptHandler;
 
@@ -33,6 +36,21 @@ public class FloorPlanRenderer implements IMapRenderer {
 			@Nonnull JavaScriptHandler handler, @Nonnull MapView mapView,
 			boolean previewMode) {
 		final String state = mapView.calculateState();
+		
+		ScaledMap map = mapView.getSelectedMap();
+		Dimension displayDimension = new Dimension(1, 1);
+		
+		if (map != null) {
+			if (previewMode) {
+				displayDimension = map.getPreviewDimension();
+			} else {
+				displayDimension = map.getDisplayDimension(mapView);
+			}
+		}
+		
+		int w = (int) displayDimension.getWidth();
+		int h = (int) displayDimension.getHeight();
+
 
 		JSBuilder js = JSBuilder.create();
 		js.__("var canvas = document.getElementById('%s');", canvasId);
@@ -41,8 +59,8 @@ public class FloorPlanRenderer implements IMapRenderer {
 		js.__("var context = canvas.getContext('2d');");
 		js.__("var imageObj = new Image();");
 		js = js.objFunction("imageObj.onload");
-		js.__("canvas.width = imageObj.width;");
-		js.__("canvas.height = imageObj.height;");
+		js.__("canvas.width = %d;", w);
+		js.__("canvas.height = %d;", h);
 
 		if (clipPaths.isSatisfied()) {
 			js.__("context.save();");
@@ -56,7 +74,8 @@ public class FloorPlanRenderer implements IMapRenderer {
 
 		}
 
-		js.__("context.drawImage(imageObj, 0, 0);");
+		
+		js.__("context.drawImage(imageObj, 0, 0, %d, %d);", w, h);
 
 		if (clipPaths.isSatisfied()) {
 			js.__("context.restore();");

@@ -1,34 +1,27 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
-import java.awt.Dimension;
-
-import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
 
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
-import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 
-public class ToScaleTokenResource extends DynamicImageResource {
+public class TokenResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
-		IRequestParameters qp = attributes.getRequest().getQueryParameters();
 
 		StringValue viewId = parameters.get("viewId");
 		StringValue tokenId = parameters.get("tokenId");
-		StringValue preview = qp.getParameterValue("preview");
 
 		if (!viewId.isNull() && !viewId.isEmpty() && !tokenId.isEmpty()
 				&& !tokenId.isNull()) {
@@ -46,38 +39,7 @@ public class ToScaleTokenResource extends DynamicImageResource {
 
 			if (view != null && definition != null) {
 
-				byte[] data = definition.getImageData();
-
-				final long square = Calculations.oneInchSquareInPixels(
-						view.toResolution(), view.getScreenDiagonalInInches());
-
-				setFormat(ImageUtil.getWicketFormatType(data));
-
-				int target = (int) (square
-						* definition.getDiameterInSquares());
-				
-				if (!preview.isNull() && !preview.isEmpty()) {
-					boolean isPreview = preview.toBoolean(false);
-
-					if (isPreview) {
-						int originalWidth = (int) view.toResolution().getWidth();
-						
-						Dimension previewDimensions = view.getPreviewDimensions();
-						
-						double factor = previewDimensions.getWidth() / originalWidth;
-						
-						if (factor < 1.0) {
-							target = (int) (factor * target);
-						}
-						
-					}
-				}
-
-				byte[] resizedData = ImageUtil.resize(data, target, target);
-
-				setFormat(ImageUtil.getWicketFormatType(resizedData));
-
-				return resizedData;
+				return definition.getImageData();
 
 			}
 
