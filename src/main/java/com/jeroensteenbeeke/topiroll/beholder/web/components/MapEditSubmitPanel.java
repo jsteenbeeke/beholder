@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddCircleFogOfWarPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddRectFogOfWarPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddTriangleFogOfWarPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.CreateGroupPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.ViewMapPage;
 
@@ -51,6 +52,19 @@ public class MapEditSubmitPanel extends Panel {
 				
 				if (form.getFeedbackMessages().isEmpty()) {
 					setResponsePage(new AddRectFogOfWarPage(form.getModelObject()));
+				}
+			}
+		});
+		
+		add(new SubmitLink("submitAndAddTriangle", form) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onAfterSubmit() {
+				super.onAfterSubmit();
+				
+				if (form.getFeedbackMessages().isEmpty()) {
+					setResponsePage(new AddTriangleFogOfWarPage(form.getModelObject()));
 				}
 			}
 		});

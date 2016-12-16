@@ -157,6 +157,16 @@ public class ViewMapPage extends AuthenticatedPage {
 
 			}
 		});
+		
+		add(new Link<ScaledMap>("addtriangle", mapModel) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new AddTriangleFogOfWarPage(getModelObject()));
+
+			}
+		});
 
 		add(new Link<ScaledMap>("group", mapModel) {
 			private static final long serialVersionUID = 1L;

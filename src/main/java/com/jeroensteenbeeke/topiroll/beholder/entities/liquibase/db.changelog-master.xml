@@ -15,4 +15,5 @@
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-TokenDefinition.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-TokenInstance.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-Effect.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarTriangle.xml"/>
 </databaseChangeLog>

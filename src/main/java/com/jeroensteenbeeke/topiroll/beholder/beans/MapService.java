@@ -38,4 +38,7 @@ public interface MapService {
 	TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
 			@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
 			@Nonnull List<FogOfWarShape> remove);
+
+	void addFogOfWarTriangle(ScaledMap map, int sides,
+			int offsetX, int offsetY, TriangleOrientation orientation);
 }

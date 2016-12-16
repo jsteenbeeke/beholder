@@ -109,6 +109,19 @@ class MapServiceImpl implements MapService {
 		rect.setOffsetY(offsetY);
 		shapeDAO.save(rect);
 	}
+	
+	@Override
+	public void addFogOfWarTriangle(ScaledMap map, int sides, int offsetX,
+			int offsetY, TriangleOrientation orientation) {
+		FogOfWarTriangle triangle = new FogOfWarTriangle();
+		triangle.setMap(map);
+		triangle.setVerticalSide(sides);
+		triangle.setHorizontalSide(sides);
+		triangle.setOffsetX(offsetX);
+		triangle.setOffsetY(offsetY);
+		triangle.setOrientation(orientation);
+		shapeDAO.save(triangle);
+	}
 
 	@Override
 	public TypedActionResult<FogOfWarGroup> createGroup(ScaledMap map,
