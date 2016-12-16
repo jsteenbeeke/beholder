@@ -59,8 +59,8 @@ public class CalculateWidthHeightFieldsTask implements CustomTaskChange {
 
 				updates.add(String.format(
 						"UPDATE scaledmap SET basicwidth = %d, basicheight = %d WHERE id=%d",
-						imageDimensions.getWidth(),
-						imageDimensions.getHeight(), id));
+						(int) imageDimensions.getWidth(),
+						(int) imageDimensions.getHeight(), id));
 			}
 
 			for (String sql : updates) {
