@@ -9,7 +9,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 public interface MapService {
 	@Nonnull
-	ScaledMap createMap(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
 			int squareSize, byte[] data);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);

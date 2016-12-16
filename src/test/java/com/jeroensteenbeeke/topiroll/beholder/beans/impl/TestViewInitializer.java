@@ -54,7 +54,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			
 			byte[] image = bos.toByteArray();
 			
-			ScaledMap map = mapService.createMap(user, "temple", 18, image);
+			ScaledMap map = mapService.createMap(user, "temple", 18, image).getObject();
 			
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);

@@ -24,9 +24,11 @@ import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
+import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -50,6 +52,8 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			}
 		});
+		
+		add(new BootstrapFeedbackPanel("feedback"));
 
 		Dimension dimensions = ImageUtil.getImageDimensions(image);
 		final int imageWidth = (int) dimensions.getWidth();
@@ -138,11 +142,14 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
-				ScaledMap map = mapService.createMap(getUser(),
+				TypedActionResult<ScaledMap> result = mapService.createMap(getUser(),
 						nameField.getModelObject(),
 						squareSizeField.getModelObject(), image);
-
-				setResponsePage(new ViewMapPage(map));
+				if (result.isOk()) {
+					setResponsePage(new ViewMapPage(result.getObject()));
+				} else {
+					error(result.getMessage());
+				}
 			}
 		};
 

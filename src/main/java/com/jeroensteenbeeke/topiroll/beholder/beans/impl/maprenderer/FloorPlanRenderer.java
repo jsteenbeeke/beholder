@@ -51,18 +51,22 @@ public class FloorPlanRenderer implements IMapRenderer {
 		int w = (int) displayDimension.getWidth();
 		int h = (int) displayDimension.getHeight();
 
-
+		String imageVar = String.format("imgObj%s", Randomizer.random(15));
+		
 		JSBuilder js = JSBuilder.create();
 		js.__("var canvas = document.getElementById('%s');", canvasId);
+		
 		js = js.ifBlock("canvas");
 		js = js.ifBlock("renderState.check('floorplan', '%s') === false", state);
-		js.__("var context = canvas.getContext('2d');");
-		js.__("var imageObj = new Image();");
-		js = js.objFunction("imageObj.onload");
 		js.__("canvas.width = %d;", w);
 		js.__("canvas.height = %d;", h);
+		js.__("var context = canvas.getContext('2d');");
+		js.__("var %s = new Image();", imageVar);
+		js = js.objFunction(String.format("%s.onload", imageVar));
+		
 
 		if (clipPaths.isSatisfied()) {
+			
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
@@ -74,8 +78,9 @@ public class FloorPlanRenderer implements IMapRenderer {
 
 		}
 
-		
-		js.__("context.drawImage(imageObj, 0, 0, %d, %d);", w, h);
+		js = js.tryBlockWithConsoleLog();
+		js.__("context.drawImage(%s, 0, 0, %d, %d);", imageVar, w, h);
+		js = js.close();
 
 		if (clipPaths.isSatisfied()) {
 			js.__("context.restore();");
@@ -83,7 +88,7 @@ public class FloorPlanRenderer implements IMapRenderer {
 
 		js.__("renderState.set('floorplan', '%s');", state);
 		js = js.close();
-		js.__("imageObj.src = '%s';",
+		js.__("%s.src = '%s';", imageVar,
 				urlService.contextRelative(String.format("/maps/%s/%d?%s",
 						Randomizer.random(44), mapView.getId(),
 						previewMode ? "preview=true&" : "")));

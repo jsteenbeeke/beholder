@@ -14,10 +14,13 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
+import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 
 @Component
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
+	private static final int MAXIMUM_RENDERABLE_AREA = 268435456;
+
 	@Autowired
 	private ScaledMapDAO mapDAO;
 
@@ -40,9 +43,24 @@ class MapServiceImpl implements MapService {
 	private TokenDefinitionDAO tokenDefinitionDAO;
 
 	@Override
-	public ScaledMap createMap(BeholderUser user, String name, int squareSize,
+	public TypedActionResult<ScaledMap> createMap(BeholderUser user, String name, int squareSize,
 			byte[] data) {
 		Dimension dimension = ImageUtil.getImageDimensions(data);
+		
+		List<MapView> views = user.getViews();
+		
+		
+		for (MapView view: views) {
+			double factor = Calculations.scale(squareSize).toResolution(view.toResolution()).onScreenWithDiagonalSize(view.getScreenDiagonalInInches());
+			double w = factor * dimension.getWidth();
+			double h = factor * dimension.getHeight();
+			int area = (int) (w * h);
+			
+			if (area > MAXIMUM_RENDERABLE_AREA) {
+				return TypedActionResult.fail("Map too large to render. Size on view '%s', render area %d exceeds maximum area of %d", view.getIdentifier(), area, MAXIMUM_RENDERABLE_AREA);
+			}
+		}
+		
 		
 		ScaledMap map = new ScaledMap();
 		map.setData(data);
@@ -53,7 +71,7 @@ class MapServiceImpl implements MapService {
 		map.setBasicWidth((int) dimension.getWidth());
 		mapDAO.save(map);
 
-		return map;
+		return TypedActionResult.ok(map);
 	}
 
 	@Override

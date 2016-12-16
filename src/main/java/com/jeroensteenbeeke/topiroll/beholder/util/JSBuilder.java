@@ -101,4 +101,33 @@ public class JSBuilder {
 	public static JSBuilder create() {
 		return new JSBuilder("", new StringBuilder(), null);
 	}
+
+	public JSBuilder tryBlockWithConsoleLog() {
+		__("try {");
+		
+		return new JSBuilder("\t".concat(indent), builder, this) {
+			@Override
+			protected void terminateCurrent() {
+				if (parent != null) {
+					builder.append(parent.getIndent());
+				}
+
+				builder.append("\t} catch (e) {\n");
+
+				if (parent != null) {
+					builder.append(parent.getIndent());
+				}
+
+				builder.append("\t\tconsole.log(e.message, e.name);\n");
+				
+				if (parent != null) {
+					builder.append(parent.getIndent());
+				}
+
+				
+				builder.append("\t}\n");
+			}
+		};
+		
+	}
 }

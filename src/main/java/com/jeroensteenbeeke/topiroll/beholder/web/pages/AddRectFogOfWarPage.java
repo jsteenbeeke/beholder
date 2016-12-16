@@ -12,7 +12,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -32,6 +31,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 public class AddRectFogOfWarPage extends AuthenticatedPage {
@@ -181,7 +181,7 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 				}));
 		previewImage.add(areaMarker);
 
-		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
+		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Inject
@@ -194,7 +194,6 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 						heightField.getModelObject(),
 						offsetXField.getModelObject(),
 						offsetYField.getModelObject());
-				setResponsePage(new ViewMapPage(map));
 			}
 		};
 
@@ -206,7 +205,7 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 
 		add(previewImage);
 
-		add(new SubmitLink("submit", configureForm));
+		add(new MapEditSubmitPanel("submit", configureForm));
 	}
 	
 	@Override
