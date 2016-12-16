@@ -111,12 +111,12 @@ class MapServiceImpl implements MapService {
 	}
 	
 	@Override
-	public void addFogOfWarTriangle(ScaledMap map, int sides, int offsetX,
+	public void addFogOfWarTriangle(ScaledMap map, int width, int height, int offsetX,
 			int offsetY, TriangleOrientation orientation) {
 		FogOfWarTriangle triangle = new FogOfWarTriangle();
 		triangle.setMap(map);
-		triangle.setVerticalSide(sides);
-		triangle.setHorizontalSide(sides);
+		triangle.setVerticalSide(height);
+		triangle.setHorizontalSide(width);
 		triangle.setOffsetX(offsetX);
 		triangle.setOffsetY(offsetY);
 		triangle.setOrientation(orientation);
@@ -238,4 +238,11 @@ class MapServiceImpl implements MapService {
 		
 	}
 
+	@Override
+	public void deleteShape(FogOfWarShape shape) {
+		shape.getVisibilities().forEach(shapeVisibilityDAO::delete);
+		
+		shapeDAO.delete(shape);
+		
+	}
 }

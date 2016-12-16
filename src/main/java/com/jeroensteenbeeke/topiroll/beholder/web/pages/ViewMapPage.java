@@ -34,6 +34,10 @@ public class ViewMapPage extends AuthenticatedPage {
 
 	@Inject
 	private FogOfWarGroupDAO groupDAO;
+	
+	@Inject
+	private MapService mapService;
+
 
 	private IModel<ScaledMap> mapModel;
 
@@ -91,9 +95,7 @@ public class ViewMapPage extends AuthenticatedPage {
 						GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
 					
-					@Inject
-					private MapService mapService;
-
+				
 					@Override
 					public void onClick() {
 						mapService.ungroup(getModelObject());
@@ -127,7 +129,7 @@ public class ViewMapPage extends AuthenticatedPage {
 
 					@Override
 					public void onClick() {
-						shapeDAO.delete(getModelObject());
+						mapService.deleteShape(getModelObject());
 						setResponsePage(new ViewMapPage(mapModel.getObject()));
 					}
 				});

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -23,7 +24,6 @@ import org.apache.wicket.util.time.Time;
 
 import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.form.dropdown.AjaxDropDownChoice;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
@@ -43,7 +43,10 @@ import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPrev
 public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
-	private NumberTextField<Integer> sidesField;
+	private NumberTextField<Integer> widthField;
+
+	private NumberTextField<Integer> heightField;
+
 
 	private NumberTextField<Integer> offsetXField;
 
@@ -72,12 +75,20 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		final int imageWidth = (int) dimensions.getWidth();
 		final int imageHeight = (int) dimensions.getHeight();
 
-		sidesField = new NumberTextField<>("sides", Model.of(imageWidth / 4));
-		sidesField.setOutputMarkupId(true);
-		sidesField.setMinimum(1);
-		sidesField.setMaximum(imageWidth);
-		sidesField.setRequired(true);
-		sidesField.setEnabled(false);
+		widthField = new NumberTextField<>("width", Model.of(imageWidth / 4));
+		widthField.setOutputMarkupId(true);
+		widthField.setMinimum(1);
+		widthField.setMaximum(imageWidth);
+		widthField.setRequired(true);
+		widthField.setEnabled(false);
+
+		heightField = new NumberTextField<>("height",
+				Model.of(imageHeight / 4));
+		heightField.setOutputMarkupId(true);
+		heightField.setMinimum(1);
+		heightField.setMaximum(imageHeight);
+		heightField.setRequired(true);
+		heightField.setEnabled(false);
 
 
 		offsetXField = new NumberTextField<>("offsetX",
@@ -98,18 +109,22 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 
-		orientationSelect = new AjaxDropDownChoice<TriangleOrientation>(
+		orientationSelect = new DropDownChoice<TriangleOrientation>(
 				"orientation", Model.of(TriangleOrientation.TopLeft),
 				Lists.newArrayList(TriangleOrientation.values()),
-				LambdaRenderer.of(TriangleOrientation::getDescription)) {
-					private static final long serialVersionUID = 1L;
-					
-					@Override
-					public void onSelectionChanged(AjaxRequestTarget target) {
-						target.add(areaMarker);
-					}
+				LambdaRenderer.of(TriangleOrientation::getDescription));
+		
+		orientationSelect.add(new AjaxFormComponentUpdatingBehavior("change") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
 			
-		};
+				target.add(areaMarker);
+				
+			}
+		});
+				
 		orientationSelect.setRequired(true);
 		
 		
@@ -147,17 +162,21 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 					protected String load() {
 						StringBuilder builder = new StringBuilder();
 						
+						builder.append("background-color: rgba(255, 0, 0, 0.5);");
 						builder.append("left: ")
 								.append(offsetXField.getModelObject())
 								.append("px; ");
 						builder.append("top: ")
 								.append(offsetYField.getModelObject())
 								.append("px; ");
-						builder.append("width: 0px; ");
-						builder.append("height: 0px; ");
+						builder.append("width: ")
+								.append(widthField.getModelObject())
+								.append("px; ");
+						builder.append("height: ")
+								.append(heightField.getModelObject())
+								.append("px; ");
 
-						orientationSelect.getModelObject().renderCSS(builder,
-								sidesField.getModelObject());
+						orientationSelect.getModelObject().renderCSS(builder);
 
 						return builder.toString();
 					}
@@ -191,8 +210,8 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 				}));
 		Options resizableOptions = new Options();
 		resizableOptions.set("containment", Options.asString("parent"));
-		resizableOptions.set("handles", Options.asString("se"));
-		resizableOptions.set("aspectRatio", "1.0");
+		resizableOptions.set("handles", Options.asString("nw, ne, sw, se"));
+		// resizableOptions.set("aspectRatio", "1.0");
 		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
 				resizableOptions, new ResizableAdapter() {
 					private static final long serialVersionUID = 1L;
@@ -209,9 +228,10 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 
 						offsetXField.setModelObject(left);
 						offsetYField.setModelObject(top);
-						sidesField.setModelObject(width);
+						widthField.setModelObject(width);
+						heightField.setModelObject(height);
 
-						target.add(offsetXField, offsetYField, sidesField,
+						target.add(offsetXField, offsetYField, widthField, heightField,
 								areaMarker);
 
 					}
@@ -229,13 +249,13 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 			@Override
 			protected void onSubmit() {
 				ScaledMap map = mapModel.getObject();
-				mapService.addFogOfWarTriangle(map, sidesField.getModelObject(),
+				mapService.addFogOfWarTriangle(map, widthField.getModelObject(), heightField.getModelObject(),
 						offsetXField.getModelObject(),
 						offsetYField.getModelObject(), orientationSelect.getModelObject());
 			}
 		};
 
-		configureForm.add(sidesField, orientationSelect);
+		configureForm.add(widthField, heightField, orientationSelect);
 		configureForm.add(offsetXField);
 		configureForm.add(offsetYField);
 
@@ -263,9 +283,12 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 	}
 
 	public NumberTextField<Integer> getWidthField() {
-		return sidesField;
+		return widthField;
 	}
 
+	public NumberTextField<Integer> getHeightField() {
+		return heightField;
+	}
 
 	public NumberTextField<Integer> getOffsetXField() {
 		return offsetXField;

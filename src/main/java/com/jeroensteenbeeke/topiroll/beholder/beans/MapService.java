@@ -39,6 +39,8 @@ public interface MapService {
 			@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
 			@Nonnull List<FogOfWarShape> remove);
 
-	void addFogOfWarTriangle(ScaledMap map, int sides,
+	void addFogOfWarTriangle(ScaledMap map, int width, int height,
 			int offsetX, int offsetY, TriangleOrientation orientation);
+
+	void deleteShape(@Nonnull FogOfWarShape shape);
 }

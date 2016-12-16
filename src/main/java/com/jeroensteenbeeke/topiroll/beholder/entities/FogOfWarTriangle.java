@@ -133,8 +133,8 @@ public class FogOfWarTriangle extends FogOfWarShape {
 						rel(poly.ypoints[poly.npoints - 1], multiplier));
 
 				for (int i = 0; i < poly.npoints; i++) {
-					int x = poly.xpoints[i];
-					int y = poly.ypoints[i];
+					int x = rel(poly.xpoints[i], multiplier);
+					int y = rel(poly.ypoints[i], multiplier);
 
 					js.__("%s.lineTo(%d,%d);", contextVariable, x, y);
 				}

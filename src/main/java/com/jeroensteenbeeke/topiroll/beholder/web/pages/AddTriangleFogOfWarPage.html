@@ -1,5 +1,22 @@
 <html xmlns:wicket>
 <wicket:extend>
+<svg width="0" height="0">
+  <defs>
+    <clipPath id="triangleTopLeft" clipPathUnits="objectBoundingBox">
+      <polygon points="0 0, 1 0, 0 1" />
+    </clipPath>
+    <clipPath id="triangleTopRight" clipPathUnits="objectBoundingBox">
+      <polygon points="0 0, 1 0, 1 1" />
+    </clipPath>
+    <clipPath id="triangleBottomLeft" clipPathUnits="objectBoundingBox">
+      <polygon points="0 0, 0 1, 1 1" />
+    </clipPath>
+    <clipPath id="triangleBottomRight" clipPathUnits="objectBoundingBox">
+      <polygon points="0 1, 1 0, 1 1" />
+    </clipPath>
+  </defs>
+</svg>
+
 	<div class="btn-group btn-group-justified">
 		<div class="btn-group">
 			<button type="button" wicket:id="back" class="btn btn-info">Abort</button>
@@ -9,8 +26,12 @@
 
 	<form wicket:id="configureForm">
 		<div class="form-group">
-			<label wicket:for="sides">Sides</label> <input type="number"
-				class="form-control" wicket:id="sides" />
+			<label wicket:for="width">Width</label> <input type="number"
+				class="form-control" wicket:id="width" />
+		</div>
+		<div class="form-group">
+			<label wicket:for="height">Height</label> <input type="number"
+				class="form-control" wicket:id="height" />
 		</div>
 		<div class="form-group">
 			<label wicket:for="offsetX">X offset</label> <input type="number"
@@ -24,7 +45,7 @@
 
 		<div class="form-group">
 			<label wicket:for="orientation">Orientation</label> <select
-				wicket:id="orientation"></select>
+				wicket:id="orientation"  class="form-control"></select>
 		</div>
 
 	</form>
