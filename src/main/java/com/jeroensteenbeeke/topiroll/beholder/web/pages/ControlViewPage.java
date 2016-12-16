@@ -1,52 +1,40 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
-import javax.inject.Inject;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.resources.ThumbnailResource;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapSelectController;
 
 public class ControlViewPage extends AuthenticatedPage {
 
+	private static final String CONTROLLER_ID = "controller";
+
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	private ScaledMapDAO mapDAO;
-
-	@Inject
-	private MapService mapService;
-
 	private IModel<MapView> viewModel;
+
+	private WebMarkupContainer controller;
 
 	public ControlViewPage(MapView view) {
 		super(String.format("Control View - %s", view.getIdentifier()));
 
 		viewModel = ModelMaker.wrap(view);
 		add(new MapCanvas("preview", viewModel, true));
-		
+
 		add(new Link<Void>("back") {
 			private static final long serialVersionUID = 1L;
 
@@ -57,73 +45,85 @@ public class ControlViewPage extends AuthenticatedPage {
 		});
 
 		if (view.getSelectedMap() == null) {
-			add(new WebMarkupContainer("controller")
-					.setOutputMarkupPlaceholderTag(true).setVisible(false));
+			add(controller = new MapSelectController(CONTROLLER_ID, getUser(),
+					view) {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onMapSelected(@Nullable ScaledMap map,
+						@Nonnull AjaxRequestTarget target) {
+					if (map != null) {
+						WebMarkupContainer newController = new HideRevealController(
+								CONTROLLER_ID, viewModel.getObject(), map);
+						controller.replaceWith(newController);
+						target.add(newController);
+						controller = newController;
+					}
+				}
+			});
 		} else {
-			add(new MapController("controller", view, view.getSelectedMap()));
+			add(controller = new HideRevealController(CONTROLLER_ID, view,
+					view.getSelectedMap()));
 		}
 
-		ScaledMapFilter mapFilter = new ScaledMapFilter();
-		mapFilter.name().orderBy(true);
-		mapFilter.owner().set(getUser());
-
-		DataView<ScaledMap> mapView = new DataView<ScaledMap>("maps",
-				FilterDataProvider.of(mapFilter, mapDAO)) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void populateItem(Item<ScaledMap> item) {
-				ScaledMap map = item.getModelObject();
-
-				item.add(new Label("name", map.getName()));
-				item.add(new NonCachingImage("thumb",
-						new ThumbnailResource(128, map.getData())));
-				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
-						GlyphIcon.screenshot) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						mapService.selectMap(viewModel.getObject(),
-								getModelObject());
-						MapController newController = new MapController(
-								"controller", viewModel.getObject(),
-								getModelObject());
-						newController.setOutputMarkupId(true);
-						ControlViewPage.this.get("controller")
-								.replaceWith(newController);
-						target.add(newController);
-					}
-				});
-			}
-
-		};
-
-		mapView.setItemsPerPage(10);
-		add(mapView);
-		add(new BootstrapPagingNavigator("mapnav", mapView));
-
-		add(new AjaxIconLink<MapView>("unselect", viewModel,
-				GlyphIcon.removeCircle) {
+		add(new AjaxLink<Void>("mapSelect") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				mapService.unselectMap(getModelObject());
-				Component newController = new WebMarkupContainer("controller")
-						.setOutputMarkupPlaceholderTag(true).setVisible(false);
-				ControlViewPage.this.get("controller")
-						.replaceWith(newController);
-				target.add(newController);
+				if (!(controller instanceof MapSelectController)) {
+					WebMarkupContainer newController = new MapSelectController(
+							CONTROLLER_ID, getUser(), viewModel.getObject()) {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void onMapSelected(@Nullable ScaledMap map,
+								@Nonnull AjaxRequestTarget target) {
+							if (map != null) {
+								WebMarkupContainer newController = new HideRevealController(
+										CONTROLLER_ID, viewModel.getObject(),
+										map);
+								controller.replaceWith(newController);
+								target.add(newController);
+								controller = newController;
+							}
+						}
+					};
+					controller.replaceWith(newController);
+					target.add(newController);
+					controller = newController;
+				}
+
 			}
 		});
+		add(new AjaxLink<Void>("hideReveal") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof HideRevealController)) {
+					MapView view = viewModel.getObject();
+					ScaledMap map = view.getSelectedMap();
+
+					if (map != null) {
+						WebMarkupContainer newController = new HideRevealController(
+								CONTROLLER_ID, view, map);
+						controller.replaceWith(newController);
+						target.add(newController);
+						controller = newController;
+					}
+				}
+
+			}
+		});
+
 	}
-	
+
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		
-		response.render(JavaScriptHeaderItem.forReference(TouchPunchJavaScriptReference.get()));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(TouchPunchJavaScriptReference.get()));
 	}
 }

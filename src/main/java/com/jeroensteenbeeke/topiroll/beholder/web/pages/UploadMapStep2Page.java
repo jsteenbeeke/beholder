@@ -6,18 +6,22 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.validation.validator.PatternValidator;
 
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
@@ -39,6 +43,8 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
 	private NumberTextField<Integer> squareSizeField;
+
+	private NumberTextField<Integer> indicatorSizeField;
 
 	public UploadMapStep2Page(final byte[] image, final String originalName) {
 		super("Configure map");
@@ -62,13 +68,40 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		final TextField<String> nameField = new TextField<>("name",
 				Model.of(originalName));
 		nameField.setRequired(true);
+		nameField.add(new PatternValidator("[a-zA-Z0-9]+"));
 
+		final Label indicatorLabel = new Label("indicator", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected String load() {
+				return String.format("%d foot square", indicatorSizeField.getModelObject());
+			}
+		});
+		indicatorLabel.setOutputMarkupId(true);
+		add(indicatorLabel);
+		
 		squareSizeField = new NumberTextField<>("squareSize", Model.of(5));
 		squareSizeField.setOutputMarkupId(true);
 		squareSizeField.setMinimum(1);
 		squareSizeField.setMaximum(imageWidth);
 		squareSizeField.setRequired(true);
 		squareSizeField.setEnabled(false);
+		
+		indicatorSizeField = new NumberTextField<>("indicatorSize", Model.of(5));
+		indicatorSizeField.setOutputMarkupId(true);
+		indicatorSizeField.setMinimum(5);
+		indicatorSizeField.setStep(5);
+		indicatorSizeField.setRequired(true);
+		indicatorSizeField.add(new AjaxFormComponentUpdatingBehavior("change") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
+				target.add(indicatorLabel);
+				
+			}
+		});
 
 		final ImageContainer previewImage = new ImageContainer("preview",
 				new ResourceReference(
@@ -142,9 +175,14 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
+				int squareSizeOnMap = squareSizeField.getModelObject();
+				int indicatorSize = indicatorSizeField.getModelObject();
+				
+				int squareSize = 5 * squareSizeOnMap / indicatorSize;
+				
 				TypedActionResult<ScaledMap> result = mapService.createMap(getUser(),
 						nameField.getModelObject(),
-						squareSizeField.getModelObject(), image);
+						squareSize, image);
 				if (result.isOk()) {
 					setResponsePage(new ViewMapPage(result.getObject()));
 				} else {
@@ -154,7 +192,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		};
 
 		configureForm.add(nameField);
-		configureForm.add(squareSizeField);
+		configureForm.add(squareSizeField, indicatorSizeField);
 
 		add(configureForm);
 		add(previewImage);

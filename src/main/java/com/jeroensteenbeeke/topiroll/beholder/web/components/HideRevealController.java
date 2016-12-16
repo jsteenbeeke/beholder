@@ -22,7 +22,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 
-public class MapController extends TypedPanel<ScaledMap> {
+public class HideRevealController extends TypedPanel<ScaledMap> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,8 +37,9 @@ public class MapController extends TypedPanel<ScaledMap> {
 
 	private IModel<MapView> mapViewModel;
 
-	public MapController(String id, MapView mapView, ScaledMap map) {
+	public HideRevealController(String id, MapView mapView, ScaledMap map) {
 		super(id, ModelMaker.wrap(map));
+		setOutputMarkupId(true);
 
 		this.mapViewModel = ModelMaker.wrap(mapView);
 

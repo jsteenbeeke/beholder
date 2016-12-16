@@ -15,13 +15,17 @@
 				class="form-control" wicket:id="name">
 		</div>
 		<div class="form-group">
-			<label wicket:for="squareSize">Square Size</label> <input type="number"
+			<label wicket:for="squareSize">Selected Square Size</label> <input type="number"
 				class="form-control" wicket:id="squareSize">
+		</div>
+		<div class="form-group">
+			<label wicket:for="indicatorSize">The area I select represents an X foot square</label> <input type="number"
+				class="form-control" wicket:id="indicatorSize">
 		</div>
 		
 	</form>
 	
-	Use the following widget to indicate the size of a single <b>5 foot square</b> to ensure proper scaling.
+	Use the following widget to indicate the size of a single <b wicket:id="indicator">5 foot square</b> to ensure proper scaling.
 	
 	<div wicket:id="preview">
 		<div wicket:id="areaMarker" class="areamarker"></div>
