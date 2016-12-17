@@ -31,6 +31,7 @@ import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.time.Duration;
 
+import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.util.AjaxRequestTargetJavaScriptHandler;
@@ -76,11 +77,6 @@ public class MapCanvas extends WebComponent {
 						return getMarkupId();
 					}
 				}));
-	}
-
-	@Override
-	protected void onRender() {
-		super.onRender();
 	}
 
 	@Override
@@ -131,6 +127,9 @@ public class MapCanvas extends WebComponent {
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/renderstate.js")));
+		response.render(JavaScriptHeaderItem.forScript(
+				String.format("var mapViewContext = '%s';",
+				Randomizer.random(23)), "mapViewContext"));
 
 		OnDomReadyJavaScriptHandler handler = new OnDomReadyJavaScriptHandler(
 				response);

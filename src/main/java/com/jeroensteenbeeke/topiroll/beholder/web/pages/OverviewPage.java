@@ -201,6 +201,11 @@ public class OverviewPage extends AuthenticatedPage {
 
 					@Override
 					protected ActionResult validateEntity(MapView entity) {
+						
+						if (!entity.getIdentifier().matches("[a-zA-Z0-9]+")) {
+							return ActionResult.error("Identifiers may only contain alphanumeric characters");
+						}
+
 						MapViewFilter filter = new MapViewFilter();
 						filter.identifier().set(entity.getIdentifier());
 

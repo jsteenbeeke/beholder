@@ -23,8 +23,7 @@ import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
 
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 
 public class MapResource extends DynamicImageResource {
@@ -35,25 +34,19 @@ public class MapResource extends DynamicImageResource {
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
 
-		StringValue viewId = parameters.get("viewId");
+		StringValue mapId = parameters.get("mapId");
 
-		if (!viewId.isNull() && !viewId.isEmpty()) {
+		if (!mapId.isNull() && !mapId.isEmpty()) {
 
-			long id = viewId.toLong();
+			long id = mapId.toLong();
 
-			MapViewDAO viewDAO = BeholderApplication.get()
-					.getApplicationContext().getBean(MapViewDAO.class);
-			MapView view = viewDAO.load(id);
+			ScaledMapDAO mapDAO = BeholderApplication.get()
+					.getApplicationContext().getBean(ScaledMapDAO.class);
+			ScaledMap map = mapDAO.load(id);
 
-			if (view != null) {
-
-				ScaledMap map = view.getSelectedMap();
-
-				if (map != null) {
-					return map.getData();
-				}
+			if (map != null) {
+				return map.getData();
 			}
-
 		}
 
 		setFormat("gif");

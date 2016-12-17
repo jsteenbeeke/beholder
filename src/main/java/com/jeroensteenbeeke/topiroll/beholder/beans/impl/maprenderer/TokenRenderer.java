@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
@@ -138,7 +137,7 @@ public class TokenRenderer implements IMapRenderer {
 
 			js.__("imageObj.src = '%s';",
 					urlService.contextRelative(String.format(
-							"/tokens/%s/%d/%d?%s", Randomizer.random(44),
+							"/tokens/%d/%d?%s", 
 							mapView.getId(), token.getId(),
 							previewMode ? "preview=true&" : "")));
 		}

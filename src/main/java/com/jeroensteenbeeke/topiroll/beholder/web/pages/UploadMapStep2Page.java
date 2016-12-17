@@ -37,7 +37,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.validation.validator.PatternValidator;
 
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
@@ -84,7 +83,6 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		final TextField<String> nameField = new TextField<>("name",
 				Model.of(originalName));
 		nameField.setRequired(true);
-		nameField.add(new PatternValidator("[a-zA-Z0-9]+"));
 
 		final Label indicatorLabel = new Label("indicator", new LoadableDetachableModel<String>() {
 			private static final long serialVersionUID = 1L;

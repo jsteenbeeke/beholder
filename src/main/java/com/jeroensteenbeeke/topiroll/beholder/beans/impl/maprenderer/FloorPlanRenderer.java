@@ -52,10 +52,10 @@ public class FloorPlanRenderer implements IMapRenderer {
 			@Nonnull JavaScriptHandler handler, @Nonnull MapView mapView,
 			boolean previewMode) {
 		final String state = mapView.calculateState();
-		
+
 		ScaledMap map = mapView.getSelectedMap();
 		Dimension displayDimension = new Dimension(1, 1);
-		
+
 		if (map != null) {
 			if (previewMode) {
 				displayDimension = map.getPreviewDimension();
@@ -63,26 +63,26 @@ public class FloorPlanRenderer implements IMapRenderer {
 				displayDimension = map.getDisplayDimension(mapView);
 			}
 		}
-		
+
 		int w = (int) displayDimension.getWidth();
 		int h = (int) displayDimension.getHeight();
 
 		String imageVar = String.format("imgObj%s", Randomizer.random(15));
-		
+
 		JSBuilder js = JSBuilder.create();
 		js.__("var canvas = document.getElementById('%s');", canvasId);
-		
+
 		js = js.ifBlock("canvas");
-		js = js.ifBlock("renderState.check('floorplan', '%s') === false", state);
+		js = js.ifBlock("renderState.check('floorplan', '%s') === false",
+				state);
 		js.__("canvas.width = %d;", w);
 		js.__("canvas.height = %d;", h);
 		js.__("var context = canvas.getContext('2d');");
 		js.__("var %s = new Image();", imageVar);
 		js = js.objFunction(String.format("%s.onload", imageVar));
-		
 
 		if (clipPaths.isSatisfied()) {
-			
+
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
@@ -104,12 +104,14 @@ public class FloorPlanRenderer implements IMapRenderer {
 
 		js.__("renderState.set('floorplan', '%s');", state);
 		js = js.close();
-		js.__("%s.src = '%s';", imageVar,
-				urlService.contextRelative(String.format("/maps/%s/%d?%s",
-						Randomizer.random(44), mapView.getId(),
-						previewMode ? "preview=true&" : "")));
+		if (map != null) {
+			js.__("%s.src = '%s' + 'context=' + mapViewContext;", imageVar,
+					urlService.contextRelative(String.format("/maps/%d?%s",
+							map.getId(), previewMode ? "preview=true&" : "")));
+		}
 
 		handler.execute(js.toString());
+
 	}
 
 }
