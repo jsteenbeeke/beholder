@@ -116,7 +116,7 @@
 			<artifactId>log4j-core</artifactId>
 		</dependency>
 
-		
+
 
 		<!-- Testing Dependencies -->
 		<dependency>
@@ -211,7 +211,7 @@
 								<directory>${project.build.directory}</directory>
 								<include>initExt.sh</include>
 							</resource>
-						<resource>
+							<resource>
 								<targetPath>/</targetPath>
 								<directory>${project.build.directory}</directory>
 								<include>xmlinsert.jar</include>
@@ -293,6 +293,26 @@
 						<version>${hyperion.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>header.txt</header>
+					<excludes>
+						<exclude>**/README</exclude>
+						<exclude>src/test/resources/**</exclude>
+						<exclude>src/main/resources/**</exclude>
+						<exclude>src/main/compile/**</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.lesscss</groupId>
