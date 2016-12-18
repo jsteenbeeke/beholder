@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.beans;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
@@ -31,6 +32,8 @@ public interface MapService {
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 
 	void unselectMap(@Nonnull MapView view);
+	
+	void delete(@Nonnull MapView view);
 
 	void addFogOfWarCircle(ScaledMap map, int radius, int offsetX, int offsetY);
 
@@ -59,4 +62,7 @@ public interface MapService {
 			int offsetX, int offsetY, TriangleOrientation orientation);
 
 	void deleteShape(@Nonnull FogOfWarShape shape);
+
+	void createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
+			@Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
 }

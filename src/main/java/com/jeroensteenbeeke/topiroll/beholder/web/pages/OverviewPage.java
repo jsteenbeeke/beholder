@@ -104,6 +104,20 @@ public class OverviewPage extends AuthenticatedPage {
 
 					}
 				});
+				item.add(new IconLink<MapView>("delete", item.getModel(),
+						GlyphIcon.remove) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						mapViewDAO.delete(mapView);
+						
+						setResponsePage(new OverviewPage());
+
+					}
+				});
+
 
 			}
 

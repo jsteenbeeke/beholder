@@ -38,8 +38,10 @@ import org.slf4j.LoggerFactory;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 
 public abstract class AbstractFogOfWarPreviewResource
 		extends DynamicImageResource {
@@ -86,6 +88,14 @@ public abstract class AbstractFogOfWarPreviewResource
 
 			shapeDAO.findByFilter(filter).forEach(s -> {
 				s.drawPreviewTo(graphics2D);
+			});
+			
+			TokenInstanceDAO tokenDAO = BeholderApplication.get().getBean(TokenInstanceDAO.class);
+			TokenInstanceFilter tokenFilter = new TokenInstanceFilter();
+			tokenFilter.map().set(map);
+			
+			tokenDAO.findByFilter(tokenFilter).forEach(t -> {
+				t.drawPreviewTo(graphics2D);
 			});
 		}
 

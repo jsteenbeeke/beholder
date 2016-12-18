@@ -55,10 +55,6 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
- 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
-	private List<TokenInstance> tokens = new ArrayList<TokenInstance>();
-
-
 
 	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<FogOfWarVisibility> visibilities = new ArrayList<FogOfWarVisibility>();
@@ -183,9 +179,11 @@ public class MapView extends BaseDomainObject {
 							data.append(s.getStatus().toString());
 
 					});
-			getTokens().stream().sorted(Comparator.comparing(TokenInstance::getId)).forEach(t -> {
+			selectedMap.getTokens().stream().sorted(Comparator.comparing(TokenInstance::getId)).forEach(t -> {
 				data.append(";T");
 				data.append(t.getId());
+				data.append("=");
+				data.append(t.calculateState());
 			});
 		}
 
@@ -200,14 +198,6 @@ public class MapView extends BaseDomainObject {
 	public void setVisibilities(
 			@Nonnull List<FogOfWarVisibility> visibilities) {
 		this.visibilities = visibilities;
-	}
-
-	@Nonnull
-	public List<TokenInstance> getTokens() {
-		return tokens;
-	}
-	public void setTokens( @Nonnull List<TokenInstance> tokens) {
-		this.tokens = tokens;
 	}
 
 	@Transient

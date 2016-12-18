@@ -1,0 +1,32 @@
+<html xmlns:wicket>
+<wicket:extend>
+
+
+	<div class="btn-group btn-group-justified">
+		<div class="btn-group">
+			<button type="button" wicket:id="back" class="btn btn-info">Abort</button>
+		</div>
+	</div>
+
+
+	<form wicket:id="configureForm">
+		<div class="form-group">
+			<label wicket:for="amount">Amount</label> <input type="number"
+				class="form-control" wicket:id="amount" />
+		</div>
+		<div class="form-group">
+			<label wicket:for="token">Token Type</label> <select
+				wicket:id="token"  class="form-control"></select>
+		</div>
+
+	</form>
+
+
+
+	<div class="btn-group btn-group-justified">
+		<div class="btn-group">
+			<button type="button" wicket:id="submit" class="btn btn-info">Submit</button>
+		</div>
+	</div>
+</wicket:extend>
+</html>

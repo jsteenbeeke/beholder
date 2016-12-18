@@ -16,6 +16,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import java.awt.Graphics2D;
 import java.io.Serializable;
 
 import javax.annotation.CheckForNull;
@@ -37,21 +38,28 @@ public class TokenInstance extends BaseDomainObject {
 			strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
- 	@Column(nullable=false)
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private TokenBorderIntensity borderIntensity;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "map")
+
+	private ScaledMap map;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private TokenBorderType borderType;
+
+	@Column(nullable = false)
 	private int offsetY;
 
-
- 	@Column(nullable=false)
+	@Column(nullable = false)
 	private int offsetX;
-
-
 
 	@Column(nullable = true)
 	private String badge;
-
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "view")
-	private MapView view;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "definition")
@@ -79,20 +87,12 @@ public class TokenInstance extends BaseDomainObject {
 		this.definition = definition;
 	}
 
-	@Nonnull
-	public MapView getView() {
-		return view;
-	}
-
-	public void setView(@Nonnull MapView view) {
-		this.view = view;
-	}
-
 	@CheckForNull
 	public String getBadge() {
 		return badge;
 	}
-	public void setBadge( @Nullable String badge) {
+
+	public void setBadge(@Nullable String badge) {
 		this.badge = badge;
 	}
 
@@ -100,7 +100,8 @@ public class TokenInstance extends BaseDomainObject {
 	public int getOffsetX() {
 		return offsetX;
 	}
-	public void setOffsetX( @Nonnull int offsetX) {
+
+	public void setOffsetX(@Nonnull int offsetX) {
 		this.offsetX = offsetX;
 	}
 
@@ -108,14 +109,66 @@ public class TokenInstance extends BaseDomainObject {
 	public int getOffsetY() {
 		return offsetY;
 	}
-	public void setOffsetY( @Nonnull int offsetY) {
+
+	public void setOffsetY(@Nonnull int offsetY) {
 		this.offsetY = offsetY;
 	}
 
+	@Nonnull
+	public TokenBorderType getBorderType() {
+		return borderType;
+	}
 
+	public void setBorderType(@Nonnull TokenBorderType borderType) {
+		this.borderType = borderType;
+	}
 
+	@Nonnull
+	public TokenBorderIntensity getBorderIntensity() {
+		return borderIntensity;
+	}
 
+	public void setBorderIntensity(
+			@Nonnull TokenBorderIntensity borderIntensity) {
+		this.borderIntensity = borderIntensity;
+	}
 
+	@Nonnull
+	public ScaledMap getMap() {
+		return map;
+	}
 
+	public void setMap(@Nonnull ScaledMap map) {
+		this.map = map;
+	}
+
+	public String calculateState() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+
+		if (getBadge() != null) {
+			sb.append("badge=");
+			sb.append(getBadge());
+			sb.append(";");
+		}
+
+		sb.append("border=");
+		sb.append(getBorderType());
+		sb.append(";intensity=");
+		sb.append(getBorderIntensity());
+		sb.append(";x=");
+		sb.append(getOffsetX());
+		sb.append(";y=");
+		sb.append(getOffsetY());
+
+		sb.append("{");
+
+		return sb.toString();
+	}
+
+	public void drawPreviewTo(Graphics2D graphics2d) {
+		// TODO
+		
+	}
 
 }

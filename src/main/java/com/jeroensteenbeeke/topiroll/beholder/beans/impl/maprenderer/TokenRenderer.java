@@ -47,8 +47,7 @@ public class TokenRenderer implements IMapRenderer {
 	@Override
 	public void onRefresh(String canvasId, JavaScriptHandler handler,
 			MapView mapView, boolean previewMode) {
-		TokenInstanceFilter filter = new TokenInstanceFilter();
-		filter.view().set(mapView);
+		
 
 		final String state = mapView.calculateState();
 
@@ -68,6 +67,14 @@ public class TokenRenderer implements IMapRenderer {
 			} else {
 				ratio = map.getDisplayFactor(mapView);
 			}
+		}
+		
+		TokenInstanceFilter filter = new TokenInstanceFilter();
+		if (map != null) {
+			filter.map().set(map);
+		} else {
+			// Map can't be null, so should return empty set
+			filter.map().isNull();
 		}
 
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter);
@@ -113,7 +120,7 @@ public class TokenRenderer implements IMapRenderer {
 					rel(radius, ratio));
 
 			js.__("context.lineWidth = 5;");
-			js.__("context.strokeStyle = '';", "#000000"); // TODO: placeholder
+			js.__("context.strokeStyle = '';", token.getBorderIntensity().getColor(token.getBorderType()));
 			js.__("context.stroke();");
 
 			js.__("context.drawImage(imageObj, %d, %d);", x, y);

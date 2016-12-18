@@ -16,19 +16,22 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddCircleFogOfWarPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddRectFogOfWarPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.AddTriangleFogOfWarPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.CreateGroupPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.ViewMapPage;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.*;
 
 public class MapEditSubmitPanel extends Panel {
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private TokenDefinitionDAO tokenDAO;
 
 	public MapEditSubmitPanel(String id, Form<ScaledMap> form) {
 		super(id);
@@ -97,6 +100,22 @@ public class MapEditSubmitPanel extends Panel {
 				}
 			}
 		});
+		
+		TokenDefinitionFilter filter = new TokenDefinitionFilter();
+		filter.owner().equalTo(form.getModelObject().getOwner());
+		
+		add(new SubmitLink("submitAndAddTokens", form) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onAfterSubmit() {
+				super.onAfterSubmit();
+				
+				if (form.getFeedbackMessages().isEmpty()) {
+					setResponsePage(new AddTokenInstance1Page(form.getModelObject()));
+				}
+			}
+		}.setVisible(tokenDAO.countByFilter(filter) > 0));
 	}
 
 }

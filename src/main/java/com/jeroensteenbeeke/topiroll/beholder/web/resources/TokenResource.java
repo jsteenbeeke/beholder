@@ -23,42 +23,57 @@ import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
 
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 
 public class TokenResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
+	
+	private Long fixedTokenId;
+	
+	public TokenResource() {
+	}
+	
+	
+
+	public TokenResource(Long fixedTokenId) {
+		this.fixedTokenId = fixedTokenId;
+	}
+
+
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
 
-		StringValue viewId = parameters.get("viewId");
 		StringValue tokenId = parameters.get("tokenId");
 
-		if (!viewId.isNull() && !viewId.isEmpty() && !tokenId.isEmpty()
+		if (!tokenId.isEmpty()
 				&& !tokenId.isNull()) {
 
-			long view_id = viewId.toLong();
 			long token_id = tokenId.toLong();
-
-			MapViewDAO viewDAO = BeholderApplication.get()
-					.getApplicationContext().getBean(MapViewDAO.class);
-			MapView view = viewDAO.load(view_id);
 
 			TokenDefinitionDAO definitionDAO = BeholderApplication.get()
 					.getApplicationContext().getBean(TokenDefinitionDAO.class);
 			TokenDefinition definition = definitionDAO.load(token_id);
 
-			if (view != null && definition != null) {
+			if (definition != null) {
 
 				return definition.getImageData();
 
 			}
 
+		} else if (fixedTokenId != null) {
+			TokenDefinitionDAO definitionDAO = BeholderApplication.get()
+					.getApplicationContext().getBean(TokenDefinitionDAO.class);
+			TokenDefinition definition = definitionDAO.load(fixedTokenId);
+
+			if (definition != null) {
+
+				return definition.getImageData();
+
+			}
 		}
 
 		setFormat("gif");

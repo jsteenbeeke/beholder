@@ -35,11 +35,13 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 public class ViewMapPage extends AuthenticatedPage {
@@ -53,6 +55,9 @@ public class ViewMapPage extends AuthenticatedPage {
 	
 	@Inject
 	private MapService mapService;
+	
+	@Inject
+	private TokenDefinitionDAO tokenDAO;
 
 
 	private IModel<ScaledMap> mapModel;
@@ -195,6 +200,19 @@ public class ViewMapPage extends AuthenticatedPage {
 
 			}
 		});
+		
+		TokenDefinitionFilter filter = new TokenDefinitionFilter();
+		filter.owner().equalTo(getUser());
+		
+		add(new Link<ScaledMap>("tokens", mapModel) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new AddTokenInstance1Page(getModelObject()));
+
+			}
+		}.setVisible(tokenDAO.countByFilter(filter) > 0));
 
 	}
 

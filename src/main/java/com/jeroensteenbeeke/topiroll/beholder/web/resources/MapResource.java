@@ -29,6 +29,15 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 public class MapResource extends DynamicImageResource {
 
 	private static final long serialVersionUID = 1L;
+	private Long fixedMapId;
+
+	public MapResource() {
+
+	}
+	
+	public MapResource(Long id) {
+		this.fixedMapId = id;
+	}
 
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
@@ -43,6 +52,14 @@ public class MapResource extends DynamicImageResource {
 			ScaledMapDAO mapDAO = BeholderApplication.get()
 					.getApplicationContext().getBean(ScaledMapDAO.class);
 			ScaledMap map = mapDAO.load(id);
+
+			if (map != null) {
+				return map.getData();
+			}
+		} else if (fixedMapId != null) {
+			ScaledMapDAO mapDAO = BeholderApplication.get()
+					.getApplicationContext().getBean(ScaledMapDAO.class);
+			ScaledMap map = mapDAO.load(fixedMapId);
 
 			if (map != null) {
 				return map.getData();

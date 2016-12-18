@@ -50,6 +50,9 @@ class MapServiceImpl implements MapService {
 	private FogOfWarGroupDAO groupDAO;
 
 	@Autowired
+	private FogOfWarVisibilityDAO visibilityDAO;
+	
+	@Autowired
 	private FogOfWarGroupVisibilityDAO groupVisibilityDAO;
 
 	@Autowired
@@ -58,6 +61,9 @@ class MapServiceImpl implements MapService {
 	@Autowired
 	private TokenDefinitionDAO tokenDefinitionDAO;
 
+	@Autowired
+	private TokenInstanceDAO tokenInstanceDAO;
+	
 	@Override
 	public TypedActionResult<ScaledMap> createMap(BeholderUser user, String name, int squareSize,
 			byte[] data) {
@@ -91,6 +97,21 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
+	public void createTokenInstance(TokenDefinition token, ScaledMap map,
+			TokenBorderType borderType, int x, int y, String badge) {
+		TokenInstance instance = new TokenInstance();
+		instance.setBadge(badge);
+		instance.setBorderIntensity(TokenBorderIntensity.HEALTHY);
+		instance.setBorderType(borderType);
+		instance.setDefinition(token);
+		instance.setMap(map);
+		instance.setOffsetX(x);
+		instance.setOffsetY(y);
+		tokenInstanceDAO.save(instance);
+		
+	}
+	
+	@Override
 	public void selectMap(MapView view, ScaledMap map) {
 		view.setSelectedMap(map);
 		viewDAO.update(view);
@@ -100,6 +121,13 @@ class MapServiceImpl implements MapService {
 	public void unselectMap(MapView view) {
 		view.setSelectedMap(null);
 		viewDAO.update(view);
+	}
+	
+	@Override
+	public void delete(MapView view) {
+		view.getVisibilities().forEach(visibilityDAO::delete);
+		viewDAO.delete(view);
+		
 	}
 
 	@Override

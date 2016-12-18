@@ -73,7 +73,7 @@ public class BeholderApplication extends WebApplication
 						return new MapResource();
 					}
 				});
-		mountResource("tokens/${viewId}/${tokenId}",
+		mountResource("tokens/${tokenId}",
 				new ResourceReference(BeholderApplication.class, "tokens") {
 					private static final long serialVersionUID = 1L;
 

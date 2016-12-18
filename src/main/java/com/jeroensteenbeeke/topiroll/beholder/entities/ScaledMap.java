@@ -41,6 +41,10 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+	private List<TokenInstance> tokens = new ArrayList<TokenInstance>();
+
+
 
 	@Column(nullable = false)
 	private int basicHeight;
@@ -201,5 +205,15 @@ public class ScaledMap extends BaseDomainObject {
 	public void setBasicHeight(@Nonnull int basicHeight) {
 		this.basicHeight = basicHeight;
 	}
+
+	@Nonnull
+	public List<TokenInstance> getTokens() {
+		return tokens;
+	}
+	public void setTokens( @Nonnull List<TokenInstance> tokens) {
+		this.tokens = tokens;
+	}
+
+
 
 }
