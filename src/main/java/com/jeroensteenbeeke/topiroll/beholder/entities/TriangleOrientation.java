@@ -24,6 +24,7 @@ public enum TriangleOrientation {
 		public void renderCSS(StringBuilder builder) {
 			builder.append("clip-path: polygon(0% 0%, 0% 100%, 100% 0%);");
 			builder.append("clip-path: url('#triangleTopLeft');");
+			builder.append("-webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 0%);");
 		}
 
 		@Override
@@ -40,7 +41,7 @@ public enum TriangleOrientation {
 		public void renderCSS(StringBuilder builder) {
 			builder.append("clip-path: polygon(0% 0%, 100% 0%, 100% 100%);");
 			builder.append("clip-path: url('#triangleTopRight');");
-
+			builder.append("-webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 100%);");
 		}
 
 		@Override
@@ -56,6 +57,7 @@ public enum TriangleOrientation {
 		public void renderCSS(StringBuilder builder) {
 			builder.append("clip-path: polygon(0% 0%, 0% 100%, 100% 100%);");
 			builder.append("clip-path: url('#triangleBottomLeft');");
+			builder.append("-webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 100%);");
 		}
 
 		@Override
@@ -71,6 +73,7 @@ public enum TriangleOrientation {
 		public void renderCSS(StringBuilder builder) {
 			builder.append("clip-path: polygon(100% 0%, 0% 100%, 100% 100%);");
 			builder.append("clip-path: url('#triangleBottomRight');");
+			builder.append("-webkit-clip-path: polygon(100% 0%, 0% 100%, 100% 100%);");
 		}
 
 		@Override
