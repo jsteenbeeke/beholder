@@ -29,7 +29,6 @@ public class FogOfWarGroupVisibility extends FogOfWarVisibility {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "group_id")
-
 	private FogOfWarGroup group;
 
 	@Nonnull
@@ -41,4 +40,8 @@ public class FogOfWarGroupVisibility extends FogOfWarVisibility {
 		this.group = group;
 	}
 
+	@Override
+	public boolean containsCoordinate(int x, int y) {
+		return group.getShapes().stream().anyMatch(s -> s.containsCoordinate(x, y));
+	}
 }

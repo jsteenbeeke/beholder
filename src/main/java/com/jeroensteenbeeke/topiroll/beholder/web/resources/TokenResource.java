@@ -46,7 +46,7 @@ public class TokenResource extends DynamicImageResource {
 	@Override
 	protected byte[] getImageData(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
-
+		
 		StringValue tokenId = parameters.get("tokenId");
 
 		if (!tokenId.isEmpty()

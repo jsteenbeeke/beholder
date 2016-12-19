@@ -131,6 +131,13 @@ public class FogOfWarRect extends FogOfWarShape {
 					rel(getOffsetY(), multiplier), rel(getWidth(), multiplier),
 					rel(getHeight(), multiplier));
 		}
-
+	}
+	
+	@Override
+	public boolean containsCoordinate(int x, int y) {
+		int x2 = getOffsetX() + getWidth();
+		int y2 = getOffsetY() + getHeight();
+		
+		return x >= getOffsetX() && x <= x2 && y >= getOffsetY() && y <= y2;
 	}
 }

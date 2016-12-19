@@ -40,4 +40,8 @@ public class FogOfWarShapeVisibility extends FogOfWarVisibility {
 		this.shape = shape;
 	}
 
+	@Override
+	public boolean containsCoordinate(int x, int y) {
+		return getShape().containsCoordinate(x, y);
+	}
 }

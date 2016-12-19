@@ -17,8 +17,10 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl.maprenderer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
@@ -27,10 +29,10 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
-import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.util.JavaScriptHandler;
 
+@Component
 public class TokenRenderer implements IMapRenderer {
 
 	@Autowired
@@ -47,7 +49,6 @@ public class TokenRenderer implements IMapRenderer {
 	@Override
 	public void onRefresh(String canvasId, JavaScriptHandler handler,
 			MapView mapView, boolean previewMode) {
-		
 
 		final String state = mapView.calculateState();
 
@@ -68,7 +69,7 @@ public class TokenRenderer implements IMapRenderer {
 				ratio = map.getDisplayFactor(mapView);
 			}
 		}
-		
+
 		TokenInstanceFilter filter = new TokenInstanceFilter();
 		if (map != null) {
 			filter.map().set(map);
@@ -77,34 +78,29 @@ public class TokenRenderer implements IMapRenderer {
 			filter.map().isNull();
 		}
 
-		List<TokenInstance> tokens = tokenDAO.findByFilter(filter);
+		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
+				.filter(i -> i.isVisible(mapView, previewMode)).collect(Collectors.toList());
 
 		for (TokenInstance token : tokens) {
 			js.__("var imageObj = new Image();");
 			js = js.objFunction("imageObj.onload");
 
 			final int diameter = token.getDefinition().getDiameterInSquares();
-			final long pixels = Calculations.oneInchSquareInPixels(
-					mapView.toResolution(),
-					mapView.getScreenDiagonalInInches());
+			final long pixels = (long) (map.getSquareSize() * ratio);
 			final int radius = (int) ((diameter * pixels) / 2);
+			int x = (int) (token.getOffsetX() * ratio);
+			int y = (int) (token.getOffsetY() * ratio);
+			int wh = (int) (diameter * pixels);
 
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
-			js.__("context.moveTo(%d, %d);", rel(token.getOffsetX(), ratio),
-					rel(token.getOffsetY(), ratio));
-			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);",
-					rel(token.getOffsetX() + radius, ratio),
-					rel(token.getOffsetY() + radius, ratio),
-					rel(radius, ratio));
+			// js.__("context.moveTo(%d, %d);", x, y);
+			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);", x + radius,
+					y + radius, radius);
 
 			js.__("context.closePath();");
 			js.__("context.clip();");
-
-			int x = (int) (token.getOffsetX() * ratio);
-			int y = (int) (token.getOffsetY() * ratio);
-			int wh = (int) (diameter * pixels * ratio);
 
 			js.__("context.drawImage(imageObj, %d, %d, %d, %d);", x, y, wh, wh);
 
@@ -112,41 +108,53 @@ public class TokenRenderer implements IMapRenderer {
 
 			js.__("context.beginPath();");
 
-			js.__("context.moveTo(%d, %d);", rel(token.getOffsetX(), ratio),
-					rel(token.getOffsetY(), ratio));
-			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);",
-					rel(token.getOffsetX() + radius, ratio),
-					rel(token.getOffsetY() + radius, ratio),
-					rel(radius, ratio));
+			// js.__("context.moveTo(%d, %d);", rel(token.getOffsetX(), ratio),
+			// rel(token.getOffsetY(), ratio));
+			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);", x + radius,
+					y + radius, radius);
 
-			js.__("context.lineWidth = 5;");
-			js.__("context.strokeStyle = '';", token.getBorderIntensity().getColor(token.getBorderType()));
+			String tokenColor = token.getBorderIntensity()
+					.getColor(token.getBorderType());
+
+			js.__("context.lineWidth = 2;");
+			js.__("context.strokeStyle = '%s';", tokenColor);
 			js.__("context.stroke();");
 
-			js.__("context.drawImage(imageObj, %d, %d);", x, y);
-			js.__("context.restore();");
-
 			String badge = token.getBadge();
-			if (badge != null) {
-				js.__("context.lineWidth = 5;");
-				js.__("context.strokeStyle = '';", "#000000"); // TODO:
-																// placeholder
-				js.__("context.fillRect(%d, %d, %d, %d);", x, y + 3 * (wh / 4),
-						wh, wh / 4);
-				js.__("context.strokeRect(%d, %d, %d, %d);", x,
-						y + 3 * (wh / 4), wh, wh / 4);
-				js.__("context.fillText('%s', %d, %d)", badge, x, y);
+			if (badge != null && !previewMode) {
+
+				int box_top_y = y + 5 * (wh / 6);
+				int box_bottom_y = y + wh;
+
+				int box_height = wh / 6;
+
+				int box_width = (int) (badge.length() * 1.5 * ratio);
+
+				int text_y = (3 * box_bottom_y + box_top_y) / 4;
+
+				js.__("context.lineWidth = 1;");
+				js.__("context.strokeStyle = '%s';", tokenColor);
+				js.__("context.fillStyle = '%s';", "#ffffff");
+				js.__("context.moveTo(%d, %d);", x, y + 3);
+				js.__("context.fillRect(%d, %d, %d, %d);", x, box_top_y,
+						box_width, box_height);
+
+				js.__("context.strokeRect(%d, %d, %d, %d);", x, box_top_y,
+						box_width, box_height);
+
+				js.__("context.fillStyle = '%s';", tokenColor);
+
+				js.__("context.fillText('%s', %d, %d)", badge, x, text_y);
 
 				js.__("context.restore();");
 			}
 
 			js = js.close();
 
-			js.__("imageObj.src = '%s';",
-					urlService.contextRelative(String.format(
-							"/tokens/%d/%d?%s", 
-							mapView.getId(), token.getId(),
-							previewMode ? "preview=true&" : "")));
+			js.__("imageObj.src = '%s' + 'context=' + mapViewContext;",
+					urlService.contextRelative(String.format("/tokens/%d?%s",
+							token.getDefinition().getId(), previewMode
+									? "preview=true&" : "")));
 		}
 
 		js.__("renderState.set('tokens', '%s');", state);

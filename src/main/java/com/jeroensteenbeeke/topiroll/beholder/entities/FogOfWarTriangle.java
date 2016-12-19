@@ -158,4 +158,10 @@ public class FogOfWarTriangle extends FogOfWarShape {
 
 		}
 	}
+
+	@Override
+	public boolean containsCoordinate(int x, int y) {
+		return getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide()).contains(x, y);
+	}
 }

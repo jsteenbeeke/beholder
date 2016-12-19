@@ -85,6 +85,18 @@ public class FogOfWarCircle extends FogOfWarShape {
 		graphics2d.fill(circle);
 
 	}
+	
+	@Override
+	public boolean containsCoordinate(int x, int y) {
+		int cx = getOffsetX()+getRadius();
+		int cy = getOffsetY()+getRadius();
+		
+		int x_cx = x - cx;
+		int y_cy = y - cy;
+		int r2 = getRadius() * getRadius();
+		
+		return (x_cx * x_cx) + (y_cy * y_cy) < r2;
+	}
 
 	@Override
 	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {

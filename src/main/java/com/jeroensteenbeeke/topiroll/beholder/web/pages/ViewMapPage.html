@@ -32,7 +32,7 @@
 		</div>
 		<wicket:enclosure child="tokens">
 			<div class="btn-group">
-				<button type="button" wicket:id="tokens"
+				<button type="button" wicket:id="addtokens"
 					class="btn btn-info">
 					<i class="glyphicon glyphicon-tower"></i> Add tokens
 				</button>
@@ -84,6 +84,33 @@
 			<tr>
 				<td colspan="3">
 					<div wicket:id="shapenav"></div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	<h2>Tokens</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Token</th>
+				<th>Location</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="tokens">
+				<td wicket:id="token"></td>
+				<td wicket:id="location"></td>
+				<td>
+					<span wicket:id="delete"></span>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3">
+					<div wicket:id="tokennav"></div>
 				</td>
 			</tr>
 		</tfoot>

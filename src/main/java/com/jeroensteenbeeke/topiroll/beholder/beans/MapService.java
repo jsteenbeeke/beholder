@@ -65,4 +65,8 @@ public interface MapService {
 
 	void createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
 			@Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
+
+	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);
+	
+	void setTokenBorderIntensity(@Nonnull TokenInstance instance, @Nonnull TokenBorderIntensity type);
 }

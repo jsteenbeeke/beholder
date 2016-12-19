@@ -1,0 +1,33 @@
+<html xmlns:wicket>
+<wicket:panel>
+	<h2>Token States</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Token</th>
+				<th>Type</th>
+				<th>Health</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="tokens">
+				<td wicket:id="token"></td>
+				<td>
+					<div class="btn-group" role="group">
+						<wicket:container wicket:id="types">
+							<button type="button" wicket:id="button"></button>
+						</wicket:container>
+					</div>
+				</td>
+				<td>
+					<div class="btn-group" role="group">
+						<wicket:container wicket:id="health">
+							<button type="button" wicket:id="button"></button>
+						</wicket:container>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</wicket:panel>
+</html>

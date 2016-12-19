@@ -100,7 +100,7 @@ class MapServiceImpl implements MapService {
 	public void createTokenInstance(TokenDefinition token, ScaledMap map,
 			TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
-		instance.setBadge(badge);
+		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
 		instance.setBorderIntensity(TokenBorderIntensity.HEALTHY);
 		instance.setBorderType(borderType);
 		instance.setDefinition(token);
@@ -287,6 +287,20 @@ class MapServiceImpl implements MapService {
 		shape.getVisibilities().forEach(shapeVisibilityDAO::delete);
 		
 		shapeDAO.delete(shape);
+	}
+	
+	@Override
+	public void setTokenBorderType(TokenInstance instance,
+			TokenBorderType type) {
+		instance.setBorderType(type);
+		tokenInstanceDAO.update(instance);
 		
+	}
+	
+	@Override
+	public void setTokenBorderIntensity(TokenInstance instance,
+			TokenBorderIntensity intensity) {
+		instance.setBorderIntensity(intensity);
+		tokenInstanceDAO.update(instance);
 	}
 }

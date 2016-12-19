@@ -36,12 +36,15 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 public class ViewMapPage extends AuthenticatedPage {
@@ -52,14 +55,16 @@ public class ViewMapPage extends AuthenticatedPage {
 
 	@Inject
 	private FogOfWarGroupDAO groupDAO;
-	
+
 	@Inject
 	private MapService mapService;
-	
+
 	@Inject
 	private TokenDefinitionDAO tokenDAO;
 
-
+	@Inject
+	private TokenInstanceDAO tokenInstanceDAO;
+	
 	private IModel<ScaledMap> mapModel;
 
 	public ViewMapPage(ScaledMap map) {
@@ -105,18 +110,17 @@ public class ViewMapPage extends AuthenticatedPage {
 				item.add(new IconLink<FogOfWarGroup>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
-					
+
 					@Override
 					public void onClick() {
-						
+
 						setResponsePage(new EditGroupPage(getModelObject()));
 					}
 				});
 				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
 						GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
-					
-				
+
 					@Override
 					public void onClick() {
 						mapService.ungroup(getModelObject());
@@ -161,6 +165,35 @@ public class ViewMapPage extends AuthenticatedPage {
 		add(shapesView);
 		add(new BootstrapPagingNavigator("shapenav", shapesView));
 
+		TokenInstanceFilter tokenFilter = new TokenInstanceFilter();
+		tokenFilter.map().set(map);
+		tokenFilter.badge().orderBy(true);
+
+		DataView<TokenInstance> tokenView = new DataView<TokenInstance>("tokens", FilterDataProvider.of(tokenFilter, tokenInstanceDAO)) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void populateItem(Item<TokenInstance> item) {
+				TokenInstance instance = item.getModelObject();
+				item.add(new Label("token", instance.getLabel()));
+				item.add(new Label("location", String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
+				item.add(new IconLink<TokenInstance>("delete", item.getModel(), GlyphIcon.trash) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						tokenInstanceDAO.delete(instance);
+						setResponsePage(new ViewMapPage(mapModel.getObject()));
+					}
+				});
+				
+			}
+		};
+		add(tokenView);
+		add(new BootstrapPagingNavigator("tokennav", tokenView));
+		
+
 		add(new Link<ScaledMap>("addcircle", mapModel) {
 			private static final long serialVersionUID = 1L;
 
@@ -180,7 +213,7 @@ public class ViewMapPage extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		add(new Link<ScaledMap>("addtriangle", mapModel) {
 			private static final long serialVersionUID = 1L;
 
@@ -200,11 +233,11 @@ public class ViewMapPage extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.owner().equalTo(getUser());
-		
-		add(new Link<ScaledMap>("tokens", mapModel) {
+
+		add(new Link<ScaledMap>("addtokens", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

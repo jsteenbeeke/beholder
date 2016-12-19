@@ -16,15 +16,25 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.util.ActionResult;
 
 @Entity
 public class TokenInstance extends BaseDomainObject {
@@ -142,6 +152,13 @@ public class TokenInstance extends BaseDomainObject {
 		this.map = map;
 	}
 
+	@Transient
+	public boolean isVisible(@Nonnull MapView view, boolean previewMode) {
+		return view.getVisibilities().stream()
+				.anyMatch(v -> v.getStatus().isVisible(previewMode)
+						&& v.containsCoordinate(getOffsetX(), getOffsetY()));
+	}
+
 	public String calculateState() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -166,9 +183,56 @@ public class TokenInstance extends BaseDomainObject {
 		return sb.toString();
 	}
 
-	public void drawPreviewTo(Graphics2D graphics2d) {
-		// TODO
+	public ActionResult drawPreviewTo(Graphics2D graphics2d) {
+		try {
+			BufferedImage image = ImageIO.read(
+					new ByteArrayInputStream(getDefinition().getImageData()));
+
+			int diameter = getDefinition().getDiameterInSquares()
+					* getMap().getSquareSize();
+
+			Shape oldClip = graphics2d.getClip();
+
+			Shape circle = new Ellipse2D.Double(getOffsetX(), getOffsetY(),
+					diameter, diameter);
+
+			graphics2d.setClip(circle);
+			graphics2d.drawImage(image, offsetX, offsetY, offsetX + diameter,
+					offsetY + diameter, 0, 0, image.getWidth(),
+					image.getHeight(), new ImageObserver() {
+
+						@Override
+						public boolean imageUpdate(Image img, int infoflags,
+								int x, int y, int width, int height) {
+							return (infoflags & (ALLBITS | ABORT)) == 0;
+
+						}
+					});
+
+			graphics2d.setClip(oldClip);
+
+			graphics2d.setColor(getBorderIntensity().toColor(getBorderType()));
+			graphics2d.setStroke(new BasicStroke(1.0f));
+			graphics2d.draw(circle);
+
+			return ActionResult.ok();
+		} catch (IOException e) {
+			return ActionResult.error(e.getMessage());
+		}
+
+	}
+
+	@Transient
+	public String getLabel() {
+		String label = getBadge();
 		
+		if (label == null) {
+			return String.format("Unlabeled %s #%d",
+					getDefinition().getName(),
+					getId());
+		}
+		
+		return label;
 	}
 
 }

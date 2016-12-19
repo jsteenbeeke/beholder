@@ -36,6 +36,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 
@@ -86,7 +87,7 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
-				setResponsePage(new AddTokenInstance2Page(mapModel.getObject(), tokenSelect.getModelObject(), amountField.getModelObject()));
+				setResponsePage(new AddTokenInstance2Page(mapModel.getObject(), tokenSelect.getModelObject(), TokenBorderType.Enemy, 1, amountField.getModelObject()));
 			}
 		};
 

@@ -167,4 +167,6 @@ public abstract class FogOfWarShape extends BaseDomainObject
 
 	}
 
+	public abstract boolean containsCoordinate(int x, int y);
+
 }

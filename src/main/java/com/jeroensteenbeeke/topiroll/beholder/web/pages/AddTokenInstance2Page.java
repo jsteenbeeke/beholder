@@ -17,6 +17,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 
 import javax.inject.Inject;
 
@@ -28,7 +29,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -52,8 +53,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.MapResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 public class AddTokenInstance2Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -70,8 +70,8 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 	private IModel<TokenDefinition> tokenModel;
 
-	public AddTokenInstance2Page(ScaledMap map, TokenDefinition token,
-			int amount) {
+	public AddTokenInstance2Page(ScaledMap map, TokenDefinition token, TokenBorderType borderType,
+			int current, int total) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -91,10 +91,10 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		final int imageWidth = (int) dimensions.getWidth();
 		final int imageHeight = (int) dimensions.getHeight();
 
-		badgeField = new TextField<String>("badge", Model.of(""));
+		badgeField = new TextField<String>("badge", Model.of(String.format("%s %d", token.getName(), current)));
 
 		borderSelect = new DropDownChoice<>("border",
-				Model.of(TokenBorderType.Neutral),
+				Model.of(borderType),
 				new ListModel<TokenBorderType>(
 						Lists.newArrayList(TokenBorderType.values())),
 				LambdaRenderer.forEnum(TokenBorderType.class, Enum::name));
@@ -123,16 +123,23 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 					@Override
 					public IResource getResource() {
-						return new MapResource(mapModel.getObject().getId());
+						return new AbstractFogOfWarPreviewResource(mapModel) {
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void drawShape(Graphics2D graphics2d) {
+								
+							}
+						};
 					}
 
 				}, dimensions);
 		previewImage.setOutputMarkupId(true);
 
-		Image areaMarker = new Image("areaMarker",
-				new TokenResource(token.getId()));
+		ContextImage areaMarker = new ContextImage("areaMarker",
+				"tokens/"+ token.getId());
 		areaMarker.add(AttributeModifier.replace("style", String.format(
-				"background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
+				"padding: 0px; width: %dpx; height: %dpx; left: %dpx; top: %dpx; border-radius: 100%%; border: 1px solid #000000;",
 				map.getSquareSize(), map.getSquareSize(),
 				offsetXField.getModelObject(), offsetYField.getModelObject())));
 
@@ -191,12 +198,12 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 		add(previewImage);
 
-		if (amount == 1) {
+		if (current == total) {
 			add(new MapEditSubmitPanel("submit", configureForm));
 		} else {
 			add(new SubmitPanel<ScaledMap>("submit", configureForm, m -> {
 				setResponsePage(new AddTokenInstance2Page(m,
-						tokenModel.getObject(), amount - 1));
+						tokenModel.getObject(), borderSelect.getModelObject(), current + 1, total));
 			}));
 		}
 	}

@@ -25,7 +25,7 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class FogOfWarVisibility extends BaseDomainObject {
+public abstract class FogOfWarVisibility extends BaseDomainObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -77,5 +77,7 @@ public class FogOfWarVisibility extends BaseDomainObject {
 	public void setStatus(@Nonnull VisibilityStatus status) {
 		this.status = status;
 	}
+
+	public abstract boolean containsCoordinate(int x, int y);
 
 }

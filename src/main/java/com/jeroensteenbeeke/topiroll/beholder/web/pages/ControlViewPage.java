@@ -31,9 +31,10 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScript
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapSelectController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.TokenStateController;
 
 public class ControlViewPage extends AuthenticatedPage {
 
@@ -123,6 +124,27 @@ public class ControlViewPage extends AuthenticatedPage {
 
 					if (map != null) {
 						WebMarkupContainer newController = new HideRevealController(
+								CONTROLLER_ID, view, map);
+						controller.replaceWith(newController);
+						target.add(newController);
+						controller = newController;
+					}
+				}
+
+			}
+		});
+		
+		add(new AjaxLink<Void>("tokenStates") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof TokenStateController)) {
+					MapView view = viewModel.getObject();
+					ScaledMap map = view.getSelectedMap();
+
+					if (map != null) {
+						WebMarkupContainer newController = new TokenStateController(
 								CONTROLLER_ID, view, map);
 						controller.replaceWith(newController);
 						target.add(newController);

@@ -35,6 +35,7 @@ import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jeroensteenbeeke.hyperion.util.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
@@ -89,14 +90,16 @@ public abstract class AbstractFogOfWarPreviewResource
 			shapeDAO.findByFilter(filter).forEach(s -> {
 				s.drawPreviewTo(graphics2D);
 			});
-			
-			TokenInstanceDAO tokenDAO = BeholderApplication.get().getBean(TokenInstanceDAO.class);
+
+			TokenInstanceDAO tokenDAO = BeholderApplication.get()
+					.getBean(TokenInstanceDAO.class);
 			TokenInstanceFilter tokenFilter = new TokenInstanceFilter();
 			tokenFilter.map().set(map);
-			
-			tokenDAO.findByFilter(tokenFilter).forEach(t -> {
-				t.drawPreviewTo(graphics2D);
-			});
+
+			tokenDAO.findByFilter(tokenFilter).stream()
+					.map(t -> t.drawPreviewTo(graphics2D))
+					.flatMap(ActionResult::allNotOk)
+					.map(ActionResult::getMessage).forEach(log::error);
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
