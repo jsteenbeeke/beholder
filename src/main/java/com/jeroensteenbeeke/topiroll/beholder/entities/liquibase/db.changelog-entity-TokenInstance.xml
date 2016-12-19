@@ -89,4 +89,21 @@
       </column>
     </addColumn>
   </changeSet>
+<changeSet author="jeroen" id="77">
+    <addColumn tableName="tokeninstance">
+      <column name="currenthitpoints" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="78">
+    <addColumn tableName="tokeninstance">
+      <column name="maxhitpoints" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+  <changeSet author="jeroen" id="79">
+    <dropColumn tableName="tokeninstance" columnName="borderintensity" />
+  </changeSet>
 </databaseChangeLog>

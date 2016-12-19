@@ -8,7 +8,10 @@ import javax.inject.Inject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -23,12 +26,11 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderIntensity;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 
-public class TokenStateController extends Panel {
+public abstract class TokenStateController extends Panel {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -111,47 +113,33 @@ public class TokenStateController extends Panel {
 						_item.add(link);
 					}
 				});
-				item.add(new ListView<TokenBorderIntensity>("health",
-						ModelMaker.forEnum(TokenBorderIntensity.class)) {
+				
+				NumberTextField<Integer> currentHitpointsField = new NumberTextField<>("currentHP", Model.of(instance.getCurrentHitpoints()), Integer.class);
+				NumberTextField<Integer> maxHitpointsField = new NumberTextField<>("maxHP", Model.of(instance.getMaxHitpoints()), Integer.class);
+				
+				Form<TokenInstance> healthForm = new Form<TokenInstance>("health") {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected void populateItem(
-							ListItem<TokenBorderIntensity> _item) {
-						TokenBorderIntensity intensity = _item.getModelObject();
-
-						AjaxLink<TokenBorderType> link = new AjaxLink<TokenBorderType>(
-								"button") {
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void onClick(AjaxRequestTarget target) {
-								mapService.setTokenBorderIntensity(
-										item.getModelObject(), intensity);
-
-								replaceMe(target);
-
-							}
-
-						};
-						
-						link.add(AttributeModifier.replace("class", new LoadableDetachableModel<String>() {
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							protected String load() {
-								if (intensity == item.getModelObject().getBorderIntensity()) {
-									return "btn btn-primary";
-								}
-								
-								return "btn btn-default";
-							}
-						}));
-
-						link.setBody(Model.of(intensity.getDescription()));
-						_item.add(link);
+					protected void onSubmit() {
+						mapService.setTokenHP(item.getModelObject(), currentHitpointsField.getModelObject(), maxHitpointsField.getModelObject());
+}					
+					
+				};
+				
+				healthForm.add(currentHitpointsField);
+				healthForm.add(maxHitpointsField);
+				
+				healthForm.add(new AjaxSubmitLink("update", healthForm) {
+					private static final long serialVersionUID = 1L;
+					
+					@Override
+					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+						replaceMe(target);
 					}
 				});
+				item.add(healthForm);
+				
 				item.add(new AjaxIconLink<TokenInstance>("hide", item.getModel(), GlyphIcon.eyeClose) {
 					private static final long serialVersionUID = 1L;
 
@@ -171,6 +159,10 @@ public class TokenStateController extends Panel {
 		
 	}
 	
+	public ScaledMap getMap() {
+		return mapModel.getObject();
+	}
+	
 	@Override
 	protected void onDetach() {
 		super.onDetach();
@@ -178,10 +170,5 @@ public class TokenStateController extends Panel {
 		mapModel.detach();
 	}
 	
-	private void replaceMe(AjaxRequestTarget target) {
-		TokenStateController replacement = new TokenStateController(getId(), viewModel.getObject(), mapModel.getObject());
-		this.replaceWith(replacement);
-		target.add(replacement);
-		
-	}
+	public abstract void replaceMe(AjaxRequestTarget target);
 }

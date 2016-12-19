@@ -68,9 +68,9 @@ public interface MapService {
 
 	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);
 	
-	void setTokenBorderIntensity(@Nonnull TokenInstance instance, @Nonnull TokenBorderIntensity type);
-	
 	void showToken(@Nonnull TokenInstance instance);
 	
 	void hideToken(@Nonnull TokenInstance instance);
+	
+	void setTokenHP(@Nonnull TokenInstance instance, @Nullable Integer currentHP, @Nullable Integer maxHP);
 }

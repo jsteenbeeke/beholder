@@ -49,14 +49,18 @@ public class TokenInstance extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private TokenBorderIntensity borderIntensity;
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "map")
-
 	private ScaledMap map;
+	
+ 	@Column(nullable=true)
+	private Integer maxHitpoints;
+
+
+ 	@Column(nullable=true)
+	private Integer currentHitpoints;
+
+
  	@Column(nullable=false)
 	private boolean show;
 
@@ -137,14 +141,31 @@ public class TokenInstance extends BaseDomainObject {
 		this.borderType = borderType;
 	}
 
-	@Nonnull
+	@Transient
 	public TokenBorderIntensity getBorderIntensity() {
-		return borderIntensity;
-	}
-
-	public void setBorderIntensity(
-			@Nonnull TokenBorderIntensity borderIntensity) {
-		this.borderIntensity = borderIntensity;
+		Integer curHP = getCurrentHitpoints();
+		Integer maxHP = getMaxHitpoints();
+		
+		if (curHP != null && maxHP != null) {
+			int c = Math.max(0, curHP.intValue());
+			int m = maxHP.intValue();
+			
+			if (c >= 0 && m > 0 && c <= m) {
+				int pc = 100 * c / m;
+				
+				if (pc == 0) {
+					return TokenBorderIntensity.DEAD;
+				} else if (pc < 25) {
+					return TokenBorderIntensity.HEAVILY_INJURED;
+				} else if (pc < 70) {
+					return TokenBorderIntensity.MODERATELY_INJURED;
+				} else if (pc < 90) {
+					return TokenBorderIntensity.MINOR_INJURIES;
+				}
+			}
+		}
+		
+		return TokenBorderIntensity.HEALTHY;
 	}
 
 	@Nonnull
@@ -248,6 +269,26 @@ public class TokenInstance extends BaseDomainObject {
 	public void setShow( @Nonnull boolean show) {
 		this.show = show;
 	}
+
+	@CheckForNull
+	public Integer getCurrentHitpoints() {
+		return currentHitpoints;
+	}
+	public void setCurrentHitpoints( @Nullable Integer currentHitpoints) {
+		this.currentHitpoints = currentHitpoints;
+	}
+
+	@CheckForNull
+	public Integer getMaxHitpoints() {
+		return maxHitpoints;
+	}
+	public void setMaxHitpoints( @Nullable Integer maxHitpoints) {
+		this.maxHitpoints = maxHitpoints;
+	}
+
+
+
+
 
 
 

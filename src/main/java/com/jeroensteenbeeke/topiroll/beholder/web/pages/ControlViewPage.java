@@ -133,7 +133,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		add(new AjaxLink<Void>("tokenStates") {
 			private static final long serialVersionUID = 1L;
 
@@ -144,7 +144,7 @@ public class ControlViewPage extends AuthenticatedPage {
 					ScaledMap map = view.getSelectedMap();
 
 					if (map != null) {
-						WebMarkupContainer newController = new TokenStateController(
+						WebMarkupContainer newController = new ControlViewTokenStateController(
 								CONTROLLER_ID, view, map);
 						controller.replaceWith(newController);
 						target.add(newController);
@@ -163,5 +163,25 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(TouchPunchJavaScriptReference.get()));
+	}
+	
+	public class ControlViewTokenStateController extends TokenStateController {
+		private static final long serialVersionUID = 1L;
+
+		private ControlViewTokenStateController(String id, MapView view,
+				ScaledMap map) {
+			super(id, view, map);
+		}
+		
+		@Override
+		public final void replaceMe(AjaxRequestTarget target) {
+			WebMarkupContainer newController = new ControlViewTokenStateController(
+					CONTROLLER_ID, viewModel.getObject(),
+					getMap());
+			controller.replaceWith(newController);
+			target.add(newController);
+			controller = newController;
+		}
+		
 	}
 }

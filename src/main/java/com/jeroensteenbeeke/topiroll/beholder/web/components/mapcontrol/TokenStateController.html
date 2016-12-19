@@ -21,15 +21,20 @@
 					</div>
 				</td>
 				<td>
-					<div class="btn-group" role="group">
-						<wicket:container wicket:id="health">
-							<button type="button" wicket:id="button"></button>
-						</wicket:container>
-					</div>
+					<form wicket:id="health" class="form-inline">
+						<div class="form-group">
+							<label wicket:for="currentHP">Current HP</label> <input type="number"
+								class="form-control" wicket:id="currentHP" />
+						</div>
+						<div class="form-group">
+							<label wicket:for="maxHP">Max HP</label> <input type="number"
+								class="form-control" wicket:id="maxHP" />
+
+						</div>
+						<button type="submit" class="btn btn-default" wicket:id="update">Update</button>
+					</form>
 				</td>
-				<td>
-					<span wicket:id="hide"></span>
-				</td>
+				<td><span wicket:id="hide"></span></td>
 			</tr>
 		</tbody>
 	</table>

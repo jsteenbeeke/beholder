@@ -101,7 +101,6 @@ class MapServiceImpl implements MapService {
 			TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
-		instance.setBorderIntensity(TokenBorderIntensity.HEALTHY);
 		instance.setBorderType(borderType);
 		instance.setDefinition(token);
 		instance.setMap(map);
@@ -299,9 +298,10 @@ class MapServiceImpl implements MapService {
 	}
 	
 	@Override
-	public void setTokenBorderIntensity(TokenInstance instance,
-			TokenBorderIntensity intensity) {
-		instance.setBorderIntensity(intensity);
+	public void setTokenHP(TokenInstance instance, Integer currentHP,
+			Integer maxHP) {
+		instance.setCurrentHitpoints(currentHP);
+		instance.setMaxHitpoints(maxHP);
 		tokenInstanceDAO.update(instance);
 	}
 	
