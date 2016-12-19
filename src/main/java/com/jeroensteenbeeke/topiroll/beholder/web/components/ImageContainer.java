@@ -30,8 +30,14 @@ public class ImageContainer extends WebMarkupContainer {
 
 	public ImageContainer(String id, ResourceReference reference,
 			Dimension dimension) {
+		this(id, RequestCycle.get()
+				.urlFor(reference, new PageParameters())
+				.toString(), dimension);
+		
+	}
+	
+	public ImageContainer(String id, final String url, Dimension dimension) {
 		super(id);
-
 		final int width = (int) dimension.getWidth();
 		final int height = (int) dimension.getHeight();
 
@@ -41,21 +47,18 @@ public class ImageContainer extends WebMarkupContainer {
 
 					@Override
 					protected String load() {
-						String url = RequestCycle.get()
-								.urlFor(reference, new PageParameters())
-								.toString();
-
-						if (url.contains("?")) {
-							url = url + "&antiCache="
+						String target = url;
+						if (target.contains("?")) {
+							target = target + "&antiCache="
 									+ System.currentTimeMillis();
 						} else {
-							url = url + "?antiCache="
+							target = target + "?antiCache="
 									+ System.currentTimeMillis();
 						}
 
 						return String.format(
 								"width: %dpx; height: %dpx; background-image: url('%s')",
-								width, height, url);
+								width, height, target);
 					}
 
 				}));

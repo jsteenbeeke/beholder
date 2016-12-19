@@ -52,6 +52,10 @@ public class TokenInstance extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "map")
 	private ScaledMap map;
+ 	@Column(nullable=true)
+	private String note;
+
+
 	
  	@Column(nullable=true)
 	private Integer maxHitpoints;
@@ -285,6 +289,16 @@ public class TokenInstance extends BaseDomainObject {
 	public void setMaxHitpoints( @Nullable Integer maxHitpoints) {
 		this.maxHitpoints = maxHitpoints;
 	}
+
+	@CheckForNull
+	public String getNote() {
+		return note;
+	}
+	public void setNote( @Nullable String note) {
+		this.note = note;
+	}
+
+
 
 
 

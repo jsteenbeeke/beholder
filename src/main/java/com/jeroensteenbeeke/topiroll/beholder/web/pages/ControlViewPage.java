@@ -34,6 +34,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveTokenController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.TokenStateController;
 
 public class ControlViewPage extends AuthenticatedPage {
@@ -154,7 +155,26 @@ public class ControlViewPage extends AuthenticatedPage {
 
 			}
 		});
+		add(new AjaxLink<Void>("moveTokens") {
+			private static final long serialVersionUID = 1L;
 
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof MoveTokenController)) {
+					MapView view = viewModel.getObject();
+					ScaledMap map = view.getSelectedMap();
+
+					if (map != null) {
+						WebMarkupContainer newController = new MoveTokenController(
+								CONTROLLER_ID, view, map);
+						controller.replaceWith(newController);
+						target.add(newController);
+						controller = newController;
+					}
+				}
+
+			}
+		});
 	}
 
 	@Override

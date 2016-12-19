@@ -54,10 +54,16 @@ public abstract class AbstractFogOfWarPreviewResource
 			new MessageDigestResourceVersion());
 
 	private final IModel<ScaledMap> mapModel;
+	
+	private final boolean disableExistingShapes;
 
 	protected AbstractFogOfWarPreviewResource(IModel<ScaledMap> mapModel) {
+		this(mapModel, false);
+	}
+	
+	public AbstractFogOfWarPreviewResource(IModel<ScaledMap> mapModel, boolean disableExistingShapes) {
 		this.mapModel = mapModel;
-
+		this.disableExistingShapes = disableExistingShapes;
 	}
 
 	@Override
@@ -80,7 +86,7 @@ public abstract class AbstractFogOfWarPreviewResource
 
 		drawShape(graphics2D);
 
-		if (shouldDrawExistingShapes()) {
+		if (!disableExistingShapes && shouldDrawExistingShapes()) {
 			FogOfWarShapeDAO shapeDAO = BeholderApplication.get()
 					.getBean(FogOfWarShapeDAO.class);
 			FogOfWarShapeFilter filter = new FogOfWarShapeFilter();

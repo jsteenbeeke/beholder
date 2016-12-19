@@ -9,6 +9,7 @@
 					<th>Token</th>
 					<th>Type</th>
 					<th>Health</th>
+					<th>Note</th>
 					<th>Hide</th>
 				</tr>
 			</thead>
@@ -33,10 +34,16 @@
 
 						</div>
 					</td>
+					<td>
+						<div class="form-group">
+							<input type="text"
+								class="form-control" wicket:id="note" />
+						</div>
+					</td>
 					<td><span wicket:id="hide"></span></td>
 				</tr>
 			</tbody>
-			
+
 		</table>
 	</form>
 </wicket:panel>

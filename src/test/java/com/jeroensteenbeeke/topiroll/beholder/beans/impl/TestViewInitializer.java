@@ -29,28 +29,34 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarRect;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
-	private static final Logger log = LoggerFactory.getLogger(TestViewInitializer.class);
-	
+	private static final Logger log = LoggerFactory
+			.getLogger(TestViewInitializer.class);
+
 	@Autowired
 	private MapService mapService;
-	
+
 	@Autowired
 	private MapViewDAO viewDAO;
-	
+
 	@Autowired
 	private FogOfWarShapeDAO shapeDAO;
 	
+	@Autowired
+	private TokenDefinitionDAO tokenDAO;
+	
+	@Autowired
+	private FogOfWarGroupDAO groupDAO;
+
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void onAccountCreated(BeholderUser user) {
 		MapView view = new MapView();
 		view.setHeight(1080);
@@ -60,33 +66,85 @@ public class TestViewInitializer implements IAccountInitializer {
 		view.setOwner(user);
 		viewDAO.save(view);
 		
-		try (InputStream stream = TestViewInitializer.class.getResourceAsStream("temple.jpg"); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-			int in = -1;
-			while ((in = stream.read()) != -1) {
-				bos.write(in);
-			}
-			bos.flush();
-			bos.close();
+		ScaledMap map = null;
+
+		try (InputStream stream = TestViewInitializer.class
+				.getResourceAsStream("temple.jpg")) {
+			byte[] image = readImage(stream);
+
+			map = mapService.createMap(user, "temple", 18, image)
+					.getObject();
 			
-			byte[] image = bos.toByteArray();
-			
-			ScaledMap map = mapService.createMap(user, "temple", 18, image).getObject();
-			
+			FogOfWarGroup group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("P3");
+			groupDAO.save(group);
+
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(153);
 			rect.setWidth(147);
 			rect.setHeight(74);
 			rect.setMap(map);
+			rect.setGroup(group);
 			shapeDAO.save(rect);
 			
-			log.info("Test data created for user {}", user.getUsername());
 			
+			rect = new FogOfWarRect();
+			rect.setOffsetX(187);
+			rect.setOffsetY(119);
+			rect.setWidth(79);
+			rect.setHeight(35);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);	
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(228);
+			rect.setOffsetY(219);
+			rect.setWidth(104);
+			rect.setHeight(39);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+			
+			
+
+			log.info("Test data created for user {}", user.getUsername());
+
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
-		
 
+		try (InputStream stream = TestViewInitializer.class
+				.getResourceAsStream("random_monster.png")) {
+			byte[] imageData = readImage(stream);
+
+			TokenDefinition token = new TokenDefinition();
+			token.setDiameterInSquares(1);
+			token.setImageData(imageData);
+			token.setName("Monster");
+			token.setOwner(user);
+			
+			tokenDAO.save(token);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+
+	}
+
+	private byte[] readImage(InputStream stream) throws IOException {
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
+			int in = -1;
+			while ((in = stream.read()) != -1) {
+				bos.write(in);
+			}
+			bos.flush();
+			bos.close();
+
+			return bos.toByteArray();
+		}
 	}
 
 }

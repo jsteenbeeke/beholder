@@ -109,7 +109,7 @@ public class FogOfWarGroup extends BaseDomainObject
 		IModel<List<FogOfWarShape>> shapesModel = ModelMaker
 				.wrapList(getShapes());
 
-		return new AbstractFogOfWarPreviewResource(ModelMaker.wrap(getMap())) {
+		return new AbstractFogOfWarPreviewResource(ModelMaker.wrap(getMap()), true) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

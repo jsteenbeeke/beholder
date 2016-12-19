@@ -317,4 +317,17 @@ class MapServiceImpl implements MapService {
 		instance.setShow(false);
 		tokenInstanceDAO.update(instance);
 	}
+	
+	@Override
+	public void setTokenNote(TokenInstance instance, String note) {
+		instance.setNote(note);
+		tokenInstanceDAO.update(instance);
+	}
+	
+	@Override
+	public void updateTokenLocation(TokenInstance instance, int x, int y) {
+		instance.setOffsetX(x);
+		instance.setOffsetY(y);
+		tokenInstanceDAO.update(instance);
+	}
 }

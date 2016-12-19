@@ -89,14 +89,14 @@ public class TokenRenderer implements IMapRenderer {
 			final int diameter = token.getDefinition().getDiameterInSquares();
 			final long pixels = (long) (map.getSquareSize() * ratio);
 			final int radius = (int) ((diameter * pixels) / 2);
-			int x = (int) (token.getOffsetX() * ratio);
-			int y = (int) (token.getOffsetY() * ratio);
+			int x = (int) Math.round(token.getOffsetX() * ratio);
+			int y = (int) Math.round(token.getOffsetY() * ratio);
 			int wh = (int) (diameter * pixels);
 
 			js.__("context.save();");
 			js.__("context.beginPath();");
 
-			// js.__("context.moveTo(%d, %d);", x, y);
+			js.__("context.moveTo(%d, %d);", x, y);
 			js.__("context.arc(%d, %d, %d, 0, 2 * Math.PI);", x + radius,
 					y + radius, radius);
 

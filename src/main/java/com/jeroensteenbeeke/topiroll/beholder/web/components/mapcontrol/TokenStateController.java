@@ -11,6 +11,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.NumberTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -126,34 +127,48 @@ public abstract class TokenStateController extends Panel {
 				NumberTextField<Integer> maxHitpointsField = new NumberTextField<>(
 						ID_MAX_HP, Model.of(instance.getMaxHitpoints()),
 						Integer.class);
-				
-				currentHitpointsField.add(new AjaxFormComponentUpdatingBehavior("blur") {
+				TextField<String> noteField = new TextField<>("note", Model.of(instance.getNote()));
+
+				currentHitpointsField
+						.add(new AjaxFormComponentUpdatingBehavior("blur") {
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							protected void onUpdate(AjaxRequestTarget target) {
+								mapService.setTokenHP(item.getModelObject(),
+										currentHitpointsField.getModelObject(),
+										maxHitpointsField.getModelObject());
+
+							}
+						});
+
+				maxHitpointsField
+						.add(new AjaxFormComponentUpdatingBehavior("blur") {
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							protected void onUpdate(AjaxRequestTarget target) {
+								mapService.setTokenHP(item.getModelObject(),
+										currentHitpointsField.getModelObject(),
+										maxHitpointsField.getModelObject());
+
+							}
+						});
+				noteField
+				.add(new AjaxFormComponentUpdatingBehavior("blur") {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					protected void onUpdate(AjaxRequestTarget target) {
-						mapService.setTokenHP(item.getModelObject(),
-								currentHitpointsField.getModelObject(),
-								maxHitpointsField.getModelObject());
+						mapService.setTokenNote(item.getModelObject(),
+								noteField.getModelObject());
 
-					}
-				});
-				
-				
-				maxHitpointsField.add(new AjaxFormComponentUpdatingBehavior("blur") {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					protected void onUpdate(AjaxRequestTarget target) {
-						mapService.setTokenHP(item.getModelObject(),
-								currentHitpointsField.getModelObject(),
-								maxHitpointsField.getModelObject());
-						
 					}
 				});
 
 				item.add(currentHitpointsField);
 				item.add(maxHitpointsField);
+				item.add(noteField);
 
 				item.add(new AjaxIconLink<TokenInstance>("hide",
 						item.getModel(), GlyphIcon.eyeClose) {
@@ -170,9 +185,9 @@ public abstract class TokenStateController extends Panel {
 
 			}
 		};
-		
-add(tokenView);
-		
+
+		add(tokenView);
+
 	}
 
 	public ScaledMap getMap() {

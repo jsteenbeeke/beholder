@@ -73,4 +73,8 @@ public interface MapService {
 	void hideToken(@Nonnull TokenInstance instance);
 	
 	void setTokenHP(@Nonnull TokenInstance instance, @Nullable Integer currentHP, @Nullable Integer maxHP);
+
+	void setTokenNote(@Nonnull TokenInstance instance, @Nullable String note);
+
+	void updateTokenLocation(@Nonnull TokenInstance instance, int x, int y);
 }
