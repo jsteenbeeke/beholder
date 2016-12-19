@@ -107,6 +107,7 @@ class MapServiceImpl implements MapService {
 		instance.setMap(map);
 		instance.setOffsetX(x);
 		instance.setOffsetY(y);
+		instance.setShow(true);
 		tokenInstanceDAO.save(instance);
 		
 	}
@@ -301,6 +302,19 @@ class MapServiceImpl implements MapService {
 	public void setTokenBorderIntensity(TokenInstance instance,
 			TokenBorderIntensity intensity) {
 		instance.setBorderIntensity(intensity);
+		tokenInstanceDAO.update(instance);
+	}
+	
+	@Override
+	public void showToken(TokenInstance instance) {
+		instance.setShow(true);
+		tokenInstanceDAO.update(instance);
+	}
+	
+	
+	@Override
+	public void hideToken(TokenInstance instance) {
+		instance.setShow(false);
 		tokenInstanceDAO.update(instance);
 	}
 }

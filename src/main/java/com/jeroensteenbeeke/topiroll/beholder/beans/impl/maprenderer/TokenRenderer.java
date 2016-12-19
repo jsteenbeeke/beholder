@@ -77,6 +77,7 @@ public class TokenRenderer implements IMapRenderer {
 			// Map can't be null, so should return empty set
 			filter.map().isNull();
 		}
+		filter.show().set(true);
 
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
 				.filter(i -> i.isVisible(mapView, previewMode)).collect(Collectors.toList());

@@ -1,96 +1,92 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet author="jeroen" failOnError="true" id="49">
 		<createTable tableName="tokeninstance">
 			<column name="id" type="bigint">
-				<constraints primaryKey="true" />
+				<constraints primaryKey="true"/>
 			</column>
 		</createTable>
-		<createSequence incrementBy="1" sequenceName="seq_id_tokeninstance"
-			startValue="1" />
+		<createSequence incrementBy="1" sequenceName="seq_id_tokeninstance" startValue="1"/>
 	</changeSet>
 	<changeSet author="jeroen" id="51">
 		<addColumn tableName="tokeninstance">
 			<column name="definition" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="definition"
-			baseTableName="tokeninstance" constraintName="fk_tokeninstance_definition"
-			referencedColumnNames="id" referencedTableName="tokendefinition" />
-		<createIndex indexName="idx_tokeninstance_definition"
-			tableName="tokeninstance">
-			<column name="definition" />
+		<addForeignKeyConstraint baseColumnNames="definition" baseTableName="tokeninstance" constraintName="fk_tokeninstance_definition" referencedColumnNames="id" referencedTableName="tokendefinition"/>
+		<createIndex indexName="idx_tokeninstance_definition" tableName="tokeninstance">
+			<column name="definition"/>
 		</createIndex>
 	</changeSet>
 	<changeSet author="jeroen" id="52">
 		<addColumn tableName="tokeninstance">
 			<column name="view" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="view"
-			baseTableName="tokeninstance" constraintName="fk_tokeninstance_view"
-			referencedColumnNames="id" referencedTableName="mapview" />
+		<addForeignKeyConstraint baseColumnNames="view" baseTableName="tokeninstance" constraintName="fk_tokeninstance_view" referencedColumnNames="id" referencedTableName="mapview"/>
 		<createIndex indexName="idx_tokeninstance_view" tableName="tokeninstance">
-			<column name="view" />
+			<column name="view"/>
 		</createIndex>
 	</changeSet>
 	<changeSet author="jeroen" id="56">
 		<addColumn tableName="tokeninstance">
 			<column name="badge" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="true" />
+				<constraints nullable="true"/>
 			</column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="jeroen" id="58">
 		<addColumn tableName="tokeninstance">
 			<column name="offsetx" type="java.sql.Types.INTEGER">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="jeroen" id="59">
 		<addColumn tableName="tokeninstance">
 			<column name="offsety" type="java.sql.Types.INTEGER">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="jeroen" id="72">
 		<addColumn tableName="tokeninstance">
 			<column name="bordertype" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="jeroen" id="73">
 		<addColumn tableName="tokeninstance">
 			<column name="borderintensity" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="jeroen" id="74">
 		<addColumn tableName="tokeninstance">
 			<column name="map" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="map"
-			baseTableName="tokeninstance" constraintName="fk_tokeninstance_map"
-			referencedColumnNames="id" referencedTableName="scaledmap" />
+		<addForeignKeyConstraint baseColumnNames="map" baseTableName="tokeninstance" constraintName="fk_tokeninstance_map" referencedColumnNames="id" referencedTableName="scaledmap"/>
 		<createIndex indexName="idx_tokeninstance_map" tableName="tokeninstance">
-			<column name="map" />
+			<column name="map"/>
 		</createIndex>
 	</changeSet>
 	<changeSet author="jeroen" id="75">
-		<dropForeignKeyConstraint baseTableName="tokeninstance"
-			constraintName="fk_tokeninstance_view" />
-		<dropIndex tableName="tokeninstance" indexName="idx_tokeninstance_view" />
-		<dropColumn tableName="tokeninstance" columnName="view" />
+		<dropForeignKeyConstraint baseTableName="tokeninstance" constraintName="fk_tokeninstance_view"/>
+		<dropIndex indexName="idx_tokeninstance_view" tableName="tokeninstance"/>
+		<dropColumn columnName="view" tableName="tokeninstance"/>
 	</changeSet>
+<changeSet author="jeroen" id="76">
+    <addColumn tableName="tokeninstance">
+      <column name="show" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

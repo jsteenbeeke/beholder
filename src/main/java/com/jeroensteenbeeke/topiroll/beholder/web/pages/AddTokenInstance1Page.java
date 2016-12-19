@@ -16,6 +16,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -44,11 +46,11 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
 	private DropDownChoice<TokenDefinition> tokenSelect;
-	
+
 	private NumberTextField<Integer> amountField;
-	
+
 	private IModel<ScaledMap> mapModel;
-	
+
 	@Inject
 	private TokenDefinitionDAO tokenDAO;
 
@@ -67,36 +69,39 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 			}
 		});
 
-		
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.owner().set(getUser());
 		filter.name().orderBy(true);
 
-		tokenSelect = new DropDownChoice<TokenDefinition>(
-				"token", EntityEncapsulator.createNullModel(TokenDefinition.class),
-				Lists.newArrayList(tokenDAO.findByFilter(filter)),
+		List<TokenDefinition> tokens = tokenDAO.findByFilter(filter);
+		tokenSelect = new DropDownChoice<TokenDefinition>("token",
+				tokens.isEmpty()
+						? EntityEncapsulator
+								.createNullModel(TokenDefinition.class)
+						: ModelMaker.wrap(tokens.get(0)),
+				Lists.newArrayList(tokens),
 				LambdaRenderer.of(TokenDefinition::getName));
 		tokenSelect.setRequired(true);
 		amountField = new NumberTextField<>("amount", Model.of(1));
 		amountField.setRequired(true);
 		amountField.setMinimum(1);
-		
+
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm",
 				mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void onSubmit() {
-				setResponsePage(new AddTokenInstance2Page(mapModel.getObject(), tokenSelect.getModelObject(), TokenBorderType.Enemy, 1, amountField.getModelObject()));
+				setResponsePage(new AddTokenInstance2Page(mapModel.getObject(),
+						tokenSelect.getModelObject(), TokenBorderType.Enemy, 1,
+						amountField.getModelObject()));
 			}
 		};
 
 		configureForm.add(tokenSelect);
 		configureForm.add(amountField);
-		
-		add(configureForm);
 
-		
+		add(configureForm);
 
 		add(new SubmitLink("submit", configureForm));
 	}
@@ -116,6 +121,5 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 
 		mapModel.detach();
 	}
-
 
 }

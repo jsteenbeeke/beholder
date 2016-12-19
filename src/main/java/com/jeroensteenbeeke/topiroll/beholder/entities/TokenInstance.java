@@ -57,6 +57,10 @@ public class TokenInstance extends BaseDomainObject {
 	@JoinColumn(name = "map")
 
 	private ScaledMap map;
+ 	@Column(nullable=false)
+	private boolean show;
+
+
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -177,8 +181,10 @@ public class TokenInstance extends BaseDomainObject {
 		sb.append(getOffsetX());
 		sb.append(";y=");
 		sb.append(getOffsetY());
+		sb.append(";s=");
+		sb.append(isShow());
 
-		sb.append("{");
+		sb.append("}");
 
 		return sb.toString();
 	}
@@ -234,5 +240,15 @@ public class TokenInstance extends BaseDomainObject {
 		
 		return label;
 	}
+
+	@Nonnull
+	public boolean isShow() {
+		return show;
+	}
+	public void setShow( @Nonnull boolean show) {
+		this.show = show;
+	}
+
+
 
 }

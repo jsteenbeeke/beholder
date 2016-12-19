@@ -12,9 +12,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
@@ -30,10 +33,17 @@ public class TokenStateController extends Panel {
 
 	@Inject
 	private TokenInstanceDAO tokenDAO;
+	
+	private IModel<MapView> viewModel;
+	
+	private IModel<ScaledMap> mapModel;
 
 	public TokenStateController(String id, MapView view, ScaledMap map) {
 		super(id);
 		setOutputMarkupId(true);
+		
+		this.viewModel = ModelMaker.wrap(view);
+		this.mapModel = ModelMaker.wrap(map);
 
 		TokenInstanceFilter filter = new TokenInstanceFilter();
 		if (map != null) {
@@ -42,6 +52,7 @@ public class TokenStateController extends Panel {
 			// Map can't be null, so should return empty set
 			filter.map().isNull();
 		}
+		filter.show().set(true);
 		filter.badge().orderBy(true);
 
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
@@ -76,8 +87,8 @@ public class TokenStateController extends Panel {
 							public void onClick(AjaxRequestTarget target) {
 								mapService.setTokenBorderType(
 										item.getModelObject(), type);
-
-								target.add(TokenStateController.this);
+								
+								replaceMe(target);
 
 							}
 
@@ -118,7 +129,7 @@ public class TokenStateController extends Panel {
 								mapService.setTokenBorderIntensity(
 										item.getModelObject(), intensity);
 
-								target.add(TokenStateController.this);
+								replaceMe(target);
 
 							}
 
@@ -141,8 +152,36 @@ public class TokenStateController extends Panel {
 						_item.add(link);
 					}
 				});
+				item.add(new AjaxIconLink<TokenInstance>("hide", item.getModel(), GlyphIcon.eyeClose) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						mapService.hideToken(getModelObject());
+
+						replaceMe(target);
+					}
+
+					
+				});
 
 			}
 		});
+		
+		
+	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		viewModel.detach();
+		mapModel.detach();
+	}
+	
+	private void replaceMe(AjaxRequestTarget target) {
+		TokenStateController replacement = new TokenStateController(getId(), viewModel.getObject(), mapModel.getObject());
+		this.replaceWith(replacement);
+		target.add(replacement);
+		
 	}
 }
