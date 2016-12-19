@@ -12,7 +12,7 @@ public class SubmitPanel<T> extends Panel {
 	public SubmitPanel(String id, Form<T> form, SerializableConsumer<T> onAfterSubmit) {
 		super(id);
 
-		add(new SubmitLink("submit", form) {
+		SubmitLink submitLink = new SubmitLink("submit", form) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -21,7 +21,15 @@ public class SubmitPanel<T> extends Panel {
 				
 				onAfterSubmit.accept(form.getModelObject());
 			}
-		});
+		};
+		
+		decorateLink(submitLink);
+		
+		add(submitLink);
+	}
+
+	protected void decorateLink(SubmitLink submitLink) {
+		
 	}
 	
 	
