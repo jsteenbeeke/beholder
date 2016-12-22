@@ -38,9 +38,12 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavi
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage.ColorScheme;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
@@ -104,20 +107,72 @@ public class OverviewPage extends AuthenticatedPage {
 
 					}
 				});
-				item.add(new IconLink<MapView>("delete", item.getModel(),
-						GlyphIcon.remove) {
+				item.add(new IconLink<MapView>("edit", item.getModel(),
+						GlyphIcon.edit) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
-						mapViewDAO.delete(mapView);
-						
-						setResponsePage(new OverviewPage());
+						setResponsePage(new BSEntityFormPage<MapView>(
+								edit(getModelObject()).onPage("Edit View")
+										.using(mapViewDAO)) {
+							private static final long serialVersionUID = 1L;
+							
+							@Override
+							protected ActionResult validateEntity(MapView entity) {
+
+								ActionResult result = validateMapView(entity);
+
+								if (result != null) {
+									return result;
+								}
+
+								return super.validateEntity(entity);
+							}
+
+
+							@Override
+							protected void onSaved(MapView entity) {
+								setResponsePage(new OverviewPage());
+							}
+
+							@Override
+							protected void onCancel(MapView entity) {
+								setResponsePage(new OverviewPage());
+							}
+
+						});
 
 					}
 				});
+				item.add(new IconLink<MapView>("delete", item.getModel(),
+						GlyphIcon.trash) {
 
+					private static final long serialVersionUID = 1L;
+
+					@Inject
+					private MapService mapService;
+
+					@Override
+					public void onClick() {
+						MapView mapView = item.getModelObject();
+
+						setResponsePage(new ConfirmationPage("Confirm Deletion",
+								String.format(
+										"Are you sure you wish to delete view \"%s\"",
+										mapView.getIdentifier()),
+								ColorScheme.INVERTED, answer -> {
+									if (answer) {
+										mapService
+												.delete(item.getModelObject());
+									}
+
+									setResponsePage(new OverviewPage());
+								}));
+
+					}
+				});
 
 			}
 
@@ -215,16 +270,11 @@ public class OverviewPage extends AuthenticatedPage {
 
 					@Override
 					protected ActionResult validateEntity(MapView entity) {
-						
-						if (!entity.getIdentifier().matches("[a-zA-Z0-9]+")) {
-							return ActionResult.error("Identifiers may only contain alphanumeric characters");
-						}
 
-						MapViewFilter filter = new MapViewFilter();
-						filter.identifier().set(entity.getIdentifier());
+						ActionResult result = validateMapView(entity);
 
-						if (mapViewDAO.countByFilter(filter) > 0) {
-							return ActionResult.error("Identifier '%s' already in use", entity.getIdentifier());
+						if (result != null) {
+							return result;
 						}
 
 						return super.validateEntity(entity);
@@ -271,6 +321,23 @@ public class OverviewPage extends AuthenticatedPage {
 			}
 		});
 
+	}
+
+	private ActionResult validateMapView(MapView entity) {
+		if (!entity.getIdentifier().matches("[a-zA-Z0-9]+")) {
+			return ActionResult.error(
+					"Identifiers may only contain alphanumeric characters");
+		}
+
+		MapViewFilter filter = new MapViewFilter();
+		filter.identifier().set(entity.getIdentifier());
+
+		if (mapViewDAO.countByFilter(filter) > 0) {
+			return ActionResult.error("Identifier '%s' already in use",
+					entity.getIdentifier());
+		}
+
+		return null;
 	}
 
 }

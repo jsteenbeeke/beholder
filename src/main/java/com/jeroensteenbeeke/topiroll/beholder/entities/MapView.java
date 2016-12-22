@@ -75,7 +75,7 @@ public class MapView extends BaseDomainObject {
 
 	@Column(nullable = false)
 	@EntityFormField(label = "Screen Diagonal", required = true)
-	@Minimum(24)
+	@Minimum(7)
 	private int screenDiagonalInInches;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
