@@ -1,7 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 public enum TokenBorderType {
-	Neutral(255, 255, 0), Ally(0, 0, 255), Enemy(255, 0, 0);
+	Neutral(128, 128, 0), Ally(0, 0, 255), Enemy(255, 0, 0);
 	
 	private final int red;
 	

@@ -89,8 +89,8 @@ public class TokenRenderer implements IMapRenderer {
 			final int diameter = token.getDefinition().getDiameterInSquares();
 			final long pixels = (long) (map.getSquareSize() * ratio);
 			final int radius = (int) ((diameter * pixels) / 2);
-			int x = (int) Math.round(token.getOffsetX() * ratio);
-			int y = (int) Math.round(token.getOffsetY() * ratio);
+			int x = (int) Math.ceil((1+token.getOffsetX()) * ratio );
+			int y = (int) Math.ceil((1+token.getOffsetY()) * ratio );
 			int wh = (int) (diameter * pixels);
 
 			js.__("context.save();");
@@ -117,7 +117,7 @@ public class TokenRenderer implements IMapRenderer {
 			String tokenColor = token.getBorderIntensity()
 					.getColor(token.getBorderType());
 
-			js.__("context.lineWidth = 2;");
+			js.__("context.lineWidth = %d;", (int) Math.max(1, ratio));
 			js.__("context.strokeStyle = '%s';", tokenColor);
 			js.__("context.stroke();");
 

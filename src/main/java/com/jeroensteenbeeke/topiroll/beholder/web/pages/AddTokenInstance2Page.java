@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.markup.html.link.SubmitLink;
 import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -204,7 +205,17 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 			add(new SubmitPanel<ScaledMap>("submit", configureForm, m -> {
 				setResponsePage(new AddTokenInstance2Page(m,
 						tokenModel.getObject(), borderSelect.getModelObject(), current + 1, total));
-			}));
+			}) {
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				protected void decorateLink(SubmitLink submitLink) {
+					super.decorateLink(submitLink);
+					
+					submitLink.setBody(Model.of("Next"));
+				}
+				
+			});
 		}
 	}
 

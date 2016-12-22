@@ -63,7 +63,7 @@ public class MoveTokenController extends Panel {
 
 				int wh = (int) (squareSize * instance.getDefinition().getDiameterInSquares());
 				
-				calculatedWidths.put(item.getIndex(), wh);
+				calculatedWidths.put(item.getIndex(), wh+4);
 				
 
 				ContextImage image = new ContextImage("token", String.format(
@@ -76,7 +76,7 @@ public class MoveTokenController extends Panel {
 						int index = item.getIndex();
 						TokenInstance i = item.getModelObject();
 						int left = i.getOffsetX();
-						int top = i.getOffsetY();
+						int top = i.getOffsetY() - 1;
 						
 						for (int v: calculatedWidths.headMap(index).values()) {
 							left = left - v;
@@ -106,7 +106,7 @@ public class MoveTokenController extends Panel {
 									int top, int left) {
 								super.onDragStop(target, top, left);
 								
-								int x = left + wh;
+								int x = left;
 								
 								for (int v: calculatedWidths.headMap(item.getIndex()).values()) {
 									x = x + v;
@@ -114,7 +114,7 @@ public class MoveTokenController extends Panel {
 								
 								
 								mapService.updateTokenLocation(
-										item.getModelObject(), x, top);
+										item.getModelObject(), x, top+1);
 							}
 						}));
 
