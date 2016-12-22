@@ -18,11 +18,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.danekja.java.util.function.serializable.SerializableBiConsumer;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -31,6 +33,41 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 
 public abstract class TokenStateController extends Panel {
+
+	public class MarkerLink extends AjaxLink<TokenInstance> {
+		private static final long serialVersionUID = 1L;
+
+		private final SerializableBiConsumer<MapView, TokenInstance> onClick;
+
+		private IModel<MapView> viewModel;
+
+		private IModel<TokenInstance> tokenModel;
+
+		public MarkerLink(String id,
+				SerializableBiConsumer<MapView, TokenInstance> onClick,
+				MapView view, TokenInstance token) {
+			super(id);
+			this.onClick = onClick;
+			this.viewModel = ModelMaker.wrap(view);
+			this.tokenModel = ModelMaker.wrap(token);
+		}
+
+		@Override
+		protected void onDetach() {
+			super.onDetach();
+			viewModel.detach();
+			tokenModel.detach();
+		}
+
+		@Override
+		public void onClick(AjaxRequestTarget target) {
+			onClick.accept(viewModel.getObject(), tokenModel.getObject());
+			onMarkerCreated(target);
+
+		}
+
+	}
+
 	private static final String ID_MAX_HP = "maxHP";
 
 	private static final String ID_CURRENT_HP = "currentHP";
@@ -42,6 +79,9 @@ public abstract class TokenStateController extends Panel {
 
 	@Inject
 	private MapService mapService;
+	
+	@Inject
+	private MarkerService markerService;
 
 	private IModel<MapView> viewModel;
 
@@ -127,7 +167,8 @@ public abstract class TokenStateController extends Panel {
 				NumberTextField<Integer> maxHitpointsField = new NumberTextField<>(
 						ID_MAX_HP, Model.of(instance.getMaxHitpoints()),
 						Integer.class);
-				TextField<String> noteField = new TextField<>("note", Model.of(instance.getNote()));
+				TextField<String> noteField = new TextField<>("note",
+						Model.of(instance.getNote()));
 
 				currentHitpointsField
 						.add(new AjaxFormComponentUpdatingBehavior("blur") {
@@ -154,8 +195,7 @@ public abstract class TokenStateController extends Panel {
 
 							}
 						});
-				noteField
-				.add(new AjaxFormComponentUpdatingBehavior("blur") {
+				noteField.add(new AjaxFormComponentUpdatingBehavior("blur") {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -183,6 +223,14 @@ public abstract class TokenStateController extends Panel {
 
 				});
 
+				item.add(new MarkerLink("circle", markerService::createCircle,
+						viewModel.getObject(), item.getModelObject()));
+				item.add(new MarkerLink("cone", markerService::createCone,
+						viewModel.getObject(), item.getModelObject()));
+				item.add(new MarkerLink("cube", markerService::createCube,
+						viewModel.getObject(), item.getModelObject()));
+				item.add(new MarkerLink("line", markerService::createLine,
+						viewModel.getObject(), item.getModelObject()));
 			}
 		};
 
@@ -202,4 +250,6 @@ public abstract class TokenStateController extends Panel {
 	}
 
 	public abstract void replaceMe(AjaxRequestTarget target);
+
+	public abstract void onMarkerCreated(AjaxRequestTarget target);
 }

@@ -55,6 +55,10 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
+ 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
+	private List<AreaMarker> markers = new ArrayList<AreaMarker>();
+
+
 
 	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<FogOfWarVisibility> visibilities = new ArrayList<FogOfWarVisibility>();
@@ -179,6 +183,14 @@ public class MapView extends BaseDomainObject {
 							data.append(s.getStatus().toString());
 
 					});
+			getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId))
+			.forEach(m -> {
+				data.append(";M");
+				data.append(m.getId());
+				data.append("=");
+				data.append(m.calculateState());
+			});
+			
 			selectedMap.getTokens().stream().sorted(Comparator.comparing(TokenInstance::getId)).forEach(t -> {
 				data.append(";T");
 				data.append(t.getId());
@@ -208,5 +220,15 @@ public class MapView extends BaseDomainObject {
 		
 		return getSelectedMap().getPreviewDimension();
 	}
+
+	@Nonnull
+	public List<AreaMarker> getMarkers() {
+		return markers;
+	}
+	public void setMarkers( @Nonnull List<AreaMarker> markers) {
+		this.markers = markers;
+	}
+
+
 
 }

@@ -16,4 +16,9 @@
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-TokenInstance.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-Effect.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarTriangle.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-AreaMarker.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CircleMarker.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-ConeMarker.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-LineMarker.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CubeMarker.xml"/>
 </databaseChangeLog>

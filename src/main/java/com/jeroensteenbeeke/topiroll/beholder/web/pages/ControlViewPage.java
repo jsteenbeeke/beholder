@@ -34,6 +34,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveTokenController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.TokenStateController;
 
@@ -175,6 +176,25 @@ public class ControlViewPage extends AuthenticatedPage {
 
 			}
 		});
+		add(new AjaxLink<Void>("markers") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof MarkerController)) {
+					MapView view = viewModel.getObject();
+					ScaledMap map = view.getSelectedMap();
+
+					WebMarkupContainer newController = new MarkerController(
+							CONTROLLER_ID, view, map);
+					controller.replaceWith(newController);
+					target.add(newController);
+					controller = newController;
+
+				}
+
+			}
+		});
 	}
 
 	@Override
@@ -184,7 +204,7 @@ public class ControlViewPage extends AuthenticatedPage {
 		response.render(JavaScriptHeaderItem
 				.forReference(TouchPunchJavaScriptReference.get()));
 	}
-	
+
 	public class ControlViewTokenStateController extends TokenStateController {
 		private static final long serialVersionUID = 1L;
 
@@ -192,16 +212,23 @@ public class ControlViewPage extends AuthenticatedPage {
 				ScaledMap map) {
 			super(id, view, map);
 		}
-		
+
 		@Override
 		public final void replaceMe(AjaxRequestTarget target) {
 			WebMarkupContainer newController = new ControlViewTokenStateController(
-					CONTROLLER_ID, viewModel.getObject(),
-					getMap());
+					CONTROLLER_ID, viewModel.getObject(), getMap());
 			controller.replaceWith(newController);
 			target.add(newController);
 			controller = newController;
 		}
-		
+
+		@Override
+		public void onMarkerCreated(AjaxRequestTarget target) {
+			WebMarkupContainer newController = new MarkerController(
+					CONTROLLER_ID, viewModel.getObject(), getMap());
+			controller.replaceWith(newController);
+			target.add(newController);
+			controller = newController;
+		}
 	}
 }

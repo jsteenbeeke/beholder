@@ -11,6 +11,7 @@
 					<th>Health</th>
 					<th>Note</th>
 					<th>Hide</th>
+					<th>Marker</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,22 +26,38 @@
 					</td>
 					<td>
 						<div class="form-group">
-							<label wicket:for="currentHP">Current HP</label> <input
+							<label wicket:for="currentHP">HP</label> <input
 								type="number" class="form-control" wicket:id="currentHP" />
 						</div>
 						<div class="form-group">
-							<label wicket:for="maxHP">Max HP</label> <input type="number"
+							<label wicket:for="maxHP">Max</label> <input type="number"
 								class="form-control" wicket:id="maxHP" />
 
 						</div>
 					</td>
 					<td>
 						<div class="form-group">
-							<input type="text"
-								class="form-control" wicket:id="note" />
+							<input type="text" class="form-control" wicket:id="note" />
 						</div>
 					</td>
 					<td><span wicket:id="hide"></span></td>
+					<td>
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-default" wicket:id="circle">
+								<i class="glyphicon glyphicon-plus-sign"></i> Circle
+							</button>
+							<button type="button" class="btn btn-default" wicket:id="cone">
+								<i class="glyphicon glyphicon-plus-sign"></i> Cone
+							</button>
+							<button type="button" class="btn btn-default" wicket:id="cube">
+								<i class="glyphicon glyphicon-plus-sign"></i> Cube
+							</button>
+							<button type="button" class="btn btn-default" wicket:id="line">
+								<i class="glyphicon glyphicon-plus-sign"></i> Line
+							</button>
+
+						</div>
+					</td>
 				</tr>
 			</tbody>
 
