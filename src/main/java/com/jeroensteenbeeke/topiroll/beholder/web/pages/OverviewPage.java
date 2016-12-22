@@ -114,15 +114,19 @@ public class OverviewPage extends AuthenticatedPage {
 
 					@Override
 					public void onClick() {
+						MapView view = getModelObject();
+						final String oldIdentifier = view.getIdentifier();
+						
 						setResponsePage(new BSEntityFormPage<MapView>(
-								edit(getModelObject()).onPage("Edit View")
+								edit(view).onPage("Edit View")
 										.using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
-							
-							@Override
-							protected ActionResult validateEntity(MapView entity) {
 
-								ActionResult result = validateMapView(entity);
+							@Override
+							protected ActionResult validateEntity(
+									MapView entity) {
+
+								ActionResult result = validateMapView(entity, !oldIdentifier.equals(entity.getIdentifier()));
 
 								if (result != null) {
 									return result;
@@ -130,7 +134,6 @@ public class OverviewPage extends AuthenticatedPage {
 
 								return super.validateEntity(entity);
 							}
-
 
 							@Override
 							protected void onSaved(MapView entity) {
@@ -246,6 +249,33 @@ public class OverviewPage extends AuthenticatedPage {
 					item.add(new Image("thumb", new ByteArrayResource(
 							ImageUtil.getMimeType(imageData), imageData)));
 				}
+				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
+						GlyphIcon.edit) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						setResponsePage(new BSEntityFormPage<TokenDefinition>(
+								edit(getModelObject()).onPage("Edit Token").withoutDelete()
+										.using(tokenDAO)) {
+
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							protected void onSaved(TokenDefinition entity) {
+								setResponsePage(new OverviewPage());
+
+							}
+
+							@Override
+							protected void onCancel(TokenDefinition entity) {
+								setResponsePage(new OverviewPage());
+							}
+
+						});
+
+					}
+				});
 
 			}
 
@@ -271,7 +301,7 @@ public class OverviewPage extends AuthenticatedPage {
 					@Override
 					protected ActionResult validateEntity(MapView entity) {
 
-						ActionResult result = validateMapView(entity);
+						ActionResult result = validateMapView(entity, true);
 
 						if (result != null) {
 							return result;
@@ -323,7 +353,7 @@ public class OverviewPage extends AuthenticatedPage {
 
 	}
 
-	private ActionResult validateMapView(MapView entity) {
+	private ActionResult validateMapView(MapView entity, boolean checkIdentifier) {
 		if (!entity.getIdentifier().matches("[a-zA-Z0-9]+")) {
 			return ActionResult.error(
 					"Identifiers may only contain alphanumeric characters");
@@ -332,7 +362,7 @@ public class OverviewPage extends AuthenticatedPage {
 		MapViewFilter filter = new MapViewFilter();
 		filter.identifier().set(entity.getIdentifier());
 
-		if (mapViewDAO.countByFilter(filter) > 0) {
+		if (checkIdentifier && mapViewDAO.countByFilter(filter) > 0) {
 			return ActionResult.error("Identifier '%s' already in use",
 					entity.getIdentifier());
 		}

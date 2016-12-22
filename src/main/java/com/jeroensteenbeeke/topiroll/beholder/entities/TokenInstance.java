@@ -34,6 +34,8 @@ import javax.imageio.ImageIO;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
+import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
 
 @Entity
@@ -52,11 +54,10 @@ public class TokenInstance extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "map")
 	private ScaledMap map;
+	
  	@Column(nullable=true)
 	private String note;
 
-
-	
  	@Column(nullable=true)
 	private Integer maxHitpoints;
 
@@ -68,10 +69,14 @@ public class TokenInstance extends BaseDomainObject {
  	@Column(nullable=false)
 	private boolean show;
 
+	@Column(nullable = true)
+	@EntityFormField(label="Badge", required=true)
+	private String badge;
 
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@EntityFormField(label="Border", required=true, type=FieldType.DROPDOWN)
 	private TokenBorderType borderType;
 
 	@Column(nullable = false)
@@ -80,8 +85,6 @@ public class TokenInstance extends BaseDomainObject {
 	@Column(nullable = false)
 	private int offsetX;
 
-	@Column(nullable = true)
-	private String badge;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "definition")

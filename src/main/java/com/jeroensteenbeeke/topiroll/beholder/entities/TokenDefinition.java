@@ -24,6 +24,9 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
+import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
+import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
 
 @Entity
 public class TokenDefinition extends BaseDomainObject {
@@ -38,15 +41,16 @@ public class TokenDefinition extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
- 	@Column(nullable=false)
+
+	@Column(nullable = false)
+	@EntityFormField(label = "Diameter", required = true,
+			type = FieldType.NUMBER)
+	@Minimum(1)
 	private int diameterInSquares;
 
-
- 	@Column(nullable=false)
+	@Column(nullable = false)
+	@EntityFormField(label = "Name", required = true)
 	private String name;
-
-
-
 
 	@Column(nullable = false)
 	private byte[] imageData;
@@ -99,12 +103,12 @@ public class TokenDefinition extends BaseDomainObject {
 		this.imageData = imageData;
 	}
 
-	
 	@Nonnull
 	public String getName() {
 		return name;
 	}
-	public void setName( @Nonnull String name) {
+
+	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
 
@@ -112,12 +116,9 @@ public class TokenDefinition extends BaseDomainObject {
 	public int getDiameterInSquares() {
 		return diameterInSquares;
 	}
-	public void setDiameterInSquares( @Nonnull int diameterInSquares) {
+
+	public void setDiameterInSquares(@Nonnull int diameterInSquares) {
 		this.diameterInSquares = diameterInSquares;
 	}
-
-
-
-
 
 }
