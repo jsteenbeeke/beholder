@@ -57,6 +57,8 @@ public class AreaMarkerRenderer implements IMapRenderer {
 			marker.renderTo("context", js, ratio, squareSize);
 		}
 		
+		js.__("renderState.set('markers', '%s');", state);
+		
 		handler.execute(js.toString());
 
 	}
