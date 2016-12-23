@@ -2,26 +2,27 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.AreaMarkerFilter;
 
-public class MarkerController extends Panel {
+public abstract class MarkerController extends Panel {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
 	private AreaMarkerDAO markerDAO;
-
-	public MarkerController(String id, MapView view,
-			ScaledMap map) {
+	
+	public MarkerController(String id, MapView view) {
 		super(id);
 		
 		AreaMarkerFilter filter = new AreaMarkerFilter();
@@ -35,9 +36,19 @@ public class MarkerController extends Panel {
 				AreaMarker marker = item.getModelObject();
 				
 				item.add(marker.createPanel("marker"));
-				
+				item.add(new AjaxIconLink<AreaMarker>("delete", item.getModel(), GlyphIcon.trash) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						AreaMarker marker = item.getModelObject();
+						markerDAO.delete(marker);
+						replaceMe(target);
+					}
+				});
 			}
 		});
 	}
 
+	public abstract void replaceMe(AjaxRequestTarget target);
 }

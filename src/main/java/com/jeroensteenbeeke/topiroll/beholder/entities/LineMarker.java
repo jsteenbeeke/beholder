@@ -40,10 +40,14 @@ public class LineMarker extends AreaMarker {
 		js.__("%s.save();", contextVariable);
 		js.__("%s.moveTo(%d, %d);", contextVariable, x, y);
 		js.__("%s.lineTo(%d, %d);", contextVariable, (x + w), (y + h));
+		js.__("%s.closePath()", contextVariable);
 		js.__("%s.strokeStyle = '#%s';", contextVariable, getColor());
-		js.__("%s.strokeWidth = %f;", contextVariable, Math.max(1.0f, ratio));
+		js.__("%s.strokeWidth = %f;", contextVariable, Math.max(2.0f, 4.0*ratio));
 		js.__("%s.stroke();", contextVariable);
 		js.__("%s.restore();", contextVariable);
+		js.__("%s.strokeWidth = 0;", contextVariable);
+		js.__("%s.strokeStyle = '#000000';", contextVariable);
+		
 	}
 
 	@Override

@@ -24,8 +24,10 @@ public class CircleMarker extends AreaMarker {
 		js.__("%s.beginPath();", contextVariable);
 		js.__("%s.arc(%d, %d, %d, 0, 2 * Math.PI, false);", contextVariable, x,
 				y, radius);
+		js.__("%s.closePath()", contextVariable);
 		js.__("%s.fillStyle = '#%s';", contextVariable, getColor());
 		js.__("%s.fill();", contextVariable);
+		
 		js.__("%s.restore();", contextVariable);
 
 	}

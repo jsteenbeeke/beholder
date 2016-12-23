@@ -26,6 +26,7 @@ public class CubeMarker extends AreaMarker {
 		js.__("%s.globalAlpha = 0.5;", contextVariable);
 		js.__("%s.beginPath();", contextVariable);
 		js.__("%s.rect(%d, %d, %d, %d);", contextVariable, x, y, extent, extent);
+		js.__("%s.closePath()", contextVariable);
 		js.__("%s.fillStyle = '#%s';", contextVariable, getColor());
 		js.__("%s.fill();", contextVariable);
 		js.__("%s.restore();", contextVariable);

@@ -183,10 +183,9 @@ public class ControlViewPage extends AuthenticatedPage {
 			public void onClick(AjaxRequestTarget target) {
 				if (!(controller instanceof MarkerController)) {
 					MapView view = viewModel.getObject();
-					ScaledMap map = view.getSelectedMap();
 
-					WebMarkupContainer newController = new MarkerController(
-							CONTROLLER_ID, view, map);
+					WebMarkupContainer newController = new ControlViewMarkerController(
+							CONTROLLER_ID, view);
 					controller.replaceWith(newController);
 					target.add(newController);
 					controller = newController;
@@ -196,6 +195,12 @@ public class ControlViewPage extends AuthenticatedPage {
 			}
 		});
 	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		viewModel.detach();
+	}
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
@@ -203,6 +208,26 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(TouchPunchJavaScriptReference.get()));
+	}
+	
+	public class ControlViewMarkerController extends MarkerController {
+
+		private static final long serialVersionUID = 1L;
+
+		private ControlViewMarkerController(String id, MapView view) {
+			super(id, view);
+		}
+		
+		@Override
+		public void replaceMe(AjaxRequestTarget target) {
+			WebMarkupContainer newController = new ControlViewMarkerController(
+					CONTROLLER_ID, viewModel.getObject());
+			controller.replaceWith(newController);
+			target.add(newController);
+			controller = newController;
+			
+		}
+		
 	}
 
 	public class ControlViewTokenStateController extends TokenStateController {
@@ -224,8 +249,8 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		@Override
 		public void onMarkerCreated(AjaxRequestTarget target) {
-			WebMarkupContainer newController = new MarkerController(
-					CONTROLLER_ID, viewModel.getObject(), getMap());
+			WebMarkupContainer newController = new ControlViewMarkerController(
+					CONTROLLER_ID, viewModel.getObject());
 			controller.replaceWith(newController);
 			target.add(newController);
 			controller = newController;
