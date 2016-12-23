@@ -33,12 +33,17 @@ public class ConeMarker extends AreaMarker {
 		int y = (int) (ratio * getOffsetY());
 		int radius = (int) (ratio * getExtent() * squareSize / 5);
 		double theta = Math.toRadians((double) getTheta());
-
+		double endAngle = theta + (Math.PI/2);
+		
 		js.__("%s.save();", contextVariable);
 		js.__("%s.globalAlpha = 0.5;", contextVariable);
 		js.__("%s.beginPath();", contextVariable);
-		js.__("%s.arc(%d, %d, %d, %f, Math.PI / 2, false);", contextVariable, x,
-				y, radius, theta);
+		js.__("%s.moveTo(%d, %d);", contextVariable, x, y);
+		js.__("%s.arc(%d, %d, %d, %f, %f, false);", contextVariable, x,
+				y, radius, theta, endAngle);
+		
+		
+		
 		js.__("%s.fillStyle = '#%s';", contextVariable, getColor());
 		js.__("%s.fill();", contextVariable);
 		js.__("%s.restore();", contextVariable);

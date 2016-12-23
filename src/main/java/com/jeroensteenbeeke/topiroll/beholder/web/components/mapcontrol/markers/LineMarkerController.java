@@ -7,6 +7,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.PatternValidator;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
@@ -38,24 +39,24 @@ public class LineMarkerController extends Panel {
 
 		this.markerModel = ModelMaker.wrap(marker);
 
-		colorField = new TextField<>("color",
-				markerModel.getProperty(LineMarker::getColor));
+		colorField = new TextField<>("color", Model.of(marker.getColor()));
 		colorField.add(new PatternValidator("[0-9a-fA-F]{6}"));
 
 		offsetXField = new NumberTextField<>("x",
-				markerModel.getProperty(LineMarker::getOffsetX));
+				Model.of(marker.getOffsetX()));
 		offsetXField.setMinimum(0);
+		offsetXField.setStep(new SquareStepModel(markerModel));
 
 		offsetYField = new NumberTextField<>("y",
-				markerModel.getProperty(LineMarker::getOffsetY));
+				Model.of(marker.getOffsetY()));
 		offsetYField.setMinimum(0);
+		offsetYField.setStep(new SquareStepModel(markerModel));
 
-		radiusField = new NumberTextField<>("r",
-				markerModel.getProperty(LineMarker::getExtent));
+		radiusField = new NumberTextField<>("r", Model.of(marker.getExtent()));
 		radiusField.setMinimum(1);
 
 		thetaField = new NumberTextField<>("theta",
-				markerModel.getProperty(LineMarker::getTheta));
+				Model.of(marker.getTheta()));
 		thetaField.setMinimum(0);
 		thetaField.setMaximum(359);
 
@@ -78,7 +79,7 @@ public class LineMarkerController extends Panel {
 		private static final long serialVersionUID = 1L;
 
 		public LineMarkerUpdateBehavior() {
-			super("blur");
+			super("change");
 		}
 
 		@Override

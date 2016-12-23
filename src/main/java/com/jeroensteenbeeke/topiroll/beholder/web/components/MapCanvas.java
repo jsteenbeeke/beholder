@@ -130,6 +130,10 @@ public class MapCanvas extends WebComponent {
 		response.render(JavaScriptHeaderItem.forScript(
 				String.format("var mapViewContext = '%s';",
 				Randomizer.random(23)), "mapViewContext"));
+		response.render(JavaScriptHeaderItem.forScript(
+				"var onAfterRenderFloorplan = [];", "onAfterRenderFloorplan"));
+		response.render(JavaScriptHeaderItem.forScript(
+				"var onAfterRenderToken = [];", "onAfterRenderFloorplan"));
 
 		OnDomReadyJavaScriptHandler handler = new OnDomReadyJavaScriptHandler(
 				response);

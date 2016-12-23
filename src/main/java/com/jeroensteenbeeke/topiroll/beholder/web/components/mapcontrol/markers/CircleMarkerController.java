@@ -7,6 +7,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.PatternValidator;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
@@ -15,6 +16,8 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CircleMarker;
 
 public class CircleMarkerController extends Panel {
+
+	
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,21 +39,23 @@ public class CircleMarkerController extends Panel {
 
 		this.markerModel = ModelMaker.wrap(marker);
 
-		colorField = new TextField<>("color", markerModel.getProperty(CircleMarker::getColor));
+		colorField = new TextField<String>("color", Model.of(marker.getColor()));
 		colorField.add(new PatternValidator("[0-9a-fA-F]{6}"));
 		
 		offsetXField = new NumberTextField<>("x",
-				markerModel.getProperty(CircleMarker::getOffsetX));
+				Model.of(marker.getOffsetX()));
 		offsetXField.setMinimum(0);
+		offsetXField.setStep(new SquareStepModel(markerModel));
 
 		offsetYField = new NumberTextField<>("y",
-				markerModel.getProperty(CircleMarker::getOffsetY));
+				Model.of(marker.getOffsetY()));
 		offsetYField.setMinimum(0);
+		offsetYField.setStep(new SquareStepModel(markerModel));
 
 		radiusField = new NumberTextField<>("r",
-				markerModel.getProperty(CircleMarker::getExtent));
+				Model.of(marker.getExtent()));
 		radiusField.setMinimum(1);
-
+		
 		colorField.add(new CircleMarkerUpdateBehavior());
 		offsetXField.add(new CircleMarkerUpdateBehavior());
 		offsetYField.add(new CircleMarkerUpdateBehavior());
@@ -62,13 +67,15 @@ public class CircleMarkerController extends Panel {
 		add(radiusField);
 
 	}
+	
+	
 
 	public class CircleMarkerUpdateBehavior
 			extends AjaxFormComponentUpdatingBehavior {
 		private static final long serialVersionUID = 1L;
 
 		public CircleMarkerUpdateBehavior() {
-			super("blur");
+			super("change");
 		}
 
 		@Override

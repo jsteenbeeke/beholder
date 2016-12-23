@@ -32,6 +32,7 @@ public class AreaMarkerRenderer implements IMapRenderer {
 		js.__("var canvas = document.getElementById('%s');", canvasId);
 		js = js.ifBlock("canvas");
 		js = js.ifBlock("!renderState.check('markers', '%s')", state);
+		js = js.objFunction("var renderMarkers");
 		js.__("var context = canvas.getContext('2d');");
 
 		ScaledMap map = mapView.getSelectedMap();
@@ -58,6 +59,8 @@ public class AreaMarkerRenderer implements IMapRenderer {
 		}
 		
 		js.__("renderState.set('markers', '%s');", state);
+		js = js.close();
+		js.__("onAfterRenderFloorplan.push(renderMarkers);");
 		
 		handler.execute(js.toString());
 

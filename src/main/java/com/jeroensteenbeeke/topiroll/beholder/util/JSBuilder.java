@@ -64,6 +64,24 @@ public class JSBuilder {
 			}
 		};
 	}
+	
+	public JSBuilder whileBlock(String condition, Object... params) {
+		if (params.length == 0) {
+			__("while (%s) {", condition);
+		} else {
+			__("while (%s) {", String.format(condition, params));
+		}
+		return new JSBuilder("\t".concat(indent), builder, this) {
+			@Override
+			protected void terminateCurrent() {
+				if (parent != null) {
+					builder.append(parent.getIndent());
+				}
+
+				builder.append("}\n");
+			}
+		};
+	}
 
 	public JSBuilder varFunction(String varName, String... params) {
 		__("var %s = function(%s) {", varName,
@@ -146,4 +164,6 @@ public class JSBuilder {
 		};
 		
 	}
+
+	
 }

@@ -83,8 +83,9 @@ public class TokenRenderer implements IMapRenderer {
 				.filter(i -> i.isVisible(mapView, previewMode)).collect(Collectors.toList());
 
 		for (TokenInstance token : tokens) {
-			js.__("var imageObj = new Image();");
-			js = js.objFunction("imageObj.onload");
+			Long tokenId = token.getDefinition().getId();
+			js.__("var imageObj%d = new Image();", tokenId);
+			js = js.objFunction(String.format("imageObj%d.onload", tokenId));
 
 			final int diameter = token.getDefinition().getDiameterInSquares();
 			final long pixels = (long) (map.getSquareSize() * ratio);
@@ -103,7 +104,7 @@ public class TokenRenderer implements IMapRenderer {
 			js.__("context.closePath();");
 			js.__("context.clip();");
 
-			js.__("context.drawImage(imageObj, %d, %d, %d, %d);", x, y, wh, wh);
+			js.__("context.drawImage(imageObj%d, %d, %d, %d, %d);", tokenId,  x, y, wh, wh);
 
 			js.__("context.restore();");
 
@@ -152,9 +153,9 @@ public class TokenRenderer implements IMapRenderer {
 
 			js = js.close();
 
-			js.__("imageObj.src = '%s' + 'context=' + mapViewContext;",
+			js.__("imageObj%d.src = '%s' + 'context=' + mapViewContext;", tokenId,
 					urlService.contextRelative(String.format("/tokens/%d?%s",
-							token.getDefinition().getId(), previewMode
+							tokenId, previewMode
 									? "preview=true&" : "")));
 		}
 

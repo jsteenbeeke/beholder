@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,7 +107,7 @@ public abstract class TokenStateController extends Panel {
 
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
 				.filter(i -> i.isVisible(view, true))
-				.collect(Collectors.toList());
+				.collect(Collectors.toCollection(ArrayList::new));
 
 		ListView<TokenInstance> tokenView = new ListView<TokenInstance>(
 				"tokens", ModelMaker.wrap(tokens)) {

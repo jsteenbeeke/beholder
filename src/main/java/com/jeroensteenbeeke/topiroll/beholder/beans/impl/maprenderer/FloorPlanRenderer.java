@@ -103,7 +103,10 @@ public class FloorPlanRenderer implements IMapRenderer {
 		}
 
 		js.__("renderState.set('floorplan', '%s');", state);
-		js = js.close();
+		js = js.whileBlock("onAfterRenderFloorplan.length > 0");
+		js.__("var callback = onAfterRenderFloorplan.pop();");
+		js.__("callback();");
+		js = js.close().close();
 		if (map != null) {
 			js.__("%s.src = '%s' + 'context=' + mapViewContext;", imageVar,
 					urlService.contextRelative(String.format("/maps/%d?%s",
