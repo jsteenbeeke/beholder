@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ExternalLink;
@@ -31,7 +32,10 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ByteArrayResource;
+import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
+import org.apache.wicket.util.time.Time;
 
 import com.jeroensteenbeeke.hyperion.ducktape.web.resources.ThumbnailResource;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
@@ -238,16 +242,29 @@ public class OverviewPage extends AuthenticatedPage {
 						new Label("size", String.format("%d squares (diameter)",
 								definition.getDiameterInSquares())));
 
-				byte[] imageData = definition.getImageData();
-				Dimension dimension = ImageUtil.getImageDimensions(imageData);
+				final byte[] imageData = definition.getImageData();
+				final Dimension dimension = ImageUtil.getImageDimensions(imageData);
 
 				if (dimension.getHeight() > TOKEN_THUMB_MAX
 						|| dimension.getWidth() > TOKEN_THUMB_MAX) {
-					item.add(new Image("thumb",
-							new ThumbnailResource(40, imageData)));
+					item.add(new ContextImage("thumb",
+							String.format("tokens/%d?preview=true", definition.getId())));
 				} else {
-					item.add(new Image("thumb", new ByteArrayResource(
-							ImageUtil.getMimeType(imageData), imageData)));
+					item.add(new Image("thumb", new DynamicImageResource(ImageUtil.getMimeType(imageData)) {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						protected byte[] getImageData(Attributes attributes) {
+							setLastModifiedTime(Time.now());
+							
+							return imageData;
+						}
+						
+						@Override
+						protected IResourceCachingStrategy getCachingStrategy() {
+							return NoOpResourceCachingStrategy.INSTANCE;
+						}
+					}));
 				}
 				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
 						GlyphIcon.edit) {
