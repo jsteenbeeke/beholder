@@ -202,9 +202,11 @@ public class TokenInstance extends BaseDomainObject {
 		}
 
 		sb.append("border=");
-		sb.append(getBorderType());
-		sb.append(";intensity=");
-		sb.append(getBorderIntensity());
+		sb.append(getBorderType().name());
+		sb.append(";hp=");
+		sb.append(getCurrentHitpoints());
+		sb.append("/");
+		sb.append(getMaxHitpoints());
 		sb.append(";x=");
 		sb.append(getOffsetX());
 		sb.append(";y=");

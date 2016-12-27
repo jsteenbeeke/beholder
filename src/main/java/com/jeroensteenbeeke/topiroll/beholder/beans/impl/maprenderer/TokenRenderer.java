@@ -130,12 +130,15 @@ public class TokenRenderer implements IMapRenderer {
 
 				int box_height = wh / 6;
 				
+				double text_ratio = 1.15;
+				double box_ratio = 1.8;
 
-				int box_width = (int) (badge.length() * 2 * ratio);
-
-				int box_left_x = x + (wh / 2) - box_width; 
-
+				int box_width = (int) (badge.length() * box_ratio * ratio);
+				int text_width = (int) (badge.length() * text_ratio * ratio);
 				
+				int box_left_x = x + (wh / 2) - (box_width / 2); 
+
+				int text_x = box_left_x + (box_width / 2) - (text_width / 2);
 				int text_y = (3 * box_bottom_y + box_top_y) / 4;
 
 				js.__("context.lineWidth = 1;");
@@ -150,7 +153,7 @@ public class TokenRenderer implements IMapRenderer {
 
 				js.__("context.fillStyle = '%s';", tokenColor);
 
-				js.__("context.fillText('%s', %d, %d)", badge, box_left_x, text_y);
+				js.__("context.fillText('%s', %d, %d)", badge, text_x, text_y);
 
 				js.__("context.restore();");
 			}
