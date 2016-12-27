@@ -6,13 +6,15 @@
 		</wicket:container>
 	</div>
 
-	<form class="form-inline">
+	<form class="form-inline" wicket:id="pcontainer">
 		<table class="table">
 			<tr>
+				<th>Label</th>
 				<th>Rough</th>
 				<th>Precision</th>
 			</tr>
 			<tr wicket:id="precision">
+				<td wicket:id="name"></td>
 				<td>
 					<div class="form-group">
 						<label wicket:for="xlarge">X</label> <input type="number"

@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -50,6 +52,8 @@ public class MoveTokenController extends Panel {
 
 	private ImageContainer previewImage;
 
+	private WebMarkupContainer precisionContainer;
+
 	public MoveTokenController(String id, MapView view, ScaledMap map) {
 		super(id);
 
@@ -60,6 +64,7 @@ public class MoveTokenController extends Panel {
 		TokenInstanceFilter filter = new TokenInstanceFilter();
 		filter.map().set(map);
 		filter.show().set(true);
+		filter.badge().orderBy(true);
 
 		tokenView = new DataView<TokenInstance>(
 				"tokens", FilterDataProvider.of(filter, tokenDAO)) {
@@ -133,6 +138,8 @@ public class MoveTokenController extends Panel {
 
 								mapService.updateTokenLocation(
 										item.getModelObject(), x, top + 1);
+								
+								target.add(precisionContainer);
 							}
 						}));
 
@@ -155,14 +162,20 @@ public class MoveTokenController extends Panel {
 		previewImage.setOutputMarkupId(true);
 
 		add(previewImage);
-
-		add(new DataView<TokenInstance>("precision",
+		
+		precisionContainer = new WebMarkupContainer("pcontainer");
+		precisionContainer.setOutputMarkupId(true);
+		add(precisionContainer);
+		
+		precisionContainer.add(new DataView<TokenInstance>("precision",
 				FilterDataProvider.of(filter, tokenDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(Item<TokenInstance> item) {
 				TokenInstance token = item.getModelObject();
+				
+				item.add(new Label("name", token.getLabel()));
 
 				ScaledMap map = token.getMap();
 				
@@ -216,6 +229,7 @@ public class MoveTokenController extends Panel {
 			}
 
 		});
+
 	}
 	
 	public class TokenCoordinateUpdateBehavior extends AjaxFormComponentUpdatingBehavior {

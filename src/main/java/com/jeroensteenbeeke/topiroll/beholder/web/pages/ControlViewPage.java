@@ -202,8 +202,14 @@ public class ControlViewPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				ScaledMap selectedMap = viewModel.getObject().getSelectedMap();
+				
+				if (selectedMap == null) {
+					return;
+				}
+				
 				setResponsePage(new AddTokenInstance1Page(
-						viewModel.getObject().getSelectedMap()) {
+						selectedMap) {
 
 					private static final long serialVersionUID = 1L;
 
