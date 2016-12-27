@@ -14,26 +14,42 @@
 				<i class="glyphicon glyphicon-ok-sign"></i> Select Map
 			</button>
 		</div>
+		<wicket:enclosure child="hideReveal">
 		<div class="btn-group">
 			<button type="button" wicket:id="hideReveal" class="btn btn-info">
 				<i class="glyphicon glyphicon-th-list"></i> Hide/Reveal
 			</button>
 		</div>
+		</wicket:enclosure>
+		<wicket:enclosure child="addTokens">
+		<div class="btn-group">
+			<button type="button" class="btn btn-info" wicket:id="addTokens">
+				<i class="glyphicon glyphicon-plus"></i> Add Tokens
+			</button>
+		</div>
+		</wicket:enclosure>
+		<wicket:enclosure child="tokenStates">
 		<div class="btn-group">
 			<button type="button" class="btn btn-info" wicket:id="tokenStates">
 				<i class="glyphicon glyphicon-tower"></i> Token states
 			</button>
 		</div>
+		</wicket:enclosure>
+		<wicket:enclosure child="moveTokens">
 		<div class="btn-group">
 			<button type="button" class="btn btn-info" wicket:id="moveTokens">
 				<i class="glyphicon glyphicon-arrow-right"></i> Move tokens
 			</button>
 		</div>
+		</wicket:enclosure>
+		<wicket:enclosure child="markers">
 		<div class="btn-group">
 			<button type="button" class="btn btn-info" wicket:id="markers">
 				<i class="glyphicon glyphicon-screenshot"></i> Marker Data
 			</button>
 		</div>
+		</wicket:enclosure>
+		
 	</div>
 
 	<div wicket:id="controller"></div>

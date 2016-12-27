@@ -83,9 +83,11 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new ViewMapPage(mapModel.getObject()));
+				onBackButtonClicked();
 
 			}
+
+			
 		});
 
 		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
@@ -199,6 +201,11 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 		add(previewImage);
 
+		createSubmitPanel(current, total, configureForm);
+	}
+
+	protected void createSubmitPanel(int current, int total,
+			Form<ScaledMap> configureForm) {
 		if (current == total) {
 			add(new MapEditSubmitPanel("submit", configureForm));
 		} else {
@@ -233,6 +240,10 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		super.onDetach();
 
 		mapModel.detach();
+	}
+	
+	protected void onBackButtonClicked() {
+		setResponsePage(new ViewMapPage(mapModel.getObject()));
 	}
 
 	public NumberTextField<Integer> getOffsetXField() {

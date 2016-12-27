@@ -64,7 +64,7 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new ViewMapPage(mapModel.getObject()));
+				onBackButtonClicked();
 
 			}
 		});
@@ -92,10 +92,13 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
-				setResponsePage(new AddTokenInstance2Page(mapModel.getObject(),
-						tokenSelect.getModelObject(), TokenBorderType.Enemy, 1,
-						amountField.getModelObject()));
+				ScaledMap map = mapModel.getObject();
+				TokenDefinition token = tokenSelect.getModelObject();
+				Integer amount = amountField.getModelObject();
+
+				setResponsePage(createSecondStepPage(map, token, 1, amount));
 			}
+
 		};
 
 		configureForm.add(tokenSelect);
@@ -120,6 +123,17 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 		super.onDetach();
 
 		mapModel.detach();
+	}
+
+	protected void onBackButtonClicked() {
+		setResponsePage(new ViewMapPage(mapModel.getObject()));
+	}
+
+	protected AddTokenInstance2Page createSecondStepPage(ScaledMap map,
+			TokenDefinition token, int current,
+			int amount) {
+		return new AddTokenInstance2Page(map, token, TokenBorderType.Enemy, current,
+				amount);
 	}
 
 }

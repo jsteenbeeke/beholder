@@ -129,24 +129,28 @@ public class TokenRenderer implements IMapRenderer {
 				int box_bottom_y = y + wh;
 
 				int box_height = wh / 6;
+				
 
-				int box_width = (int) (badge.length() * 1.5 * ratio);
+				int box_width = (int) (badge.length() * 2 * ratio);
 
+				int box_left_x = x + (wh / 2) - box_width; 
+
+				
 				int text_y = (3 * box_bottom_y + box_top_y) / 4;
 
 				js.__("context.lineWidth = 1;");
 				js.__("context.strokeStyle = '%s';", tokenColor);
 				js.__("context.fillStyle = '%s';", "#ffffff");
-				js.__("context.moveTo(%d, %d);", x, y + 3);
-				js.__("context.fillRect(%d, %d, %d, %d);", x, box_top_y,
+				js.__("context.moveTo(%d, %d);", box_left_x, y + 3);
+				js.__("context.fillRect(%d, %d, %d, %d);", box_left_x, box_top_y,
 						box_width, box_height);
 
-				js.__("context.strokeRect(%d, %d, %d, %d);", x, box_top_y,
+				js.__("context.strokeRect(%d, %d, %d, %d);", box_left_x, box_top_y,
 						box_width, box_height);
 
 				js.__("context.fillStyle = '%s';", tokenColor);
 
-				js.__("context.fillText('%s', %d, %d)", badge, x, text_y);
+				js.__("context.fillText('%s', %d, %d)", badge, box_left_x, text_y);
 
 				js.__("context.restore();");
 			}

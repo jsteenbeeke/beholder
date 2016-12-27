@@ -16,6 +16,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
+import java.util.stream.Stream;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,6 +26,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -31,7 +34,10 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScript
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
@@ -47,6 +53,16 @@ public class ControlViewPage extends AuthenticatedPage {
 	private IModel<MapView> viewModel;
 
 	private WebMarkupContainer controller;
+
+	private AjaxLink<Void> markersLink;
+
+	private AjaxLink<Void> moveTokenLink;
+
+	private AjaxLink<Void> tokenStateLink;
+
+	private AjaxLink<Void> hideRevealLink;
+
+	private AjaxLink<Void> createTokensLink;
 
 	public ControlViewPage(MapView view) {
 		super(String.format("Control View - %s", view.getIdentifier()));
@@ -74,9 +90,7 @@ public class ControlViewPage extends AuthenticatedPage {
 					if (map != null) {
 						WebMarkupContainer newController = new HideRevealController(
 								CONTROLLER_ID, viewModel.getObject(), map);
-						controller.replaceWith(newController);
-						target.add(newController);
-						controller = newController;
+						setController(target, newController);
 					}
 				}
 			});
@@ -102,20 +116,17 @@ public class ControlViewPage extends AuthenticatedPage {
 								WebMarkupContainer newController = new HideRevealController(
 										CONTROLLER_ID, viewModel.getObject(),
 										map);
-								controller.replaceWith(newController);
-								target.add(newController);
-								controller = newController;
+								setController(target, newController);
 							}
 						}
 					};
-					controller.replaceWith(newController);
-					target.add(newController);
-					controller = newController;
+					setController(target, newController);
 				}
 
 			}
 		});
-		add(new AjaxLink<Void>("hideReveal") {
+
+		addLink(hideRevealLink = new AjaxLink<Void>("hideReveal") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -127,16 +138,14 @@ public class ControlViewPage extends AuthenticatedPage {
 					if (map != null) {
 						WebMarkupContainer newController = new HideRevealController(
 								CONTROLLER_ID, view, map);
-						controller.replaceWith(newController);
-						target.add(newController);
-						controller = newController;
+						setController(target, newController);
+
 					}
 				}
-
 			}
 		});
 
-		add(new AjaxLink<Void>("tokenStates") {
+		addLink(tokenStateLink = new AjaxLink<Void>("tokenStates") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -148,15 +157,13 @@ public class ControlViewPage extends AuthenticatedPage {
 					if (map != null) {
 						WebMarkupContainer newController = new ControlViewTokenStateController(
 								CONTROLLER_ID, view, map);
-						controller.replaceWith(newController);
-						target.add(newController);
-						controller = newController;
+						setController(target, newController);
 					}
 				}
 
 			}
 		});
-		add(new AjaxLink<Void>("moveTokens") {
+		addLink(moveTokenLink = new AjaxLink<Void>("moveTokens") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -168,15 +175,13 @@ public class ControlViewPage extends AuthenticatedPage {
 					if (map != null) {
 						WebMarkupContainer newController = new MoveTokenController(
 								CONTROLLER_ID, view, map);
-						controller.replaceWith(newController);
-						target.add(newController);
-						controller = newController;
+						setController(target, newController);
 					}
 				}
 
 			}
 		});
-		add(new AjaxLink<Void>("markers") {
+		addLink(markersLink = new AjaxLink<Void>("markers") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -186,16 +191,84 @@ public class ControlViewPage extends AuthenticatedPage {
 
 					WebMarkupContainer newController = new ControlViewMarkerController(
 							CONTROLLER_ID, view);
-					controller.replaceWith(newController);
-					target.add(newController);
-					controller = newController;
+					setController(target, newController);
 
 				}
 
 			}
 		});
+		addLink(createTokensLink = new AjaxLink<Void>("addTokens") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				setResponsePage(new AddTokenInstance1Page(
+						viewModel.getObject().getSelectedMap()) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected void onBackButtonClicked() {
+						setResponsePage(
+								new ControlViewPage(viewModel.getObject()));
+					}
+
+					@Override
+					protected AddTokenInstance2Page createSecondStepPage(
+							ScaledMap map, TokenDefinition token, int current,
+							int amount) {
+						final IModel<TokenDefinition> tokenModel = ModelMaker
+								.wrap(token);
+						tokenModel.detach();
+
+						return new AddTokenInstance2Page(map, token,
+								TokenBorderType.Enemy, current, amount) {
+
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							protected void onBackButtonClicked() {
+								setResponsePage(new ControlViewPage(
+										viewModel.getObject()));
+							}
+
+							@Override
+							protected void createSubmitPanel(int current,
+									int total, Form<ScaledMap> configureForm) {
+								if (current == total) {
+									add(new SubmitPanel<>("submit",
+											configureForm, m -> {
+												setResponsePage(
+														new ControlViewPage(
+																viewModel
+																		.getObject()));
+											}));
+								} else {
+									add(new SubmitPanel<>("submit",
+											configureForm, m -> {
+												setResponsePage(
+														createSecondStepPage(m,
+																tokenModel
+																		.getObject(),
+																current + 1,
+																total));
+											}));
+								}
+							}
+						};
+					}
+				});
+			}
+		});
 	}
-	
+
+	public void addLink(AjaxLink<Void> link) {
+		link.setOutputMarkupId(true);
+		link.setOutputMarkupPlaceholderTag(true);
+		// link.setVisible(false);
+		add(link);
+	}
+
 	@Override
 	protected void onDetach() {
 		super.onDetach();
@@ -209,7 +282,26 @@ public class ControlViewPage extends AuthenticatedPage {
 		response.render(JavaScriptHeaderItem
 				.forReference(TouchPunchJavaScriptReference.get()));
 	}
-	
+
+	private void setController(AjaxRequestTarget target,
+			WebMarkupContainer newController) {
+		controller.replaceWith(newController);
+		target.add(newController);
+		controller = newController;
+
+		MapView view = viewModel.getObject();
+		ScaledMap map = view.getSelectedMap();
+
+		boolean mapButtonsVisible = map != null;
+
+		Stream.<AjaxLink<Void>> builder().add(markersLink).add(moveTokenLink)
+				.add(tokenStateLink).add(hideRevealLink).build()
+				.forEach(link -> {
+					// link.setVisible(mapButtonsVisible);
+					target.add(link);
+				});
+	}
+
 	public class ControlViewMarkerController extends MarkerController {
 
 		private static final long serialVersionUID = 1L;
@@ -217,17 +309,14 @@ public class ControlViewPage extends AuthenticatedPage {
 		private ControlViewMarkerController(String id, MapView view) {
 			super(id, view);
 		}
-		
+
 		@Override
 		public void replaceMe(AjaxRequestTarget target) {
-			WebMarkupContainer newController = new ControlViewMarkerController(
-					CONTROLLER_ID, viewModel.getObject());
-			controller.replaceWith(newController);
-			target.add(newController);
-			controller = newController;
-			
+			setController(target, new ControlViewMarkerController(CONTROLLER_ID,
+					viewModel.getObject()));
+
 		}
-		
+
 	}
 
 	public class ControlViewTokenStateController extends TokenStateController {
@@ -240,20 +329,14 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		@Override
 		public final void replaceMe(AjaxRequestTarget target) {
-			WebMarkupContainer newController = new ControlViewTokenStateController(
-					CONTROLLER_ID, viewModel.getObject(), getMap());
-			controller.replaceWith(newController);
-			target.add(newController);
-			controller = newController;
+			setController(target, new ControlViewTokenStateController(
+					CONTROLLER_ID, viewModel.getObject(), getMap()));
 		}
 
 		@Override
 		public void onMarkerCreated(AjaxRequestTarget target) {
-			WebMarkupContainer newController = new ControlViewMarkerController(
-					CONTROLLER_ID, viewModel.getObject());
-			controller.replaceWith(newController);
-			target.add(newController);
-			controller = newController;
+			setController(target, new ControlViewMarkerController(CONTROLLER_ID,
+					viewModel.getObject()));
 		}
 	}
 }
