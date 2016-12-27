@@ -130,8 +130,8 @@ public class TokenRenderer implements IMapRenderer {
 
 				int box_height = wh / 6;
 				
-				double text_ratio = 1.15;
-				double box_ratio = 1.8;
+				double text_ratio = 1.0;
+				double box_ratio = 2.0;
 
 				int box_width = (int) (badge.length() * box_ratio * ratio);
 				int text_width = (int) (badge.length() * text_ratio * ratio);
