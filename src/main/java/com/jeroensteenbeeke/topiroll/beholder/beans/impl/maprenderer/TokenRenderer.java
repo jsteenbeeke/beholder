@@ -80,7 +80,8 @@ public class TokenRenderer implements IMapRenderer {
 		filter.show().set(true);
 
 		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
-				.filter(i -> i.isVisible(mapView, previewMode)).collect(Collectors.toList());
+				.filter(i -> i.isVisible(mapView, previewMode))
+				.collect(Collectors.toList());
 
 		for (TokenInstance token : tokens) {
 			Long tokenId = token.getDefinition().getId();
@@ -90,8 +91,8 @@ public class TokenRenderer implements IMapRenderer {
 			final int diameter = token.getDefinition().getDiameterInSquares();
 			final long pixels = (long) (map.getSquareSize() * ratio);
 			final int radius = (int) ((diameter * pixels) / 2);
-			int x = (int) Math.ceil((1+token.getOffsetX()) * ratio );
-			int y = (int) Math.ceil((1+token.getOffsetY()) * ratio );
+			int x = (int) Math.ceil((1 + token.getOffsetX()) * ratio);
+			int y = (int) Math.ceil((1 + token.getOffsetY()) * ratio);
 			int wh = (int) (diameter * pixels);
 
 			js.__("context.save();");
@@ -104,7 +105,8 @@ public class TokenRenderer implements IMapRenderer {
 			js.__("context.closePath();");
 			js.__("context.clip();");
 
-			js.__("context.drawImage(imageObj%d, %d, %d, %d, %d);", tokenId,  x, y, wh, wh);
+			js.__("context.drawImage(imageObj%d, %d, %d, %d, %d);", tokenId, x,
+					y, wh, wh);
 
 			js.__("context.restore();");
 
@@ -129,30 +131,34 @@ public class TokenRenderer implements IMapRenderer {
 				int box_bottom_y = y + wh;
 
 				int box_height = wh / 6;
-				
-				double text_ratio = 1.0;
-				double box_ratio = 2.0;
+
+				double text_ratio = 1.25 * diameter;
+				double box_ratio = 2.0 * diameter;
 
 				int box_width = (int) (badge.length() * box_ratio * ratio);
 				int text_width = (int) (badge.length() * text_ratio * ratio);
-				
-				int box_left_x = x + (wh / 2) - (box_width / 2); 
+
+				int box_left_x = x + (wh / 2) - (box_width / 2);
 
 				int text_x = box_left_x + (box_width / 2) - (text_width / 2);
-				int text_y = (3 * box_bottom_y + box_top_y) / 4;
+				int text_y = (3 * box_bottom_y + box_top_y) / 4 - (diameter-1);
 
 				js.__("context.lineWidth = 1;");
 				js.__("context.strokeStyle = '%s';", tokenColor);
 				js.__("context.fillStyle = '%s';", "#ffffff");
 				js.__("context.moveTo(%d, %d);", box_left_x, y + 3);
-				js.__("context.fillRect(%d, %d, %d, %d);", box_left_x, box_top_y,
-						box_width, box_height);
+				js.__("context.fillRect(%d, %d, %d, %d);", box_left_x,
+						box_top_y, box_width, box_height);
 
-				js.__("context.strokeRect(%d, %d, %d, %d);", box_left_x, box_top_y,
-						box_width, box_height);
+				js.__("context.strokeRect(%d, %d, %d, %d);", box_left_x,
+						box_top_y, box_width, box_height);
 
 				js.__("context.fillStyle = '%s';", tokenColor);
-
+				if (box_height < 9 && diameter == 1) {
+					js.__("context.font = '6pt Arial';");
+				} else {
+					js.__("context.font = '8pt Arial';");
+				}
 				js.__("context.fillText('%s', %d, %d)", badge, text_x, text_y);
 
 				js.__("context.restore();");
@@ -160,10 +166,10 @@ public class TokenRenderer implements IMapRenderer {
 
 			js = js.close();
 
-			js.__("imageObj%d.src = '%s' + 'context=' + mapViewContext;", tokenId,
+			js.__("imageObj%d.src = '%s' + 'context=' + mapViewContext;",
+					tokenId,
 					urlService.contextRelative(String.format("/tokens/%d?%s",
-							tokenId, previewMode
-									? "preview=true&" : "")));
+							tokenId, previewMode ? "preview=true&" : "")));
 		}
 
 		js.__("renderState.set('tokens', '%s');", state);

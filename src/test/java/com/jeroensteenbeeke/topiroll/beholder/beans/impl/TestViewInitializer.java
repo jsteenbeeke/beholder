@@ -59,10 +59,10 @@ public class TestViewInitializer implements IAccountInitializer {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void onAccountCreated(BeholderUser user) {
 		MapView view = new MapView();
-		view.setHeight(1080);
-		view.setWidth(1920);
+		view.setHeight(768);
+		view.setWidth(1360);
 		view.setIdentifier("test");
-		view.setScreenDiagonalInInches(24);
+		view.setScreenDiagonalInInches(32);
 		view.setOwner(user);
 		viewDAO.save(view);
 		
