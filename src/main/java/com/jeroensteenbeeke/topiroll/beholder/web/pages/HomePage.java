@@ -22,6 +22,7 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.social.web.components.slack.SlackLink;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 
 public class HomePage extends BootstrapBasePage {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +36,8 @@ public class HomePage extends BootstrapBasePage {
 		}
 
 		add(new SlackLink("slack"));
+		
+		add(new LegalPanel("legal"));
 	}
 
 }

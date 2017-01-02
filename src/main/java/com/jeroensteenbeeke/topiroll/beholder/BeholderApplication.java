@@ -34,6 +34,7 @@ import com.jeroensteenbeeke.hyperion.social.Slack;
 import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionScheduler;
+import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
@@ -52,6 +53,13 @@ public class BeholderApplication extends WebApplication
 				.add(new SpringComponentInjector(this));
 		ctx = WebApplicationContextUtils
 				.getWebApplicationContext(getServletContext());
+
+		String sourceURL = ctx.getBean(URLService.class).getSourceURL();
+
+		if (sourceURL == null || sourceURL.isEmpty()) {
+			throw new IllegalStateException(
+					"This software is licensed under the Affero GPL, which requires you to provide source code to all users. Please input the source URL");
+		}
 
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
 

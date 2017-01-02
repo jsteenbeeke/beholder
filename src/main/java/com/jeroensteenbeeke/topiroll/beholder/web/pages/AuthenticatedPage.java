@@ -28,6 +28,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.EntityPageInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.BeholderNavBar;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 
 public abstract class AuthenticatedPage extends BootstrapBasePage
 		implements EntityPageInitializer {
@@ -42,6 +43,8 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 			BeholderSession.get().invalidate();
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
+		
+		add(new LegalPanel("legal"));
 	}
 
 	@CheckForNull
