@@ -29,7 +29,7 @@
 
 		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-solstice</artifactId>
+			<artifactId>hyperion-solstice-wicket</artifactId>
 		</dependency>
 
 		<dependency>
@@ -45,7 +45,7 @@
 
 		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-tardis</artifactId>
+			<artifactId>hyperion-tardis-wicket</artifactId>
 		</dependency>
 
 		<dependency>
