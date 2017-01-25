@@ -33,7 +33,7 @@ import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
 import com.jeroensteenbeeke.hyperion.social.Slack;
 import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
-import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionScheduler;
+import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
