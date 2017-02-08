@@ -24,8 +24,13 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 
 @Component
 class URLServiceImpl implements URLService {
+	private static final String SOURCE_URL_CONSTANT = "${application.sourceurl}";
+
 	@Value("${application.baseurl}")
 	private String urlPrefix;
+	
+	@Value(SOURCE_URL_CONSTANT)
+	private String sourceUrl;
 
 	@Override
 	public String contextRelative(String relativePath) {
@@ -41,5 +46,14 @@ class URLServiceImpl implements URLService {
 		}
 
 		return String.format("%s/%s", prefix, path);
+	}
+	
+	@Override
+	public String getSourceURL() {
+		if (sourceUrl.equals(SOURCE_URL_CONSTANT)) {
+			return null;
+		}
+		
+		return sourceUrl;
 	}
 }
