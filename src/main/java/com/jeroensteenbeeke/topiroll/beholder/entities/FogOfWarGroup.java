@@ -152,4 +152,8 @@ public class FogOfWarGroup extends BaseDomainObject
 				.orElse(VisibilityStatus.INVISIBLE);
 	}
 
+	public boolean containsCoordinate(int x, int y) {
+		return getShapes().stream().anyMatch(shape -> shape.containsCoordinate(x, y));
+	}
+
 }

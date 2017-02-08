@@ -17,6 +17,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,6 +29,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 
+import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
@@ -53,14 +56,21 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 	private MapService mapService;
 
 	private IModel<MapView> mapViewModel;
-
+	
 	public HideRevealController(String id, MapView mapView, ScaledMap map) {
+		this(id, mapView, map, ImmutableList.of(), ImmutableList.of());
+	}
+
+	public HideRevealController(String id, MapView mapView, ScaledMap map, List<Long> groupIds, List<Long> shapeIds) {
 		super(id, ModelMaker.wrap(map));
 		setOutputMarkupId(true);
 
 		this.mapViewModel = ModelMaker.wrap(mapView);
 
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
+		if (!groupIds.isEmpty()) {
+			groupFilter.id().in(groupIds);
+		}
 		groupFilter.map().set(map);
 		groupFilter.name().orderBy(true);
 
@@ -77,6 +87,9 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 		});
 
 		FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
+		if (!shapeIds.isEmpty()) {
+			shapeFilter.id().in(shapeIds);
+		}
 		shapeFilter.map().set(map);
 		shapeFilter.group().isNull();
 
