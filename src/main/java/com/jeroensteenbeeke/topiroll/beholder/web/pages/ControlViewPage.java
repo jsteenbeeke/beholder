@@ -78,27 +78,31 @@ public class ControlViewPage extends AuthenticatedPage {
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				super.onClick(target, event);
 
-				int top = event.getTop();
-				int left = event.getLeft();
+				
 				int offsetTop = event.getOffsetTop();
 				int offsetLeft = event.getOffsetLeft();
 
 				MapView view = viewModel.getObject();
 				if (view != null) {
 					ScaledMap map = view.getSelectedMap();
-
+					
 					if (map != null) {
+						double factor = map.getPreviewFactor();
+						
+						int x = (int) (offsetLeft * factor);
+						int y = (int) (offsetTop * factor);
+
+						
 						List<Long> selectedShapes = map.getFogOfWarShapes()
 								.stream()
 								.filter(s -> s.getGroup() == null)
-								.filter(s -> s.containsCoordinate(offsetLeft,
-										offsetTop))
+								.filter(s -> s.containsCoordinate(x, y))
 								.map(FogOfWarShape::getId)
 								.collect(Collectors.toList());
 
 						List<Long> selectedGroups = map.getGroups().stream()
-								.filter(s -> s.containsCoordinate(offsetLeft,
-										offsetTop))
+								.filter(s -> s.containsCoordinate(x,
+										y))
 								.map(FogOfWarGroup::getId)
 								.collect(Collectors.toList());
 
@@ -107,6 +111,10 @@ public class ControlViewPage extends AuthenticatedPage {
 							WebMarkupContainer newController = new HideRevealController(
 									CONTROLLER_ID, viewModel.getObject(), map,
 									selectedGroups, selectedShapes);
+							setController(target, newController);
+						} else {
+							WebMarkupContainer newController = new HideRevealController(
+									CONTROLLER_ID, viewModel.getObject(), map);
 							setController(target, newController);
 						}
 					}
