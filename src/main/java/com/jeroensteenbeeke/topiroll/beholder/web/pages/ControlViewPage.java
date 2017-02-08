@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -35,11 +36,9 @@ import org.apache.wicket.model.IModel;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
@@ -71,7 +70,51 @@ public class ControlViewPage extends AuthenticatedPage {
 		super(String.format("Control View - %s", view.getIdentifier()));
 
 		viewModel = ModelMaker.wrap(view);
-		add(new MapCanvas("preview", viewModel, true));
+		MapCanvas mapCanvas = new MapCanvas("preview", viewModel, true);
+		mapCanvas.add(new OnClickBehavior() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
+				super.onClick(target, event);
+
+				int top = event.getTop();
+				int left = event.getLeft();
+				int offsetTop = event.getOffsetTop();
+				int offsetLeft = event.getOffsetLeft();
+
+				MapView view = viewModel.getObject();
+				if (view != null) {
+					ScaledMap map = view.getSelectedMap();
+
+					if (map != null) {
+						List<Long> selectedShapes = map.getFogOfWarShapes()
+								.stream()
+								.filter(s -> s.getGroup() == null)
+								.filter(s -> s.containsCoordinate(offsetLeft,
+										offsetTop))
+								.map(FogOfWarShape::getId)
+								.collect(Collectors.toList());
+
+						List<Long> selectedGroups = map.getGroups().stream()
+								.filter(s -> s.containsCoordinate(offsetLeft,
+										offsetTop))
+								.map(FogOfWarGroup::getId)
+								.collect(Collectors.toList());
+
+						if (!selectedShapes.isEmpty()
+								|| !selectedGroups.isEmpty()) {
+							WebMarkupContainer newController = new HideRevealController(
+									CONTROLLER_ID, viewModel.getObject(), map,
+									selectedGroups, selectedShapes);
+							setController(target, newController);
+						}
+					}
+				}
+
+			}
+		});
+		add(mapCanvas);
 
 		add(new Link<Void>("back") {
 			private static final long serialVersionUID = 1L;
@@ -206,13 +249,12 @@ public class ControlViewPage extends AuthenticatedPage {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				ScaledMap selectedMap = viewModel.getObject().getSelectedMap();
-				
+
 				if (selectedMap == null) {
 					return;
 				}
-				
-				setResponsePage(new AddTokenInstance1Page(
-						selectedMap) {
+
+				setResponsePage(new AddTokenInstance1Page(selectedMap) {
 
 					private static final long serialVersionUID = 1L;
 

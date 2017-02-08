@@ -78,6 +78,8 @@ public class MapCanvas extends WebComponent {
 						return getMarkupId();
 					}
 				}));
+		
+		
 	}
 
 	@Override
