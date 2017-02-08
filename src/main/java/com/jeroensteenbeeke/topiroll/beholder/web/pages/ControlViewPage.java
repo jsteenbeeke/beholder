@@ -92,8 +92,8 @@ public class ControlViewPage extends AuthenticatedPage {
 					if (map != null) {
 						double factor = map.getPreviewFactor();
 
-						int x = (int) (offsetLeft * factor);
-						int y = (int) (offsetTop * factor);
+						int x = (int) (offsetLeft / factor);
+						int y = (int) (offsetTop / factor);
 
 						log.info("Clicked {},{}", x, y);
 
