@@ -33,6 +33,8 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -47,6 +49,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveToke
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.TokenStateController;
 
 public class ControlViewPage extends AuthenticatedPage {
+	private static final Logger log = LoggerFactory
+			.getLogger(ControlViewPage.class);
 
 	private static final String CONTROLLER_ID = "controller";
 
@@ -78,33 +82,34 @@ public class ControlViewPage extends AuthenticatedPage {
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				super.onClick(target, event);
 
-				
 				int offsetTop = event.getOffsetTop();
 				int offsetLeft = event.getOffsetLeft();
 
 				MapView view = viewModel.getObject();
 				if (view != null) {
 					ScaledMap map = view.getSelectedMap();
-					
+
 					if (map != null) {
 						double factor = map.getPreviewFactor();
-						
+
 						int x = (int) (offsetLeft * factor);
 						int y = (int) (offsetTop * factor);
 
-						
+						log.info("Clicked {},{}", x, y);
+
 						List<Long> selectedShapes = map.getFogOfWarShapes()
-								.stream()
-								.filter(s -> s.getGroup() == null)
+								.stream().filter(s -> s.getGroup() == null)
 								.filter(s -> s.containsCoordinate(x, y))
 								.map(FogOfWarShape::getId)
 								.collect(Collectors.toList());
 
 						List<Long> selectedGroups = map.getGroups().stream()
-								.filter(s -> s.containsCoordinate(x,
-										y))
+								.filter(s -> s.containsCoordinate(x, y))
 								.map(FogOfWarGroup::getId)
 								.collect(Collectors.toList());
+
+						log.info("Location matched {} groups and {} shapes",
+								selectedGroups.size(), selectedShapes.size());
 
 						if (!selectedShapes.isEmpty()
 								|| !selectedGroups.isEmpty()) {
