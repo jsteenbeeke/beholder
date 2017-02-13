@@ -18,6 +18,15 @@
 package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import javax.servlet.ServletException;
+import javax.websocket.DeploymentException;
+
+import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
+import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
@@ -26,16 +35,36 @@ public class StartBeholderApplication {
 	public static void main(String[] args) throws Exception {
 		if (args.length < 2) {
 			System.err.println("Usage:");
-			System.err.println("\tStartBeholderApplication clientId clientSecret");
+			System.err.println(
+					"\tStartBeholderApplication clientId clientSecret");
 			System.exit(-1);
 			return;
 		}
-		
+
 		createApplicationHandler(args).ifPresent(Handler::waitForKeyPress);
 	}
 
-	public static Optional<Handler> createApplicationHandler(String[] args) throws Exception {
-		return InMemory.run("beholder-web").withContextPath("/beholder/").withProperty("slack.clientid", args[0])
-				.withProperty("slack.clientsecret", args[1]).withProperty("application.baseurl", "http://localhost:8081/beholder/").withProperty("application.sourceurl", "file://"+ System.getProperty("user.dir")).atPort(8081);
+	public static Optional<Handler> createApplicationHandler(String[] args)
+			throws Exception {
+		Consumer<WebAppContext> initWebsockets = context -> {
+			try {
+				ServerContainer wscontainer = WebSocketServerContainerInitializer
+						.configureContext(context);
+
+				wscontainer.addEndpoint(new WicketServerEndpointConfig());
+			} catch (DeploymentException | ServletException e) {
+				e.printStackTrace();
+			}
+		};
+
+		return InMemory.run("beholder-web").withContextPath("/beholder/")
+				.withContextConsumer(initWebsockets)
+				.withProperty("slack.clientid", args[0])
+				.withProperty("slack.clientsecret", args[1])
+				.withProperty("application.baseurl",
+						"http://localhost:8081/beholder/")
+				.withProperty("application.sourceurl",
+						"file://" + System.getProperty("user.dir"))
+				.atPort(8081);
 	}
 }

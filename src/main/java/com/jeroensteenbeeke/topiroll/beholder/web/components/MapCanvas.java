@@ -20,23 +20,21 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 import javax.inject.Inject;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
+import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
+import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.util.time.Duration;
 
-import com.jeroensteenbeeke.hyperion.util.Randomizer;
+import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.util.AjaxRequestTargetJavaScriptHandler;
-import com.jeroensteenbeeke.topiroll.beholder.util.OnDomReadyJavaScriptHandler;
 
 public class MapCanvas extends WebComponent {
 	private static final long serialVersionUID = 1L;
@@ -48,12 +46,15 @@ public class MapCanvas extends WebComponent {
 
 	private final boolean previewMode;
 
+	private final long viewId;
+
 	public MapCanvas(String id, IModel<MapView> viewModel,
 			boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
 		this.viewModel = viewModel;
 		this.previewMode = previewMode;
+		this.viewId = viewModel.getObject().getId();
 
 		add(AttributeModifier.replace("style",
 				new LoadableDetachableModel<String>() {
@@ -78,8 +79,7 @@ public class MapCanvas extends WebComponent {
 						return getMarkupId();
 					}
 				}));
-		
-		
+
 	}
 
 	@Override
@@ -87,25 +87,35 @@ public class MapCanvas extends WebComponent {
 
 		super.onInitialize();
 
-		add(new AbstractAjaxTimerBehavior(Duration.seconds(5)) {
+		add(new WebSocketBehavior() {
+
+			/**
+			 * 
+			 */
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onTimer(AjaxRequestTarget target) {
-				final String canvasId = MapCanvas.this.getMarkupId();
-
-				MapView view = viewModel.getObject();
-
-				if (target != null) {
-					AjaxRequestTargetJavaScriptHandler handler = new AjaxRequestTargetJavaScriptHandler(
-							target);
-
-					renderers.getRenderers().forEach(r -> {
-						r.onRefresh(canvasId, handler, view, previewMode);
-					});
-				}
-
+			protected void onClose(ClosedMessage message) {
+				super.onClose(message);
+				
+				BeholderRegistry.instance.removeSession(message.getSessionId(), message.getKey());
 			}
+
+			@Override
+			protected void onConnect(ConnectedMessage message) {
+				super.onConnect(message);
+
+				if (previewMode) {
+					BeholderRegistry.instance
+							.addPreviewSession(message.getSessionId())
+							.withKey(message.getKey()).forView(viewId);
+				} else {
+					BeholderRegistry.instance
+							.addLiveSession(message.getSessionId())
+							.withKey(message.getKey()).forView(viewId);
+				}
+			}
+
 		});
 	}
 
@@ -129,21 +139,7 @@ public class MapCanvas extends WebComponent {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/renderstate.js")));
-		response.render(JavaScriptHeaderItem.forScript(
-				String.format("var mapViewContext = '%s';",
-				Randomizer.random(23)), "mapViewContext"));
-		response.render(JavaScriptHeaderItem.forScript(
-				"var onAfterRenderFloorplan = [];", "onAfterRenderFloorplan"));
-		response.render(JavaScriptHeaderItem.forScript(
-				"var onAfterRenderToken = [];", "onAfterRenderFloorplan"));
+						"js/renderer.js")));
 
-		OnDomReadyJavaScriptHandler handler = new OnDomReadyJavaScriptHandler(
-				response);
-
-		renderers.getRenderers().forEach(r -> {
-			r.onRefresh(getMarkupId(), handler, viewModel.getObject(),
-					previewMode);
-		});
 	}
 }
