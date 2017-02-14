@@ -52,6 +52,7 @@ public class MapCanvas extends WebComponent {
 			boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
+		setMarkupId("map");
 		this.viewModel = viewModel;
 		this.previewMode = previewMode;
 		this.viewId = viewModel.getObject().getId();
@@ -137,6 +138,15 @@ public class MapCanvas extends WebComponent {
 
 		super.renderHead(response);
 
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/marker.js")));
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/token.js")));
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/map.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/renderer.js")));
