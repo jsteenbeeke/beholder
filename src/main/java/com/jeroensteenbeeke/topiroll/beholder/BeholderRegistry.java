@@ -1,14 +1,23 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.JSRenderable;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.Payload;
 
 public enum BeholderRegistry {
 	instance;
+
+	private static final Logger log = LoggerFactory
+			.getLogger(BeholderRegistry.class);
 
 	private static final ObjectMapper mapper = initMapper();
 
@@ -41,17 +50,49 @@ public enum BeholderRegistry {
 		}
 	}
 
+	public void sendToView(long viewId, JSRenderable renderable) {
+
+		entries.forEach((sessionId, entry) -> {
+			if (entry.getViewId() == viewId) {
+				Payload payload = new Payload();
+				payload.setCanvasId(entry.getMarkupId());
+				payload.setData(renderable);
+
+				IWebSocketConnection connection = BeholderApplication.get()
+						.getWebSocketRegistry()
+						.getConnection(BeholderApplication.get(), sessionId,
+								entry.getKey());
+
+				try {
+					connection.sendMessage(mapper.writeValueAsString(payload));
+				} catch (IOException e) {
+					log.error(e.getMessage(), e);
+				}
+
+			}
+		});
+
+	}
+
 	public static class RegistryEntry {
 		private final IKey key;
 
 		private final long viewId;
 
+		private final String markupId;
+
 		private final boolean previewMode;
 
-		private RegistryEntry(IKey key, long viewId, boolean previewMode) {
+		private RegistryEntry(IKey key, String markupId, long viewId,
+				boolean previewMode) {
+			this.markupId = markupId;
 			this.key = key;
 			this.viewId = viewId;
 			this.previewMode = previewMode;
+		}
+
+		public String getMarkupId() {
+			return markupId;
 		}
 
 		public IKey getKey() {
@@ -81,12 +122,12 @@ public enum BeholderRegistry {
 			this.registry = registry;
 		}
 
-		public AddViewStep withKey(IKey key) {
-			return new AddViewStep(id, previewMode, key, registry);
+		public AddMarkupIdStep withKey(IKey key) {
+			return new AddMarkupIdStep(id, previewMode, key, registry);
 		}
 	}
 
-	public static class AddViewStep {
+	public static class AddMarkupIdStep {
 		private final String id;
 
 		private final IKey key;
@@ -95,18 +136,46 @@ public enum BeholderRegistry {
 
 		private final boolean previewMode;
 
-		private AddViewStep(String id, boolean previewMode, IKey key,
+		private AddMarkupIdStep(String id, boolean previewMode, IKey key,
 				BeholderRegistry registry) {
+			super();
 			this.id = id;
+			this.key = key;
+			this.registry = registry;
+			this.previewMode = previewMode;
+		}
+
+		public AddViewStep withMarkupId(String markupId) {
+			return new AddViewStep(id, markupId, previewMode, key, registry);
+		}
+
+	}
+
+	public static class AddViewStep {
+		private final String sessionId;
+
+		private final String markupId;
+
+		private final IKey key;
+
+		private final BeholderRegistry registry;
+
+		private final boolean previewMode;
+
+		private AddViewStep(String sessionId, String markupId,
+				boolean previewMode, IKey key, BeholderRegistry registry) {
+			this.sessionId = sessionId;
+			this.markupId = markupId;
 			this.previewMode = previewMode;
 			this.key = key;
 			this.registry = registry;
 		}
 
 		public void forView(long viewId) {
-			RegistryEntry entry = new RegistryEntry(key, viewId, previewMode);
+			RegistryEntry entry = new RegistryEntry(key, markupId, viewId,
+					previewMode);
 
-			registry.entries.put(id, entry);
+			registry.entries.put(sessionId, entry);
 		}
 	}
 }

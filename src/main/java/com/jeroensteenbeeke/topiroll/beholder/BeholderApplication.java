@@ -20,6 +20,8 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
+import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.IResource;
@@ -44,6 +46,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
 	private ApplicationContext ctx;
+	
+	private IWebSocketConnectionRegistry webSocketRegistry;
 
 	@Override
 	protected void init() {
@@ -92,7 +96,13 @@ public class BeholderApplication extends WebApplication
 						return new TokenResource();
 					}
 				});
+		
+		webSocketRegistry = new SimpleWebSocketConnectionRegistry();
 
+	}
+	
+	public IWebSocketConnectionRegistry getWebSocketRegistry() {
+		return webSocketRegistry;
 	}
 
 	@Override

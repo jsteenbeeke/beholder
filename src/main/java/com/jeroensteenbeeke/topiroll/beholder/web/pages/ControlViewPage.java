@@ -75,6 +75,8 @@ public class ControlViewPage extends AuthenticatedPage {
 
 		viewModel = ModelMaker.wrap(view);
 		MapCanvas mapCanvas = new MapCanvas("preview", viewModel, true);
+		
+		
 		mapCanvas.add(new OnClickBehavior() {
 			private static final long serialVersionUID = 1L;
 

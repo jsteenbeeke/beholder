@@ -1,5 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class JSToken  {
 	private String src;
 	
@@ -36,6 +38,7 @@ public class JSToken  {
 		this.src = src;
 	}
 
+	@JsonProperty("border_type")
 	public String getBorderType() {
 		return borderType;
 	}
@@ -44,6 +47,7 @@ public class JSToken  {
 		this.borderType = borderType;
 	}
 
+	@JsonProperty("border_intensity")
 	public String getBorderIntensity() {
 		return borderIntensity;
 	}

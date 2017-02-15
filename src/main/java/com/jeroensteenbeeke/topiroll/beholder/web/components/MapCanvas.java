@@ -52,7 +52,6 @@ public class MapCanvas extends WebComponent {
 			boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
-		setMarkupId("map");
 		this.viewModel = viewModel;
 		this.previewMode = previewMode;
 		this.viewId = viewModel.getObject().getId();
@@ -109,11 +108,11 @@ public class MapCanvas extends WebComponent {
 				if (previewMode) {
 					BeholderRegistry.instance
 							.addPreviewSession(message.getSessionId())
-							.withKey(message.getKey()).forView(viewId);
+							.withKey(message.getKey()).withMarkupId(getMarkupId()).forView(viewId);
 				} else {
 					BeholderRegistry.instance
 							.addLiveSession(message.getSessionId())
-							.withKey(message.getKey()).forView(viewId);
+							.withKey(message.getKey()).withMarkupId(getMarkupId()).forView(viewId);
 				}
 			}
 
