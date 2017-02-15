@@ -45,11 +45,8 @@ function determineBorderColor(type, intensity) {
 
 function renderToken(canvasId, token) {
 	var src = token.src; // string
-	var borderType = token.border_type; // enum (Neutral, Ally, Enemy)
-	var borderIntensity = token.border_intensity; // enum (HEALTHY,
-													// MINOR_INJURIES,
-													// MODERATELY_INJURED,
-													// HEAVILY_INJURED, DEAD)
+	var borderType = token.border_type; // enum
+	var borderIntensity = token.border_intensity; // enum
 	var label = token.label; // string
 	var x = token.x; // int
 	var y = token.y; // int
@@ -59,39 +56,31 @@ function renderToken(canvasId, token) {
 	var radius = (width + height) / 4;
 	var ox = x + radius;
 	var oy = y + radius;
-	var color = determineColor(borderType, borderIntensity);
+	var color = determineBorderColor(borderType, borderIntensity);
 
 	var img = new Image();
 
 	img.onload = function() {
+		// Step 1: Draw image (with circle clip path)
 		context.save();
 		context.beginPath();
-
 		context.arc(ox, oy, 0, 2 * Math.PI);
-
 		context.closePath();
 		context.clip();
-
 		context.drawImage(img, x, y, width, height);
-
 		context.restore();
 
+		// Step 2: Draw border
 		context.save();
 		context.beginPath();
-
 		context.arc(ox, oy, 0, 2 * Math.PI);
-
 		context.closePath();
-		
 		context.lineWidth = radius / 7;
 		context.strokeStyle = color;
 		context.stroke();
-
 		context.restore();
 
-		
-		// FIXME: this only draws the image, not the text. Look at
-		// TokenRenderer for the rest
+		// Step 3: Draw text (TODO: see TokenRenderer)
 	}
 	img.src = src;
 }
