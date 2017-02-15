@@ -30,6 +30,7 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -170,4 +171,5 @@ public abstract class FogOfWarShape extends BaseDomainObject
 
 	public abstract boolean containsCoordinate(int x, int y);
 
+	public abstract JSShape toJS(double factor);
 }

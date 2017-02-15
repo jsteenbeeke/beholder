@@ -19,6 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -29,6 +31,9 @@ import javax.persistence.Enumerated;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarTrianglePreviewResource;
 
@@ -164,5 +169,22 @@ public class FogOfWarTriangle extends FogOfWarShape {
 	public boolean containsCoordinate(int x, int y) {
 		return getOrientation().toPolygon(getOffsetX(), getOffsetY(),
 				getHorizontalSide(), getVerticalSide()).contains(x, y);
+	}
+
+	@Override
+	public JSShape toJS(double factor) {
+		Polygon poly = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide());
+
+		List<XY> points = new LinkedList<>();
+		for (int i = 0; i < poly.npoints; i++) {
+			points.add(new XY(rel(poly.xpoints[i], factor),
+					rel(poly.ypoints[i], factor)));
+		}
+
+		JSPolygon polygon = new JSPolygon();
+		polygon.setPoints(points);
+
+		return polygon;
 	}
 }

@@ -26,6 +26,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.LineMarkerController;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 public class LineMarker extends AreaMarker {
@@ -60,12 +62,13 @@ public class LineMarker extends AreaMarker {
 		js.__("%s.lineTo(%d, %d);", contextVariable, (x + w), (y + h));
 		js.__("%s.closePath()", contextVariable);
 		js.__("%s.strokeStyle = '#%s';", contextVariable, getColor());
-		js.__("%s.strokeWidth = %f;", contextVariable, Math.max(2.0f, 4.0*ratio));
+		js.__("%s.strokeWidth = %f;", contextVariable,
+				Math.max(2.0f, 4.0 * ratio));
 		js.__("%s.stroke();", contextVariable);
 		js.__("%s.restore();", contextVariable);
 		js.__("%s.strokeWidth = 0;", contextVariable);
 		js.__("%s.strokeStyle = '#000000';", contextVariable);
-		
+
 	}
 
 	@Override
@@ -73,9 +76,21 @@ public class LineMarker extends AreaMarker {
 
 		return new LineMarkerController(id, this);
 	}
-	
+
 	@Override
 	public String getMarkerState() {
 		return ";CONE;theta=".concat(Integer.toString(getTheta()));
+	}
+
+	@Override
+	public JSShape getShape(double factor) {
+		JSCircle circle = new JSCircle();
+		circle.setRadius((int) (getExtent() * factor));
+		circle.setX((int) (getOffsetX() * factor));
+		circle.setY((int) (getOffsetY() * factor));
+		circle.setThetaOffset(Math.toRadians((double) getTheta()));
+		circle.setThetaExtent(Math.toRadians(0.5));
+
+		return circle;
 	}
 }

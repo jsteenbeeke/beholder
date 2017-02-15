@@ -139,6 +139,10 @@ public class MapCanvas extends WebComponent {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/geometry.js")));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/marker.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,

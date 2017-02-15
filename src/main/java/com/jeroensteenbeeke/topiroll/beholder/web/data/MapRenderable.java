@@ -8,30 +8,50 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 public class MapRenderable implements JSRenderable {
 	private String src;
 
+	private int width;
+
+	private int height;
+
 	private List<JSShape> revealed;
-	
+
 	private List<JSToken> tokens;
-	
+
 	@JsonProperty("area_markers")
 	private List<JSAreaMarker> areaMarkers;
-	
+
 	@Override
 	public String getType() {
 		return "map";
 	}
 
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
 	public String getSrc() {
 		return src;
 	}
-	
+
 	public void setSrc(String src) {
 		this.src = src;
 	}
-	
+
 	public List<JSShape> getRevealed() {
 		return revealed;
 	}
-	
+
 	public void setRevealed(List<JSShape> revealed) {
 		this.revealed = revealed;
 	}
@@ -51,6 +71,5 @@ public class MapRenderable implements JSRenderable {
 	public void setAreaMarkers(List<JSAreaMarker> areaMarkers) {
 		this.areaMarkers = areaMarkers;
 	}
-	
-	
+
 }

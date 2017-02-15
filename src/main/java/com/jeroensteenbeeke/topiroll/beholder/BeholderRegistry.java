@@ -3,6 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
@@ -51,9 +52,13 @@ public enum BeholderRegistry {
 	}
 
 	public void sendToView(long viewId, JSRenderable renderable) {
+		sendToView(viewId, e -> true, renderable);
+	}
+	
+	public void sendToView(long viewId, Predicate<RegistryEntry> selector, JSRenderable renderable) {
 
 		entries.forEach((sessionId, entry) -> {
-			if (entry.getViewId() == viewId) {
+			if (entry.getViewId() == viewId && selector.test(entry)) {
 				Payload payload = new Payload();
 				payload.setCanvasId(entry.getMarkupId());
 				payload.setData(renderable);

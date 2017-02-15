@@ -28,6 +28,8 @@ import javax.persistence.Entity;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarCirclePreviewResource;
 
@@ -139,4 +141,16 @@ public class FogOfWarCircle extends FogOfWarShape {
 
 	}
 
+	@Override
+	public JSShape toJS(double factor) {
+		JSCircle circle = new JSCircle();
+		circle.setRadius((int) (getRadius()*factor));
+		circle.setX((int) (getOffsetX()*factor));
+		circle.setY((int) (getOffsetY()*factor));
+		circle.setThetaOffset(0.0);
+		circle.setThetaExtent(Math.PI*2);
+
+
+		return circle;
+	}
 }

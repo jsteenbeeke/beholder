@@ -8,6 +8,8 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 		if (data.type) {
 			if ("map" === data.type) {
 				renderMap(canvasId, data);
+			} else if ("clear" === data.type) {
+				document.getElementById(canvasId).clear();
 			}
 		}
 	

@@ -38,6 +38,7 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.JSToken;
 
 @Entity
 public class TokenInstance extends BaseDomainObject {
@@ -304,7 +305,16 @@ public class TokenInstance extends BaseDomainObject {
 		this.note = note;
 	}
 
-
+	public JSToken toJS(double factor) {
+		JSToken token = new JSToken();
+		token.setBorderType(getBorderType().name());
+		token.setBorderIntensity(getBorderIntensity().name());
+		token.setHeight((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
+		token.setWidth((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
+		token.setLabel(getLabel());
+		
+		return token;
+	}
 
 
 

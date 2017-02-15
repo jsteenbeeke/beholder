@@ -26,6 +26,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.ConeMarkerController;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 public class ConeMarker extends AreaMarker {
@@ -76,6 +78,18 @@ public class ConeMarker extends AreaMarker {
 	@Override
 	public String getMarkerState() {
 		return ";CONE;theta=".concat(Integer.toString(getTheta()));
+	}
+
+	@Override
+	public JSShape getShape(double factor) {
+		JSCircle circle = new JSCircle();
+		circle.setRadius((int) (getExtent()*factor));
+		circle.setX((int) (getOffsetX()*factor));
+		circle.setY((int) (getOffsetY()*factor));
+		circle.setThetaOffset(Math.toRadians((double) getTheta()));
+		circle.setThetaExtent(Math.PI/2);
+
+		return circle;
 	}
 
 }
