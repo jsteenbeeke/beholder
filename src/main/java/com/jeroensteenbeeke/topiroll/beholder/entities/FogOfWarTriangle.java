@@ -30,7 +30,6 @@ import javax.persistence.Enumerated;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
@@ -137,32 +136,6 @@ public class FogOfWarTriangle extends FogOfWarShape {
 		return String.format("%s Triangle (x: %d, y: %d, w: %d, h: %d)",
 				getOrientation().getDescription(), getOffsetX(), getOffsetY(),
 				getHorizontalSide(), getVerticalSide());
-	}
-
-	@Override
-	public void renderTo(JSRenderContext context) {
-		if (shouldRender(context.getView(), context.isPreviewMode())) {
-			final JSBuilder js = context.getJavaScriptBuilder();
-			final double multiplier = context.getMultiplier();
-			final String contextVariable = context.getContextVariable();
-
-			Polygon poly = getOrientation().toPolygon(getOffsetX(),
-					getOffsetY(), getHorizontalSide(), getVerticalSide());
-
-			if (poly.npoints > 0) {
-				js.__("%s.moveTo(%d, %d);", contextVariable,
-						rel(poly.xpoints[poly.npoints - 1], multiplier),
-						rel(poly.ypoints[poly.npoints - 1], multiplier));
-
-				for (int i = 0; i < poly.npoints; i++) {
-					int x = rel(poly.xpoints[i], multiplier);
-					int y = rel(poly.ypoints[i], multiplier);
-
-					js.__("%s.lineTo(%d,%d);", contextVariable, x, y);
-				}
-			}
-
-		}
 	}
 
 	@Override

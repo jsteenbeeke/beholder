@@ -355,10 +355,6 @@ public class ControlViewPage extends AuthenticatedPage {
 		target.add(newController);
 		controller = newController;
 
-		MapView view = viewModel.getObject();
-		ScaledMap map = view.getSelectedMap();
-
-		boolean mapButtonsVisible = map != null;
 
 		Stream.<AjaxLink<Void>> builder().add(markersLink).add(moveTokenLink)
 				.add(tokenStateLink).add(hideRevealLink).build()

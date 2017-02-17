@@ -26,7 +26,6 @@ import javax.persistence.*;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSAreaMarker;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
@@ -111,9 +110,6 @@ public abstract class AreaMarker extends BaseDomainObject {
 		this.extent = extent;
 	}
 
-	public abstract void renderTo(String contextVariable, JSBuilder js,
-			double ratio, int squareSize);
-
 	@Nonnull
 	public String getColor() {
 		return color;
@@ -124,24 +120,6 @@ public abstract class AreaMarker extends BaseDomainObject {
 	}
 
 	public abstract Panel createPanel(String id);
-
-	public abstract String getMarkerState();
-
-	public String calculateState() {
-		StringBuilder state = new StringBuilder();
-		state.append("{x=");
-		state.append(getOffsetX());
-		state.append(";y=");
-		state.append(getOffsetY());
-		state.append(";r=");
-		state.append(getExtent());
-		state.append(";c=");
-		state.append(getColor());
-		state.append(getMarkerState());
-		state.append("}");
-
-		return state.toString();
-	}
 
 	public JSAreaMarker toJS(double factor) {
 		JSAreaMarker marker = new JSAreaMarker();

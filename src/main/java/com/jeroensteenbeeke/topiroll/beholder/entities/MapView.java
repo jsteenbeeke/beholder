@@ -20,7 +20,6 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.CheckForNull;
@@ -31,7 +30,6 @@ import javax.persistence.*;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
-import com.jeroensteenbeeke.hyperion.util.HashUtil;
 
 @Entity
 public class MapView extends BaseDomainObject {
@@ -168,40 +166,7 @@ public class MapView extends BaseDomainObject {
 		return new Dimension(getWidth(), getHeight());
 	}
 
-	public String calculateState() {
-		StringBuilder data = new StringBuilder();
-
-		if (selectedMap != null) {
-			data.append(selectedMap.getName());
-
-			getVisibilities().stream()
-					.sorted(Comparator.comparing(FogOfWarVisibility::getId))
-					.forEach(s -> {
-						
-							data.append(";V");
-							data.append(s.getId());
-							data.append("=");
-							data.append(s.getStatus().toString());
-
-					});
-			getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId))
-			.forEach(m -> {
-				data.append(";M");
-				data.append(m.getId());
-				data.append("=");
-				data.append(m.calculateState());
-			});
-			
-			selectedMap.getTokens().stream().sorted(Comparator.comparing(TokenInstance::getId)).forEach(t -> {
-				data.append(";T");
-				data.append(t.getId());
-				data.append("=");
-				data.append(t.calculateState());
-			});
-		}
-
-		return HashUtil.sha512Hash(data.toString());
-	}
+	
 
 	@Nonnull
 	public List<FogOfWarVisibility> getVisibilities() {
