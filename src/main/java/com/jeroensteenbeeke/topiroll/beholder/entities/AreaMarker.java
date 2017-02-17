@@ -26,7 +26,8 @@ import javax.persistence.*;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.JSAreaMarker;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -42,10 +43,9 @@ public abstract class AreaMarker extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
- 	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String color;
-
-
 
 	@Column(nullable = false)
 	private int extent;
@@ -110,38 +110,26 @@ public abstract class AreaMarker extends BaseDomainObject {
 		this.extent = extent;
 	}
 
-	public abstract void renderTo(String contextVariable, JSBuilder js,
-			double ratio, int squareSize);
-
 	@Nonnull
 	public String getColor() {
 		return color;
 	}
-	public void setColor( @Nonnull String color) {
+
+	public void setColor(@Nonnull String color) {
 		this.color = color;
 	}
 
 	public abstract Panel createPanel(String id);
-	
-	public abstract String getMarkerState();
 
-	public String calculateState() {
-		StringBuilder state = new StringBuilder();
-		state.append("{x=");
-		state.append(getOffsetX());
-		state.append(";y=");
-		state.append(getOffsetY());
-		state.append(";r=");
-		state.append(getExtent());
-		state.append(";c=");
-		state.append(getColor());
-		state.append(getMarkerState());
-		state.append("}");
-		
-		
-		return state.toString();
+	public JSAreaMarker toJS(double factor) {
+		JSAreaMarker marker = new JSAreaMarker();
+		marker.setColor(getColor());
+
+		marker.setShape(getShape(factor));
+
+		return marker;
 	}
 
-
+	public abstract JSShape getShape(double factor);
 
 }

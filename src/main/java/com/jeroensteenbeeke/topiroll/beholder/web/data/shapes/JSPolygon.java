@@ -15,24 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.components;
+package com.jeroensteenbeeke.topiroll.beholder.web.data.shapes;
 
-import javax.inject.Inject;
+import java.util.List;
 
-import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
-
-public class LegalPanel extends Panel {
-	private static final long serialVersionUID = 1L;
+public class JSPolygon implements JSShape {
+	private List<XY> points;
 	
-	@Inject
-	private URLService urlService;
-	
-	public LegalPanel(String id) {
-		super(id);
-		
-		add(new ExternalLink("link", urlService.getSourceURL()));
+	@Override
+	public String getType() {
+		return "polygon";
 	}
+
+	public List<XY> getPoints() {
+		return points;
+	}
+
+	public void setPoints(List<XY> points) {
+		this.points = points;
+	}
+	
+	
+
 }

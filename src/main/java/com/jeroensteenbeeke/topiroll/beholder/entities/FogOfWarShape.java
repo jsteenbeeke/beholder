@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -95,8 +95,6 @@ public abstract class FogOfWarShape extends BaseDomainObject
 
 	public abstract void drawPreviewTo(@Nonnull Graphics2D graphics2d);
 
-	public abstract void renderTo(@Nonnull JSRenderContext context);
-
 	public boolean shouldRender(MapView view, boolean previewMode) {
 		FogOfWarGroup _group = getGroup();
 
@@ -125,49 +123,9 @@ public abstract class FogOfWarShape extends BaseDomainObject
 				.orElse(VisibilityStatus.INVISIBLE);
 	}
 
-	public static class JSRenderContext {
-		private final JSBuilder javaScriptBuilder;
-
-		private final String contextVariable;
-
-		private final double multiplier;
-
-		private final boolean previewMode;
-
-		private final MapView view;
-
-		public JSRenderContext(JSBuilder javaScriptBuilder,
-				String contextVariable, double multiplier, boolean previewMode,
-				MapView view) {
-			this.javaScriptBuilder = javaScriptBuilder;
-			this.contextVariable = contextVariable;
-			this.multiplier = multiplier;
-			this.previewMode = previewMode;
-			this.view = view;
-		}
-
-		public JSBuilder getJavaScriptBuilder() {
-			return javaScriptBuilder;
-		}
-
-		public String getContextVariable() {
-			return contextVariable;
-		}
-
-		public double getMultiplier() {
-			return multiplier;
-		}
-
-		public boolean isPreviewMode() {
-			return previewMode;
-		}
-
-		public MapView getView() {
-			return view;
-		}
-
-	}
+	
 
 	public abstract boolean containsCoordinate(int x, int y);
 
+	public abstract JSShape toJS(double factor);
 }

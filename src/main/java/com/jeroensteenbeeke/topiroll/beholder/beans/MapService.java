@@ -78,4 +78,8 @@ public interface MapService {
 	void setTokenNote(@Nonnull TokenInstance instance, @Nullable String note);
 
 	void updateTokenLocation(@Nonnull TokenInstance instance, int x, int y);
+
+	void refreshView(@Nonnull MapView view);
+
+	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 }

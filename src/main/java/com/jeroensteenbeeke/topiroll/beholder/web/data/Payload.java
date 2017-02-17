@@ -15,28 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
+package com.jeroensteenbeeke.topiroll.beholder.web.data;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+public class Payload {
+	private String canvasId;
+	
+	private JSRenderable data;
 
-import com.jeroensteenbeeke.hyperion.solstice.api.Any;
-import com.jeroensteenbeeke.topiroll.beholder.beans.IMapRenderer;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
-
-@Component
-class MapRenderersImpl implements MapRenderers {
-	@Autowired
-	private Any<IMapRenderer> renderers;
-
-	@Override
-	public List<IMapRenderer> getRenderers() {
-		return renderers.stream()
-				.sorted(Comparator.comparing(IMapRenderer::getPriority))
-				.collect(Collectors.toList());
+	@JsonProperty("canvas_id")
+	public String getCanvasId() {
+		return canvasId;
 	}
+
+	public void setCanvasId(String canvasId) {
+		this.canvasId = canvasId;
+	}
+
+	public JSRenderable getData() {
+		return data;
+	}
+
+	public void setData(JSRenderable data) {
+		this.data = data;
+	}
+	
+	
 }

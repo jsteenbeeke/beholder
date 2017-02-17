@@ -15,22 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans;
+package com.jeroensteenbeeke.topiroll.beholder.web.data;
 
-import javax.annotation.Nonnull;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.util.JavaScriptHandler;
+public class JSAreaMarker {
+	private String color;
+	
+	private JSShape shape;
 
-public interface IMapRenderer {
-	/**
-	 * Indicates when this renderer should execute relative to other renderes.
-	 * Executed in ascending order
-	 * 
-	 * @return The priority of this renderer
-	 */
-	int getPriority();
+	public String getColor() {
+		return color;
+	}
 
-	void onRefresh(@Nonnull String canvasId, @Nonnull JavaScriptHandler handler,
-			@Nonnull MapView mapView, boolean previewMode);
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public JSShape getShape() {
+		return shape;
+	}
+
+	public void setShape(JSShape shape) {
+		this.shape = shape;
+	}
+
+	
 }

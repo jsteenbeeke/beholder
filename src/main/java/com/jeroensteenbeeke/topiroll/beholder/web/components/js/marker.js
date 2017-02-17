@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
  *
@@ -15,10 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans;
-
-import java.util.List;
-
-public interface MapRenderers {
-	List<IMapRenderer> getRenderers();
+function renderMarker(context, marker) {
+	var color = marker.color;
+	var shape = marker.shape;
+	
+	context.save();
+	context.globalAlpha = 0.5;
+	context.beginPath();
+	if (shape.type === 'rect') {
+		applyRectangle(context, shape);
+	} else if (shape.type === 'circle') {
+		applyCircle(context, shape);
+	} else if (shape.type === 'polygon') {
+		applyPoly(context, shape);
+	}
+	context.closePath();
+	context.fillStyle = color;
+	context.fill();
+	
+	context.restore();
 }

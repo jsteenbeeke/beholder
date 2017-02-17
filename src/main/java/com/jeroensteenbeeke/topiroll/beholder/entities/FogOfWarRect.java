@@ -25,7 +25,8 @@ import javax.persistence.Entity;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarRectPreviewResource;
 
@@ -116,23 +117,6 @@ public class FogOfWarRect extends FogOfWarShape {
 
 		};
 	}
-
-	@Override
-	public void renderTo(@Nonnull JSRenderContext context) {
-		if (shouldRender(context.getView(), context.isPreviewMode())) {
-			final JSBuilder js = context.getJavaScriptBuilder();
-			final double multiplier = context.getMultiplier();
-			final String contextVariable = context.getContextVariable();
-
-			js.__("%s.moveTo(%d, %d);", contextVariable,
-					rel(getOffsetX(), multiplier),
-					rel(getOffsetY(), multiplier));
-			js.__("%s.rect(%d, %d, %d, %d);", contextVariable,
-					rel(getOffsetX(), multiplier),
-					rel(getOffsetY(), multiplier), rel(getWidth(), multiplier),
-					rel(getHeight(), multiplier));
-		}
-	}
 	
 	@Override
 	public boolean containsCoordinate(int x, int y) {
@@ -140,5 +124,16 @@ public class FogOfWarRect extends FogOfWarShape {
 		int y2 = getOffsetY() + getHeight();
 		
 		return x >= getOffsetX() && x <= x2 && y >= getOffsetY() && y <= y2;
+	}
+	
+	@Override
+	public JSShape toJS(double factor) {
+		JSRect rect = new JSRect();
+		rect.setHeight((int) (getHeight() * factor));
+		rect.setWidth((int) (getWidth() * factor));
+		rect.setX((int) (getOffsetX() * factor));
+		rect.setY((int) (getOffsetY() * factor));
+
+		return rect;
 	}
 }

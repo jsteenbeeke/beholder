@@ -15,22 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans;
+package com.jeroensteenbeeke.topiroll.beholder.web.data;
 
-import javax.annotation.Nonnull;
-
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.util.JSBuilder;
-
-public interface IClipPathContributor {
-	/**
-	 * Indicates when this renderer should execute relative to other renderes.
-	 * Executed in ascending order
-	 * 
-	 * @return The priority of this renderer
-	 */
-	int getPriority();
-
-	void contribute(@Nonnull JSBuilder builder, @Nonnull String contextVariable,
-			@Nonnull MapView mapView, boolean previewMode);
+public interface JSRenderable {
+	String getType();
 }

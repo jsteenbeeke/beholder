@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
  *
@@ -15,24 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.components;
+Wicket.Event.subscribe("/websocket/closed", function(jqEvent, message) {
+	window.location.reload(false); 	
+});
 
-import javax.inject.Inject;
+Wicket.Event.subscribe("/websocket/error", function(jqEvent, message) {
+	window.location.reload(false); 	
+});
 
-import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
-
-public class LegalPanel extends Panel {
-	private static final long serialVersionUID = 1L;
+Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
+	var payload = JSON.parse(message);
 	
-	@Inject
-	private URLService urlService;
-	
-	public LegalPanel(String id) {
-		super(id);
+
+	if (payload && payload.canvas_id && payload.data) {
+		var canvasId = payload.canvas_id;
+		var data = payload.data;
+		var canvas = document.getElementById(canvasId);
 		
-		add(new ExternalLink("link", urlService.getSourceURL()));
+		if (data.type) {
+			if ("map" === data.type) {
+				renderMap(canvasId, data);
+			} else if ("clear" === data.type) {
+				context = canvas.getContext('2d');
+				
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				
+			}
+		}
+	
 	}
-}
+});

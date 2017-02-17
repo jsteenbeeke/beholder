@@ -17,6 +17,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-native-websocket-javax</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
 			<artifactId>hyperion-core</artifactId>
 		</dependency>
