@@ -67,11 +67,13 @@ public enum BeholderRegistry {
 						.getWebSocketRegistry()
 						.getConnection(BeholderApplication.get(), sessionId,
 								entry.getKey());
-
+				if (connection != null) {
 				try {
 					connection.sendMessage(mapper.writeValueAsString(payload));
 				} catch (IOException e) {
 					log.error(e.getMessage(), e);
+				}
+				
 				}
 
 			}
@@ -81,6 +83,8 @@ public enum BeholderRegistry {
 
 	public static class RegistryEntry {
 		private final IKey key;
+		
+		private final String sessionId;
 
 		private final long viewId;
 
@@ -88,12 +92,17 @@ public enum BeholderRegistry {
 
 		private final boolean previewMode;
 
-		private RegistryEntry(IKey key, String markupId, long viewId,
+		private RegistryEntry(IKey key, String sessionId, String markupId, long viewId,
 				boolean previewMode) {
 			this.markupId = markupId;
+			this.sessionId = sessionId;
 			this.key = key;
 			this.viewId = viewId;
 			this.previewMode = previewMode;
+		}
+		
+		public String getSessionId() {
+			return sessionId;
 		}
 
 		public String getMarkupId() {
@@ -177,10 +186,11 @@ public enum BeholderRegistry {
 		}
 
 		public void forView(long viewId) {
-			RegistryEntry entry = new RegistryEntry(key, markupId, viewId,
+			RegistryEntry entry = new RegistryEntry(key, sessionId, markupId, viewId,
 					previewMode);
 
 			registry.entries.put(sessionId, entry);
 		}
 	}
 }
+

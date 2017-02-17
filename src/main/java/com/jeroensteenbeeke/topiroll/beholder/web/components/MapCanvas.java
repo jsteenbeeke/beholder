@@ -17,9 +17,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import javax.inject.Inject;
-
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -31,16 +30,15 @@ import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
 import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.joda.time.DateTime;
 
+import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapRenderers;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.jobs.InitialRenderTask;
 
 public class MapCanvas extends WebComponent {
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private MapRenderers renderers;
 
 	private IModel<MapView> viewModel;
 
@@ -97,8 +95,9 @@ public class MapCanvas extends WebComponent {
 			@Override
 			protected void onClose(ClosedMessage message) {
 				super.onClose(message);
-				
-				BeholderRegistry.instance.removeSession(message.getSessionId(), message.getKey());
+
+				BeholderRegistry.instance.removeSession(message.getSessionId(),
+						message.getKey());
 			}
 
 			@Override
@@ -108,12 +107,17 @@ public class MapCanvas extends WebComponent {
 				if (previewMode) {
 					BeholderRegistry.instance
 							.addPreviewSession(message.getSessionId())
-							.withKey(message.getKey()).withMarkupId(getMarkupId()).forView(viewId);
+							.withKey(message.getKey())
+							.withMarkupId(getMarkupId()).forView(viewId);
 				} else {
 					BeholderRegistry.instance
 							.addLiveSession(message.getSessionId())
-							.withKey(message.getKey()).withMarkupId(getMarkupId()).forView(viewId);
+							.withKey(message.getKey())
+							.withMarkupId(getMarkupId()).forView(viewId);
 				}
+
+				HyperionScheduler.getScheduler().scheduleTask(
+						new DateTime(), new InitialRenderTask(viewId, message.getSessionId(), previewMode));
 			}
 
 		});
@@ -138,6 +142,9 @@ public class MapCanvas extends WebComponent {
 		super.renderHead(response);
 
 		response.render(JavaScriptHeaderItem
+				.forReference(WicketEventJQueryResourceReference.get()));
+
+		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/geometry.js")));
 
@@ -147,9 +154,8 @@ public class MapCanvas extends WebComponent {
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/token.js")));
-		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/map.js")));
+		response.render(JavaScriptHeaderItem.forReference(
+				new JavaScriptResourceReference(MapCanvas.class, "js/map.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/renderer.js")));

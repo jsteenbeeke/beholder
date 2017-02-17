@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
@@ -122,18 +124,23 @@ class MapServiceImpl implements MapService {
 		instance.setShow(true);
 		tokenInstanceDAO.save(instance);
 
+		map.getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	public void selectMap(MapView view, ScaledMap map) {
 		view.setSelectedMap(map);
 		viewDAO.update(view);
+
+		refreshView(view);
 	}
 
 	@Override
 	public void unselectMap(MapView view) {
 		view.setSelectedMap(null);
 		viewDAO.update(view);
+
+		refreshView(view);
 	}
 
 	@Override
@@ -243,6 +250,8 @@ class MapServiceImpl implements MapService {
 			visibility.setStatus(status);
 			groupVisibilityDAO.update(visibility);
 		}
+
+		refreshView(view);
 	}
 
 	@Override
@@ -265,6 +274,8 @@ class MapServiceImpl implements MapService {
 			visibility.setStatus(status);
 			shapeVisibilityDAO.update(visibility);
 		}
+
+		refreshView(view);
 	}
 
 	@Override
@@ -283,6 +294,8 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	public void ungroup(FogOfWarGroup group) {
+		ScaledMap map = group.getMap();
+
 		group.getShapes().forEach(s -> {
 			s.setGroup(null);
 			shapeDAO.update(s);
@@ -292,13 +305,19 @@ class MapServiceImpl implements MapService {
 
 		groupDAO.delete(group);
 
+		map.getSelectedBy().forEach(this::refreshView);
+
 	}
 
 	@Override
 	public void deleteShape(FogOfWarShape shape) {
+		ScaledMap map = shape.getMap();
+
 		shape.getVisibilities().forEach(shapeVisibilityDAO::delete);
 
 		shapeDAO.delete(shape);
+
+		map.getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
@@ -307,6 +326,7 @@ class MapServiceImpl implements MapService {
 		instance.setBorderType(type);
 		tokenInstanceDAO.update(instance);
 
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
@@ -315,18 +335,24 @@ class MapServiceImpl implements MapService {
 		instance.setCurrentHitpoints(currentHP);
 		instance.setMaxHitpoints(maxHP);
 		tokenInstanceDAO.update(instance);
+
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	public void showToken(TokenInstance instance) {
 		instance.setShow(true);
 		tokenInstanceDAO.update(instance);
+
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	public void hideToken(TokenInstance instance) {
 		instance.setShow(false);
 		tokenInstanceDAO.update(instance);
+
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
@@ -340,35 +366,57 @@ class MapServiceImpl implements MapService {
 		instance.setOffsetX(x);
 		instance.setOffsetY(y);
 		tokenInstanceDAO.update(instance);
+
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
-	public void updateView(MapView view) {
+	public void refreshView(MapView view) {
+		internalUpdateView(view, s -> true);
+	}
+
+	private void internalUpdateView(MapView view,
+			Predicate<RegistryEntry> selector) {
 		ScaledMap selectedMap = view.getSelectedMap();
 		if (selectedMap == null) {
-			BeholderRegistry.instance.sendToView(view.getId(), new ClearMap());
+			BeholderRegistry.instance.sendToView(view.getId(), selector,
+					new ClearMap());
 		} else {
-			updatePreview(view, selectedMap);
-			updateMainView(view, selectedMap);
+			updatePreview(view, selector, selectedMap);
+			updateMainView(view, selector, selectedMap);
 		}
 	}
 
-	private void updateMainView(MapView view, ScaledMap map) {
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void initializeView(long viewId, String sessionId,
+			boolean previewMode) {
+		MapView view = viewDAO.load(viewId);
+		if (view != null) {
+			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
+					&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
+		}
+
+	}
+
+	private void updateMainView(MapView view, Predicate<RegistryEntry> selector,
+			ScaledMap map) {
 		Dimension dimensions = map.getDisplayDimension(view);
 		String imageUrl = urlService.contextRelative(
 				String.format("/maps/%d?preview=true&", map.getId()));
 
-		internalUpdateView(dimensions, false, imageUrl, e -> !e.isPreviewMode(),
-				view, map);
+		internalUpdateView(dimensions, false, imageUrl,
+				selector.and(e -> !e.isPreviewMode()), view, map);
 	}
 
-	private void updatePreview(MapView view, ScaledMap map) {
+	private void updatePreview(MapView view, Predicate<RegistryEntry> selector,
+			ScaledMap map) {
 		Dimension dimensions = view.getPreviewDimensions();
 		String imageUrl = urlService.contextRelative(
 				String.format("/maps/%d?preview=true&", map.getId()));
 
 		internalUpdateView(dimensions, true, imageUrl,
-				RegistryEntry::isPreviewMode, view, map);
+				selector.and(RegistryEntry::isPreviewMode), view, map);
 
 	}
 
@@ -377,6 +425,15 @@ class MapServiceImpl implements MapService {
 			ScaledMap map) {
 		double factor = dimensions.getWidth() / map.getBasicWidth();
 
+		MapRenderable renderable = mapToJS(dimensions, previewMode, src, view,
+				map, factor);
+
+		BeholderRegistry.instance.sendToView(view.getId(), selector,
+				renderable);
+	}
+
+	private MapRenderable mapToJS(Dimension dimensions, boolean previewMode,
+			String src, MapView view, ScaledMap map, double factor) {
 		MapRenderable renderable = new MapRenderable();
 		renderable.setSrc(src);
 		renderable.setWidth((int) dimensions.getWidth());
@@ -385,13 +442,18 @@ class MapServiceImpl implements MapService {
 		renderable.setTokens(map.getTokens().stream()
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
+		renderable.getTokens().forEach(t -> {
+			t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
+							t.getSrc(), previewMode ? "preview=true&" : "")));
+		});
+		if (previewMode) {
+			renderable.getTokens().forEach(t -> t.setLabel(null));
+		}
 		renderable.setAreaMarkers(view.getMarkers().stream()
 				.map(a -> a.toJS(factor)).collect(Collectors.toList()));
-		map.getFogOfWarShapes()
-				.stream()
-				.filter(s -> s.getGroup() == null)
-		.filter(s -> s.shouldRender(view, previewMode)).map(s -> s.toJS(factor)).collect(Collectors.toList());
-		
-		
+		renderable.setRevealed(map.getFogOfWarShapes().stream()
+				.filter(s -> s.shouldRender(view, previewMode))
+				.map(s -> s.toJS(factor)).collect(Collectors.toList()));
+		return renderable;
 	}
 }

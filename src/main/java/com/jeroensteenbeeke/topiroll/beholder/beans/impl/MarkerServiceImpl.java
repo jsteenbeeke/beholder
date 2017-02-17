@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
@@ -31,6 +32,9 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 class MarkerServiceImpl implements MarkerService {
 	@Autowired
 	private AreaMarkerDAO markerDAO;
+	
+	@Autowired
+	private MapService mapService;
 
 	@Override
 	public void update(CircleMarker marker, String color, int x, int y,
@@ -40,6 +44,8 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setExtent(radius);
 		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
 	}
 
 	@Override
@@ -51,6 +57,8 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setExtent(radius);
 		marker.setTheta(theta);
 		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
 	}
 
 	@Override
@@ -61,6 +69,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setExtent(extent);
 		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+
 	}
 
 	@Override
@@ -72,6 +83,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setExtent(extent);
 		marker.setTheta(theta);
 		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+
 	}
 
 	@Override
@@ -83,6 +97,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(token.getOffsetY());
 		marker.setView(view);
 		markerDAO.save(marker);
+		
+		mapService.refreshView(marker.getView());
+
 
 	}
 
@@ -96,6 +113,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(token.getOffsetY());
 		marker.setView(view);
 		markerDAO.save(marker);
+		
+		mapService.refreshView(marker.getView());
+
 	}
 
 	@Override
@@ -107,6 +127,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(token.getOffsetY());
 		marker.setView(view);
 		markerDAO.save(marker);
+		
+		mapService.refreshView(marker.getView());
+
 
 	}
 
@@ -120,6 +143,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(token.getOffsetY());
 		marker.setView(view);
 		markerDAO.save(marker);
+		
+		mapService.refreshView(marker.getView());
+
 	}
 
 }

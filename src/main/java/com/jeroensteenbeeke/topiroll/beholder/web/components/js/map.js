@@ -8,28 +8,29 @@ function renderMap(canvasId, map) {
 	var markers = map.area_markers // Array of area markers
 	var canvas = document.getElementById(canvasId);
 	
-	canvas.clear();
-	
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	canvas.width = width;
 	canvas.height = height;
 	
-	var context = canvas.getContext('2d');
+	context = canvas.getContext('2d');
 	
 	var img = new Image();
 	img.onload = function() {
 	
 		context.save();
 		context.beginPath();
-		
-		revealed.forEach(function(shape) {
-			if (shape.type === 'rect') {
-				applyRectangle(context, shape);
-			} else if (shape.type === 'circle') {
-				applyCircle(context, shape);
-			} else if (shape.type === 'polygon') {
-				applyPoly(context, shape);
-			}
-		});
+		if (revealed) {
+			revealed.forEach(function(shape) {
+				if (shape.type === 'rect') {
+					applyRectangle(context, shape);
+				} else if (shape.type === 'circle') {
+					applyCircle(context, shape);
+				} else if (shape.type === 'polygon') {
+					applyPoly(context, shape);
+				}
+			});
+		}
 		
 		context.closePath();
 		context.clip();

@@ -312,6 +312,10 @@ public class TokenInstance extends BaseDomainObject {
 		token.setHeight((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
 		token.setWidth((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
 		token.setLabel(getLabel());
+		// Workaround, will be transformed to URL
+		token.setSrc(Long.toString(getId()));
+		token.setX(getOffsetX());
+		token.setY(getOffsetY());
 		
 		return token;
 	}
