@@ -1,0 +1,36 @@
+<html xmlns:wicket>
+<wicket:extend>
+	<div class="btn-group" role="group">
+		<button class="btn btn-default" type="button" wicket:id="recalculate">Reroll</button>
+		<button class="btn btn-default" type="button" wicket:id="hide">Hide</button>
+		<wicket:container wicket:id="positions">
+			<button class="btn btn-default" type="button" wicket:id="show"></button>
+		</wicket:container>
+	</div>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Participant</th>
+				<th>Score</th>
+				<th>Initiative</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="participants">
+				<td wicket:id="name"></td>
+				<td wicket:id="score"></td>
+				<td wicket:id="initiative"></td>
+				<td><span wicket:id="edit"></span> <span wicket:id="delete"></span>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4"></td>
+			</tr>
+		</tfoot>
+	</table>
+</wicket:extend>
+</html>

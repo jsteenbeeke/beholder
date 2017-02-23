@@ -54,10 +54,15 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
- 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
+
+	@Column(nullable = true)
+	private InitiativeLocation initiativePosition;
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
+	private List<InitiativeParticipant> initiativeParticipants = new ArrayList<InitiativeParticipant>();
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<AreaMarker> markers = new ArrayList<AreaMarker>();
-
-
 
 	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<FogOfWarVisibility> visibilities = new ArrayList<FogOfWarVisibility>();
@@ -166,8 +171,6 @@ public class MapView extends BaseDomainObject {
 		return new Dimension(getWidth(), getHeight());
 	}
 
-	
-
 	@Nonnull
 	public List<FogOfWarVisibility> getVisibilities() {
 		return visibilities;
@@ -183,7 +186,7 @@ public class MapView extends BaseDomainObject {
 		if (getSelectedMap() == null) {
 			return DEFAULT_DIMENSION;
 		}
-		
+
 		return getSelectedMap().getPreviewDimension();
 	}
 
@@ -191,10 +194,29 @@ public class MapView extends BaseDomainObject {
 	public List<AreaMarker> getMarkers() {
 		return markers;
 	}
-	public void setMarkers( @Nonnull List<AreaMarker> markers) {
+
+	public void setMarkers(@Nonnull List<AreaMarker> markers) {
 		this.markers = markers;
 	}
 
+	@Nonnull
+	public List<InitiativeParticipant> getInitiativeParticipants() {
+		return initiativeParticipants;
+	}
 
+	public void setInitiativeParticipants(
+			@Nonnull List<InitiativeParticipant> initiativeParticipants) {
+		this.initiativeParticipants = initiativeParticipants;
+	}
+
+	@CheckForNull
+	public InitiativeLocation getInitiativePosition() {
+		return initiativePosition;
+	}
+
+	public void setInitiativePosition(
+			@Nullable InitiativeLocation initiativePosition) {
+		this.initiativePosition = initiativePosition;
+	}
 
 }
