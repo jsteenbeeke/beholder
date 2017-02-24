@@ -15,12 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+var enableWebSocketReloadOnError = true;
+
+Wicket.Event.subscribe("/websocket/notsupported", function(jqEvent, message) {
+	enableWebSocketReloadOnError = false; 	
+});
+
 Wicket.Event.subscribe("/websocket/closed", function(jqEvent, message) {
-	window.location.reload(false); 	
+	if (enableWebSocketReloadOnError === true) {
+		Wicket.WebSocket.close();
+		Wicket.WebSocket.createDefaultConnection();
+	}
 });
 
 Wicket.Event.subscribe("/websocket/error", function(jqEvent, message) {
-	window.location.reload(false); 	
+	if (enableWebSocketReloadOnError === true) {
+		window.location.reload(false); 	
+	}
 });
 
 Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {

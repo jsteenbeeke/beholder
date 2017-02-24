@@ -26,8 +26,8 @@ function applyRectangle(context, rect) {
 }
 
 function applyCircle(context, circle) {
-	var x = circle.x; // int
-	var y = circle.y; // int
+	var x = circle.x + circle.radius; // int
+	var y = circle.y + circle.radius; // int
 	var radius = circle.radius; // int
 	var thetaOffset = circle.theta_offset; // double
 	var thetaExtent = circle.theta_extent; // double
