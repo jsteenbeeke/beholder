@@ -193,33 +193,7 @@ public class TokenInstance extends BaseDomainObject {
 						&& v.containsCoordinate(getOffsetX(), getOffsetY()));
 	}
 
-	public String calculateState() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-
-		if (getBadge() != null) {
-			sb.append("badge=");
-			sb.append(getBadge());
-			sb.append(";");
-		}
-
-		sb.append("border=");
-		sb.append(getBorderType().name());
-		sb.append(";hp=");
-		sb.append(getCurrentHitpoints());
-		sb.append("/");
-		sb.append(getMaxHitpoints());
-		sb.append(";x=");
-		sb.append(getOffsetX());
-		sb.append(";y=");
-		sb.append(getOffsetY());
-		sb.append(";s=");
-		sb.append(isShow());
-
-		sb.append("}");
-
-		return sb.toString();
-	}
+	
 
 	public ActionResult drawPreviewTo(Graphics2D graphics2d) {
 		try {
@@ -314,8 +288,8 @@ public class TokenInstance extends BaseDomainObject {
 		token.setLabel(getLabel());
 		// Workaround, will be transformed to URL
 		token.setSrc(Long.toString(getId()));
-		token.setX(getOffsetX());
-		token.setY(getOffsetY());
+		token.setX((int) (getOffsetX()*factor));
+		token.setY((int) (getOffsetY()*factor));
 		
 		return token;
 	}

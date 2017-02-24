@@ -440,6 +440,7 @@ class MapServiceImpl implements MapService {
 		renderable.setHeight((int) dimensions.getHeight());
 
 		renderable.setTokens(map.getTokens().stream()
+				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
 		renderable.getTokens().forEach(t -> {
