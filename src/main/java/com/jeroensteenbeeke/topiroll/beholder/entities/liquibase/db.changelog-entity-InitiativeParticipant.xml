@@ -41,4 +41,11 @@
       </column>
     </addColumn>
   </changeSet>
+<changeSet author="jeroensteenbeeke" id="99">
+    <addColumn tableName="initiativeparticipant">
+      <column name="initiativetype" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

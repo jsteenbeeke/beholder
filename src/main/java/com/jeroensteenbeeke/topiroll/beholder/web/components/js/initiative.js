@@ -17,12 +17,11 @@
  */
 
 function renderInitiative(initiative) {
-	var id = initiative.id;
 	var show = initiative.show;
 	var position = initiative.position;
 	var participants = initiative.participants;
 
-	var element = document.getElementByID(id);
+	var element = document.getElementById("initiative");
 
 	if (element) {
 		if (show) {
@@ -54,14 +53,14 @@ function renderInitiative(initiative) {
 				} else {
 					html = html + 'btn-default';
 				}
-				html = html + '" type="button">';
+				html = html + '" type="button"><span class="pull-left">';
 				html = html + name;
-				html = html + '<span class="badge">';
+				html = html + '</span>&nbsp;&nbsp;<span class="badge pull-right">';
 				html = html + p.score;
 				html = html + '</span></button>';
 			});
 			
-			element.innerHtml = html;
+			element.innerHTML = html;
 
 		} else {
 			element.style.cssText = 'display: none;';

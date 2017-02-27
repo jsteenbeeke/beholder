@@ -42,11 +42,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.HideRevealController;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MapSelectController;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveTokenController;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.TokenStateController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.*;
 
 public class ControlViewPage extends AuthenticatedPage {
 	private static final Logger log = LoggerFactory
@@ -70,13 +66,14 @@ public class ControlViewPage extends AuthenticatedPage {
 
 	private AjaxLink<Void> createTokensLink;
 
+	private AjaxLink<Void> initiativeLink;
+
 	public ControlViewPage(MapView view) {
 		super(String.format("Control View - %s", view.getIdentifier()));
 
 		viewModel = ModelMaker.wrap(view);
 		MapCanvas mapCanvas = new MapCanvas("preview", viewModel, true);
-		
-		
+
 		mapCanvas.add(new OnClickBehavior() {
 			private static final long serialVersionUID = 1L;
 
@@ -326,6 +323,20 @@ public class ControlViewPage extends AuthenticatedPage {
 				});
 			}
 		});
+		addLink(tokenStateLink = new AjaxLink<Void>("initiative") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof InitiativeOrderController)) {
+					MapView view = viewModel.getObject();
+					WebMarkupContainer newController = new InitiativeOrderController(
+							CONTROLLER_ID, view);
+					setController(target, newController);
+				}
+
+			}
+		});
 	}
 
 	public void addLink(AjaxLink<Void> link) {
@@ -354,7 +365,6 @@ public class ControlViewPage extends AuthenticatedPage {
 		controller.replaceWith(newController);
 		target.add(newController);
 		controller = newController;
-
 
 		Stream.<AjaxLink<Void>> builder().add(markersLink).add(moveTokenLink)
 				.add(tokenStateLink).add(hideRevealLink).build()

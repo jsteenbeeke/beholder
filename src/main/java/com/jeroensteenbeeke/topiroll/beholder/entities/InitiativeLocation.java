@@ -6,4 +6,11 @@ public enum InitiativeLocation {
 	public String toJS() {
 		return name().toLowerCase().replace('_', '-');
 	}
+
+	public String getPrettyName() {
+		
+		final String base = name().replace('_', ' ');
+		
+		return base.substring(0, 1).concat(base.substring(1).toLowerCase());
+	}
 }

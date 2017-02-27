@@ -20,7 +20,9 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -30,6 +32,8 @@ import javax.persistence.*;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeRenderable;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.JSRenderable;
 
 @Entity
 public class MapView extends BaseDomainObject {
@@ -217,6 +221,39 @@ public class MapView extends BaseDomainObject {
 	public void setInitiativePosition(
 			@Nullable InitiativeLocation initiativePosition) {
 		this.initiativePosition = initiativePosition;
+	}
+
+	public JSRenderable getInitiativeJS() {
+		InitiativeRenderable renderable = new InitiativeRenderable();
+
+		InitiativeLocation pos = getInitiativePosition();
+		renderable.setShow(pos != null);
+		renderable.setPosition(pos != null ? pos.toJS() : null);
+
+		Comparator<InitiativeParticipant> comparator = (a,b) -> {
+			int total_a = a.getTotal() != null ? a.getTotal() : Integer.MIN_VALUE;
+			int total_b = b.getTotal() != null ? b.getTotal() : Integer.MIN_VALUE;
+			
+			int c = Integer.compare(total_b, total_a);
+			
+			if (c == 0) {
+				c = Integer.compare(b.getScore(), a.getScore());
+				
+				
+			}
+			
+			if (c == 0) {
+				c = b.getName().compareTo(a.getName());
+			}
+			
+			return c;
+			
+		};
+		renderable.setParticipants(getInitiativeParticipants().stream()
+				.sorted(comparator)
+				.map(InitiativeParticipant::toJS).collect(Collectors.toList()));
+
+		return renderable;
 	}
 
 }

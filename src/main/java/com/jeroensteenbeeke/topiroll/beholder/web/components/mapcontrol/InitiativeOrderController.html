@@ -1,5 +1,6 @@
 <html xmlns:wicket>
-<wicket:extend>
+<wicket:panel>
+	<br />
 	<div class="btn-group" role="group">
 		<button class="btn btn-default" type="button" wicket:id="recalculate">Reroll</button>
 		<button class="btn btn-default" type="button" wicket:id="hide">Hide</button>
@@ -17,20 +18,35 @@
 				<th>Actions</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody wicket:id="container">
 			<tr wicket:id="participants">
 				<td wicket:id="name"></td>
 				<td wicket:id="score"></td>
 				<td wicket:id="initiative"></td>
-				<td><span wicket:id="edit"></span> <span wicket:id="delete"></span>
-				</td>
+				<td><span wicket:id="delete"></span></td>
 			</tr>
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="4"></td>
+				<td colspan="4">
+					<form class="form-inline" wicket:id="participantForm">
+						<div class="form-group">
+							<input type="text" class="form-control" wicket:id="name"
+								placeholder="Name">
+						</div>
+						<div class="form-group">
+
+							<input type="number" class="form-control" wicket:id="score"
+								placeholder="Score">
+						</div>
+						<div class="form-group">
+							<select class="form-control" wicket:id="type"></select>
+						</div>
+						<button type="submit" wicket:id="submit" class="btn btn-default">Add</button>
+					</form>
+				</td>
 			</tr>
 		</tfoot>
 	</table>
-</wicket:extend>
+</wicket:panel>
 </html>
