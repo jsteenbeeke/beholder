@@ -49,7 +49,7 @@ function renderInitiative(initiative) {
 				
 				html = html + '<button class="btn ';
 				if (selected) {
-					html = html + 'btn-primary';
+					html = html + 'btn-success';
 				} else {
 					html = html + 'btn-default';
 				}

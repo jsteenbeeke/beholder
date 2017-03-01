@@ -20,7 +20,6 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +27,8 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
+
+import org.danekja.java.misc.serializable.SerializableComparator;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
@@ -94,6 +95,30 @@ public class MapView extends BaseDomainObject {
 	@JoinColumn(name = "owner")
 
 	private BeholderUser owner;
+
+	public static final SerializableComparator<InitiativeParticipant> INITIATIVE_ORDER = (
+			a, b) -> {
+		int total_a = a.getTotal() != null ? a.getTotal() : Integer.MIN_VALUE;
+		int total_b = b.getTotal() != null ? b.getTotal() : Integer.MIN_VALUE;
+
+		int c = Integer.compare(total_b, total_a);
+
+		if (c == 0) {
+			c = Integer.compare(b.getScore(), a.getScore());
+		}
+
+		if (c == 0 && a.getOrderOverride() != null
+				&& b.getOrderOverride() != null) {
+			c = Integer.compare(a.getOrderOverride(), b.getOrderOverride());
+		}
+
+		if (c == 0) {
+			c = b.getName().compareTo(a.getName());
+		}
+
+		return c;
+
+	};;
 
 	public Long getId() {
 		return id;
@@ -230,28 +255,9 @@ public class MapView extends BaseDomainObject {
 		renderable.setShow(pos != null);
 		renderable.setPosition(pos != null ? pos.toJS() : null);
 
-		Comparator<InitiativeParticipant> comparator = (a,b) -> {
-			int total_a = a.getTotal() != null ? a.getTotal() : Integer.MIN_VALUE;
-			int total_b = b.getTotal() != null ? b.getTotal() : Integer.MIN_VALUE;
-			
-			int c = Integer.compare(total_b, total_a);
-			
-			if (c == 0) {
-				c = Integer.compare(b.getScore(), a.getScore());
-				
-				
-			}
-			
-			if (c == 0) {
-				c = b.getName().compareTo(a.getName());
-			}
-			
-			return c;
-			
-		};
 		renderable.setParticipants(getInitiativeParticipants().stream()
-				.sorted(comparator)
-				.map(InitiativeParticipant::toJS).collect(Collectors.toList()));
+				.sorted(INITIATIVE_ORDER).map(InitiativeParticipant::toJS)
+				.collect(Collectors.toList()));
 
 		return renderable;
 	}

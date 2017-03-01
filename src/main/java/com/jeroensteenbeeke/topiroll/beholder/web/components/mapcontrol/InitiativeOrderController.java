@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -31,6 +32,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
@@ -89,6 +91,19 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 			}
 		});
 
+		add(new AjaxLink<InitiativeLocation>("next") {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				initiativeService.selectNext(
+						InitiativeOrderController.this.getModelObject());
+				target.add(container);
+
+			}
+		});
+
 		add(new ListView<InitiativeLocation>("positions",
 				Lists.newArrayList(InitiativeLocation.values())) {
 
@@ -117,6 +132,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 		filter.view().equalTo(view);
 		filter.total().orderBy(false);
 		filter.score().orderBy(false);
+		filter.orderOverride().orderBy(true);
 		filter.name().orderBy(false);
 
 		container.add(new DataView<InitiativeParticipant>("participants",
@@ -128,9 +144,69 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 			protected void populateItem(Item<InitiativeParticipant> item) {
 				InitiativeParticipant participant = item.getModelObject();
 
-				item.add(new Label("name", participant.getName()));
-				item.add(new Label("score", participant.getInitiativeType().formatBonus(participant.getScore())));
+				Label nameLabel = new Label("name", participant.getName());
+				nameLabel.add(AttributeModifier.replace("style",
+						new LoadableDetachableModel<String>() {
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							protected String load() {
+								if (participant.isSelected()) {
+									return "font-weight: bold;";
+								}
+								return "";
+							}
+						}));
+
+				item.add(nameLabel);
+				item.add(new Label("score", participant.getInitiativeType()
+						.formatBonus(participant.getScore())));
 				item.add(new Label("initiative", participant.getTotal()));
+				item.add(new AjaxIconLink<InitiativeParticipant>("select",
+						item.getModel(), GlyphIcon.screenshot) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						initiativeService.select(item.getModelObject());
+						target.add(container);
+					}
+				}.setVisible(!participant.isSelected()));
+				item.add(new AjaxIconLink<InitiativeParticipant>("up",
+						item.getModel(), GlyphIcon.arrowUp) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						initiativeService.moveUp(item.getModelObject());
+						target.add(container);
+					}
+					
+					@Override
+					public boolean isVisible() {
+						return super.isVisible() && initiativeService
+								.canMoveUp(item.getModelObject());
+					}
+				});
+				item.add(new AjaxIconLink<InitiativeParticipant>("down",
+						item.getModel(), GlyphIcon.arrowDown) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						initiativeService.moveDown(item.getModelObject());
+						target.add(container);
+					}
+
+					@Override
+					public boolean isVisible() {
+						return super.isVisible() && initiativeService
+								.canMoveDown(item.getModelObject());
+					}
+				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("delete",
 						item.getModel(), GlyphIcon.trash) {
 
@@ -176,11 +252,11 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				initiativeService.addInitiative(getModelObject(),
 						nameField.getModelObject(), scoreField.getModelObject(),
 						typeField.getModelObject());
-				
+
 				nameField.setModel(Model.of(""));
 				scoreField.setModel(Model.of(0));
 				typeField.setModel(Model.of(InitiativeType.Normal));
-				
+
 				target.add(container, nameField, scoreField, typeField);
 			}
 		});

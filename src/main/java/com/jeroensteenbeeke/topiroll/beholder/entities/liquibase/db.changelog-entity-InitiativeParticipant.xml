@@ -48,4 +48,18 @@
       </column>
     </addColumn>
   </changeSet>
+<changeSet author="jeroen" id="100">
+    <addColumn tableName="initiativeparticipant">
+      <column name="orderoverride" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="101">
+    <addColumn tableName="initiativeparticipant">
+      <column name="selected" type="BOOLEAN" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

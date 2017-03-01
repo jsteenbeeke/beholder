@@ -32,4 +32,16 @@ public interface InitiativeService {
 	void reroll(MapView view);
 	
 	void removeParticipant(InitiativeParticipant participant);
+
+	boolean canMoveUp(InitiativeParticipant participant);
+
+	boolean canMoveDown(InitiativeParticipant participant);
+
+	void moveUp(InitiativeParticipant participant);
+	
+	void moveDown(InitiativeParticipant participant);
+	
+	void select(InitiativeParticipant participant);
+	
+	void selectNext(MapView view);
 }

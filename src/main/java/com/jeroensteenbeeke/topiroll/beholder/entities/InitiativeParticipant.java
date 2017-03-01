@@ -44,6 +44,14 @@ public class InitiativeParticipant extends BaseDomainObject {
 	
  	@Column(nullable=false)
 	private InitiativeType initiativeType;
+ 	@Column(nullable=true)
+	private Integer orderOverride;
+ 	@Column(nullable=false)
+	private boolean selected;
+
+
+
+
 
 
 
@@ -115,7 +123,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		
 		js.setName(getName());
 		js.setScore(getTotal());
-		js.setSelected(false);
+		js.setSelected(isSelected());
 		
 		return js;
 	}
@@ -127,6 +135,26 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public void setInitiativeType( @Nonnull InitiativeType initiativeType) {
 		this.initiativeType = initiativeType;
 	}
+
+	@CheckForNull
+	public Integer getOrderOverride() {
+		return orderOverride;
+	}
+	public void setOrderOverride( @Nullable Integer orderOverride) {
+		this.orderOverride = orderOverride;
+	}
+
+	@Nonnull
+	public boolean isSelected() {
+		return selected;
+	}
+	public void setSelected( @Nonnull boolean selected) {
+		this.selected = selected;
+	}
+
+
+
+
 
 
 
