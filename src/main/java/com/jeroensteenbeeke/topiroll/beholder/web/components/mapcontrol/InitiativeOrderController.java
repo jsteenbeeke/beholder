@@ -145,14 +145,14 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				InitiativeParticipant participant = item.getModelObject();
 
 				Label nameLabel = new Label("name", participant.getName());
-				nameLabel.add(AttributeModifier.replace("style",
+				item.add(AttributeModifier.replace("class",
 						new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							protected String load() {
 								if (participant.isSelected()) {
-									return "font-weight: bold;";
+									return "bg-success";
 								}
 								return "";
 							}
