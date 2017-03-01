@@ -388,13 +388,18 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void initializeView(long viewId, String sessionId,
 			boolean previewMode) {
 		MapView view = viewDAO.load(viewId);
 		if (view != null) {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
 					&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
+			BeholderRegistry.instance
+					.sendToView(view.getId(),
+							e -> e.getSessionId().equals(sessionId)
+									&& !e.isPreviewMode(),
+							view.getInitiativeJS());
 		}
 
 	}
@@ -445,7 +450,7 @@ class MapServiceImpl implements MapService {
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
 		renderable.getTokens().forEach(t -> {
 			t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
-							t.getSrc(), previewMode ? "preview=true&" : "")));
+					t.getSrc(), previewMode ? "preview=true&" : "")));
 		});
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));

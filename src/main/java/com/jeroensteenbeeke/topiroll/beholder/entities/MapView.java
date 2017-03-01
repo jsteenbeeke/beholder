@@ -21,15 +21,20 @@ import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 
+import org.danekja.java.misc.serializable.SerializableComparator;
+
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeRenderable;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.JSRenderable;
 
 @Entity
 public class MapView extends BaseDomainObject {
@@ -54,10 +59,15 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
- 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
+
+	@Column(nullable = true)
+	private InitiativeLocation initiativePosition;
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
+	private List<InitiativeParticipant> initiativeParticipants = new ArrayList<InitiativeParticipant>();
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<AreaMarker> markers = new ArrayList<AreaMarker>();
-
-
 
 	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<FogOfWarVisibility> visibilities = new ArrayList<FogOfWarVisibility>();
@@ -85,6 +95,30 @@ public class MapView extends BaseDomainObject {
 	@JoinColumn(name = "owner")
 
 	private BeholderUser owner;
+
+	public static final SerializableComparator<InitiativeParticipant> INITIATIVE_ORDER = (
+			a, b) -> {
+		int total_a = a.getTotal() != null ? a.getTotal() : Integer.MIN_VALUE;
+		int total_b = b.getTotal() != null ? b.getTotal() : Integer.MIN_VALUE;
+
+		int c = Integer.compare(total_b, total_a);
+
+		if (c == 0) {
+			c = Integer.compare(b.getScore(), a.getScore());
+		}
+
+		if (c == 0 && a.getOrderOverride() != null
+				&& b.getOrderOverride() != null) {
+			c = Integer.compare(a.getOrderOverride(), b.getOrderOverride());
+		}
+
+		if (c == 0) {
+			c = b.getName().compareTo(a.getName());
+		}
+
+		return c;
+
+	};;
 
 	public Long getId() {
 		return id;
@@ -166,8 +200,6 @@ public class MapView extends BaseDomainObject {
 		return new Dimension(getWidth(), getHeight());
 	}
 
-	
-
 	@Nonnull
 	public List<FogOfWarVisibility> getVisibilities() {
 		return visibilities;
@@ -183,7 +215,7 @@ public class MapView extends BaseDomainObject {
 		if (getSelectedMap() == null) {
 			return DEFAULT_DIMENSION;
 		}
-		
+
 		return getSelectedMap().getPreviewDimension();
 	}
 
@@ -191,10 +223,43 @@ public class MapView extends BaseDomainObject {
 	public List<AreaMarker> getMarkers() {
 		return markers;
 	}
-	public void setMarkers( @Nonnull List<AreaMarker> markers) {
+
+	public void setMarkers(@Nonnull List<AreaMarker> markers) {
 		this.markers = markers;
 	}
 
+	@Nonnull
+	public List<InitiativeParticipant> getInitiativeParticipants() {
+		return initiativeParticipants;
+	}
 
+	public void setInitiativeParticipants(
+			@Nonnull List<InitiativeParticipant> initiativeParticipants) {
+		this.initiativeParticipants = initiativeParticipants;
+	}
+
+	@CheckForNull
+	public InitiativeLocation getInitiativePosition() {
+		return initiativePosition;
+	}
+
+	public void setInitiativePosition(
+			@Nullable InitiativeLocation initiativePosition) {
+		this.initiativePosition = initiativePosition;
+	}
+
+	public JSRenderable getInitiativeJS() {
+		InitiativeRenderable renderable = new InitiativeRenderable();
+
+		InitiativeLocation pos = getInitiativePosition();
+		renderable.setShow(pos != null);
+		renderable.setPosition(pos != null ? pos.toJS() : null);
+
+		renderable.setParticipants(getInitiativeParticipants().stream()
+				.sorted(INITIATIVE_ORDER).map(InitiativeParticipant::toJS)
+				.collect(Collectors.toList()));
+
+		return renderable;
+	}
 
 }

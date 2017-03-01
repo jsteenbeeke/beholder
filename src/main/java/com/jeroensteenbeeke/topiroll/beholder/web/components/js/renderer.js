@@ -44,9 +44,11 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 		var data = payload.data;
 		var canvas = document.getElementById(canvasId);
 		
-		if (data.type) {
+		if (data.type) {	
 			if ("map" === data.type) {
 				renderMap(canvasId, data);
+			} else if ("initiative" === data.type) {
+				renderInitiative(data);
 			} else if ("clear" === data.type) {
 				context = canvas.getContext('2d');
 				
