@@ -17,6 +17,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.ComponentTag;
@@ -34,6 +36,7 @@ import org.joda.time.DateTime;
 
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitialRenderTask;
 
@@ -45,6 +48,9 @@ public class MapCanvas extends WebComponent {
 	private final boolean previewMode;
 
 	private final long viewId;
+
+	@Inject
+	private RollBarData rollbarData;
 
 	public MapCanvas(String id, IModel<MapView> viewModel,
 			boolean previewMode) {
@@ -116,8 +122,9 @@ public class MapCanvas extends WebComponent {
 							.withMarkupId(getMarkupId()).forView(viewId);
 				}
 
-				HyperionScheduler.getScheduler().scheduleTask(
-						new DateTime(), new InitialRenderTask(viewId, message.getSessionId(), previewMode));
+				HyperionScheduler.getScheduler().scheduleTask(new DateTime(),
+						new InitialRenderTask(viewId, message.getSessionId(),
+								previewMode));
 			}
 
 		});
@@ -140,6 +147,8 @@ public class MapCanvas extends WebComponent {
 	public void renderHead(IHeaderResponse response) {
 
 		super.renderHead(response);
+
+		
 
 		response.render(JavaScriptHeaderItem
 				.forReference(WicketEventJQueryResourceReference.get()));
@@ -164,4 +173,6 @@ public class MapCanvas extends WebComponent {
 						"js/renderer.js")));
 
 	}
+
+	
 }

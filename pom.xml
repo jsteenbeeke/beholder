@@ -35,6 +35,11 @@
 			<groupId>com.jeroensteenbeeke</groupId>
 			<artifactId>hyperion-solstice-wicket</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-rollbar-filter</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.zaxxer</groupId>
