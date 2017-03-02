@@ -54,7 +54,7 @@ public class ConeMarker extends AreaMarker {
 
 
 	@Override
-	public JSShape getShape(double factor) {
+	public JSShape getShape(double factor, int squareSize) {
 		JSCircle circle = new JSCircle();
 		circle.setRadius((int) (getExtent()*factor));
 		circle.setX((int) (getOffsetX()*factor));

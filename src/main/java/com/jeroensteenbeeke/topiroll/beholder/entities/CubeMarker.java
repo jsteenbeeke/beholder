@@ -38,10 +38,10 @@ public class CubeMarker extends AreaMarker {
 
 
 	@Override
-	public JSShape getShape(double factor) {
+	public JSShape getShape(double factor, int squareSize) {
 		JSRect rect = new JSRect();
-		rect.setHeight((int) (getExtent() * factor));
-		rect.setWidth((int) (getExtent() * factor));
+		rect.setHeight((int) (getExtent() * factor * squareSize / 5));
+		rect.setWidth((int) (getExtent() * factor * squareSize / 5));
 		rect.setX((int) (getOffsetX() * factor));
 		rect.setY((int) (getOffsetY() * factor));
 
