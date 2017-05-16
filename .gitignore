@@ -6,3 +6,8 @@ target
 src/main/webapp/css/
 .factorypath
 beholder-docker.tar.gz
+
+# IntelliJ
+*.iws
+*.iml
+.idea

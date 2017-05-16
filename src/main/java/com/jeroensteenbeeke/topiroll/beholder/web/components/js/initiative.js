@@ -20,6 +20,7 @@ function renderInitiative(initiative) {
 	var show = initiative.show;
 	var position = initiative.position;
 	var participants = initiative.participants;
+	var margin = initiative.margin;
 
 	var element = document.getElementById("initiative");
 
@@ -29,15 +30,15 @@ function renderInitiative(initiative) {
 			var html = '';
 
 			if (position.indexOf('top') !== -1) {
-				style = style + 'top: 5px;';
+				style = style + 'top: '+ margin +'px;';
 			} else if (position.indexOf('bottom') !== -1) {
-				style = style + 'bottom: 5px;';
+				style = style + 'bottom: '+ margin +'px;';
 			}
 
 			if (position.indexOf('left') !== -1) {
-				style = style + 'left: 5px;'
+				style = style + 'left: '+ margin +'px;'
 			} else if (position.indexOf('right') !== -1) {
-				style = style + 'right: 5px;';
+				style = style + 'right: '+ margin +'px;';
 			}
 
 			element.style.cssText = style;

@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -43,6 +43,8 @@ public class MapView extends BaseDomainObject {
 
 	private static final Dimension DEFAULT_DIMENSION = new Dimension(320, 240);
 
+	private static final int DEFAULT_MARGIN = 5;
+
 	@Id
 	@SequenceGenerator(sequenceName = "SEQ_ID_MapView", name = "MapView",
 			initialValue = 1, allocationSize = 1)
@@ -59,6 +61,9 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
+
+	@Column(nullable = true)
+	private Integer initiativeMargin;
 
 	@Column(nullable = true)
 	private InitiativeLocation initiativePosition;
@@ -118,7 +123,8 @@ public class MapView extends BaseDomainObject {
 
 		return c;
 
-	};;
+	};
+	;
 
 	public Long getId() {
 		return id;
@@ -252,8 +258,10 @@ public class MapView extends BaseDomainObject {
 		InitiativeRenderable renderable = new InitiativeRenderable();
 
 		InitiativeLocation pos = getInitiativePosition();
+		Integer margin = getInitiativeMargin();
 		renderable.setShow(pos != null);
 		renderable.setPosition(pos != null ? pos.toJS() : null);
+		renderable.setMargin(margin != null ? margin : DEFAULT_MARGIN);
 
 		renderable.setParticipants(getInitiativeParticipants().stream()
 				.sorted(INITIATIVE_ORDER).map(InitiativeParticipant::toJS)
@@ -261,5 +269,15 @@ public class MapView extends BaseDomainObject {
 
 		return renderable;
 	}
+
+	@CheckForNull
+	public Integer getInitiativeMargin() {
+		return initiativeMargin;
+	}
+
+	public void setInitiativeMargin(@Nullable Integer initiativeMargin) {
+		this.initiativeMargin = initiativeMargin;
+	}
+
 
 }

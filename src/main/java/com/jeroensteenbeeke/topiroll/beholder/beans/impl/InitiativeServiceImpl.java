@@ -88,6 +88,15 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
+	public void setViewInitiativeMargin(MapView view, Integer margin) {
+		view.setInitiativeMargin(margin);
+		mapViewDAO.update(view);
+
+		BeholderRegistry.instance.sendToView(view.getId(),
+				view.getInitiativeJS());
+	}
+
+	@Override
 	public void reroll(MapView view) {
 		view.getInitiativeParticipants().forEach(i -> {
 			i.setTotal(
