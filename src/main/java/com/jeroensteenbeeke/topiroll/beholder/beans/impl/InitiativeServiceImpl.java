@@ -155,6 +155,17 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
+	public void setParticipantTotal(InitiativeParticipant participant, int total) {
+		participant.setTotal(total);
+		participantDAO.update(participant);
+
+		MapView view = participant.getView();
+
+		BeholderRegistry.instance.sendToView(view.getId(),
+				view.getInitiativeJS());
+	}
+
+	@Override
 	public boolean canMoveUp(InitiativeParticipant participant) {
 		MapView view = participant.getView();
 

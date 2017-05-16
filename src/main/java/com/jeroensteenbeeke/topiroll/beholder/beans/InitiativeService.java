@@ -46,4 +46,6 @@ public interface InitiativeService {
 	void selectNext(MapView view);
 
 	void setViewInitiativeMargin(MapView view, Integer margin);
+
+	void setParticipantTotal(InitiativeParticipant participant, int total);
 }

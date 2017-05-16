@@ -161,7 +161,26 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				item.add(nameLabel);
 				item.add(new Label("score", participant.getInitiativeType()
 						.formatBonus(participant.getScore())));
-				item.add(new Label("initiative", participant.getTotal()));
+
+				Form<InitiativeParticipant> form = new Form<InitiativeParticipant>("total");
+				NumberTextField<Integer> initiativeField =
+						new NumberTextField<>("initiativeField", Model.of(participant.getTotal()), Integer.class);
+				form.add(initiativeField);
+				form.add(new AjaxSubmitLink("update") {
+					@Override
+					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+						super.onSubmit(target, form);
+
+						InitiativeParticipant participant = item.getModelObject();
+
+						Integer total = initiativeField.getModelObject();
+						if (total != null) {
+							initiativeService.setParticipantTotal(participant, total);
+							target.add(container);
+						}
+					}
+				});
+				item.add(form);
 				item.add(new AjaxIconLink<InitiativeParticipant>("select",
 						item.getModel(), GlyphIcon.screenshot) {
 
