@@ -18,22 +18,27 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import javax.inject.Inject;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-
+import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.AreaMarkerFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers
+		.SelectMarkerTypeController;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 
-public abstract class MarkerController extends Panel {
+import javax.inject.Inject;
+
+public abstract class MarkerController extends TypedPanel<MapView> implements IClickListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -41,7 +46,7 @@ public abstract class MarkerController extends Panel {
 	private AreaMarkerDAO markerDAO;
 	
 	public MarkerController(String id, MapView view) {
-		super(id);
+		super(id, ModelMaker.wrap(view));
 		
 		AreaMarkerFilter filter = new AreaMarkerFilter();
 		filter.view().set(view);
@@ -57,16 +62,33 @@ public abstract class MarkerController extends Panel {
 				item.add(new AjaxIconLink<AreaMarker>("delete", item.getModel(), GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
 
+					@Inject
+					private MapService mapService;
+
+
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						AreaMarker marker = item.getModelObject();
+						MapView markerView = marker.getView();
 						markerDAO.delete(marker);
-						replaceMe(target);
+						mapService.refreshView(markerView);
+
+						replaceMe(target, null);
 					}
 				});
 			}
 		});
 	}
 
-	public abstract void replaceMe(AjaxRequestTarget target);
+	@Override
+	public void onClick(AjaxRequestTarget target, ScaledMap map, int x, int y) {
+		replaceMe(target, new SelectMarkerTypeController(getId(), getModelObject(), x, y) {
+			@Override public void replaceMe(AjaxRequestTarget target,
+					WebMarkupContainer replacement) {
+				MarkerController.this.replaceMe(target, replacement);
+			}
+		});
+	}
+
+	public abstract void replaceMe(AjaxRequestTarget target, WebMarkupContainer replacement);
 }

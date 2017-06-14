@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.util;
 
+import javax.annotation.Nonnull;
 import java.awt.Dimension;
 
 public final class Calculations {
@@ -126,7 +127,26 @@ public final class Calculations {
 	 *            The number of pixels a square on the given map image occupies
 	 * @return A ScaleCalculation object, a builder to
 	 */
+	@Nonnull
 	public static ScaleCalculation scale(int pixels) {
 		return new ScaleCalculation(pixels);
+	}
+
+	public static int getTheta(int sx, int sy, int tx, int ty) {
+		int theta = (int) Math.toDegrees(Math.atan2(ty - sy, tx - sx));
+
+		while (theta < 0) {
+			theta = theta + 360;
+		}
+
+		while (theta > 360) {
+			theta = theta - 360;
+		}
+
+		return theta;
+	}
+
+	public static int distance(int sx, int sy, int tx, int ty) {
+		return (int) Math.sqrt(Math.pow(tx-sx, 2) + Math.pow(ty-sy, 2));
 	}
 }

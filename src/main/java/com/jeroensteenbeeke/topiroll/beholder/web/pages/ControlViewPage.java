@@ -362,9 +362,13 @@ public class ControlViewPage extends AuthenticatedPage {
 		}
 
 		@Override
-		public void replaceMe(AjaxRequestTarget target) {
-			setController(target, new ControlViewMarkerController(CONTROLLER_ID,
-					viewModel.getObject()));
+		public void replaceMe(AjaxRequestTarget target, WebMarkupContainer replacement) {
+			if (replacement == null) {
+				setController(target,
+						new ControlViewMarkerController(CONTROLLER_ID, viewModel.getObject()));
+			} else {
+				setController(target, replacement);
+			}
 
 		}
 
