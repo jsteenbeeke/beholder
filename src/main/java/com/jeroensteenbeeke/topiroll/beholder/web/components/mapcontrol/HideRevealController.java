@@ -18,10 +18,12 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.repeater.Item;
@@ -42,7 +44,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 
-public class HideRevealController extends TypedPanel<ScaledMap> {
+public class HideRevealController extends TypedPanel<ScaledMap> implements IClickListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,6 +69,12 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 
 		this.mapViewModel = ModelMaker.wrap(mapView);
 
+		drawListViews(map, groupIds, shapeIds);
+
+		setOutputMarkupId(true);
+	}
+
+	private void drawListViews(ScaledMap map, List<Long> groupIds, List<Long> shapeIds) {
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		if (!groupIds.isEmpty()) {
 			groupFilter.id().in(groupIds);
@@ -74,7 +82,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 		groupFilter.map().set(map);
 		groupFilter.name().orderBy(true);
 
-		add(new VisibilityControlView<FogOfWarGroup>("groups",
+		addOrReplace(new VisibilityControlView<FogOfWarGroup>("groups",
 				FilterDataProvider.of(groupFilter, groupDAO)) {
 			private static final long serialVersionUID = 1L;
 
@@ -93,7 +101,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 		shapeFilter.map().set(map);
 		shapeFilter.group().isNull();
 
-		add(new VisibilityControlView<FogOfWarShape>("shapes",
+		addOrReplace(new VisibilityControlView<FogOfWarShape>("shapes",
 				FilterDataProvider.of(shapeFilter, shapeDAO)) {
 			private static final long serialVersionUID = 1L;
 
@@ -104,8 +112,27 @@ public class HideRevealController extends TypedPanel<ScaledMap> {
 						status);
 			}
 		});
+	}
 
-		setOutputMarkupId(true);
+	@Override
+	public void onClick(AjaxRequestTarget target, ScaledMap map, int x, int y) {
+
+		List<Long> selectedShapes = map.getFogOfWarShapes()
+				.stream().filter(s -> s.getGroup() == null)
+				.filter(s -> s.containsCoordinate(x, y))
+				.map(FogOfWarShape::getId)
+				.collect(Collectors.toList());
+
+		List<Long> selectedGroups = map.getGroups().stream()
+				.filter(s -> s.containsCoordinate(x, y))
+				.map(FogOfWarGroup::getId)
+				.collect(Collectors.toList());
+
+		if (!selectedShapes.isEmpty()
+				|| !selectedGroups.isEmpty()) {
+			drawListViews(map, selectedGroups, selectedGroups);
+			target.add(this);
+		}
 	}
 
 	@Override

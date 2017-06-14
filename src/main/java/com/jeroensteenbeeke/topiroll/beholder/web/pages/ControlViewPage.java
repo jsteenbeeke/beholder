@@ -96,31 +96,10 @@ public class ControlViewPage extends AuthenticatedPage {
 
 						log.info("Clicked {},{}", x, y);
 
-						List<Long> selectedShapes = map.getFogOfWarShapes()
-								.stream().filter(s -> s.getGroup() == null)
-								.filter(s -> s.containsCoordinate(x, y))
-								.map(FogOfWarShape::getId)
-								.collect(Collectors.toList());
-
-						List<Long> selectedGroups = map.getGroups().stream()
-								.filter(s -> s.containsCoordinate(x, y))
-								.map(FogOfWarGroup::getId)
-								.collect(Collectors.toList());
-
-						log.info("Location matched {} groups and {} shapes",
-								selectedGroups.size(), selectedShapes.size());
-
-						if (!selectedShapes.isEmpty()
-								|| !selectedGroups.isEmpty()) {
-							WebMarkupContainer newController = new HideRevealController(
-									CONTROLLER_ID, viewModel.getObject(), map,
-									selectedGroups, selectedShapes);
-							setController(target, newController);
-						} else {
-							WebMarkupContainer newController = new HideRevealController(
-									CONTROLLER_ID, viewModel.getObject(), map);
-							setController(target, newController);
+						if (controller instanceof IClickListener) {
+							((IClickListener) controller).onClick(target, map, x, y);
 						}
+
 					}
 				}
 
