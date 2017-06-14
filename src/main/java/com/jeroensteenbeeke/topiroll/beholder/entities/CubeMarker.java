@@ -40,10 +40,13 @@ public class CubeMarker extends AreaMarker {
 	@Override
 	public JSShape getShape(double factor, int squareSize) {
 		JSRect rect = new JSRect();
-		rect.setHeight((int) (getExtent() * factor * squareSize / 5));
-		rect.setWidth((int) (getExtent() * factor * squareSize / 5));
-		rect.setX((int) (getOffsetX() * factor));
-		rect.setY((int) (getOffsetY() * factor));
+		final int hw = (int) (getExtent() * factor * squareSize / 5);
+		rect.setHeight(hw);
+		rect.setWidth(hw);
+
+		// Note: while this property is called offset, we treat it as the center of the cube
+		rect.setX((int) (getOffsetX() * factor - (hw/2)));
+		rect.setY((int) (getOffsetY() * factor - (hw/2)));
 
 		return rect;
 	}

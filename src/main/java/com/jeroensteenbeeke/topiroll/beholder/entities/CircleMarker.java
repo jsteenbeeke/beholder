@@ -42,9 +42,12 @@ public class CircleMarker extends AreaMarker {
 	@Override
 	public JSShape getShape(double factor, int squareSize) {
 		JSCircle circle = new JSCircle();
-		circle.setRadius((int) (getExtent()*factor*squareSize/5));
-		circle.setX((int) (getOffsetX()*factor));
-		circle.setY((int) (getOffsetY()*factor));
+		int radius = (int) (getExtent() * factor * squareSize / 5);
+
+		circle.setRadius(radius);
+		// Treat offset as center instead
+		circle.setX((int) (getOffsetX()*factor) - (radius / 2));
+		circle.setY((int) (getOffsetY()*factor) - (radius / 2));
 		circle.setThetaOffset(0.0);
 		circle.setThetaExtent(Math.PI*2);
 
