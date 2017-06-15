@@ -1,0 +1,32 @@
+<html xmlns:wicket>
+<wicket:panel>
+	<h2>Cone</h2>
+
+	<form class="form-inline" wicket:id="createForm">
+		<div class="form-group">
+			<label wicket:for="color">Color</label>
+			<div class="input-group">
+				<span class="input-group-addon" wicket:id="preview">#</span>
+				<input type="text"
+					   class="form-control"
+					   wicket:id="color"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label wicket:for="r">Radius</label> <input type="number"
+														class="form-control"
+														wicket:id="r"/>
+
+		</div>
+		<div class="form-group">
+			<label wicket:for="theta">Angle</label> <input type="number"
+														class="form-control"
+														wicket:id="theta"/>
+
+		</div>
+
+		<button type="submit" class="btn btn-success"
+				wicket:id="submit">Add</button>
+	</form>
+</wicket:panel>
+</html>

@@ -27,6 +27,8 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
+import javax.annotation.Nonnull;
+
 @Component
 @Scope(value = "request")
 class MarkerServiceImpl implements MarkerService {
@@ -89,12 +91,14 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void createCircle(MapView view, TokenInstance token) {
+	public void createCircle(@Nonnull MapView view, @Nonnull String color,
+			int x, int y, int radius) {
+
 		CircleMarker marker = new CircleMarker();
-		marker.setColor("ff0000");
-		marker.setExtent(20);
-		marker.setOffsetX(token.getOffsetX());
-		marker.setOffsetY(token.getOffsetY());
+		marker.setColor(color);
+		marker.setExtent(radius);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
 		
@@ -104,13 +108,15 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void createCone(MapView view, TokenInstance token) {
+	public void createCone(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int radius, int theta) {
+
 		ConeMarker marker = new ConeMarker();
-		marker.setColor("ff0000");
-		marker.setExtent(15);
-		marker.setTheta(45);
-		marker.setOffsetX(token.getOffsetX());
-		marker.setOffsetY(token.getOffsetY());
+		marker.setColor(color);
+		marker.setExtent(radius);
+		marker.setTheta(theta);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
 		
@@ -119,28 +125,30 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void createCube(MapView view, TokenInstance token) {
+	public void createCube(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int extent) {
+
 		CubeMarker marker = new CubeMarker();
-		marker.setExtent(20);
-		marker.setColor("ff0000");
-		marker.setOffsetX(token.getOffsetX());
-		marker.setOffsetY(token.getOffsetY());
+		marker.setExtent(extent);
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
 		
 		mapService.refreshView(marker.getView());
-
-
 	}
 
 	@Override
-	public void createLine(MapView view, TokenInstance token) {
+	public void createLine(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int extent, int theta) {
+
 		LineMarker marker = new LineMarker();
-		marker.setColor("ff0000");
-		marker.setExtent(15);
-		marker.setTheta(45);
-		marker.setOffsetX(token.getOffsetX());
-		marker.setOffsetY(token.getOffsetY());
+		marker.setColor(color);
+		marker.setExtent(extent);
+		marker.setTheta(theta);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
 		

@@ -24,6 +24,8 @@ public class InitiativeRenderable implements JSRenderable {
 
 	private String position;
 
+	private int margin;
+
 	private List<InitiativeParticipantRenderable> participants;
 
 	public boolean isShow() {
@@ -49,6 +51,14 @@ public class InitiativeRenderable implements JSRenderable {
 	public void setParticipants(
 			List<InitiativeParticipantRenderable> participants) {
 		this.participants = participants;
+	}
+
+	public int getMargin() {
+		return margin;
+	}
+
+	public void setMargin(int margin) {
+		this.margin = margin;
 	}
 
 	@Override

@@ -88,6 +88,15 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
+	public void setViewInitiativeMargin(MapView view, Integer margin) {
+		view.setInitiativeMargin(margin);
+		mapViewDAO.update(view);
+
+		BeholderRegistry.instance.sendToView(view.getId(),
+				view.getInitiativeJS());
+	}
+
+	@Override
 	public void reroll(MapView view) {
 		view.getInitiativeParticipants().forEach(i -> {
 			i.setTotal(
@@ -140,6 +149,17 @@ public class InitiativeServiceImpl implements InitiativeService {
 		participantDAO.delete(participant);
 
 		determineOverrideOrder(view);
+
+		BeholderRegistry.instance.sendToView(view.getId(),
+				view.getInitiativeJS());
+	}
+
+	@Override
+	public void setParticipantTotal(InitiativeParticipant participant, int total) {
+		participant.setTotal(total);
+		participantDAO.update(participant);
+
+		MapView view = participant.getView();
 
 		BeholderRegistry.instance.sendToView(view.getId(),
 				view.getInitiativeJS());

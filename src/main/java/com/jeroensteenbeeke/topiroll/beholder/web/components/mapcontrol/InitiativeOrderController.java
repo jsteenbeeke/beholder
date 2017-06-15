@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -161,7 +161,26 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				item.add(nameLabel);
 				item.add(new Label("score", participant.getInitiativeType()
 						.formatBonus(participant.getScore())));
-				item.add(new Label("initiative", participant.getTotal()));
+
+				Form<InitiativeParticipant> form = new Form<InitiativeParticipant>("total");
+				NumberTextField<Integer> initiativeField =
+						new NumberTextField<>("initiativeField", Model.of(participant.getTotal()), Integer.class);
+				form.add(initiativeField);
+				form.add(new AjaxSubmitLink("update") {
+					@Override
+					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+						super.onSubmit(target, form);
+
+						InitiativeParticipant participant = item.getModelObject();
+
+						Integer total = initiativeField.getModelObject();
+						if (total != null) {
+							initiativeService.setParticipantTotal(participant, total);
+							target.add(container);
+						}
+					}
+				});
+				item.add(form);
 				item.add(new AjaxIconLink<InitiativeParticipant>("select",
 						item.getModel(), GlyphIcon.screenshot) {
 
@@ -183,7 +202,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 						initiativeService.moveUp(item.getModelObject());
 						target.add(container);
 					}
-					
+
 					@Override
 					public boolean isVisible() {
 						return super.isVisible() && initiativeService
@@ -260,6 +279,28 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				target.add(container, nameField, scoreField, typeField);
 			}
 		});
+
+		Form<InitiativeParticipant> settingsForm = new Form<>("settingsForm");
+		NumberTextField<Integer> marginField =
+				new NumberTextField<Integer>("margin", Model.of(view.getInitiativeMargin()), Integer.class);
+		settingsForm.add(marginField);
+		settingsForm.add(new AjaxSubmitLink("submit") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+
+				super.onSubmit(target, form);
+
+				Integer margin = marginField.getModelObject();
+				MapView view = getModelObject();
+
+				initiativeService.setViewInitiativeMargin(view, margin);
+
+				target.add(container, nameField, scoreField, typeField);
+			}
+		});
+		add(settingsForm);
 	}
 
 }

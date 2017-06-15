@@ -73,4 +73,11 @@
       </column>
     </addColumn>
   </changeSet>
+<changeSet author="jeroensteenbeeke" id="102">
+    <addColumn tableName="mapview">
+      <column name="initiativemargin" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
