@@ -371,6 +371,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
+	@Transactional
 	public void refreshView(MapView view) {
 		internalUpdateView(view, s -> true);
 	}

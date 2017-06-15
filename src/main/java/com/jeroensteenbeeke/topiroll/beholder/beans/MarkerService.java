@@ -32,12 +32,12 @@ public interface MarkerService {
 
 	void update(@Nonnull LineMarker marker, @Nonnull String color, int x, int y, int extent, int theta);
 
-	void createCircle(@Nonnull MapView view, @Nonnull TokenInstance token);
+	void createCircle(@Nonnull MapView view,  @Nonnull String color, int x, int y, int radius);
 
-	void createCone(@Nonnull MapView view, @Nonnull TokenInstance token);
+	void createCone(@Nonnull MapView view,  @Nonnull String color, int x, int y, int radius, int theta);
 
-	void createCube(@Nonnull MapView view, @Nonnull TokenInstance token);
+	void createCube(@Nonnull MapView view, @Nonnull String color, int x, int y, int extent);
 	
-	void createLine(@Nonnull MapView view, @Nonnull TokenInstance token);
+	void createLine(@Nonnull MapView view, @Nonnull String color, int x, int y, int extent, int theta);
 
 }

@@ -99,9 +99,6 @@ public abstract class TokenStateController extends Panel {
 	@Inject
 	private MapService mapService;
 	
-	@Inject
-	private MarkerService markerService;
-
 	private IModel<MapView> viewModel;
 
 	private IModel<ScaledMap> mapModel;
@@ -241,15 +238,6 @@ public abstract class TokenStateController extends Panel {
 					}
 
 				});
-
-				item.add(new MarkerLink("circle", markerService::createCircle,
-						viewModel.getObject(), item.getModelObject()));
-				item.add(new MarkerLink("cone", markerService::createCone,
-						viewModel.getObject(), item.getModelObject()));
-				item.add(new MarkerLink("cube", markerService::createCube,
-						viewModel.getObject(), item.getModelObject()));
-				item.add(new MarkerLink("line", markerService::createLine,
-						viewModel.getObject(), item.getModelObject()));
 			}
 		};
 

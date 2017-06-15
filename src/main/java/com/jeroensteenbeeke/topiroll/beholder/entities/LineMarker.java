@@ -32,6 +32,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 public class LineMarker extends AreaMarker {
 
 	private static final long serialVersionUID = 1L;
+	public static final int LINE_ANGLE = 3;
+	private static final int LINE_MARKER_CUTOFF = 15;
 
 	@Column(nullable = false)
 	private int theta;
@@ -57,10 +59,19 @@ public class LineMarker extends AreaMarker {
 	public JSShape getShape(double factor, int squareSize) {
 		JSCircle circle = new JSCircle();
 		circle.setRadius((int) (getExtent() * factor * squareSize / 5));
-		circle.setX((int) (getOffsetX() * factor));
-		circle.setY((int) (getOffsetY() * factor));
-		circle.setThetaOffset(Math.toRadians((double) getTheta()));
-		circle.setThetaExtent(Math.toRadians(0.5));
+		circle.setX((int) (getOffsetX() * factor) - circle.getRadius());
+		circle.setY((int) (getOffsetY() * factor) - circle.getRadius());
+
+		double angle = LINE_ANGLE;
+
+		int repetitions = 5 * circle.getRadius() / (squareSize * LINE_MARKER_CUTOFF);
+
+		for (int i = 0; i < repetitions-1; i++) {
+			angle = angle / 2.0;
+		}
+
+		circle.setThetaOffset(Math.toRadians((double) getTheta()-(angle/2.0)));
+		circle.setThetaExtent(Math.toRadians(angle));
 
 		return circle;
 	}
