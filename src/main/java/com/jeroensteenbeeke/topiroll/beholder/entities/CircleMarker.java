@@ -46,8 +46,8 @@ public class CircleMarker extends AreaMarker {
 
 		circle.setRadius(radius);
 		// Treat offset as center instead
-		circle.setX((int) (getOffsetX()*factor) - (radius / 2));
-		circle.setY((int) (getOffsetY()*factor) - (radius / 2));
+		circle.setX((int) (getOffsetX()*factor) - radius);
+		circle.setY((int) (getOffsetY()*factor) - radius);
 		circle.setThetaOffset(0.0);
 		circle.setThetaExtent(Math.PI*2);
 
