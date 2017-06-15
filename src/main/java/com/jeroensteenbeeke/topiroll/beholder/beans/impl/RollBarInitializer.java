@@ -1,5 +1,8 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.IHeaderContributor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +25,8 @@ public class RollBarInitializer implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		String apiKey = data.getServerKey();
 		String environment = data.getEnvironment();
-		
+		String clientKey = data.getClientKey();
+
 		log.info("Rollbar API key: {}", apiKey != null && !apiKey.isEmpty());
 		log.info("Rollbar Environment: {}", environment);
 
@@ -30,6 +34,8 @@ public class RollBarInitializer implements InitializingBean {
 				&& !environment.isEmpty()) {
 			RollBarReference.instance
 					.setRollbar(new Rollbar(apiKey, environment));
+
+
 		} else {
 			log.warn("Rollbar not initialized! Errors will not be submitted!");
 		}

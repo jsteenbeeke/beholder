@@ -1,22 +1,24 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.RollbarClientListener;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -46,7 +48,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
 	private ApplicationContext ctx;
-	
+
 	private IWebSocketConnectionRegistry webSocketRegistry;
 
 	@Override
@@ -62,7 +64,8 @@ public class BeholderApplication extends WebApplication
 
 		if (sourceURL == null || sourceURL.isEmpty()) {
 			throw new IllegalStateException(
-					"This software is licensed under the Affero GPL, which requires you to provide source code to all users. Please input the source URL");
+					"This software is licensed under the Affero GPL, which requires you to provide source code to all " +
+							"users. Please input the source URL");
 		}
 
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
@@ -96,11 +99,18 @@ public class BeholderApplication extends WebApplication
 						return new TokenResource();
 					}
 				});
-		
+
 		webSocketRegistry = new SimpleWebSocketConnectionRegistry();
 
+		RollBarData data = ctx.getBean(RollBarData.class);
+
+		if (data != null && data.getClientKey() != null) {
+			BeholderApplication.get().getHeaderContributorListeners()
+					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
+		}
+
 	}
-	
+
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {
 		return webSocketRegistry;
 	}
