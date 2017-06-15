@@ -57,14 +57,29 @@ public class StartBeholderApplication {
 			}
 		};
 
-		return InMemory.run("beholder-web").withContextPath("/beholder/")
-				.withContextConsumer(initWebsockets)
-				.withProperty("slack.clientid", args[0])
-				.withProperty("slack.clientsecret", args[1])
-				.withProperty("application.baseurl",
-						"http://localhost:8081/beholder/")
-				.withProperty("application.sourceurl",
-						"file://" + System.getProperty("user.dir"))
-				.atPort(8081);
+		if (args.length < 5) {
+			return InMemory.run("beholder-web").withContextPath("/beholder/")
+					.withContextConsumer(initWebsockets)
+					.withProperty("slack.clientid", args[0])
+					.withProperty("slack.clientsecret", args[1])
+					.withProperty("application.baseurl",
+							"http://localhost:8081/beholder/")
+					.withProperty("application.sourceurl",
+							"file://" + System.getProperty("user.dir"))
+					.atPort(8081);
+		} else {
+			return InMemory.run("beholder-web").withContextPath("/beholder/")
+					.withContextConsumer(initWebsockets)
+					.withProperty("slack.clientid", args[0])
+					.withProperty("slack.clientsecret", args[1])
+					.withProperty("rollbar.server.apiKey", args[2])
+					.withProperty("rollbar.client.apiKey", args[3])
+					.withProperty("rollbar.environment", args[4])
+					.withProperty("application.baseurl",
+							"http://localhost:8081/beholder/")
+					.withProperty("application.sourceurl",
+							"file://" + System.getProperty("user.dir"))
+					.atPort(8081);
+		}
 	}
 }
