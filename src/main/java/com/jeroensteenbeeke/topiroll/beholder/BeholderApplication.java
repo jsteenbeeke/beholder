@@ -105,8 +105,8 @@ public class BeholderApplication extends WebApplication
 		RollBarData data = ctx.getBean(RollBarData.class);
 
 		if (data != null && data.getClientKey() != null) {
-			BeholderApplication.get().getHeaderContributorListeners()
-					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
+//			BeholderApplication.get().getHeaderContributorListeners()
+//					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
 		}
 
 	}
