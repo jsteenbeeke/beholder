@@ -11,3 +11,4 @@ beholder-docker.tar.gz
 *.iws
 *.iml
 .idea
+revision.txt
