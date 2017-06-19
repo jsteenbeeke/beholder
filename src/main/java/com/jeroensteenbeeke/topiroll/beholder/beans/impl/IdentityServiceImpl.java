@@ -39,7 +39,7 @@ class IdentityServiceImpl implements IdentityService {
 	@Autowired
 	private BeholderUserDAO userDAO;
 
-	@Autowired
+	@Autowired(required = false)
 	private List<IAccountInitializer> initializers;
 
 	@Nonnull
@@ -59,9 +59,10 @@ class IdentityServiceImpl implements IdentityService {
 			user.setUserId(descriptor.getUserId());
 			user.setUsername(descriptor.getUserName());
 			userDAO.save(user);
-
-			for (IAccountInitializer initializer : initializers) {
-				initializer.onAccountCreated(user);
+			if (initializers != null) {
+				for (IAccountInitializer initializer : initializers) {
+					initializer.onAccountCreated(user);
+				}
 			}
 		} else {
 			user.setAccessToken(descriptor.getAccessToken());

@@ -19,7 +19,6 @@ package com.jeroensteenbeeke.topiroll.beholder;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.resteasy.plugins.spring.SpringBeanProcessorServletAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -80,10 +79,5 @@ public class BeholderApplicationConfig {
 	@Bean
 	public TestModeEntityPopulator testPopulator() {
 		return new TestModeEntityPopulator();
-	}
-
-	@Bean
-	public static SpringBeanProcessorServletAware resteasyConfig() {
-		return new SpringBeanProcessorServletAware();
 	}
 }
