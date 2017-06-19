@@ -70,6 +70,8 @@ public class ControlViewPage extends AuthenticatedPage {
 
 	private AjaxLink<Void> initiativeLink;
 
+	private AjaxLink<Void> mapSelectLink;
+
 	public ControlViewPage(MapView view) {
 		super(String.format("Control View - %s", view.getIdentifier()));
 
@@ -138,7 +140,7 @@ public class ControlViewPage extends AuthenticatedPage {
 					view.getSelectedMap()));
 		}
 
-		add(new AjaxLink<Void>("mapSelect") {
+		add(mapSelectLink = new AjaxLink<Void>("mapSelect") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -150,7 +152,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
 						@Override
 						public void onMapSelected(@Nullable ScaledMap map,
-								@Nonnull AjaxRequestTarget target) {
+												  @Nonnull AjaxRequestTarget target) {
 							if (map != null) {
 								WebMarkupContainer newController = new HideRevealController(
 										CONTROLLER_ID, viewModel.getObject(),
