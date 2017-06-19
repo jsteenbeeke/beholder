@@ -28,7 +28,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 public interface MapService {
 	@Nonnull
 	TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
-			int squareSize, byte[] data);
+			int squareSize, @Nonnull byte[] data);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 
@@ -36,9 +36,9 @@ public interface MapService {
 	
 	void delete(@Nonnull MapView view);
 
-	void addFogOfWarCircle(ScaledMap map, int radius, int offsetX, int offsetY);
+	void addFogOfWarCircle(@Nonnull ScaledMap map, int radius, int offsetX, int offsetY);
 
-	void addFogOfWarRect(ScaledMap map, int width, int height, int offsetX,
+	void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height, int offsetX,
 			int offsetY);
 
 	TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
@@ -51,7 +51,7 @@ public interface MapService {
 			@Nonnull VisibilityStatus status);
 
 	TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
-			@Nonnull int diameter, @Nonnull byte[] image);
+			int diameter, @Nonnull byte[] image);
 
 	void ungroup(@Nonnull FogOfWarGroup group);
 
@@ -59,8 +59,8 @@ public interface MapService {
 			@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
 			@Nonnull List<FogOfWarShape> remove);
 
-	void addFogOfWarTriangle(ScaledMap map, int width, int height,
-			int offsetX, int offsetY, TriangleOrientation orientation);
+	void addFogOfWarTriangle(@Nonnull ScaledMap map, int width, int height,
+			int offsetX, int offsetY, @Nonnull TriangleOrientation orientation);
 
 	void deleteShape(@Nonnull FogOfWarShape shape);
 

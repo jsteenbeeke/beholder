@@ -26,6 +26,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 
@@ -39,8 +40,9 @@ class MarkerServiceImpl implements MarkerService {
 	private MapService mapService;
 
 	@Override
-	public void update(CircleMarker marker, String color, int x, int y,
-			int radius) {
+	@Transactional
+	public void update(@Nonnull CircleMarker marker, @Nonnull String color, int x, int y,
+					   int radius) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
 		marker.setOffsetY(y);
@@ -51,8 +53,9 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void update(ConeMarker marker, String color, int x, int y,
-			int radius, int theta) {
+	@Transactional
+	public void update(@Nonnull ConeMarker marker, @Nonnull String color, int x, int y,
+					   int radius, int theta) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
 		marker.setOffsetY(y);
@@ -64,8 +67,9 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void update(CubeMarker marker, String color, int x, int y,
-			int extent) {
+	@Transactional
+	public void update(@Nonnull CubeMarker marker, @Nonnull String color, int x, int y,
+					   int extent) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
 		marker.setOffsetY(y);
@@ -77,8 +81,9 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
-	public void update(LineMarker marker, String color, int x, int y,
-			int extent, int theta) {
+	@Transactional
+	public void update(@Nonnull LineMarker marker, @Nonnull String color, int x, int y,
+					   int extent, int theta) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
 		marker.setOffsetY(y);
@@ -91,6 +96,7 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
+	@Transactional
 	public void createCircle(@Nonnull MapView view, @Nonnull String color,
 			int x, int y, int radius) {
 
@@ -108,6 +114,7 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
+	@Transactional
 	public void createCone(@Nonnull MapView view, @Nonnull String color, int x,
 			int y, int radius, int theta) {
 
@@ -125,6 +132,7 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
+	@Transactional
 	public void createCube(@Nonnull MapView view, @Nonnull String color, int x,
 			int y, int extent) {
 
@@ -140,6 +148,7 @@ class MarkerServiceImpl implements MarkerService {
 	}
 
 	@Override
+	@Transactional
 	public void createLine(@Nonnull MapView view, @Nonnull String color, int x,
 			int y, int extent, int theta) {
 

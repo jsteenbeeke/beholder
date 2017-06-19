@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 
 public interface IdentityService {
-	public static class UserDescriptor {
+	class UserDescriptor {
 		private String userId;
 
 		private String teamId;

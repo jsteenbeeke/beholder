@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 
+import javax.annotation.Nonnull;
+
 @Component
 class URLServiceImpl implements URLService {
 	private static final String SOURCE_URL_CONSTANT = "${application.sourceurl}";
@@ -32,8 +34,9 @@ class URLServiceImpl implements URLService {
 	@Value(SOURCE_URL_CONSTANT)
 	private String sourceUrl;
 
+	@Nonnull
 	@Override
-	public String contextRelative(String relativePath) {
+	public String contextRelative(@Nonnull String relativePath) {
 		String prefix = urlPrefix;
 
 		while (prefix.endsWith("/")) {
@@ -48,6 +51,7 @@ class URLServiceImpl implements URLService {
 		return String.format("%s/%s", prefix, path);
 	}
 	
+	@Nonnull
 	@Override
 	public String getSourceURL() {
 		if (sourceUrl.equals(SOURCE_URL_CONSTANT)) {

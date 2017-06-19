@@ -40,6 +40,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 
+import javax.annotation.Nonnull;
+
 @Component
 public class InitiativeServiceImpl implements InitiativeService {
 	private static final Random DICEMASTER = new Random();
@@ -51,7 +53,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	private InitiativeParticipantDAO participantDAO;
 
 	@Override
-	public void hideInitiative(MapView view) {
+	public void hideInitiative(@Nonnull MapView view) {
 		view.setInitiativePosition(null);
 		mapViewDAO.update(view);
 
@@ -60,7 +62,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void showInitiative(MapView view, InitiativeLocation location) {
+	public void showInitiative(@Nonnull MapView view, @Nonnull InitiativeLocation location) {
 		view.setInitiativePosition(location);
 		mapViewDAO.update(view);
 
@@ -69,8 +71,8 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void addInitiative(MapView view, String name, int score,
-			InitiativeType type) {
+	public void addInitiative(@Nonnull MapView view, @Nonnull String name, int score,
+							  @Nonnull InitiativeType type) {
 
 		InitiativeParticipant participant = new InitiativeParticipant();
 		participant.setName(name);
@@ -88,7 +90,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void setViewInitiativeMargin(MapView view, Integer margin) {
+	public void setViewInitiativeMargin(@Nonnull MapView view, @Nonnull Integer margin) {
 		view.setInitiativeMargin(margin);
 		mapViewDAO.update(view);
 
@@ -97,7 +99,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void reroll(MapView view) {
+	public void reroll(@Nonnull MapView view) {
 		view.getInitiativeParticipants().forEach(i -> {
 			i.setTotal(
 					i.getInitiativeType().determine(DICEMASTER, i.getScore()));
@@ -144,7 +146,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void removeParticipant(InitiativeParticipant participant) {
+	public void removeParticipant(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 		participantDAO.delete(participant);
 
@@ -155,7 +157,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void setParticipantTotal(InitiativeParticipant participant, int total) {
+	public void setParticipantTotal(@Nonnull InitiativeParticipant participant, int total) {
 		participant.setTotal(total);
 		participantDAO.update(participant);
 
@@ -166,7 +168,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public boolean canMoveUp(InitiativeParticipant participant) {
+	public boolean canMoveUp(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		return view.getInitiativeParticipants().stream()
@@ -178,7 +180,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public boolean canMoveDown(InitiativeParticipant participant) {
+	public boolean canMoveDown(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		return view.getInitiativeParticipants().stream()
@@ -190,13 +192,13 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void moveUp(InitiativeParticipant participant) {
+	public void moveUp(@Nonnull InitiativeParticipant participant) {
 		setOrderOverride(participant, participant.getOrderOverride() - 1);
 
 	}
 
 	@Override
-	public void moveDown(InitiativeParticipant participant) {
+	public void moveDown(@Nonnull InitiativeParticipant participant) {
 		setOrderOverride(participant, participant.getOrderOverride() + 1);
 
 	}
@@ -221,7 +223,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void select(InitiativeParticipant participant) {
+	public void select(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		view.getInitiativeParticipants().forEach(i -> {
@@ -237,7 +239,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	}
 
 	@Override
-	public void selectNext(MapView view) {
+	public void selectNext(@Nonnull MapView view) {
 		List<InitiativeParticipant> participants = view
 				.getInitiativeParticipants().stream().sorted(MapView.INITIATIVE_ORDER)
 				.collect(Collectors.toList());

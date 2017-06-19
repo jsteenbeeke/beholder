@@ -42,6 +42,8 @@ import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 
+import javax.annotation.Nonnull;
+
 @Component
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
@@ -77,9 +79,11 @@ class MapServiceImpl implements MapService {
 	@Autowired
 	private URLService urlService;
 
+	@Nonnull
 	@Override
-	public TypedActionResult<ScaledMap> createMap(BeholderUser user,
-			String name, int squareSize, byte[] data) {
+	@Transactional
+	public TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user,
+												  @Nonnull String name, int squareSize, byte[] data) {
 		Dimension dimension = ImageUtil.getImageDimensions(data);
 
 		List<MapView> views = user.getViews();
@@ -112,8 +116,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void createTokenInstance(TokenDefinition token, ScaledMap map,
-			TokenBorderType borderType, int x, int y, String badge) {
+	@Transactional
+	public void createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
+									@Nonnull TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
 		instance.setBorderType(borderType);
@@ -128,7 +133,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void selectMap(MapView view, ScaledMap map) {
+	@Transactional
+	public void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map) {
 		view.setSelectedMap(map);
 		viewDAO.update(view);
 
@@ -136,7 +142,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void unselectMap(MapView view) {
+	@Transactional
+	public void unselectMap(@Nonnull MapView view) {
 		view.setSelectedMap(null);
 		viewDAO.update(view);
 
@@ -144,15 +151,17 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void delete(MapView view) {
+	@Transactional
+	public void delete(@Nonnull MapView view) {
 		view.getVisibilities().forEach(visibilityDAO::delete);
 		viewDAO.delete(view);
 
 	}
 
 	@Override
-	public void addFogOfWarCircle(ScaledMap map, int radius, int offsetX,
-			int offsetY) {
+	@Transactional
+	public void addFogOfWarCircle(@Nonnull ScaledMap map, int radius, int offsetX,
+								  int offsetY) {
 		FogOfWarCircle circle = new FogOfWarCircle();
 		circle.setMap(map);
 		circle.setOffsetX(offsetX);
@@ -163,8 +172,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void addFogOfWarRect(ScaledMap map, int width, int height,
-			int offsetX, int offsetY) {
+	@Transactional
+	public void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height,
+								int offsetX, int offsetY) {
 		FogOfWarRect rect = new FogOfWarRect();
 		rect.setMap(map);
 		rect.setHeight(height);
@@ -175,8 +185,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void addFogOfWarTriangle(ScaledMap map, int width, int height,
-			int offsetX, int offsetY, TriangleOrientation orientation) {
+	@Transactional
+	public void addFogOfWarTriangle(@Nonnull ScaledMap map, int width, int height,
+									int offsetX, int offsetY, @Nonnull TriangleOrientation orientation) {
 		FogOfWarTriangle triangle = new FogOfWarTriangle();
 		triangle.setMap(map);
 		triangle.setVerticalSide(height);
@@ -188,8 +199,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public TypedActionResult<FogOfWarGroup> createGroup(ScaledMap map,
-			String name, List<FogOfWarShape> shapes) {
+	@Transactional
+	public TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
+														@Nonnull String name, @Nonnull List<FogOfWarShape> shapes) {
 		if (shapes.isEmpty()) {
 			return TypedActionResult.fail("No shapes selected");
 		}
@@ -208,8 +220,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public TypedActionResult<FogOfWarGroup> editGroup(FogOfWarGroup group,
-			String name, List<FogOfWarShape> keep, List<FogOfWarShape> remove) {
+	@Transactional
+	public TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+													  @Nonnull String name, @Nonnull List<FogOfWarShape> keep, @Nonnull List<FogOfWarShape> remove) {
 		if (keep.isEmpty()) {
 			return TypedActionResult.fail("No shapes selected");
 		}
@@ -231,8 +244,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void setGroupVisibility(MapView view, FogOfWarGroup group,
-			VisibilityStatus status) {
+	@Transactional
+	public void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
+								   @Nonnull VisibilityStatus status) {
 		FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();
 		filter.view().set(view);
 		filter.group().set(group);
@@ -255,8 +269,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void setShapeVisibility(MapView view, FogOfWarShape shape,
-			VisibilityStatus status) {
+	@Transactional
+	public void setShapeVisibility(@Nonnull MapView view, @Nonnull FogOfWarShape shape,
+								   @Nonnull VisibilityStatus status) {
 		FogOfWarShapeVisibilityFilter filter = new FogOfWarShapeVisibilityFilter();
 		filter.view().set(view);
 		filter.shape().set(shape);
@@ -279,8 +294,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public TokenDefinition createToken(BeholderUser user, String name,
-			int diameter, byte[] image) {
+	@Transactional
+	public TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
+									   int diameter, @Nonnull byte[] image) {
 		TokenDefinition def = new TokenDefinition();
 		def.setImageData(image);
 		def.setOwner(user);
@@ -293,7 +309,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void ungroup(FogOfWarGroup group) {
+	@Transactional
+	public void ungroup(@Nonnull FogOfWarGroup group) {
 		ScaledMap map = group.getMap();
 
 		group.getShapes().forEach(s -> {
@@ -310,7 +327,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void deleteShape(FogOfWarShape shape) {
+	@Transactional
+	public void deleteShape(@Nonnull FogOfWarShape shape) {
 		ScaledMap map = shape.getMap();
 
 		shape.getVisibilities().forEach(shapeVisibilityDAO::delete);
@@ -321,8 +339,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void setTokenBorderType(TokenInstance instance,
-			TokenBorderType type) {
+	@Transactional
+	public void setTokenBorderType(@Nonnull TokenInstance instance,
+								   @Nonnull TokenBorderType type) {
 		instance.setBorderType(type);
 		tokenInstanceDAO.update(instance);
 
@@ -330,8 +349,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void setTokenHP(TokenInstance instance, Integer currentHP,
-			Integer maxHP) {
+	@Transactional
+	public void setTokenHP(@Nonnull TokenInstance instance, Integer currentHP,
+						   Integer maxHP) {
 		instance.setCurrentHitpoints(currentHP);
 		instance.setMaxHitpoints(maxHP);
 		tokenInstanceDAO.update(instance);
@@ -340,7 +360,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void showToken(TokenInstance instance) {
+	@Transactional
+	public void showToken(@Nonnull TokenInstance instance) {
 		instance.setShow(true);
 		tokenInstanceDAO.update(instance);
 
@@ -348,7 +369,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void hideToken(TokenInstance instance) {
+	@Transactional
+	public void hideToken(@Nonnull TokenInstance instance) {
 		instance.setShow(false);
 		tokenInstanceDAO.update(instance);
 
@@ -356,13 +378,15 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void setTokenNote(TokenInstance instance, String note) {
+	@Transactional
+	public void setTokenNote(@Nonnull TokenInstance instance, String note) {
 		instance.setNote(note);
 		tokenInstanceDAO.update(instance);
 	}
 
 	@Override
-	public void updateTokenLocation(TokenInstance instance, int x, int y) {
+	@Transactional
+	public void updateTokenLocation(@Nonnull TokenInstance instance, int x, int y) {
 		instance.setOffsetX(x);
 		instance.setOffsetY(y);
 		tokenInstanceDAO.update(instance);
@@ -372,7 +396,7 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public void refreshView(MapView view) {
+	public void refreshView(@Nonnull MapView view) {
 		internalUpdateView(view, s -> true);
 	}
 
@@ -390,8 +414,8 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void initializeView(long viewId, String sessionId,
-			boolean previewMode) {
+	public void initializeView(long viewId, @Nonnull String sessionId,
+							   boolean previewMode) {
 		MapView view = viewDAO.load(viewId);
 		if (view != null) {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)

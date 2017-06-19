@@ -34,6 +34,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.OverviewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.SlackErrorPage;
 
+import javax.annotation.Nonnull;
+
 @Component
 public class BeholderSlackHandler extends SlackHandler {
 	@Value("${application.baseurl}")
@@ -48,36 +50,40 @@ public class BeholderSlackHandler extends SlackHandler {
 	@Autowired
 	private IdentityService identityService;
 
+	@Nonnull
 	@Override
 	public String getClientId() {
 		return clientId;
 	}
 
+	@Nonnull
 	@Override
 	public String getClientSecret() {
 		return clientSecret;
 	}
 
+	@Nonnull
 	@Override
 	public String getApplicationBaseUrl() {
 		return applicationBaseUrl;
 	}
 
 	@Override
-	public void onError(String message) {
+	public void onError(@Nonnull String message) {
 		throw new RestartResponseAtInterceptPageException(
 				new SlackErrorPage(message));
 
 	}
 
+	@Nonnull
 	@Override
 	public String getScopes() {
 		return "identity.basic,identity.team,identity.avatar";
 	}
 
 	@Override
-	public void onAccessTokenReceived(OAuth20Service service,
-			OAuth2AccessToken accessToken) {
+	public void onAccessTokenReceived(@Nonnull OAuth20Service service,
+									  @Nonnull OAuth2AccessToken accessToken) {
 		String tokenString = accessToken.getAccessToken();
 
 		TypedActionResult<JSONObject> result = getUserInfo(service,
@@ -88,7 +94,7 @@ public class BeholderSlackHandler extends SlackHandler {
 
 			Boolean ok = (Boolean) response.get("ok");
 
-			if (ok == null || !ok.booleanValue()) {
+			if (ok == null || !ok) {
 				onError("Slack returned non-OK response status: "
 						.concat(response.toJSONString()));
 			} else {
@@ -131,7 +137,7 @@ public class BeholderSlackHandler extends SlackHandler {
 	}
 
 	@Override
-	public void setUserState(String state) {
+	public void setUserState(@Nonnull String state) {
 		BeholderSession.get().setState(state);
 
 	}

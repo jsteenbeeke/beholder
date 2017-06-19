@@ -38,6 +38,8 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
+import javax.annotation.Nonnull;
+
 @Component
 public class TestViewInitializer implements IAccountInitializer {
 	private static final Logger log = LoggerFactory
@@ -60,7 +62,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void onAccountCreated(BeholderUser user) {
+	public void onAccountCreated(@Nonnull BeholderUser user) {
 		MapView view = new MapView();
 		view.setHeight(768);
 		view.setWidth(1360);

@@ -24,7 +24,9 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -160,6 +162,18 @@ public class ControlViewPage extends AuthenticatedPage {
 					setController(target, newController);
 				}
 
+			}
+		});
+
+		add(new AjaxLink<Void>("forceUpdate") {
+			private static final long serialVersionUID = 1L;
+
+			@Inject
+			private MapService service;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				service.refreshView(viewModel.getObject());
 			}
 		});
 

@@ -22,30 +22,32 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 
+import javax.annotation.Nonnull;
+
 public interface InitiativeService {
-	void hideInitiative(MapView view);
+	void hideInitiative(@Nonnull MapView view);
 	
-	void showInitiative(MapView view, InitiativeLocation location);
+	void showInitiative(@Nonnull MapView view, @Nonnull InitiativeLocation location);
 	
-	void addInitiative(MapView view, String name, int score, InitiativeType type);
+	void addInitiative(@Nonnull MapView view, @Nonnull String name, int score, @Nonnull InitiativeType type);
 
-	void reroll(MapView view);
+	void reroll(@Nonnull MapView view);
 	
-	void removeParticipant(InitiativeParticipant participant);
+	void removeParticipant(@Nonnull InitiativeParticipant participant);
 
-	boolean canMoveUp(InitiativeParticipant participant);
+	boolean canMoveUp(@Nonnull InitiativeParticipant participant);
 
-	boolean canMoveDown(InitiativeParticipant participant);
+	boolean canMoveDown(@Nonnull InitiativeParticipant participant);
 
-	void moveUp(InitiativeParticipant participant);
+	void moveUp(@Nonnull InitiativeParticipant participant);
 	
-	void moveDown(InitiativeParticipant participant);
+	void moveDown(@Nonnull InitiativeParticipant participant);
 	
-	void select(InitiativeParticipant participant);
+	void select(@Nonnull InitiativeParticipant participant);
 	
-	void selectNext(MapView view);
+	void selectNext(@Nonnull MapView view);
 
-	void setViewInitiativeMargin(MapView view, Integer margin);
+	void setViewInitiativeMargin(@Nonnull MapView view, @Nonnull Integer margin);
 
-	void setParticipantTotal(InitiativeParticipant participant, int total);
+	void setParticipantTotal(@Nonnull InitiativeParticipant participant, int total);
 }
