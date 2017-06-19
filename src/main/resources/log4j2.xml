@@ -6,15 +6,15 @@
     </Console>
   </Appenders>
   <Loggers>
-  	<logger name="org.apache.wicket" level="INFO" additivity="false">
+  	<Logger name="org.apache.wicket" level="INFO" additivity="false">
   		<AppenderRef ref="CONSOLE"/>
-  	</logger>
-  	<logger name="com.jeroensteenbeeke.hyperion" level="INFO" additivity="false">
+  	</Logger>
+  	<Logger name="com.jeroensteenbeeke.hyperion" level="INFO" additivity="false">
   		<AppenderRef ref="CONSOLE"/>
-  	</logger>
-  	<logger name="com.jeroensteenbeeke.topiroll.beholder" level="INFO" additivity="false">
+  	</Logger>
+  	<Logger name="com.jeroensteenbeeke.topiroll.beholder" level="INFO" additivity="false">
   		<AppenderRef ref="CONSOLE"/>
-  	</logger>
+  	</Logger>
     <Root level="WARN">
       <AppenderRef ref="CONSOLE"/>
     </Root>

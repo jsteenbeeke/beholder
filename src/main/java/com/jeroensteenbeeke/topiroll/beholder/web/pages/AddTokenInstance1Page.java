@@ -80,7 +80,7 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 						? EntityEncapsulator
 								.createNullModel(TokenDefinition.class)
 						: ModelMaker.wrap(tokens.get(0)),
-				Lists.newArrayList(tokens),
+				ModelMaker.wrapList(tokens),
 				LambdaRenderer.of(TokenDefinition::getName));
 		tokenSelect.setRequired(true);
 		amountField = new NumberTextField<>("amount", Model.of(1));
