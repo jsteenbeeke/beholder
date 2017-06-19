@@ -64,10 +64,11 @@ public class LineMarker extends AreaMarker {
 
 		double angle = LINE_ANGLE;
 
-		int repetitions = 5 * circle.getRadius() / (squareSize * LINE_MARKER_CUTOFF);
+		int ext = circle.getRadius();
 
-		for (int i = 0; i < repetitions-1; i++) {
-			angle = angle / 2.0;
+		while (ext > 50) {
+			angle = angle * 0.75;
+			ext = ext / 2;
 		}
 
 		circle.setThetaOffset(Math.toRadians((double) getTheta()-(angle/2.0)));
