@@ -241,6 +241,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		super.onDetach();
 
 		mapModel.detach();
+		tokenModel.detach();
 	}
 	
 	protected void onBackButtonClicked() {

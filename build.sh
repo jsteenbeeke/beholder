@@ -10,9 +10,6 @@ maven() {
 
 maven clean package -U
 
-if [[ $@ != 0 ]]; then
-	exit 1
-fi
 maven docker:build
 docker save beholder:latest > beholder-docker.tar.gz
 echo `git log -n 1 --pretty=format:"%H"` > revision.txt
