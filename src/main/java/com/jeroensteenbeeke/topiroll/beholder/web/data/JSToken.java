@@ -35,6 +35,8 @@ public class JSToken  {
 	private int width;
 	
 	private int height;
+
+	private int diameterInSquares;
 	
 		
 	public String getLabel() {
@@ -104,7 +106,13 @@ public class JSToken  {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
-	
 
+	@JsonProperty("diameter_in_squares")
+	public int getDiameterInSquares() {
+		return diameterInSquares;
+	}
+
+	public void setDiameterInSquares(int diameterInSquares) {
+		this.diameterInSquares = diameterInSquares;
+	}
 }
