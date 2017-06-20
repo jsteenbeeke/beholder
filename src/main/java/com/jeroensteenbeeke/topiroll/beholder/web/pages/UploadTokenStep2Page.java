@@ -45,7 +45,7 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new OverviewPage());
+				setResponsePage(new PrepareSessionPage());
 
 			}
 		});
@@ -82,7 +82,7 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 				mapService.createToken(getUser(), nameField.getModelObject(),
 						sizeField.getModelObject(), image);
 
-				setResponsePage(new OverviewPage());
+				setResponsePage(new PrepareSessionPage());
 			}
 		};
 

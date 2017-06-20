@@ -123,8 +123,10 @@ public class MoveTokenController extends Panel {
 								}
 
 								return String.format(
-										"left: %dpx; top: %dpx; width: %dpx; height: %dpx;",
-										left, top, wh, wh);
+										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
+												"width: %dpx; height: %dpx; max-height: %dpx " +
+												"!important;",
+										left, top, wh, wh, wh, wh);
 							}
 
 						}));

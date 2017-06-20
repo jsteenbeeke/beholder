@@ -111,12 +111,12 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 							@Override
 							protected void onSaved(MapView entity) {
-								setResponsePage(new OverviewPage());
+								setResponsePage(new PrepareSessionPage());
 							}
 
 							@Override
 							protected void onCancel(MapView entity) {
-								setResponsePage(new OverviewPage());
+								setResponsePage(new PrepareSessionPage());
 							}
 
 						});
@@ -145,7 +145,7 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 										.delete(item.getModelObject());
 							}
 
-							setResponsePage(new OverviewPage());
+							setResponsePage(new PrepareSessionPage());
 						}));
 
 					}
@@ -250,13 +250,13 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 							@Override
 							protected void onSaved(TokenDefinition entity) {
-								setResponsePage(new OverviewPage());
+								setResponsePage(new PrepareSessionPage());
 
 							}
 
 							@Override
 							protected void onCancel(TokenDefinition entity) {
-								setResponsePage(new OverviewPage());
+								setResponsePage(new PrepareSessionPage());
 							}
 
 						});
@@ -304,13 +304,13 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 					@Override
 					protected void onSaved(MapView entity) {
-						setResponsePage(new OverviewPage());
+						setResponsePage(new PrepareSessionPage());
 
 					}
 
 					@Override
 					protected void onCancel(MapView entity) {
-						setResponsePage(new OverviewPage());
+						setResponsePage(new PrepareSessionPage());
 					}
 
 				});

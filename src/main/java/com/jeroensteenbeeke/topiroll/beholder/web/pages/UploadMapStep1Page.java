@@ -44,7 +44,7 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new OverviewPage());
+				setResponsePage(new PrepareSessionPage());
 
 			}
 		});

@@ -125,13 +125,24 @@ public class TestViewInitializer implements IAccountInitializer {
 				.getResourceAsStream("random_monster.png")) {
 			byte[] imageData = readImage(stream);
 
-			TokenDefinition token = new TokenDefinition();
-			token.setDiameterInSquares(1);
-			token.setImageData(imageData);
-			token.setName("Monster");
-			token.setOwner(user);
-			
-			tokenDAO.save(token);
+			String[] names = {
+					"Monster",
+					"Big Monster",
+					"Bigger Monster",
+					"Biggest Monster"
+			};
+
+			for (int squares = 1; squares <= 4; squares++) {
+				TokenDefinition token = new TokenDefinition();
+				token.setDiameterInSquares(squares);
+				token.setImageData(imageData);
+				token.setName(names[squares-1]);
+				token.setOwner(user);
+
+				tokenDAO.save(token);
+			}
+
+
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}

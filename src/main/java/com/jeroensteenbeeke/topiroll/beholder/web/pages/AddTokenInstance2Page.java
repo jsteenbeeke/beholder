@@ -142,9 +142,14 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 		ContextImage areaMarker = new ContextImage("areaMarker",
 				"tokens/"+ token.getId());
+		int wh = map.getSquareSize() * token.getDiameterInSquares();
 		areaMarker.add(AttributeModifier.replace("style", String.format(
-				"padding: 0px; width: %dpx; height: %dpx; left: %dpx; top: %dpx; border-radius: 100%%; border: 1px solid #000000;",
-				map.getSquareSize(), map.getSquareSize(),
+				"padding: 0px; width: %dpx; height: %dpx; max-width: %dpx !important; max-height:" +
+						" %dpx !important; left:" +
+						" %dpx; top: %dpx; border-radius: " +
+						"100%%; border: 1px solid #000000;",
+
+				wh, wh, wh, wh,
 				offsetXField.getModelObject(), offsetYField.getModelObject())));
 
 		Options draggableOptions = new Options();

@@ -118,7 +118,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
             @Override
             public void onClick() {
-                setResponsePage(OverviewPage.class);
+                setResponsePage(RunSessionPage.class);
             }
         });
 

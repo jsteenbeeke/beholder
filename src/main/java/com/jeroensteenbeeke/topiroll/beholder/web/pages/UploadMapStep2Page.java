@@ -70,7 +70,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(OverviewPage.class);
+				setResponsePage(PrepareSessionPage.class);
 
 			}
 		});

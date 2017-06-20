@@ -44,7 +44,7 @@ public class UploadTokenStep1Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new OverviewPage());
+				setResponsePage(new PrepareSessionPage());
 
 			}
 		});
