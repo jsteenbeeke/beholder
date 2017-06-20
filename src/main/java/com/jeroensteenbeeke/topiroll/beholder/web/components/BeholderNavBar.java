@@ -20,6 +20,8 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.OverviewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.PrepareSessionPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.RunSessionPage;
 import org.apache.wicket.markup.html.link.Link;
 
 import javax.annotation.Nonnull;
@@ -47,6 +49,21 @@ public class BeholderNavBar extends org.apache.wicket.markup.html.panel.Panel {
 
 		add(brandLink);
 
+		add(new Link<Void>("prepare") {
+			@Override
+			public void onClick() {
+				setResponsePage(new PrepareSessionPage());
+			}
+		});
+
+		add(new Link<Void>("run") {
+			@Override
+			public void onClick() {
+				setResponsePage(new RunSessionPage());
+			}
+		});
+
+
 		add(new Link<Void>("logout") {
 			private static final long serialVersionUID = 1L;
 
@@ -57,6 +74,8 @@ public class BeholderNavBar extends org.apache.wicket.markup.html.panel.Panel {
 			}
 
 		});
+
+
 	}
 
 }
