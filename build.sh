@@ -9,7 +9,7 @@ maven() {
 }
 
 maven clean package -U
-
+docker pull jetty:alpine
 maven docker:build
 docker save beholder:latest > beholder-docker.tar.gz
 echo `git log -n 1 --pretty=format:"%H"` > revision.txt
