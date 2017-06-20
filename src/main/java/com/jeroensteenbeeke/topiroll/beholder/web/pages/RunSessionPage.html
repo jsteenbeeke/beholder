@@ -1,0 +1,38 @@
+<html xmlns:wicket>
+	<wicket:extend>
+		<h2>Views</h2>
+
+		<table class="table">
+			<thead>
+			<tr>
+				<th>Identifier</th>
+				<th>Width</th>
+				<th>Height</th>
+				<th>Diagonal</th>
+				<th>Actions</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr wicket:id="views">
+				<td wicket:id="identifier"></td>
+				<td wicket:id="width"></td>
+				<td wicket:id="height"></td>
+				<td><span wicket:id="diagonal"></span>&quot;</td>
+				<td>
+					<div class="btn-group" role="group" aria-label="...">
+						<a type="button" class="btn btn-default" wicket:id="player">Player View</a>
+						<button type="button" class="btn btn-default" wicket:id="dm">DM View</button>
+					</div>
+
+				</td>
+			</tr>
+			</tbody>
+			<tfoot>
+			<tr>
+				<td colspan="6">
+					<div wicket:id="viewnav"></div>
+				</td>
+			</tr>
+			</tfoot>
+		</table>
+	</wicket:extend></html>
