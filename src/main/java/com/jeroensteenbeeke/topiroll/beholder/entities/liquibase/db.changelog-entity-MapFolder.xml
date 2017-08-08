@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="jeroensteenbeeke" failOnError="true" id="103">
+		<createTable tableName="mapfolder">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"/>
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_mapfolder" startValue="1"/>
+	</changeSet>
+	<changeSet author="jeroensteenbeeke" id="104">
+		<addColumn tableName="mapfolder">
+			<column name="name" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroensteenbeeke" id="105">
+		<addColumn tableName="mapfolder">
+			<column name="parent" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="parent" baseTableName="mapfolder" constraintName="fk_mapfolder_parent"
+								 referencedColumnNames="id" referencedTableName="mapfolder"/>
+		<createIndex indexName="idx_mapfolder_parent" tableName="mapfolder">
+			<column name="parent"/>
+		</createIndex>
+	</changeSet>
+	<changeSet author="jeroensteenbeeke" id="106">
+		<addColumn tableName="scaledmap">
+			<column name="folder" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="folder" baseTableName="scaledmap" constraintName="fk_scaledmap_folder"
+								 referencedColumnNames="id" referencedTableName="mapfolder"/>
+		<createIndex indexName="idx_scaledmap_folder" tableName="scaledmap">
+			<column name="folder"/>
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

@@ -22,4 +22,5 @@
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-LineMarker.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CubeMarker.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-InitiativeParticipant.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-MapFolder.xml"/>
 </databaseChangeLog>

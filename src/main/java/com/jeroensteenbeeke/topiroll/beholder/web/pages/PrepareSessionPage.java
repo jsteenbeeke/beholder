@@ -10,15 +10,19 @@ import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.AuthenticatedPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,11 +39,11 @@ import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.time.Time;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.awt.*;
 
 public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.web.pages.AuthenticatedPage {
-
 
 
 	private static final long serialVersionUID = 1L;
@@ -56,8 +60,10 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 	@Inject
 	private TokenDefinitionDAO tokenDAO;
 
+	@Inject
+	private MapFolderDAO mapFolderDAO;
 
-	public  PrepareSessionPage() {
+	public PrepareSessionPage() {
 		super("");
 
 		MapViewFilter viewFilter = new MapViewFilter();
@@ -100,7 +106,8 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 							protected ActionResult validateEntity(
 									MapView entity) {
 
-								ActionResult result = validateMapView(entity, !oldIdentifier.equals(entity.getIdentifier()));
+								ActionResult result =
+										validateMapView(entity, !oldIdentifier.equals(entity.getIdentifier()));
 
 								if (result != null) {
 									return result;
@@ -159,40 +166,17 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 		add(viewView);
 		add(new BootstrapPagingNavigator("viewnav", viewView));
 
-		ScaledMapFilter mapFilter = new ScaledMapFilter();
-		mapFilter.owner().set(getUser());
-		mapFilter.name().orderBy(true);
-
-		DataView<ScaledMap> mapView = new DataView<ScaledMap>("maps",
-				FilterDataProvider.of(mapFilter, mapDAO)) {
-
-			private static final long serialVersionUID = 1L;
-
+		add(new MapOverviewPanel("maps", getUser()) {
 			@Override
-			protected void populateItem(Item<ScaledMap> item) {
-				ScaledMap map = item.getModelObject();
-
-				item.add(new Label("name", map.getName()));
-				item.add(new NonCachingImage("thumb",
-						new ThumbnailResource(128, map.getData())));
-				item.add(new IconLink<ScaledMap>("view", item.getModel(),
-						GlyphIcon.eyeOpen) {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						setResponsePage(new ViewMapPage(item.getModelObject()));
-
-					}
-				});
+			protected void decorateFolderFilter(@Nonnull MapFolderFilter folderFilter) {
+				folderFilter.parent().isNull();
 			}
 
-		};
-
-		mapView.setItemsPerPage(10);
-		add(mapView);
-		add(new BootstrapPagingNavigator("mapnav", mapView));
+			@Override
+			protected void decorateMapFilter(@Nonnull ScaledMapFilter mapFilter) {
+				mapFilter.folder().isNull();
+			}
+		});
 
 		TokenDefinitionFilter tokenFilter = new TokenDefinitionFilter();
 		tokenFilter.owner().set(getUser());
@@ -220,21 +204,22 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 					item.add(new ContextImage("thumb",
 							String.format("tokens/%d?preview=true", definition.getId())));
 				} else {
-					item.add(new org.apache.wicket.markup.html.image.Image("thumb", new DynamicImageResource(ImageUtil.getMimeType(imageData)) {
-						private static final long serialVersionUID = 1L;
+					item.add(new org.apache.wicket.markup.html.image.Image("thumb",
+							new DynamicImageResource(ImageUtil.getMimeType(imageData)) {
+								private static final long serialVersionUID = 1L;
 
-						@Override
-						protected byte[] getImageData(Attributes attributes) {
-							setLastModifiedTime(Time.now());
+								@Override
+								protected byte[] getImageData(Attributes attributes) {
+									setLastModifiedTime(Time.now());
 
-							return imageData;
-						}
+									return imageData;
+								}
 
-						@Override
-						protected IResourceCachingStrategy getCachingStrategy() {
-							return NoOpResourceCachingStrategy.INSTANCE;
-						}
-					}));
+								@Override
+								protected IResourceCachingStrategy getCachingStrategy() {
+									return NoOpResourceCachingStrategy.INSTANCE;
+								}
+							}));
 				}
 				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
 						GlyphIcon.edit) {
@@ -335,6 +320,27 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 			public void onClick() {
 				setResponsePage(new UploadTokenStep1Page());
 
+			}
+		});
+
+		add(new Link<MapFolder>("addfolder") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new BSEntityFormPage<MapFolder>(
+						create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+
+					@Override
+					protected void onSaved(MapFolder entity) {
+						setResponsePage(new PrepareSessionPage());
+					}
+
+					@Override
+					protected void onCancel(MapFolder entity) {
+						setResponsePage(new PrepareSessionPage());
+					}
+				});
 			}
 		});
 	}
