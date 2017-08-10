@@ -308,7 +308,7 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 			@Override
 			public void onClick() {
-				setResponsePage(new UploadMapStep1Page());
+				setResponsePage(new UploadMapStep1Page(null));
 
 			}
 		});
@@ -333,7 +333,7 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 					@Override
 					protected void onSaved(MapFolder entity) {
-						setResponsePage(new PrepareSessionPage());
+						setResponsePage(new ViewFolderPage(entity));
 					}
 
 					@Override

@@ -22,22 +22,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 
+import javax.annotation.Nullable;
+
 public class UploadMapStep1Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
-	public UploadMapStep1Page() {
+	private IModel<MapFolder> folderModel;
+
+	public UploadMapStep1Page(@Nullable MapFolder folder) {
 		super("Upload Map");
+
+		if (folder != null) {
+			folderModel = ModelMaker.wrap(folder);
+		} else {
+			folderModel = Model.of((MapFolder) null);
+		}
 
 		add(new Link<BeholderUser>("back") {
 			private static final long serialVersionUID = 1L;
@@ -50,7 +64,7 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 		});
 
 		FileUploadField uploadField = new FileUploadField("file",
-				new ListModel<FileUpload>(new LinkedList<FileUpload>()));
+				new ListModel<>(new LinkedList<>()));
 		uploadField.setRequired(true);
 
 		Form<ScaledMap> uploadForm = new Form<ScaledMap>("uploadForm") {
@@ -78,7 +92,7 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 
 					if (ImageUtil.isWebImage(image)) {
 						setResponsePage(new UploadMapStep2Page(image,
-								upload.getClientFileName()));
+								upload.getClientFileName(), folderModel));
 					} else {
 						error("Unrecognized image format");
 					}
@@ -99,4 +113,9 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 		add(new SubmitLink("submit", uploadForm));
 	}
 
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		folderModel.detach();
+	}
 }

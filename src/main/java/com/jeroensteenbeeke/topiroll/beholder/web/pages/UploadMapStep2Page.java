@@ -19,8 +19,11 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
 import java.awt.Dimension;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -33,6 +36,7 @@ import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -62,8 +66,12 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 	private NumberTextField<Integer> indicatorSizeField;
 
-	public UploadMapStep2Page(final byte[] image, final String originalName) {
+	private IModel<MapFolder> folderModel;
+
+	public UploadMapStep2Page(final byte[] image, final String originalName, @Nonnull IModel<MapFolder> folderModel) {
 		super("Configure map");
+
+		this.folderModel = folderModel;
 
 		add(new Link<BeholderUser>("back") {
 			private static final long serialVersionUID = 1L;
@@ -197,7 +205,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 				
 				TypedActionResult<ScaledMap> result = mapService.createMap(getUser(),
 						nameField.getModelObject(),
-						squareSize, image);
+						squareSize, image, folderModel.getObject());
 				if (result.isOk()) {
 					setResponsePage(new ViewMapPage(result.getObject()));
 				} else {
@@ -226,4 +234,10 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		return squareSizeField;
 	}
 
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		folderModel.detach();
+	}
 }

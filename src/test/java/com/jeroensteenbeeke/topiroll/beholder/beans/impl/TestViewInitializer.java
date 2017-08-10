@@ -77,7 +77,7 @@ public class TestViewInitializer implements IAccountInitializer {
 				.getResourceAsStream("temple.jpg")) {
 			byte[] image = readImage(stream);
 
-			map = mapService.createMap(user, "temple", 18, image)
+			map = mapService.createMap(user, "temple", 18, image, null)
 					.getObject();
 			
 			FogOfWarGroup group = new FogOfWarGroup();

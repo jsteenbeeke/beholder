@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
@@ -40,11 +41,6 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
@@ -79,7 +75,12 @@ public class ViewMapPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new PrepareSessionPage());
+				MapFolder folder = mapModel.getObject().getFolder();
+				if (folder != null) {
+					setResponsePage(new ViewFolderPage(folder));
+ 				} else {
+					setResponsePage(new PrepareSessionPage());
+				}
 
 			}
 		});
