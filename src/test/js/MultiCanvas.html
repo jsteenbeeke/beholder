@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MultiCanvas Tester</title>
+    <script src="../../main/java/com/jeroensteenbeeke/topiroll/beholder/web/components/js/multicanvas.js"></script>
+    <script src="../../main/java/com/jeroensteenbeeke/topiroll/beholder/web/components/js/geometry.js"></script>
+
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+<script type="application/ecmascript">
+    var canvas = new MultiCanvas('canvas', 5000, 5000);
+    var context = canvas.getContext('2d');
+
+    context.setLineWidth(5);
+    context.setStrokeStyle('red');
+    applyRectangle(context, {
+        x: 200,
+        y: 200,
+        width: 4600,
+        height: 4600
+    });
+    context.stroke();
+</script>
+</body>
+</html>
