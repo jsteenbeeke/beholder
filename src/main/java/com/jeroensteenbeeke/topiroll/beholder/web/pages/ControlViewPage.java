@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -130,7 +131,7 @@ public class ControlViewPage extends AuthenticatedPage {
             public void onClick(AjaxRequestTarget target) {
                 if (!(controller instanceof MapSelectController)) {
                     WebMarkupContainer newController = new MapSelectController(
-                            CONTROLLER_ID, getUser(), viewModel.getObject()) {
+                            CONTROLLER_ID, getUser(), viewModel.getObject(), null) {
                         private static final long serialVersionUID = 1L;
 
                         @Override
@@ -146,6 +147,11 @@ public class ControlViewPage extends AuthenticatedPage {
                                 links().forEach(l -> l.setVisible(false));
                             }
                             links().forEach(target::add);
+                        }
+
+                        @Override
+                        public void replaceMe(@Nonnull AjaxRequestTarget target, @Nonnull WebMarkupContainer component) {
+                            setController(target, component);
                         }
                     };
                     setController(target, newController);
@@ -327,7 +333,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
         if (view.getSelectedMap() == null) {
             add(controller = new MapSelectController(CONTROLLER_ID, getUser(),
-                    view) {
+                    view, null) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -343,7 +349,12 @@ public class ControlViewPage extends AuthenticatedPage {
                     }
                     links().forEach(target::add);
                 }
-            });
+
+				@Override
+				public void replaceMe(@Nonnull AjaxRequestTarget target, @Nonnull WebMarkupContainer component) {
+					setController(target, component);
+				}
+			});
 
 
             links().forEach(l -> l.setVisible(false));

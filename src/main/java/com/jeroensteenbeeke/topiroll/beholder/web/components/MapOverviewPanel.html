@@ -1,0 +1,31 @@
+<html xmlns:wicket>
+	<wicket:panel>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Thumbnail</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr wicket:id="folders">
+					<td colspan="2"><i class="glyphicon glyphicon-folder-open"></i> <a wicket:id="name"></a></td>
+					<td><span wicket:id="delete"></span></td>
+				</tr>
+				<tr wicket:id="maps">
+					<td wicket:id="name"></td>
+					<td><img wicket:id="thumb"/></td>
+					<td><span wicket:id="view"></span><span wicket:id="delete"></span></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						<div wicket:id="mapnav"></div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</wicket:panel>
+</html>

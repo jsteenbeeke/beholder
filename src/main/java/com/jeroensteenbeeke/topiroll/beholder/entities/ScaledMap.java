@@ -27,6 +27,8 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 @Entity
 public class ScaledMap extends BaseDomainObject {
@@ -42,6 +44,11 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="folder")
+
+	private MapFolder folder;
+
+
  	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
 	private List<TokenInstance> tokens = new ArrayList<TokenInstance>();
 
@@ -214,6 +221,16 @@ public class ScaledMap extends BaseDomainObject {
 	public void setTokens( @Nonnull List<TokenInstance> tokens) {
 		this.tokens = tokens;
 	}
+
+	@CheckForNull
+	public MapFolder getFolder() {
+		return folder;
+	}
+	public void setFolder( @Nullable MapFolder folder) {
+		this.folder = folder;
+	}
+
+
 
 
 

@@ -28,7 +28,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 public interface MapService {
 	@Nonnull
 	TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
-			int squareSize, @Nonnull byte[] data);
+			int squareSize, @Nonnull byte[] data, @Nullable MapFolder folder);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 

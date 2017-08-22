@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -43,6 +43,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Component
 @Scope(value = "request")
@@ -83,7 +84,8 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user,
-												  @Nonnull String name, int squareSize, byte[] data) {
+												  @Nonnull String name, int squareSize, @Nonnull byte[] data,
+												  @Nullable MapFolder folder) {
 		Dimension dimension = ImageUtil.getImageDimensions(data);
 
 		List<MapView> views = user.getViews();
@@ -110,6 +112,7 @@ class MapServiceImpl implements MapService {
 		map.setOwner(user);
 		map.setBasicHeight((int) dimension.getHeight());
 		map.setBasicWidth((int) dimension.getWidth());
+		map.setFolder(folder);
 		mapDAO.save(map);
 
 		return TypedActionResult.ok(map);
@@ -222,7 +225,8 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
-													  @Nonnull String name, @Nonnull List<FogOfWarShape> keep, @Nonnull List<FogOfWarShape> remove) {
+													  @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
+													  @Nonnull List<FogOfWarShape> remove) {
 		if (keep.isEmpty()) {
 			return TypedActionResult.fail("No shapes selected");
 		}
@@ -401,7 +405,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private void internalUpdateView(MapView view,
-			Predicate<RegistryEntry> selector) {
+									Predicate<RegistryEntry> selector) {
 		ScaledMap selectedMap = view.getSelectedMap();
 		if (selectedMap == null) {
 			BeholderRegistry.instance.sendToView(view.getId(), selector,
@@ -430,7 +434,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private void updateMainView(MapView view, Predicate<RegistryEntry> selector,
-			ScaledMap map) {
+								ScaledMap map) {
 		Dimension dimensions = map.getDisplayDimension(view);
 		String imageUrl = urlService.contextRelative(
 				String.format("/maps/%d?preview=true&", map.getId()));
@@ -440,7 +444,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private void updatePreview(MapView view, Predicate<RegistryEntry> selector,
-			ScaledMap map) {
+							   ScaledMap map) {
 		Dimension dimensions = view.getPreviewDimensions();
 		String imageUrl = urlService.contextRelative(
 				String.format("/maps/%d?preview=true&", map.getId()));
@@ -451,8 +455,8 @@ class MapServiceImpl implements MapService {
 	}
 
 	private void internalUpdateView(Dimension dimensions, boolean previewMode,
-			String src, Predicate<RegistryEntry> selector, MapView view,
-			ScaledMap map) {
+									String src, Predicate<RegistryEntry> selector, MapView view,
+									ScaledMap map) {
 		double factor = dimensions.getWidth() / map.getBasicWidth();
 
 		MapRenderable renderable = mapToJS(dimensions, previewMode, src, view,
@@ -463,7 +467,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private MapRenderable mapToJS(Dimension dimensions, boolean previewMode,
-			String src, MapView view, ScaledMap map, double factor) {
+								  String src, MapView view, ScaledMap map, double factor) {
 		MapRenderable renderable = new MapRenderable();
 		renderable.setSrc(src);
 		renderable.setWidth((int) dimensions.getWidth());

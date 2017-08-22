@@ -81,7 +81,7 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 			
 			byte[] image = bos.toByteArray();
 			
-			ScaledMap map = mapService.createMap(user, "porridge", 4, image).getObject();
+			ScaledMap map = mapService.createMap(user, "porridge", 4, image, null).getObject();
 			
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
