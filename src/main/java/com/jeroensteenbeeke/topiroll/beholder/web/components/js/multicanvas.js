@@ -212,7 +212,10 @@ MultiCanvasContext.prototype.drawImage = function (img, x, y, sWidth, sHeight, d
         var adjustedX = x - ctx.canvasOffsetX;
         var adjustedY = y - ctx.canvasOffsetY;
 
-        ctx.drawImage(img, adjustedX, adjustedY, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        var adx = typeof dx !== "undefined" ? dx - ctx.canvasOffsetX : undefined;
+        var ady = typeof dy !== "undefined" ? dy - ctx.canvasOffsetY : undefined;
+
+        ctx.drawImage(img, adjustedX, adjustedY, sWidth, sHeight, adx, ady, dWidth, dHeight);
     });
 };
 
