@@ -5,15 +5,21 @@
     <title>MultiCanvas Tester</title>
     <script src="../../main/java/com/jeroensteenbeeke/topiroll/beholder/web/components/js/multicanvas.js"></script>
     <script src="../../main/java/com/jeroensteenbeeke/topiroll/beholder/web/components/js/geometry.js"></script>
-
+    <style>
+        html, body, div, canvas {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <div id="canvas"></div>
 
 <script type="application/ecmascript">
     var canvas = new MultiCanvas('canvas', 5000, 5000);
     var context = canvas.getContext('2d');
 
+    context.save();
     context.setLineWidth(5);
     context.setStrokeStyle('red');
     applyRectangle(context, {
@@ -23,6 +29,33 @@
         height: 4600
     });
     context.stroke();
+    context.restore();
+
+    context.save();
+    context.setLineWidth(5);
+    context.setStrokeStyle('blue');
+    applyCircle(context, {
+        x: 800,
+        y: 800,
+        radius: 200,
+        theta_offset: 0.0,
+        theta_extent: Math.PI * 2
+
+    });
+    context.stroke();
+    context.restore();
+
+    var img = new Image();
+    img.onload = function() {
+        try {
+            context.drawImage(img, 400, 400);
+
+        } catch (e) {
+            console.log(e.message, e.name);
+        }
+    };
+
+    img.src = '../../test/java/com/jeroensteenbeeke/topiroll/beholder/beans/impl/temple.jpg';
 </script>
 </body>
 </html>

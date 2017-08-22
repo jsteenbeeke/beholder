@@ -16,21 +16,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function renderMap(canvasId, map) {
+var lastRenderedMap;
+var multiCanvas;
+
+function clearMap(containerId) {
+    var container = document.getElementById(containerId);
+    var children = [];
+    for (i = 0; i < container.childElementCount; i++) {
+        children.push(container.childNodes.item(i));
+    }
+    children.forEach(function(child) {
+        container.removeChild(child);
+    });
+    lastRenderedMap = null;
+    multiCanvas = null;
+}
+
+function renderMap(containerId, map) {
 	var src = map.src; // String
 	var width = map.width; // int
 	var height = map.height; // int
 	var revealed = map.revealed; // Array of shapes
-	var tokens = map.tokens // Array of tokens
-	var markers = map.area_markers // Array of area markers
-	var canvas = document.getElementById(canvasId);
-	
-	var context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	canvas.width = width;
-	canvas.height = height;
-	
-	context = canvas.getContext('2d');
+	var tokens = map.tokens; // Array of tokens
+	var markers = map.area_markers; // Array of area markers
+
+	if (lastRenderedMap !== src) {
+		clearMap(containerId);
+
+		multiCanvas = new MultiCanvas(containerId, width, height);
+
+		lastRenderedMap = src;
+	}
+
+	var context = multiCanvas.getContext('2d');
+	context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
+
+	context = multiCanvas.getContext('2d');
 	
 	var img = new Image();
 	img.onload = function() {
@@ -67,7 +88,7 @@ function renderMap(canvasId, map) {
 		}
 		
 		context.restore();
-	}
+	};
 	
 	img.src = src;
 }
