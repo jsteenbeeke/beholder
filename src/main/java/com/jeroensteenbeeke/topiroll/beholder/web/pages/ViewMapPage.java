@@ -231,7 +231,7 @@ public class ViewMapPage extends AuthenticatedPage {
 
 					@Override
 					public void onClick() {
-						tokenInstanceDAO.delete(instance);
+						tokenInstanceDAO.delete(getModelObject());
 						setResponsePage(new ViewMapPage(mapModel.getObject()));
 					}
 				});
