@@ -94,7 +94,7 @@ MultiCanvasContext.prototype.setFont = function (font) {
 };
 
 MultiCanvasContext.prototype.setGlobalAlpha = function (alpha) {
-    this.forEachContext('setFont', function (ctx) {
+    this.forEachContext('setGlobalAlpha', function (ctx) {
         ctx.globalAlpha = alpha;
     });
 };
