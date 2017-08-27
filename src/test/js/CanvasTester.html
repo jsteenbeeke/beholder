@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Tester</title>
+    <script type="application/javascript">
+        function _get(id) {
+            return document.getElementById(id);
+        }
+
+        function redraw() {
+            var canvas = _get('testcanvas');
+            var width = _get('width').value;
+            var height = _get('height').value;
+            var url = _get('url').value;
+            var off_x = _get('offsetx').value;
+            var off_y = _get('offsety').value;
+
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.strokeStyle = '#ff0000';
+            ctx.strokeRect(0, 0, width, height);
+
+            var img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, off_x, off_y);
+            };
+            img.src = url;
+        }
+
+    </script>
+</head>
+<body>
+<div>
+    <label for="width">Canvas Width</label>
+    <input type="number" id="width" value="200"/>
+</div>
+
+<div>
+    <label for="height">Canvas Height</label>
+    <input type="number" id="height" value="200"/>
+</div>
+
+<div>
+    <label for="height">Image offset X</label>
+    <input type="number" id="offsetx" value="0"/>
+</div>
+
+<div>
+    <label for="height">Image offset Y</label>
+    <input type="number" id="offsety" value="0"/>
+</div>
+
+<div>
+    <label for="url">Image URL</label>
+    <input type="url" id="url" value="https://images6.alphacoders.com/343/343040.jpg" />
+
+</div>
+
+<div>
+    <button type="button" onclick="javascript:redraw()">Redraw</button>
+</div>
+
+<br />
+<canvas id="testcanvas" width="200" height="200"></canvas>
+
+
+</body>
+</html>
