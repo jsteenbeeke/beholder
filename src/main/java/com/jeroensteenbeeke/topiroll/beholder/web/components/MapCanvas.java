@@ -60,19 +60,6 @@ public class MapCanvas extends WebComponent {
 		this.previewMode = previewMode;
 		this.viewId = viewModel.getObject().getId();
 
-		add(AttributeModifier.replace("style",
-				new LoadableDetachableModel<String>() {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					protected String load() {
-						return String.format("background-image: url('%s');",
-								UrlUtils.rewriteToContextRelative(
-										"img/fog-of-war.png",
-										getRequestCycle()));
-					}
-				}));
-
 		// Hack
 		add(AttributeModifier.replace("id",
 				new LoadableDetachableModel<String>() {
@@ -132,7 +119,7 @@ public class MapCanvas extends WebComponent {
 
 	@Override
 	protected void onComponentTag(ComponentTag tag) {
-		checkComponentTag(tag, "canvas");
+		checkComponentTag(tag, "div");
 
 	}
 
@@ -153,6 +140,9 @@ public class MapCanvas extends WebComponent {
 		response.render(JavaScriptHeaderItem
 				.forReference(WicketEventJQueryResourceReference.get()));
 
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/multicanvas.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/geometry.js")));

@@ -98,17 +98,17 @@ function drawText(context, token) {
 	text_x = text_x - ((horizontal_pixels_per_character * char_count) / 2.4);
 	
 	context.save();
-	context.lineWidth = 1;
-	context.strokeStyle = color;
-	context.fillStyle = '#ffffff';
+	context.setLineWidth(1);
+	context.setStrokeStyle(color);
+	context.setFillStyle('#ffffff');
 	context.moveTo(box_left_x, box_top_y);
 	context.fillRect(box_left_x, box_top_y, box_width, box_height);
 	context.strokeRect(box_left_x, box_top_y, box_width, box_height);
 	context.restore();
 	
 	context.save();
-	context.fillStyle = color;
-	context.font = text_scale + 'pt Arial';
+	context.setFillStyle(color);
+	context.setFont(text_scale + 'pt Arial');
 	context.fillText(label, text_x, text_y);
 
 	context.restore();
@@ -148,8 +148,8 @@ function renderToken(context, token) {
 		context.beginPath();
 		context.arc(ox, oy, radius, 0, 2 * Math.PI);
 		context.closePath();
-		context.lineWidth = radius / 7;
-		context.strokeStyle = color;
+		context.setLineWidth(radius / 7);
+		context.setStrokeStyle(color);
 		context.stroke();
 		context.restore();
 

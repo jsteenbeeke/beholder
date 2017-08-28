@@ -8,6 +8,10 @@
 @whitish: #ccc;
 @blackish: #222;
 
+html, body, div, canvas {
+	margin: 0;
+	padding: 0;
+}
 
 .dropshadow (@shadowcolor) {
 	box-shadow:  10px 10px 5px 0px rgba(red(@shadowcolor), green(@shadowcolor), blue(@shadowcolor), 1);
@@ -122,4 +126,8 @@ body.mapview {
 .legal {
 	font-size: 6pt;
 	text-align: center;
+}
+
+.mapcanvas {
+	background-image: url('../img/fog-of-war.png');
 }

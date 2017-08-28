@@ -20,7 +20,7 @@ function renderMarker(context, marker) {
 	var shape = marker.shape;
 	
 	context.save();
-	context.globalAlpha = 0.5;
+	context.setGlobalAlpha(0.5);
 	context.beginPath();
 	if (shape.type === 'rect') {
 		applyRectangle(context, shape);
@@ -30,7 +30,7 @@ function renderMarker(context, marker) {
 		applyPoly(context, shape);
 	}
 	context.closePath();
-	context.fillStyle = color;
+	context.setFillStyle(color);
 	context.fill();
 	
 	context.restore();

@@ -109,7 +109,7 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 								ActionResult result =
 										validateMapView(entity, !oldIdentifier.equals(entity.getIdentifier()));
 
-								if (result != null) {
+								if (!result.isOk()) {
 									return result;
 								}
 
@@ -275,7 +275,7 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 
 						ActionResult result = validateMapView(entity, true);
 
-						if (result != null) {
+						if (!result.isOk()) {
 							return result;
 						}
 
@@ -359,6 +359,6 @@ public class PrepareSessionPage extends com.jeroensteenbeeke.topiroll.beholder.w
 					entity.getIdentifier());
 		}
 
-		return null;
+		return ActionResult.ok();
 	}
 }

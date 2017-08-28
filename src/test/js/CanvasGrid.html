@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Grid</title>
+    <style>
+        .container {
+            width: 1000px;
+            height: 1000px;
+            padding: 0;
+            margin: 0;
+            line-height: 0;
+        }
+
+        .contained {
+            width: 500px;
+            height: 500px;
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas class="contained" id="topleft"></canvas><!--
+        --><canvas class="contained" id="topright"></canvas><!--
+        --><canvas class="contained" id="bottomleft"></canvas><!--
+        --><canvas class="contained" id="bottomright"></canvas>
+
+        <script>
+            var ctx_tl = document.getElementById('topleft').getContext('2d');
+            var ctx_tr = document.getElementById('topright').getContext('2d');
+            var ctx_bl = document.getElementById('bottomleft').getContext('2d');
+            var ctx_br = document.getElementById('bottomright').getContext('2d');
+
+            ctx_tl.fillStyle = '#ff0000';
+            ctx_tr.fillStyle = '#00ff00';
+            ctx_bl.fillStyle = '#0000ff';
+            ctx_br.fillStyle = '#ffff00';
+
+            ctx_tl.fillRect(0, 0, 500, 500);
+            ctx_tr.fillRect(0, 0, 500, 500);
+            ctx_bl.fillRect(0, 0, 500, 500);
+            ctx_br.fillRect(0, 0, 500, 500);
+        </script>
+    </div>
+</body>
+</html>
