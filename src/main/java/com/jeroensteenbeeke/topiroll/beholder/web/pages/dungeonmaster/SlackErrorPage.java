@@ -15,30 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.pages;
+package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.markup.html.basic.Label;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
-import com.jeroensteenbeeke.hyperion.social.web.components.slack.SlackLink;
-import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 
-public class HomePage extends BootstrapBasePage {
+public class SlackErrorPage extends BootstrapBasePage {
+
 	private static final long serialVersionUID = 1L;
 
-	public HomePage() {
-		super("Beholder");
+	public SlackErrorPage(String error) {
+		super("Error");
 
-		if (BeholderSession.get().getUser() != null) {
-			throw new RestartResponseAtInterceptPageException(
-					new OverviewPage());
-		}
-
-		add(new SlackLink("slack"));
-		
-		add(new LegalPanel("legal"));
+		add(new Label("error", error));
 	}
-
 }

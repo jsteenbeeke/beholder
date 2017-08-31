@@ -1,0 +1,37 @@
+<html xmlns:wicket>
+<wicket:panel>
+	<h2>Portraits</h2>
+	<form class="form-inline">
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Portrait</th>
+					<th>Thumbnail</th>
+					<th>Show</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr wicket:id="portraits">
+					<td wicket:id="name"></td>
+					<td><img wicket:id="thumb" class="img-responsive" /></td>
+					<td>
+						<div class="btn-group" role="group">
+							<wicket:container wicket:id="locations">
+								<button type="button" wicket:id="button"></button>
+							</wicket:container>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						<span wicket:id="nav"></span>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</form>
+</wicket:panel>
+</html>

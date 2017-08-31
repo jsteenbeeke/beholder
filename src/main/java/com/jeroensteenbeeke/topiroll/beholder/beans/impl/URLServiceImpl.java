@@ -55,7 +55,7 @@ class URLServiceImpl implements URLService {
 	@Override
 	public String getSourceURL() {
 		if (sourceUrl.equals(SOURCE_URL_CONSTANT)) {
-			return null;
+			return "";
 		}
 		
 		return sourceUrl;

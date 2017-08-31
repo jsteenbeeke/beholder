@@ -18,7 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
-import com.jeroensteenbeeke.topiroll.beholder.beans.impl.RollbarClientListener;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.PortraitResource;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -41,7 +41,7 @@ import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.MapViewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.MapResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
 
@@ -62,7 +62,7 @@ public class BeholderApplication extends WebApplication
 
 		String sourceURL = ctx.getBean(URLService.class).getSourceURL();
 
-		if (sourceURL == null || sourceURL.isEmpty()) {
+		if (sourceURL.isEmpty()) {
 			throw new IllegalStateException(
 					"This software is licensed under the Affero GPL, which requires you to provide source code to all " +
 							"users. Please input the source URL");
@@ -97,6 +97,17 @@ public class BeholderApplication extends WebApplication
 					public IResource getResource() {
 
 						return new TokenResource();
+					}
+				});
+
+		mountResource("portraits/${portraitId}",
+				new ResourceReference(BeholderApplication.class, "portraits") {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public IResource getResource() {
+
+						return new PortraitResource();
 					}
 				});
 

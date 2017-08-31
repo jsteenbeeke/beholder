@@ -15,30 +15,46 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.pages;
+package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
+import javax.annotation.CheckForNull;
+
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
-import com.jeroensteenbeeke.hyperion.social.web.components.slack.SlackLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.EntityPageInitializer;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.BeholderNavBar;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 
-public class HomePage extends BootstrapBasePage {
+public abstract class AuthenticatedPage extends BootstrapBasePage
+		implements EntityPageInitializer {
 	private static final long serialVersionUID = 1L;
 
-	public HomePage() {
-		super("Beholder");
+	public AuthenticatedPage(String title) {
+		super(title);
 
-		if (BeholderSession.get().getUser() != null) {
-			throw new RestartResponseAtInterceptPageException(
-					new OverviewPage());
+		add(new BeholderNavBar("navbar"));
+
+		if (getUser() == null) {
+			BeholderSession.get().invalidate();
+			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
-
-		add(new SlackLink("slack"));
 		
 		add(new LegalPanel("legal"));
 	}
 
+	@CheckForNull
+	public BeholderUser getUser() {
+		return BeholderSession.get().getUser();
+	}
+
+	@Override
+	public Component createNavComponent(String id) {
+		return new WebMarkupContainer(id).setVisible(false);
+	}
 }

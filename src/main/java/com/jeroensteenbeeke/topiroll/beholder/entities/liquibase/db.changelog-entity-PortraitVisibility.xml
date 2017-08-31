@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroensteenbeeke" failOnError="true" id="111">
+    <createTable tableName="portraitvisibility">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_portraitvisibility" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="112">
+    <addColumn tableName="portraitvisibility">
+      <column name="portrait" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="portrait" baseTableName="portraitvisibility" constraintName="fk_portraitvisibility_portrait" referencedColumnNames="id" referencedTableName="portrait"/>
+  <createIndex indexName="idx_portraitvisibility_portrait" tableName="portraitvisibility">
+      <column name="portrait"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="113">
+    <addColumn tableName="portraitvisibility">
+      <column name="view" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="view" baseTableName="portraitvisibility" constraintName="fk_portraitvisibility_view" referencedColumnNames="id" referencedTableName="mapview"/>
+  <createIndex indexName="idx_portraitvisibility_view" tableName="portraitvisibility">
+      <column name="view"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="114">
+    <addColumn tableName="portraitvisibility">
+      <column name="location" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

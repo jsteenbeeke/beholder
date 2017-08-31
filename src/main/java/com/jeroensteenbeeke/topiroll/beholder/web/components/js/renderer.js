@@ -51,6 +51,8 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 				renderInitiative(data);
 			} else if ("clear" === data.type) {
 				clearMap(containerId);
+			} else if ("portraits" === data.type) {
+				updatePortraits(data);
 			}
 		}
 
