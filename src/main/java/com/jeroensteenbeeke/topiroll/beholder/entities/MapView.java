@@ -61,6 +61,10 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
+ 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
+	private List<PortraitVisibility> portraitVisibilities = new ArrayList<PortraitVisibility>();
+
+
 
 	@Column(nullable = true)
 	private Integer initiativeMargin;
@@ -278,6 +282,16 @@ public class MapView extends BaseDomainObject {
 	public void setInitiativeMargin(@Nullable Integer initiativeMargin) {
 		this.initiativeMargin = initiativeMargin;
 	}
+
+	@Nonnull
+	public List<PortraitVisibility> getPortraitVisibilities() {
+		return portraitVisibilities;
+	}
+	public void setPortraitVisibilities( @Nonnull List<PortraitVisibility> portraitVisibilities) {
+		this.portraitVisibilities = portraitVisibilities;
+	}
+
+
 
 
 }

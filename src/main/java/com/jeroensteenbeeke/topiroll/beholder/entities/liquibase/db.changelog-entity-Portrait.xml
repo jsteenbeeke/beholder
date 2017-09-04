@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroensteenbeeke" failOnError="true" id="107">
+    <createTable tableName="portrait">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_portrait" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="108">
+    <addColumn tableName="portrait">
+      <column name="owner" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="owner" baseTableName="portrait" constraintName="fk_portrait_owner" referencedColumnNames="id" referencedTableName="beholderuser"/>
+  <createIndex indexName="idx_portrait_owner" tableName="portrait">
+      <column name="owner"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="109">
+    <addColumn tableName="portrait">
+      <column name="data" type="BLOB">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="110">
+    <addColumn tableName="portrait">
+      <column name="name" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

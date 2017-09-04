@@ -36,50 +36,68 @@ public interface MapService {
 	
 	void delete(@Nonnull MapView view);
 
-	void addFogOfWarCircle(@Nonnull ScaledMap map, int radius, int offsetX, int offsetY);
+	void refreshView(@Nonnull MapView view);
 
-	void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height, int offsetX,
-			int offsetY);
+	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 
-	TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
-			@Nonnull String name, @Nonnull List<FogOfWarShape> shapes);
-
-	void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
-			@Nonnull VisibilityStatus status);
-
-	void setShapeVisibility(@Nonnull MapView view, @Nonnull FogOfWarShape shape,
-			@Nonnull VisibilityStatus status);
+	//region Tokens
 
 	TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
-			int diameter, @Nonnull byte[] image);
+								int diameter, @Nonnull byte[] image);
 
-	void ungroup(@Nonnull FogOfWarGroup group);
-
-	TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
-			@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
-			@Nonnull List<FogOfWarShape> remove);
-
-	void addFogOfWarTriangle(@Nonnull ScaledMap map, int width, int height,
-			int offsetX, int offsetY, @Nonnull TriangleOrientation orientation);
-
-	void deleteShape(@Nonnull FogOfWarShape shape);
 
 	void createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
-			@Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
+							 @Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
 
 	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);
-	
+
 	void showToken(@Nonnull TokenInstance instance);
-	
+
 	void hideToken(@Nonnull TokenInstance instance);
-	
+
 	void setTokenHP(@Nonnull TokenInstance instance, @Nullable Integer currentHP, @Nullable Integer maxHP);
 
 	void setTokenNote(@Nonnull TokenInstance instance, @Nullable String note);
 
 	void updateTokenLocation(@Nonnull TokenInstance instance, int x, int y);
+	//endregion
 
-	void refreshView(@Nonnull MapView view);
+	//region FogOfWar
+	void addFogOfWarCircle(@Nonnull ScaledMap map, int radius, int offsetX, int offsetY);
 
-	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
+	void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height, int offsetX,
+						 int offsetY);
+
+	TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
+												 @Nonnull String name, @Nonnull List<FogOfWarShape> shapes);
+
+	void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
+							@Nonnull VisibilityStatus status);
+
+	void setShapeVisibility(@Nonnull MapView view, @Nonnull FogOfWarShape shape,
+							@Nonnull VisibilityStatus status);
+
+	void ungroup(@Nonnull FogOfWarGroup group);
+
+	TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+											   @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
+											   @Nonnull List<FogOfWarShape> remove);
+
+	void addFogOfWarTriangle(@Nonnull ScaledMap map, int width, int height,
+							 int offsetX, int offsetY, @Nonnull TriangleOrientation orientation);
+
+	void deleteShape(@Nonnull FogOfWarShape shape);
+
+	//endregion
+
+	//region Portraits
+	Portrait createPortrait(@Nonnull BeholderUser user, @Nonnull String name, @Nonnull byte[] image);
+
+	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
+
+	void unselectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
+
+	//endregion
+
+
 }

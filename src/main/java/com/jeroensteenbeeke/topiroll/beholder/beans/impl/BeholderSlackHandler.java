@@ -31,8 +31,8 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService.UserDescriptor;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.OverviewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.SlackErrorPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackErrorPage;
 
 import javax.annotation.Nonnull;
 

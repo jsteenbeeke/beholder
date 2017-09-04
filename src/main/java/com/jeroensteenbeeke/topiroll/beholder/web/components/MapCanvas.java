@@ -135,8 +135,6 @@ public class MapCanvas extends WebComponent {
 
 		super.renderHead(response);
 
-		
-
 		response.render(JavaScriptHeaderItem
 				.forReference(WicketEventJQueryResourceReference.get()));
 
@@ -158,6 +156,8 @@ public class MapCanvas extends WebComponent {
 						"js/token.js")));
 		response.render(JavaScriptHeaderItem.forReference(
 				new JavaScriptResourceReference(MapCanvas.class, "js/map.js")));
+		response.render(JavaScriptHeaderItem.forReference(
+				new JavaScriptResourceReference(MapCanvas.class, "js/portrait.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/renderer.js")));

@@ -269,11 +269,9 @@
 				<configuration>
 					<recipes>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.AddPropertyWithLiquibase</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.CreateEntityWithLiquibase
-						</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.CreateEntityWithLiquibase</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.LinkEntityWithLiquibase</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.ExtendEntityWithLiquibase
-						</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.ExtendEntityWithLiquibase</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateSpringBean</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateTaskGroup</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateWicketBasedBackgroundJob</recipe>
@@ -285,10 +283,8 @@
 						<entitySuperclass>com.jeroensteenbeeke.hyperion.data.BaseDomainObject</entitySuperclass>
 						<liquibasePackage>com.jeroensteenbeeke.topiroll.beholder.entities.liquibase</liquibasePackage>
 						<taskGroupEnum>com.jeroensteenbeeke.topiroll.beholder.Jobs</taskGroupEnum>
-						<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication
-						</wicketApplication>
-						<wicketBasePage>com.jeroensteenbeeke.topiroll.beholder.web.pages.AuthenticatedPage
-						</wicketBasePage>
+						<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication</wicketApplication>
+						<wicketBasePage>com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage</wicketBasePage>
 						<customPageParams>super String ""</customPageParams>
 					</extraConfiguration>
 				</configuration>

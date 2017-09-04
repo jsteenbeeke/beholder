@@ -1,0 +1,18 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.java]
+indent_style = tab
+braces_style = end_of_line_no_space
+
+[*.xml]
+indent_style = tab
+
+[*.less]
+indent_style = tab
+
+[*.html]
+indent_style = tab

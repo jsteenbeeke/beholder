@@ -19,9 +19,9 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.OverviewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.PrepareSessionPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.RunSessionPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import org.apache.wicket.markup.html.link.Link;
 
 import javax.annotation.Nonnull;
