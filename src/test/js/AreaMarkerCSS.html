@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>CSS Area Marker</title>
+		<style>
+			.cube {
+				width: 50px;
+				height: 50px;
+				border: 1px solid #ff0000;
+			}
+
+			.circle {
+				width: 50px;
+				height: 50px;
+				border-radius: 100%;
+				border: 1px solid #00ff00;
+			}
+
+			.cone {
+				width: 0;
+				height: 0;
+				border-left: 25px solid transparent;
+				border-right: 25px solid transparent;
+				border-top: 25px solid #0000ff;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				border-radius: 50%;
+				opacity: 0.5;
+				transform: rotate(90deg);
+			}
+
+			.ray {
+				width: 50px;
+				height: 1px;
+				background-color: #ff00ff;
+				opacity: 0.5;
+				transform: rotate(30deg);
+			}
+
+		</style>
+	</head>
+	<body>
+		<h2>Cube</h2>
+		<div class="cube"></div>
+
+		<h2>Circle</h2>
+		<div class="circle"></div>
+
+		<h2>Cone</h2>
+		<div class="cone"></div>
+
+		<h2>Ray</h2>
+		<div class="ray"></div>
+	</body>
+</html>

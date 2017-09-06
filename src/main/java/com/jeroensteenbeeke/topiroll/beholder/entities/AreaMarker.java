@@ -23,6 +23,7 @@ import java.io.Serializable;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
@@ -118,6 +119,8 @@ public abstract class AreaMarker extends BaseDomainObject {
 	public void setColor(@Nonnull String color) {
 		this.color = color;
 	}
+
+	public abstract <R> R visit(AreaMarkerVisitor<R> visitor);
 
 	public abstract Panel createPanel(String id);
 

@@ -95,10 +95,10 @@ public class MoveTokenController extends Panel {
 			protected void populateItem(Item<TokenInstance> item) {
 				TokenInstance instance = item.getModelObject();
 
-				int squareSize = map != null ? map.getSquareSize() : 10;
+				int squareSize = map.getSquareSize();
 
-				int wh = (int) (squareSize
-						* instance.getDefinition().getDiameterInSquares());
+				int wh = squareSize
+						* instance.getDefinition().getDiameterInSquares();
 
 				calculatedWidths.put(item.getIndex(), wh + 4);
 

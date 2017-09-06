@@ -107,6 +107,8 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
+
+		view.getMarkers().add(marker);
 		
 		mapService.refreshView(marker.getView());
 
@@ -126,7 +128,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
-		
+
+		view.getMarkers().add(marker);
+
 		mapService.refreshView(marker.getView());
 
 	}
@@ -143,7 +147,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
-		
+
+		view.getMarkers().add(marker);
+
 		mapService.refreshView(marker.getView());
 	}
 
@@ -160,7 +166,9 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setOffsetY(y);
 		marker.setView(view);
 		markerDAO.save(marker);
-		
+
+		view.getMarkers().add(marker);
+
 		mapService.refreshView(marker.getView());
 
 	}

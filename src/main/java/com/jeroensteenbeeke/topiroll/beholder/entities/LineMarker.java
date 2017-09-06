@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.LineMarkerController;
@@ -54,6 +55,10 @@ public class LineMarker extends AreaMarker {
 		return new LineMarkerController(id, this);
 	}
 
+	@Override
+	public <R> R visit(AreaMarkerVisitor<R> visitor) {
+		return visitor.visit(this);
+	}
 
 	@Override
 	public JSShape getShape(double factor, int squareSize) {

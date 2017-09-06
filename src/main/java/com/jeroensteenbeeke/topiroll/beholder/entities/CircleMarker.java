@@ -20,6 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import javax.persistence.Entity;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.CircleMarkerController;
@@ -37,8 +38,12 @@ public class CircleMarker extends AreaMarker {
 
 		return new CircleMarkerController(id, this);
 	}
-	
-	
+
+	@Override
+	public <R> R visit(AreaMarkerVisitor<R> visitor) {
+		return visitor.visit(this);
+	}
+
 	@Override
 	public JSShape getShape(double factor, int squareSize) {
 		JSCircle circle = new JSCircle();
