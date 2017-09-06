@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
+import java.io.File;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -28,7 +29,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 public interface MapService {
 	@Nonnull
 	TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
-			int squareSize, @Nonnull byte[] data, @Nullable MapFolder folder);
+										   int squareSize, @Nonnull File data, @Nullable MapFolder folder);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 

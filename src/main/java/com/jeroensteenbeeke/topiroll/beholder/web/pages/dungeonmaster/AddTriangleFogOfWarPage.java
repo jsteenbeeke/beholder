@@ -17,11 +17,23 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
+import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -39,23 +51,8 @@ import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.time.Time;
 
-import com.google.common.collect.Lists;
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
-import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
-import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TriangleOrientation;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
+import javax.inject.Inject;
+import java.awt.*;
 
 public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -146,28 +143,28 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		
 		
 
-		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(
-						String.format("preview-%d", map.getId())) {
-					private static final long serialVersionUID = 1L;
-
+		final AbstractMapPreviewPanel previewImage = new AbstractMapPreviewPanel("preview", map) {
+			@Override
+			protected void addOnDomReadyJavaScript(StringBuilder js) {
+				getModelObject().getAllShapes().forEach(s -> s.visit(new FogOfWarShapeVisitor<Void>() {
 					@Override
-					public IResource getResource() {
-						AbstractFogOfWarPreviewResource resource = new AbstractFogOfWarPreviewResource(
-								mapModel) {
+					public Void visit(FogOfWarCircle fogOfWarCircle) {
 
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void drawShape(Graphics2D graphics2d) {
-								setLastModifiedTime(Time.now());
-							}
-						};
-
-						return resource;
+						return null;
 					}
 
-				}, dimensions);
+					@Override
+					public Void visit(FogOfWarRect fogOfWarRect) {
+						return null;
+					}
+
+					@Override
+					public Void visit(FogOfWarTriangle fogOfWarTriangle) {
+						return null;
+					}
+				}));
+			}
+		};
 		previewImage.setOutputMarkupId(true);
 
 		

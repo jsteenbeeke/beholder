@@ -30,7 +30,6 @@ import org.apache.wicket.model.IModel;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 
 @Entity
 public class FogOfWarGroup extends BaseDomainObject
@@ -103,35 +102,6 @@ public class FogOfWarGroup extends BaseDomainObject
 	@Override
 	public String getDescription() {
 		return getName();
-	}
-
-	@Override
-	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-		IModel<List<FogOfWarShape>> shapesModel = ModelMaker
-				.wrapList(getShapes());
-
-		return new AbstractFogOfWarPreviewResource(ModelMaker.wrap(getMap()), true) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean shouldDrawExistingShapes() {
-				return false;
-			}
-			
-			@Override
-			protected byte[] postProcess(byte[] image) {
-				return ImageUtil.resize(image, size, size);
-			}
-
-			@Override
-			public void drawShape(Graphics2D graphics2d) {
-				shapesModel.detach();
-				shapesModel.getObject().forEach(s -> {
-					s.createThumbnailResource(size).drawShape(graphics2d);
-				});
-				shapesModel.detach();
-			}
-		};
 	}
 
 	@Nonnull

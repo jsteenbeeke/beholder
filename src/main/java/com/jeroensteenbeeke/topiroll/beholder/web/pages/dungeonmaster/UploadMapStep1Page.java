@@ -1,23 +1,24 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -75,29 +76,10 @@ public class UploadMapStep1Page extends AuthenticatedPage {
 				FileUpload upload = uploadField.getFileUpload();
 
 				try {
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					setResponsePage(new UploadMapStep2Page(upload.writeToTempFile(),
+							upload.getClientFileName(), folderModel));
 
-					int b;
-
-					InputStream in = upload.getInputStream();
-					while ((b = in.read()) != -1) {
-						bos.write(b);
-
-					}
-
-					bos.flush();
-					bos.close();
-
-					byte[] image = bos.toByteArray();
-
-					if (ImageUtil.isWebImage(image)) {
-						setResponsePage(new UploadMapStep2Page(image,
-								upload.getClientFileName(), folderModel));
-					} else {
-						error("Unrecognized image format");
-					}
-
-				} catch (IOException e) {
+				} catch (Exception e) {
 					error(String.format("Could not convert file input: %s",
 							e.getMessage()));
 				}

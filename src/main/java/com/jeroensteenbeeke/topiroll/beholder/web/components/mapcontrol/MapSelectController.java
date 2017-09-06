@@ -143,8 +143,6 @@ public abstract class MapSelectController extends Panel {
 				ScaledMap map = item.getModelObject();
 
 				item.add(new Label("name", map.getName()));
-				item.add(new NonCachingImage("thumb",
-						new ThumbnailResource(128, map.getData())));
 				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
 						GlyphIcon.screenshot) {
 					private static final long serialVersionUID = 1L;

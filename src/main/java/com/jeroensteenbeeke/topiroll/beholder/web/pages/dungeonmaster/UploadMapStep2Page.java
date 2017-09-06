@@ -1,29 +1,35 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -56,6 +62,9 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import org.apache.wicket.request.resource.ResourceStreamResource;
+import org.apache.wicket.util.resource.FileResourceStream;
+import org.apache.wicket.util.resource.IResourceStream;
 
 public class UploadMapStep2Page extends AuthenticatedPage {
 
@@ -67,7 +76,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 	private IModel<MapFolder> folderModel;
 
-	public UploadMapStep2Page(final byte[] image, final String originalName, @Nonnull IModel<MapFolder> folderModel) {
+	public UploadMapStep2Page(final File image, final String originalName, @Nonnull IModel<MapFolder> folderModel) {
 		super("Configure map");
 
 		this.folderModel = folderModel;
@@ -81,10 +90,18 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			}
 		});
-		
+
 		add(new BootstrapFeedbackPanel("feedback"));
 
-		Dimension dimensions = ImageUtil.getImageDimensions(image);
+		TypedActionResult<Dimension> dimResult = ImageUtil.getImageDimensions(image);
+		if (!dimResult.isOk()) {
+			UploadMapStep1Page page = new UploadMapStep1Page(folderModel.getObject());
+			page.error(dimResult.getMessage());
+			throw new RestartResponseAtInterceptPageException(page);
+		}
+
+		Dimension dimensions = dimResult.getObject();
+
 		final int imageWidth = (int) dimensions.getWidth();
 		final int imageHeight = (int) dimensions.getHeight();
 
@@ -102,14 +119,14 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		});
 		indicatorLabel.setOutputMarkupId(true);
 		add(indicatorLabel);
-		
+
 		squareSizeField = new NumberTextField<>("squareSize", Model.of(5));
 		squareSizeField.setOutputMarkupId(true);
 		squareSizeField.setMinimum(1);
 		squareSizeField.setMaximum(imageWidth);
 		squareSizeField.setRequired(true);
 		squareSizeField.setEnabled(false);
-		
+
 		indicatorSizeField = new NumberTextField<>("indicatorSize", Model.of(5));
 		indicatorSizeField.setOutputMarkupId(true);
 		indicatorSizeField.setMinimum(5);
@@ -121,7 +138,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				target.add(indicatorLabel);
-				
+
 			}
 		});
 
@@ -132,21 +149,15 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 					@Override
 					public IResource getResource() {
-						return new DynamicImageResource(
-								ImageUtil.getWicketFormatType(image)) {
-
-							private static final long serialVersionUID = 1L;
-
+						return new ResourceStreamResource() {
 							@Override
-							protected byte[] getImageData(
-									Attributes attributes) {
-								return ImageUtil.resize(image, imageWidth * 2,
-										imageHeight * 2);
+							protected IResourceStream getResourceStream() {
+								return new FileResourceStream(image);
 							}
 						};
 					}
 
-				}, new Dimension(imageWidth*2, imageHeight * 2));
+				}, new Dimension(imageWidth * 2, imageHeight * 2));
 		previewImage.setOutputMarkupId(true);
 
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
@@ -168,25 +179,25 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		resizableOptions.set("aspectRatio", "true");
 		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
 				resizableOptions, new ResizableAdapter() {
-					private static final long serialVersionUID = 1L;
+			private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean isResizeStopEventEnabled() {
-						return true;
-					}
+			@Override
+			public boolean isResizeStopEventEnabled() {
+				return true;
+			}
 
-					@Override
-					public void onResizeStop(AjaxRequestTarget target, int top,
-							int left, int width, int height) {
-						super.onResizeStop(target, top, left, width, height);
+			@Override
+			public void onResizeStop(AjaxRequestTarget target, int top,
+									 int left, int width, int height) {
+				super.onResizeStop(target, top, left, width, height);
 
-						squareSizeField.setModelObject(width / 2);
+				squareSizeField.setModelObject(width / 2);
 
-						target.add(squareSizeField);
+				target.add(squareSizeField);
 
-					}
+			}
 
-				}));
+		}));
 		previewImage.add(areaMarker);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
@@ -199,9 +210,9 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 			protected void onSubmit() {
 				int squareSizeOnMap = squareSizeField.getModelObject();
 				int indicatorSize = indicatorSizeField.getModelObject();
-				
+
 				int squareSize = 5 * squareSizeOnMap / indicatorSize;
-				
+
 				TypedActionResult<ScaledMap> result = mapService.createMap(getUser(),
 						nameField.getModelObject(),
 						squareSize, image, folderModel.getObject());
@@ -221,11 +232,11 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 		add(new SubmitLink("submit", configureForm));
 	}
-	
+
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		
+
 		response.render(JavaScriptHeaderItem.forReference(TouchPunchJavaScriptReference.get()));
 	}
 

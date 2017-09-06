@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
  *
@@ -15,14 +15,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import javax.annotation.Nonnull;
+function renderMapToCanvas(canvasId, src, targetWidth) {
+    var canvas = document.getElementById(canvasId);
 
-public interface ICanHazVisibilityStatus {
-	@Nonnull
-	VisibilityStatus getStatus(@Nonnull MapView view);
+    var img = new Image();
+    img.onload = function () {
+        var ctx = canvas.getContext('2d');
+        var w, h;
 
-	@Nonnull
-	String getDescription();
+        if (typeof targetWidth === 'undefined') {
+		    w = img.width;
+		    h = img.height;
+        } else {
+            w = targetWidth;
+            h = img.width * img.height / targetWidth;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+
+        ctx.drawImage(img, 0, 0, w, h);
+    };
+
+    img.src = src;
 }
