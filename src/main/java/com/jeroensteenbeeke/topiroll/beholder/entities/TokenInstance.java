@@ -195,45 +195,6 @@ public class TokenInstance extends BaseDomainObject {
 
 	
 
-	public ActionResult drawPreviewTo(Graphics2D graphics2d) {
-		try {
-			BufferedImage image = ImageIO.read(
-					new ByteArrayInputStream(getDefinition().getImageData()));
-
-			int diameter = getDefinition().getDiameterInSquares()
-					* getMap().getSquareSize();
-
-			Shape oldClip = graphics2d.getClip();
-
-			Shape circle = new Ellipse2D.Double(getOffsetX(), getOffsetY(),
-					diameter, diameter);
-
-			graphics2d.setClip(circle);
-			graphics2d.drawImage(image, offsetX, offsetY, offsetX + diameter,
-					offsetY + diameter, 0, 0, image.getWidth(),
-					image.getHeight(), new ImageObserver() {
-
-						@Override
-						public boolean imageUpdate(Image img, int infoflags,
-								int x, int y, int width, int height) {
-							return (infoflags & (ALLBITS | ABORT)) == 0;
-
-						}
-					});
-
-			graphics2d.setClip(oldClip);
-
-			graphics2d.setColor(getBorderIntensity().toColor(getBorderType()));
-			graphics2d.setStroke(new BasicStroke(1.0f));
-			graphics2d.draw(circle);
-
-			return ActionResult.ok();
-		} catch (IOException e) {
-			return ActionResult.error(e.getMessage());
-		}
-
-	}
-
 	@Transient
 	public String getLabel() {
 		String label = getBadge();

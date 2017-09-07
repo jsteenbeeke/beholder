@@ -16,7 +16,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function renderMapToCanvas(canvasId, src, targetWidth) {
+function previewRectangle(canvasId, color, rect) {
+    var canvas = document.getElementById(canvasId);
+    var ctx = canvas.getContext('2d');
+
+    ctx.save();
+    ctx.fillStyle = color;
+    applyRectangle(ctx, rect);
+    ctx.fill();
+    ctx.restore();
+
+}
+
+function previewCircle(canvasId, color, circle) {
+    var canvas = document.getElementById(canvasId);
+    var ctx = canvas.getContext('2d');
+
+    ctx.save();
+    applyCircle(ctx, circle);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+function previewPolygon(canvasId, color, poly) {
+    var canvas = document.getElementById(canvasId);
+    var ctx = canvas.getContext('2d');
+
+    ctx.save();
+    applyPoly(ctx, poly);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+
+function renderMapToCanvas(canvasId, src, targetWidth, onDrawn) {
     var canvas = document.getElementById(canvasId);
 
     var img = new Image();
@@ -29,13 +64,15 @@ function renderMapToCanvas(canvasId, src, targetWidth) {
 		    h = img.height;
         } else {
             w = targetWidth;
-            h = img.width * img.height / targetWidth;
+            h = (targetWidth / img.width) * img.height;
         }
 
         canvas.width = w;
         canvas.height = h;
 
         ctx.drawImage(img, 0, 0, w, h);
+
+        onDrawn();
     };
 
     img.src = src;

@@ -24,6 +24,7 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -68,7 +69,7 @@ public class MoveTokenController extends Panel {
 
 	private DataView<TokenInstance> tokenView;
 
-	private ImageContainer previewImage;
+	private AbstractMapPreview previewImage;
 
 	private WebMarkupContainer precisionContainer;
 
@@ -171,12 +172,12 @@ public class MoveTokenController extends Panel {
 		
 		
 
-		previewImage = new ImageContainer("preview",
-				UrlUtils.rewriteToContextRelative(
-						String.format("maps/%d?antiCache=%d", map.getId(),
-								System.currentTimeMillis()),
-						RequestCycle.get()),
-				dimensions);
+		previewImage = new AbstractMapPreview("preview",map) {
+			@Override
+			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+
+			}
+		};
 
 		previewImage.add(tokenView);
 		previewImage.setOutputMarkupId(true);

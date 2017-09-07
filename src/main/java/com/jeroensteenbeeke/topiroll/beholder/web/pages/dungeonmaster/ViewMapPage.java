@@ -17,18 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.awt.Graphics2D;
-
-import javax.inject.Inject;
-
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.IModel;
-
 import com.google.common.collect.Lists;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
@@ -41,11 +29,19 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
+
+import javax.inject.Inject;
 
 public class ViewMapPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -86,16 +82,14 @@ public class ViewMapPage extends AuthenticatedPage {
 		});
 
 		mapModel = ModelMaker.wrap(map);
-		add(new NonCachingImage("preview",
-				new AbstractFogOfWarPreviewResource(mapModel) {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void drawShape(Graphics2D graphics2d) {
-
-					}
-				}));
+		add(new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+			@Override
+			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+				getMap().getAllShapes().stream()
+						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+						.forEach(js::append);
+			}
+		});
 
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		groupFilter.map().set(map);
@@ -110,8 +104,14 @@ public class ViewMapPage extends AuthenticatedPage {
 				FogOfWarGroup group = item.getModelObject();
 
 				item.add(new Label("name", group.getName()));
-				item.add(new NonCachingImage("thumb",
-						group.createThumbnailResource(200)));
+				item.add(new AbstractMapPreview("thumb", map, 128) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						item.getModelObject().getShapes().stream()
+								.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+								.forEach(js::append);
+					}
+				});
 				item.add(new IconLink<FogOfWarGroup>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
@@ -151,8 +151,12 @@ public class ViewMapPage extends AuthenticatedPage {
 				FogOfWarShape shape = item.getModelObject();
 
 				item.add(new Label("shape", shape.getDescription()));
-				item.add(new NonCachingImage("thumb",
-						shape.createThumbnailResource(200)));
+				item.add(new AbstractMapPreview("thumb", map, 128) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
+					}
+				});
 				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(),
 						GlyphIcon.trash) {
 					private static final long serialVersionUID = 1L;
@@ -295,6 +299,10 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		}.setVisible(tokenDAO.countByFilter(filter) > 0));
 
+	}
+
+	public ScaledMap getMap() {
+		return mapModel.getObject();
 	}
 
 	@Override

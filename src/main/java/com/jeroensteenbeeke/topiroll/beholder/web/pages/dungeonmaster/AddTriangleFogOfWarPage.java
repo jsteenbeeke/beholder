@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,14 +26,12 @@ import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
 import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreviewPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TriangleOrientation;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -47,12 +45,8 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.time.Time;
 
 import javax.inject.Inject;
-import java.awt.*;
 
 public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -85,9 +79,8 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 			}
 		});
 
-		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
-		final int imageWidth = (int) dimensions.getWidth();
-		final int imageHeight = (int) dimensions.getHeight();
+		final int imageWidth = map.getBasicWidth();
+		final int imageHeight = map.getBasicHeight();
 
 		widthField = new NumberTextField<>("width", Model.of(imageWidth / 4));
 		widthField.setOutputMarkupId(true);
@@ -120,54 +113,38 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		offsetYField.setMaximum(imageHeight);
 		offsetYField.setRequired(true);
 		offsetYField.setEnabled(false);
-		
+
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 
-		orientationSelect = new DropDownChoice<TriangleOrientation>(
+		orientationSelect = new DropDownChoice<>(
 				"orientation", Model.of(TriangleOrientation.TopLeft),
 				Lists.newArrayList(TriangleOrientation.values()),
 				LambdaRenderer.of(TriangleOrientation::getDescription));
-		
+
 		orientationSelect.add(new AjaxFormComponentUpdatingBehavior("change") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-			
+
 				target.add(areaMarker);
-				
+
 			}
 		});
-				
+
 		orientationSelect.setRequired(true);
-		
-		
 
-		final AbstractMapPreviewPanel previewImage = new AbstractMapPreviewPanel("preview", map) {
-			@Override
-			protected void addOnDomReadyJavaScript(StringBuilder js) {
-				getModelObject().getAllShapes().forEach(s -> s.visit(new FogOfWarShapeVisitor<Void>() {
+
+		final AbstractMapPreview previewImage =
+				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
 					@Override
-					public Void visit(FogOfWarCircle fogOfWarCircle) {
-
-						return null;
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						getMap().getAllShapes().stream()
+								.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+								.forEach(js::append);
 					}
+				};
 
-					@Override
-					public Void visit(FogOfWarRect fogOfWarRect) {
-						return null;
-					}
-
-					@Override
-					public Void visit(FogOfWarTriangle fogOfWarTriangle) {
-						return null;
-					}
-				}));
-			}
-		};
-		previewImage.setOutputMarkupId(true);
-
-		
 		areaMarker.add(AttributeModifier.replace("style",
 				new LoadableDetachableModel<String>() {
 					private static final long serialVersionUID = 1L;
@@ -175,19 +152,19 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 					@Override
 					protected String load() {
 						StringBuilder builder = new StringBuilder();
-						
+
 						builder.append("background-color: rgba(255, 0, 0, 0.5);");
 						builder.append("left: ")
-								.append(offsetXField.getModelObject())
+								.append(previewImage.translateToScaledImageSize(offsetXField.getModelObject()))
 								.append("px; ");
 						builder.append("top: ")
-								.append(offsetYField.getModelObject())
+								.append(previewImage.translateToScaledImageSize(offsetYField.getModelObject()))
 								.append("px; ");
 						builder.append("width: ")
-								.append(widthField.getModelObject())
+								.append(previewImage.translateToScaledImageSize(widthField.getModelObject()))
 								.append("px; ");
 						builder.append("height: ")
-								.append(heightField.getModelObject())
+								.append(previewImage.translateToScaledImageSize(heightField.getModelObject()))
 								.append("px; ");
 
 						orientationSelect.getModelObject().renderCSS(builder);
@@ -213,11 +190,11 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 
 					@Override
 					public void onDragStop(AjaxRequestTarget target, int top,
-							int left) {
+										   int left) {
 						super.onDragStop(target, top, left);
 
-						offsetXField.setModelObject(left);
-						offsetYField.setModelObject(top);
+						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
 
 						target.add(offsetXField, offsetYField);
 					}
@@ -228,29 +205,29 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		// resizableOptions.set("aspectRatio", "1.0");
 		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
 				resizableOptions, new ResizableAdapter() {
-					private static final long serialVersionUID = 1L;
+			private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean isResizeStopEventEnabled() {
-						return true;
-					}
+			@Override
+			public boolean isResizeStopEventEnabled() {
+				return true;
+			}
 
-					@Override
-					public void onResizeStop(AjaxRequestTarget target, int top,
-							int left, int width, int height) {
-						super.onResizeStop(target, top, left, width, height);
+			@Override
+			public void onResizeStop(AjaxRequestTarget target, int top,
+									 int left, int width, int height) {
+				super.onResizeStop(target, top, left, width, height);
 
-						offsetXField.setModelObject(left);
-						offsetYField.setModelObject(top);
-						widthField.setModelObject(width);
-						heightField.setModelObject(height);
+				offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+				offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
+				widthField.setModelObject(previewImage.translateToRealImageSize(width));
+				heightField.setModelObject(previewImage.translateToRealImageSize(height));
 
-						target.add(offsetXField, offsetYField, widthField, heightField,
-								areaMarker);
+				target.add(offsetXField, offsetYField, widthField, heightField,
+						areaMarker);
 
-					}
+			}
 
-				}));
+		}));
 		previewImage.add(areaMarker);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm",

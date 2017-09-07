@@ -1,34 +1,23 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.wicket.util.io.ByteArrayOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -37,8 +26,18 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import org.apache.wicket.util.io.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
@@ -53,10 +52,10 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Autowired
 	private FogOfWarShapeDAO shapeDAO;
-	
+
 	@Autowired
 	private TokenDefinitionDAO tokenDAO;
-	
+
 	@Autowired
 	private FogOfWarGroupDAO groupDAO;
 
@@ -70,16 +69,11 @@ public class TestViewInitializer implements IAccountInitializer {
 		view.setScreenDiagonalInInches(32);
 		view.setOwner(user);
 		viewDAO.save(view);
-		
-		ScaledMap map = null;
 
-		try (InputStream stream = TestViewInitializer.class
-				.getResourceAsStream("temple.jpg")) {
-			byte[] image = readImage(stream);
+		File image = ImageResource.importImage("temple.jpg");
 
-			map = mapService.createMap(user, "temple", 18, image, null)
-					.getObject();
-			
+		mapService.createMap(user, "temple", 18, image, null).ifOk(map -> {
+
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("P3");
@@ -93,8 +87,8 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setMap(map);
 			rect.setGroup(group);
 			shapeDAO.save(rect);
-			
-			
+
+
 			rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(119);
@@ -102,7 +96,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setHeight(35);
 			rect.setMap(map);
 			rect.setGroup(group);
-			shapeDAO.save(rect);	
+			shapeDAO.save(rect);
 
 			rect = new FogOfWarRect();
 			rect.setOffsetX(228);
@@ -112,14 +106,10 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setMap(map);
 			rect.setGroup(group);
 			shapeDAO.save(rect);
-			
-			
+		});
 
-			log.info("Test data created for user {}", user.getUsername());
 
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
+		log.info("Test data created for user {}", user.getUsername());
 
 		try (InputStream stream = TestViewInitializer.class
 				.getResourceAsStream("random_monster.png")) {
@@ -136,7 +126,7 @@ public class TestViewInitializer implements IAccountInitializer {
 				TokenDefinition token = new TokenDefinition();
 				token.setDiameterInSquares(squares);
 				token.setImageData(imageData);
-				token.setName(names[squares-1]);
+				token.setName(names[squares - 1]);
 				token.setOwner(user);
 
 				tokenDAO.save(token);

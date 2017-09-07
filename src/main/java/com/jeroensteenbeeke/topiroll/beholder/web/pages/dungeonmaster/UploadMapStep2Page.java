@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -160,12 +161,16 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 				}, new Dimension(imageWidth * 2, imageHeight * 2));
 		previewImage.setOutputMarkupId(true);
 
+		int markerSize =
+				Stream.of(squareSizeField.getModelObject() * 2, imageHeight / 10, imageWidth / 10).max
+						(Integer::compare)
+						.get();
+
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 		areaMarker.add(AttributeModifier.replace("style",
 				String.format(
 						"background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
-						squareSizeField.getModelObject() * 2,
-						squareSizeField.getModelObject() * 2, imageWidth,
+						markerSize, markerSize, imageWidth,
 						imageHeight)));
 
 		Options draggableOptions = new Options();

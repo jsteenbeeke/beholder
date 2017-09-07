@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -143,6 +144,12 @@ public abstract class MapSelectController extends Panel {
 				ScaledMap map = item.getModelObject();
 
 				item.add(new Label("name", map.getName()));
+				item.add(new AbstractMapPreview("thumb", map, 128) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+
+					}
+				});
 				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
 						GlyphIcon.screenshot) {
 					private static final long serialVersionUID = 1L;

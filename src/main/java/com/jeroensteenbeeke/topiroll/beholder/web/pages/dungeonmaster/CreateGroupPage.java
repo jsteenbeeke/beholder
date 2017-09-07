@@ -22,11 +22,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -75,8 +75,12 @@ public class CreateGroupPage extends AuthenticatedPage {
 				FogOfWarShape shape = item.getModelObject();
 
 				item.add(new CheckBox("check", Model.of(false)));
-				item.add(new NonCachingImage("thumb",
-						shape.createThumbnailResource(200)));
+				item.add(new AbstractMapPreview("thumb", shape.getMap(), 200) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
+					}
+				});
 				item.add(new Label("description", shape.getDescription()));
 
 			}

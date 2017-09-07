@@ -112,20 +112,19 @@ public class FogOfWarTriangle extends FogOfWarShape {
 
 	@Override
 	public boolean containsCoordinate(int x, int y) {
-		return getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()).contains(x, y);
+		List<XY> xyList = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide());
+
+		Polygon poly = new Polygon();
+		xyList.forEach(xy -> poly.addPoint(xy.getX(), xy.getY()));
+
+		return poly.contains(x, y);
 	}
 
 	@Override
 	public JSShape toJS(double factor) {
-		Polygon poly = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+		List<XY> points = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
 				getHorizontalSide(), getVerticalSide());
-
-		List<XY> points = new LinkedList<>();
-		for (int i = 0; i < poly.npoints; i++) {
-			points.add(new XY(rel(poly.xpoints[i], factor),
-					rel(poly.ypoints[i], factor)));
-		}
 
 		JSPolygon polygon = new JSPolygon();
 		polygon.setPoints(points);
