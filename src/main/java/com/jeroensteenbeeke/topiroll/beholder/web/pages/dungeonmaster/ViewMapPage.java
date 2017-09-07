@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -60,7 +60,7 @@ public class ViewMapPage extends AuthenticatedPage {
 
 	@Inject
 	private TokenInstanceDAO tokenInstanceDAO;
-	
+
 	private IModel<ScaledMap> mapModel;
 
 	public ViewMapPage(ScaledMap map) {
@@ -74,7 +74,7 @@ public class ViewMapPage extends AuthenticatedPage {
 				MapFolder folder = mapModel.getObject().getFolder();
 				if (folder != null) {
 					setResponsePage(new ViewFolderPage(folder));
- 				} else {
+				} else {
 					setResponsePage(new PrepareSessionPage());
 				}
 
@@ -87,6 +87,9 @@ public class ViewMapPage extends AuthenticatedPage {
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 				getMap().getAllShapes().stream()
 						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+						.forEach(js::append);
+				getMap().getTokens().stream()
+						.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
 						.forEach(js::append);
 			}
 		});
@@ -178,73 +181,74 @@ public class ViewMapPage extends AuthenticatedPage {
 		tokenFilter.map().set(map);
 		tokenFilter.badge().orderBy(true);
 
-		DataView<TokenInstance> tokenView = new DataView<TokenInstance>("tokens", FilterDataProvider.of(tokenFilter, tokenInstanceDAO)) {
+		DataView<TokenInstance> tokenView =
+				new DataView<TokenInstance>("tokens", FilterDataProvider.of(tokenFilter, tokenInstanceDAO)) {
 
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void populateItem(Item<TokenInstance> item) {
-				TokenInstance instance = item.getModelObject();
-				item.add(new Label("token", instance.getLabel()));
-				item.add(new Label("location", String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
-				item.add(new IconLink<TokenInstance>("reveal", item.getModel(), GlyphIcon.eyeOpen) {
-					private static final long serialVersionUID = 1L;
-
-					@Inject
-					private MapService mapService;
-					
-					@Override
-					public void onClick() {
-						mapService.showToken(getModelObject());
-						setResponsePage(new ViewMapPage(mapModel.getObject()));
-					}
-				}.setVisible(!instance.isShow()));
-				item.add(new IconLink<TokenInstance>("edit", item.getModel(),
-						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void onClick() {
-						BSEntityFormPage<TokenInstance> page = new BSEntityFormPage<TokenInstance>(
-								edit(getModelObject()).onPage("Edit Token").withoutDelete()
-										.using(tokenInstanceDAO)) {
+					protected void populateItem(Item<TokenInstance> item) {
+						TokenInstance instance = item.getModelObject();
+						item.add(new Label("token", instance.getLabel()));
+						item.add(new Label("location",
+								String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
+						item.add(new IconLink<TokenInstance>("reveal", item.getModel(), GlyphIcon.eyeOpen) {
+							private static final long serialVersionUID = 1L;
 
+							@Inject
+							private MapService mapService;
+
+							@Override
+							public void onClick() {
+								mapService.showToken(getModelObject());
+								setResponsePage(new ViewMapPage(mapModel.getObject()));
+							}
+						}.setVisible(!instance.isShow()));
+						item.add(new IconLink<TokenInstance>("edit", item.getModel(),
+								GlyphIcon.edit) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
-							protected void onSaved(TokenInstance entity) {
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
+							public void onClick() {
+								BSEntityFormPage<TokenInstance> page = new BSEntityFormPage<TokenInstance>(
+										edit(getModelObject()).onPage("Edit Token").withoutDelete()
+												.using(tokenInstanceDAO)) {
+
+									private static final long serialVersionUID = 1L;
+
+									@Override
+									protected void onSaved(TokenInstance entity) {
+										setResponsePage(new ViewMapPage(mapModel.getObject()));
+									}
+
+									@Override
+									protected void onCancel(TokenInstance entity) {
+										setResponsePage(new ViewMapPage(mapModel.getObject()));
+									}
+
+
+								};
+								page.setChoices(TokenBorderType.class, Lists.newArrayList(TokenBorderType.values()));
+
+								setResponsePage(page);
+
 							}
+						});
+						item.add(new IconLink<TokenInstance>("delete", item.getModel(), GlyphIcon.trash) {
+							private static final long serialVersionUID = 1L;
 
 							@Override
-							protected void onCancel(TokenInstance entity) {
+							public void onClick() {
+								tokenInstanceDAO.delete(getModelObject());
 								setResponsePage(new ViewMapPage(mapModel.getObject()));
 							}
-							
-							
-
-						};
-						page.setChoices(TokenBorderType.class, Lists.newArrayList(TokenBorderType.values()));
-						
-						setResponsePage(page);
+						});
 
 					}
-				});
-				item.add(new IconLink<TokenInstance>("delete", item.getModel(), GlyphIcon.trash) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						tokenInstanceDAO.delete(getModelObject());
-						setResponsePage(new ViewMapPage(mapModel.getObject()));
-					}
-				});
-				
-			}
-		};
+				};
 		add(tokenView);
 		add(new BootstrapPagingNavigator("tokennav", tokenView));
-		
+
 
 		add(new Link<ScaledMap>("addcircle", mapModel) {
 			private static final long serialVersionUID = 1L;

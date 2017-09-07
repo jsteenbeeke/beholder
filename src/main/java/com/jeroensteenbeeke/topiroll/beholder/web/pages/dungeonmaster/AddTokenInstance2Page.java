@@ -112,6 +112,9 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						getMap().getTokens().stream()
+								.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
+								.forEach(js::append);
 					}
 				};
 		previewImage.setOutputMarkupId(true);

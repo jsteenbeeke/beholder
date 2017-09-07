@@ -50,6 +50,60 @@ function previewPolygon(canvasId, color, poly) {
     ctx.restore();
 }
 
+function determineBorderColor(type) {
+    if ("Neutral" === type) {
+        return "#ffff00";
+    } else if ("Ally" === type) {
+        return "#00ff00";
+    } else if ("Enemy" === type) {
+        return "#ff0000";
+    }
+
+    // Default to black border
+    return "#000000";
+}
+
+function previewToken(canvasId, token) {
+    var canvas = document.getElementById(canvasId);
+    var context = canvas.getContext('2d');
+
+    var src = token.src; // string
+    var borderType = token.border_type; // enum
+    var x = token.x; // int
+    var y = token.y; // int
+    var width = token.width; // int
+    var height = token.height; // int
+
+    var radius = (width + height) / 4;
+    var ox = x + radius;
+    var oy = y + radius;
+    var color = determineBorderColor(borderType);
+
+    var img = new Image();
+
+    img.onload = function () {
+        // Step 1: Draw image (with circle clip path)
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.clip();
+        context.drawImage(img, x, y, width, height);
+        context.restore();
+
+        // Step 2: Draw border
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.lineWidth = radius / 7;
+        context.strokeStyle = color;
+        context.stroke();
+        context.restore();
+
+    }
+    img.src = src;
+}
 
 function renderMapToCanvas(canvasId, src, targetWidth, onDrawn) {
     var canvas = document.getElementById(canvasId);
@@ -60,8 +114,8 @@ function renderMapToCanvas(canvasId, src, targetWidth, onDrawn) {
         var w, h;
 
         if (typeof targetWidth === 'undefined') {
-		    w = img.width;
-		    h = img.height;
+            w = img.width;
+            h = img.height;
         } else {
             w = targetWidth;
             h = (targetWidth / img.width) * img.height;
