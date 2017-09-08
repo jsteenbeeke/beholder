@@ -30,6 +30,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisib
 import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.UpdatePortraits;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -38,8 +39,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.sound.sampled.Port;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,16 +94,32 @@ class MapServiceImpl implements MapService {
 	@Autowired
 	private PortraitVisibilityDAO portraitVisibilityDAO;
 
+	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
+	private EntityManager entityManager;
+
 	@Nonnull
 	@Override
 	@Transactional
 	public TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user,
-												  @Nonnull String name, int squareSize, @Nonnull byte[] data,
+												  @Nonnull String name, int squareSize, @Nonnull File data,
 												  @Nullable MapFolder folder) {
-		Dimension dimension = ImageUtil.getImageDimensions(data);
+		TypedActionResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
+		if (!dimResult.isOk()) {
+			return TypedActionResult.fail(dimResult);
+		}
+
+		Dimension dimension = dimResult.getObject();
+
+		Session session = entityManager.unwrap(Session.class);
+
 
 		ScaledMap map = new ScaledMap();
-		map.setData(data);
+		try {
+			map.setData(session.getLobHelper().createBlob(new FileInputStream(data), data.length()));
+		} catch (FileNotFoundException e) {
+			return TypedActionResult.fail(e.getMessage());
+		}
+
 		map.setName(name);
 		map.setSquareSize(squareSize);
 		map.setOwner(user);

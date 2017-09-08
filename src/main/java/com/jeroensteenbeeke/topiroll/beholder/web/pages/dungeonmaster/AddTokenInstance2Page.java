@@ -1,27 +1,35 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.markup.html.link.SubmitLink;
+import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -35,27 +43,8 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
 
-import com.google.common.collect.Lists;
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.googlecode.wicket.jquery.ui.markup.html.link.SubmitLink;
-import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
-import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.SubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
+import javax.inject.Inject;
 
 public class AddTokenInstance2Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -73,7 +62,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 	private IModel<TokenDefinition> tokenModel;
 
 	public AddTokenInstance2Page(ScaledMap map, TokenDefinition token, TokenBorderType borderType,
-			int current, int total) {
+								 int current, int total) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -88,18 +77,17 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 			}
 
-			
+
 		});
 
-		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
-		final int imageWidth = (int) dimensions.getWidth();
-		final int imageHeight = (int) dimensions.getHeight();
+		final int imageWidth = map.getBasicWidth();
+		final int imageHeight = map.getBasicHeight();
 
-		badgeField = new TextField<String>("badge", Model.of(String.format("%s %d", token.getName(), current)));
+		badgeField = new TextField<>("badge", Model.of(String.format("%s %d", token.getName(), current)));
 
 		borderSelect = new DropDownChoice<>("border",
 				Model.of(borderType),
-				new ListModel<TokenBorderType>(
+				new ListModel<>(
 						Lists.newArrayList(TokenBorderType.values())),
 				LambdaRenderer.forEnum(TokenBorderType.class, Enum::name));
 		borderSelect.setRequired(true);
@@ -120,28 +108,19 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		offsetYField.setRequired(true);
 		offsetYField.setEnabled(false);
 
-		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(
-						String.format("preview-%d", map.getId())) {
-					private static final long serialVersionUID = 1L;
-
+		final AbstractMapPreview previewImage =
+				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
 					@Override
-					public IResource getResource() {
-						return new AbstractFogOfWarPreviewResource(mapModel) {
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void drawShape(Graphics2D graphics2d) {
-								
-							}
-						};
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						getMap().getTokens().stream()
+								.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
+								.forEach(js::append);
 					}
-
-				}, dimensions);
+				};
 		previewImage.setOutputMarkupId(true);
 
 		ContextImage areaMarker = new ContextImage("areaMarker",
-				"tokens/"+ token.getId());
+				"tokens/" + token.getId());
 		int wh = map.getSquareSize() * token.getDiameterInSquares();
 		areaMarker.add(AttributeModifier.replace("style", String.format(
 				"padding: 0px; width: %dpx; height: %dpx; max-width: %dpx !important; max-height:" +
@@ -150,7 +129,8 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 						"100%%; border: 1px solid #000000;",
 
 				wh, wh, wh, wh,
-				offsetXField.getModelObject(), offsetYField.getModelObject())));
+				previewImage.translateToScaledImageSize(offsetXField.getModelObject()),
+				previewImage.translateToScaledImageSize(offsetYField.getModelObject()))));
 
 		Options draggableOptions = new Options();
 		draggableOptions.set("opacity", "0.5");
@@ -167,11 +147,11 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 					@Override
 					public void onDragStop(AjaxRequestTarget target, int top,
-							int left) {
+										   int left) {
 						super.onDragStop(target, top, left);
 
-						offsetXField.setModelObject(left);
-						offsetYField.setModelObject(top);
+						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
 
 						target.add(offsetXField, offsetYField);
 					}
@@ -211,7 +191,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 	}
 
 	protected void createSubmitPanel(int current, int total,
-			Form<ScaledMap> configureForm) {
+									 Form<ScaledMap> configureForm) {
 		if (current == total) {
 			add(new MapEditSubmitPanel("submit", configureForm));
 		} else {
@@ -220,14 +200,14 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 						tokenModel.getObject(), borderSelect.getModelObject(), current + 1, total));
 			}) {
 				private static final long serialVersionUID = 1L;
-				
+
 				@Override
 				protected void decorateLink(SubmitLink submitLink) {
 					super.decorateLink(submitLink);
-					
+
 					submitLink.setBody(Model.of("Next"));
 				}
-				
+
 			});
 		}
 	}
@@ -248,7 +228,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		mapModel.detach();
 		tokenModel.detach();
 	}
-	
+
 	protected void onBackButtonClicked() {
 		setResponsePage(new ViewMapPage(mapModel.getObject()));
 	}

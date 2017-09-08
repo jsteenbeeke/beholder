@@ -17,11 +17,18 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-
-import javax.inject.Inject;
-
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,24 +39,8 @@ import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.time.Time;
 
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
-import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapEditSubmitPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
+import javax.inject.Inject;
 
 public class AddRectFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -79,9 +70,8 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 			}
 		});
 
-		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
-		final int imageWidth = (int) dimensions.getWidth();
-		final int imageHeight = (int) dimensions.getHeight();
+		final int imageWidth = map.getBasicWidth();
+		final int imageHeight = map.getBasicHeight();
 
 		widthField = new NumberTextField<>("width", Model.of(imageWidth / 4));
 		widthField.setOutputMarkupId(true);
@@ -114,35 +104,23 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 		offsetYField.setRequired(true);
 		offsetYField.setEnabled(false);
 
-		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(
-						String.format("preview-%d", map.getId())) {
-					private static final long serialVersionUID = 1L;
+		final AbstractMapPreview previewImage = new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+			@Override
+			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+				getMap().getAllShapes().stream()
+						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+						.forEach(js::append);
+			}
+		};
 
-					@Override
-					public IResource getResource() {
-						AbstractFogOfWarPreviewResource resource = new AbstractFogOfWarPreviewResource(
-								mapModel) {
-
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void drawShape(Graphics2D graphics2d) {
-								setLastModifiedTime(Time.now());
-							}
-						};
-
-						return resource;
-					}
-
-				}, dimensions);
-		previewImage.setOutputMarkupId(true);
 
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 		areaMarker.add(AttributeModifier.replace("style", String.format(
 				"background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
-				widthField.getModelObject(), heightField.getModelObject(),
-				offsetXField.getModelObject(), offsetYField.getModelObject())));
+				previewImage.translateToScaledImageSize(widthField.getModelObject()),
+				previewImage.translateToScaledImageSize(heightField.getModelObject()),
+				previewImage.translateToScaledImageSize(offsetXField.getModelObject()),
+				previewImage.translateToScaledImageSize(offsetYField.getModelObject()))));
 
 		Options draggableOptions = new Options();
 		draggableOptions.set("opacity", "0.5");
@@ -162,8 +140,8 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 							int left) {
 						super.onDragStop(target, top, left);
 
-						offsetXField.setModelObject(left);
-						offsetYField.setModelObject(top);
+						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
 
 						target.add(offsetXField, offsetYField);
 					}
@@ -185,10 +163,10 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 							int left, int width, int height) {
 						super.onResizeStop(target, top, left, width, height);
 
-						offsetXField.setModelObject(left);
-						offsetYField.setModelObject(top);
-						widthField.setModelObject(width);
-						heightField.setModelObject(height);
+						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
+						widthField.setModelObject(previewImage.translateToRealImageSize(width));
+						heightField.setModelObject(previewImage.translateToRealImageSize(height));
 
 						target.add(offsetXField, offsetYField, widthField,
 								heightField);

@@ -17,24 +17,19 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.util.LinkedList;
-import java.util.List;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarTrianglePreviewResource;
+import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 public class FogOfWarTriangle extends FogOfWarShape {
@@ -102,33 +97,10 @@ public class FogOfWarTriangle extends FogOfWarShape {
 		this.orientation = orientation;
 	}
 
-	@Override
-	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-		return new FogOfWarTrianglePreviewResource(ModelMaker.wrap(getMap()),
-				this::getHorizontalSide, this::getVerticalSide,
-				this::getOffsetX, this::getOffsetY, this::getOrientation) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean shouldDrawExistingShapes() {
-				return false;
-			}
-
-			@Override
-			protected byte[] postProcess(byte[] image) {
-
-				return ImageUtil.resize(image, size, size);
-			}
-
-		};
-	}
 
 	@Override
-	public void drawPreviewTo(Graphics2D graphics2D) {
-		graphics2D.setColor(FogOfWarShape.TRANSPARENT_BLUE);
-		graphics2D.fill(getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()));
-
+	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override
@@ -140,20 +112,19 @@ public class FogOfWarTriangle extends FogOfWarShape {
 
 	@Override
 	public boolean containsCoordinate(int x, int y) {
-		return getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()).contains(x, y);
+		List<XY> xyList = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide());
+
+		Polygon poly = new Polygon();
+		xyList.forEach(xy -> poly.addPoint(xy.getX(), xy.getY()));
+
+		return poly.contains(x, y);
 	}
 
 	@Override
 	public JSShape toJS(double factor) {
-		Polygon poly = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+		List<XY> points = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
 				getHorizontalSide(), getVerticalSide());
-
-		List<XY> points = new LinkedList<>();
-		for (int i = 0; i < poly.npoints; i++) {
-			points.add(new XY(rel(poly.xpoints[i], factor),
-					rel(poly.ypoints[i], factor)));
-		}
 
 		JSPolygon polygon = new JSPolygon();
 		polygon.setPoints(points);

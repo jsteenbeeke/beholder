@@ -17,20 +17,13 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarCirclePreviewResource;
 
 @Entity
 public class FogOfWarCircle extends FogOfWarShape {
@@ -80,15 +73,6 @@ public class FogOfWarCircle extends FogOfWarShape {
 	}
 
 	@Override
-	public void drawPreviewTo(Graphics2D graphics2d) {
-		graphics2d.setColor(TRANSPARENT_BLUE);
-		Shape circle = new Ellipse2D.Double(getOffsetX(), getOffsetY(),
-				2.0 * getRadius(), 2.0 * getRadius());
-		graphics2d.fill(circle);
-
-	}
-	
-	@Override
 	public boolean containsCoordinate(int x, int y) {
 		int cx = getOffsetX()+getRadius();
 		int cy = getOffsetY()+getRadius();
@@ -100,25 +84,10 @@ public class FogOfWarCircle extends FogOfWarShape {
 		return (x_cx * x_cx) + (y_cy * y_cy) < r2;
 	}
 
+
 	@Override
-	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-
-		return new FogOfWarCirclePreviewResource(ModelMaker.wrap(getMap()),
-				this::getRadius, this::getOffsetX, this::getOffsetY) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean shouldDrawExistingShapes() {
-				return false;
-			}
-
-			@Override
-			protected byte[] postProcess(byte[] image) {
-
-				return ImageUtil.resize(image, size, size);
-			}
-
-		};
+	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override

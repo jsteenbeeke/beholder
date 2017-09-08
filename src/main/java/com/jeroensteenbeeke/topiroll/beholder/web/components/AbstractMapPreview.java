@@ -1,0 +1,95 @@
+package com.jeroensteenbeeke.topiroll.beholder.web.components;
+
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.border.Border;
+import org.apache.wicket.request.UrlUtils;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+
+public abstract class AbstractMapPreview extends Border {
+	private final int desiredWidth;
+	private WebMarkupContainer canvas;
+
+	private final double factor;
+
+	public AbstractMapPreview(String id, ScaledMap map) {
+		this(id, map, map.getBasicWidth());
+	}
+
+	public AbstractMapPreview(String id, ScaledMap map, int desiredWidth) {
+		super(id, ModelMaker.wrap(map));
+
+		setOutputMarkupId(true);
+
+		canvas = new WebMarkupContainer("preview");
+		canvas.setOutputMarkupId(true);
+		addToBorder(canvas);
+
+		this.desiredWidth = desiredWidth;
+		factor = (double) desiredWidth / (double) map.getBasicWidth();
+	}
+
+	public int translateToRealImageSize(int number) {
+		return (int) (number / factor);
+	}
+
+	public int translateToScaledImageSize(int number) {
+		return (int) (number * factor);
+	}
+
+	protected ScaledMap getMap() {
+		return (ScaledMap) getDefaultModelObject();
+	}
+
+	@Override
+	public Border addToBorder(Component... children) {
+		return super.addToBorder(children);
+	}
+
+	@Override
+	public void renderHead(IHeaderResponse response) {
+
+		super.renderHead(response);
+
+		response.render(JavaScriptHeaderItem
+				.forReference(WicketEventJQueryResourceReference.get()));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/geometry.js")));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/previewcanvas.js")));
+
+		StringBuilder js = new StringBuilder();
+
+		js.append(String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
+				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth));
+
+		js.append(String.format("$('#%1$s > #dragdrop').css({\n" +
+						"\t\"position\" : \"absolute\",\n" +
+						"\t\"z-index\" :1,\n" +
+						"\t\"left\"     : $('#%2$s').position().left,\n" +
+						"\t\"top\"      : $('#%2$s').position().top,\n" +
+						"\t\"width\"	: %3$d,\n" +
+						"\t\"height\"	: %4$d,\n" +
+						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
+				Math.round(getMap().getBasicHeight() * factor)));
+
+		StringBuilder onImageDrawComplete = new StringBuilder();
+
+		addOnDomReadyJavaScript(canvas.getMarkupId(), onImageDrawComplete, factor);
+
+		response.render(OnDomReadyHeaderItem
+				.forScript(js.toString().replace("__PLACEHOLDER__", onImageDrawComplete.toString())));
+	}
+
+	protected abstract void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor);
+}

@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,6 +39,8 @@ import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSToken;
+import org.apache.wicket.request.UrlUtils;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 @Entity
 public class TokenInstance extends BaseDomainObject {
@@ -56,29 +58,29 @@ public class TokenInstance extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "map")
 	private ScaledMap map;
-	
- 	@Column(nullable=true)
+
+	@Column(nullable = true)
 	private String note;
 
- 	@Column(nullable=true)
+	@Column(nullable = true)
 	private Integer maxHitpoints;
 
 
- 	@Column(nullable=true)
+	@Column(nullable = true)
 	private Integer currentHitpoints;
 
 
- 	@Column(nullable=false)
+	@Column(nullable = false)
 	private boolean show;
 
 	@Column(nullable = true)
-	@EntityFormField(label="Badge", required=true)
+	@EntityFormField(label = "Badge", required = true)
 	private String badge;
 
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	@EntityFormField(label="Border", required=true, type=FieldType.DROPDOWN)
+	@EntityFormField(label = "Border", required = true, type = FieldType.DROPDOWN)
 	private TokenBorderType borderType;
 
 	@Column(nullable = false)
@@ -154,14 +156,14 @@ public class TokenInstance extends BaseDomainObject {
 	public TokenBorderIntensity getBorderIntensity() {
 		Integer curHP = getCurrentHitpoints();
 		Integer maxHP = getMaxHitpoints();
-		
+
 		if (curHP != null && maxHP != null) {
 			int c = Math.max(0, curHP.intValue());
 			int m = maxHP.intValue();
-			
+
 			if (c >= 0 && m > 0 && c <= m) {
 				int pc = 100 * c / m;
-				
+
 				if (pc == 0) {
 					return TokenBorderIntensity.DEAD;
 				} else if (pc < 25) {
@@ -173,7 +175,7 @@ public class TokenInstance extends BaseDomainObject {
 				}
 			}
 		}
-		
+
 		return TokenBorderIntensity.HEALTHY;
 	}
 
@@ -193,57 +195,17 @@ public class TokenInstance extends BaseDomainObject {
 						&& v.containsCoordinate(getOffsetX(), getOffsetY()));
 	}
 
-	
-
-	public ActionResult drawPreviewTo(Graphics2D graphics2d) {
-		try {
-			BufferedImage image = ImageIO.read(
-					new ByteArrayInputStream(getDefinition().getImageData()));
-
-			int diameter = getDefinition().getDiameterInSquares()
-					* getMap().getSquareSize();
-
-			Shape oldClip = graphics2d.getClip();
-
-			Shape circle = new Ellipse2D.Double(getOffsetX(), getOffsetY(),
-					diameter, diameter);
-
-			graphics2d.setClip(circle);
-			graphics2d.drawImage(image, offsetX, offsetY, offsetX + diameter,
-					offsetY + diameter, 0, 0, image.getWidth(),
-					image.getHeight(), new ImageObserver() {
-
-						@Override
-						public boolean imageUpdate(Image img, int infoflags,
-								int x, int y, int width, int height) {
-							return (infoflags & (ALLBITS | ABORT)) == 0;
-
-						}
-					});
-
-			graphics2d.setClip(oldClip);
-
-			graphics2d.setColor(getBorderIntensity().toColor(getBorderType()));
-			graphics2d.setStroke(new BasicStroke(1.0f));
-			graphics2d.draw(circle);
-
-			return ActionResult.ok();
-		} catch (IOException e) {
-			return ActionResult.error(e.getMessage());
-		}
-
-	}
 
 	@Transient
 	public String getLabel() {
 		String label = getBadge();
-		
+
 		if (label == null) {
 			return String.format("Unlabeled %s #%d",
 					getDefinition().getName(),
 					getId());
 		}
-		
+
 		return label;
 	}
 
@@ -251,7 +213,8 @@ public class TokenInstance extends BaseDomainObject {
 	public boolean isShow() {
 		return show;
 	}
-	public void setShow( @Nonnull boolean show) {
+
+	public void setShow(@Nonnull boolean show) {
 		this.show = show;
 	}
 
@@ -259,7 +222,8 @@ public class TokenInstance extends BaseDomainObject {
 	public Integer getCurrentHitpoints() {
 		return currentHitpoints;
 	}
-	public void setCurrentHitpoints( @Nullable Integer currentHitpoints) {
+
+	public void setCurrentHitpoints(@Nullable Integer currentHitpoints) {
 		this.currentHitpoints = currentHitpoints;
 	}
 
@@ -267,7 +231,8 @@ public class TokenInstance extends BaseDomainObject {
 	public Integer getMaxHitpoints() {
 		return maxHitpoints;
 	}
-	public void setMaxHitpoints( @Nullable Integer maxHitpoints) {
+
+	public void setMaxHitpoints(@Nullable Integer maxHitpoints) {
 		this.maxHitpoints = maxHitpoints;
 	}
 
@@ -275,7 +240,8 @@ public class TokenInstance extends BaseDomainObject {
 	public String getNote() {
 		return note;
 	}
-	public void setNote( @Nullable String note) {
+
+	public void setNote(@Nullable String note) {
 		this.note = note;
 	}
 
@@ -283,22 +249,34 @@ public class TokenInstance extends BaseDomainObject {
 		JSToken token = new JSToken();
 		token.setBorderType(getBorderType().name());
 		token.setBorderIntensity(getBorderIntensity().name());
-		token.setHeight((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
-		token.setWidth((int) (getMap().getSquareSize()*factor*getDefinition().getDiameterInSquares()));
+		token.setHeight((int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));
+		token.setWidth((int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));
 		token.setDiameterInSquares(getDefinition().getDiameterInSquares());
 		token.setLabel(getLabel());
 		// Workaround, will be transformed to URL
 		token.setSrc(Long.toString(getDefinition().getId()));
-		token.setX((int) (getOffsetX()*factor));
-		token.setY((int) (getOffsetY()*factor));
-		
+		token.setX((int) (getOffsetX() * factor));
+		token.setY((int) (getOffsetY() * factor));
+
 		return token;
 	}
 
+	public String toPreview(double factor) {
+		final String url = UrlUtils.rewriteToContextRelative("tokens/" + getId(), RequestCycle.get());
 
-
-
-
+		return String.format("{\n" +
+						"\t'src': '%s',\n" +
+						"\t'border_type': '%s',\n" +
+						"\t'x': %d,\n" +
+						"\t'y': %d,\n" +
+						"\t'width': %d,\n" +
+						"\t'height': %d,\n" +
+						"}",
+				url,
+				getBorderType().name(), (int) (getOffsetX() * factor), (int) (getOffsetY() * factor),
+				(int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()),
+				(int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));
+	}
 
 
 }
