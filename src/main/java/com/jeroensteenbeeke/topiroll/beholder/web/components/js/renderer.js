@@ -53,6 +53,8 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 				clearMap(containerId);
 			} else if ("portraits" === data.type) {
 				updatePortraits(data);
+			} else if ("youtube" === data.type) {
+				document.getElementById('youtube').src = data.url;
 			}
 		}
 
