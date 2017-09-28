@@ -74,7 +74,10 @@ public class ControlViewPage extends AuthenticatedPage {
 
 	private AjaxLink<Void> portraitLink;
 
-    public ControlViewPage(MapView view) {
+	private AjaxLink<Void> youtubeLink;
+
+
+	public ControlViewPage(MapView view) {
         super(String.format("Control View - %s", view.getIdentifier()));
 
         viewModel = ModelMaker.wrap(view);
@@ -339,6 +342,17 @@ public class ControlViewPage extends AuthenticatedPage {
 			}
 		});
 
+		addLink(youtubeLink = new AjaxLink<Void>("youtube") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof YoutubeController)) {
+					MapView view = viewModel.getObject();
+					WebMarkupContainer newController = new YoutubeController(CONTROLLER_ID, view);
+					setController(target, newController);
+				}
+			}
+		});
+
         links().forEach(l -> l.setOutputMarkupPlaceholderTag(true));
 
         if (view.getSelectedMap() == null) {
@@ -386,7 +400,7 @@ public class ControlViewPage extends AuthenticatedPage {
                 createTokensLink,
                 initiativeLink,
                 mapSelectLink,
-                forceUpdateLink, portraitLink);
+                forceUpdateLink, portraitLink, youtubeLink);
     }
 
     public void addLink(AjaxLink<Void> link) {
