@@ -65,10 +65,12 @@ public class TestViewInitializer implements IAccountInitializer {
 		MapView view = new MapView();
 		view.setHeight(768);
 		view.setWidth(1360);
-		view.setIdentifier("test");
+		view.setIdentifier("720p");
 		view.setScreenDiagonalInInches(32);
 		view.setOwner(user);
 		viewDAO.save(view);
+
+
 
 		File image = ImageResource.importImage("temple.jpg");
 
@@ -107,6 +109,14 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 		});
+
+		MapView view2 = new MapView();
+		view2.setHeight(1080);
+		view2.setWidth(1920);
+		view2.setIdentifier("1080p");
+		view2.setScreenDiagonalInInches(24);
+		view2.setOwner(user);
+		viewDAO.save(view2);
 
 
 		log.info("Test data created for user {}", user.getUsername());
