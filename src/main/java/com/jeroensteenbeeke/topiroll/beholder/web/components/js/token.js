@@ -15,148 +15,164 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-function determineBorderColor(type, intensity) {
-	if ("Neutral" === type) {
-		if ("HEALTHY" === intensity) {
-			return "#ffff00";
-		} else if ("MINOR_INJURIES" === intensity) {
-			return "#cccc00";			
-		} else if ("MODERATELY_INJURED" === intensity) {
-			return "#aaaa00";			
-		} else if ("HEAVILY_INJURED" === intensity) {
-			return "#888800";			
-		} else if ("DEAD" === intensity) {
-			return "#444400";			
-		}
-	} else if ("Ally" === type) {
-		if ("HEALTHY" === intensity) {
-			return "#00ff00";
-		} else if ("MINOR_INJURIES" === intensity) {
-			return "#00cc00";			
-		} else if ("MODERATELY_INJURED" === intensity) {
-			return "#00aa00";			
-		} else if ("HEAVILY_INJURED" === intensity) {
-			return "#008800";			
-		} else if ("DEAD" === intensity) {
-			return "#004400";			
-		}
-		
-	} else if ("Enemy" === type) {
-		if ("HEALTHY" === intensity) {
-			return "#ff0000";
-		} else if ("MINOR_INJURIES" === intensity) {
-			return "#cc0000";			
-		} else if ("MODERATELY_INJURED" === intensity) {
-			return "#aa0000";			
-		} else if ("HEAVILY_INJURED" === intensity) {
-			return "#880000";			
-		} else if ("DEAD" === intensity) {
-			return "#440000";			
-		}
+function determineBorderColor(type) {
+    if ("Neutral" === type) {
+        return "#ffff00";
+    } else if ("Ally" === type) {
+        return "#00ff00";
+    } else if ("Enemy" === type) {
+        return "#ff0000";
+    }
 
-	}
-	
-	// Default to black border
-	return "#000000";
+    // Default to black border
+    return "#000000";
+}
+
+function determineFontSize(context, width, height, label) {
+    var valuesToTry = [108, 100, 96, 88, 84, 72, 66, 60, 56, 54, 48, 44, 42, 40, 36, 32, 30, 28,
+        26, 24, 22, 20, 18, 16, 15, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4];
+
+    var found = {
+        fontSize: 4,
+        characterHeight: 6
+    };
+    var chars = label.split('');
+
+    for (idx = 0; idx < valuesToTry.length; idx++) {
+        var value = valuesToTry[idx];
+        context.setFont(value + 'pt Arial');
+        var measure = context.measureText(label);
+
+        var cwidth = chars.map(function(c) {
+           return Math.round(context.measureText(c).width);
+        }).reduce(function(a,b) {
+            return Math.max(a,b);
+        });
+        var textHeight = Math.round(cwidth / 0.78);
+
+        if (measure.width < width && textHeight < height) {
+            found = {
+                fontSize: value,
+                characterHeight: textHeight
+            };
+            break;
+        }
+
+    }
+
+    return found;
+
 }
 
 function drawText(context, token) {
-	var src = token.src; // string
-	var borderType = token.border_type; // enum
-	var borderIntensity = token.border_intensity; // enum
-	var label = token.label; // string
-	var x = token.x; // int
-	var y = token.y; // int
-	var width = token.width; // int
-	var height = token.height; // int
-	var color = "#000000;"
+    var label = token.label; // string
+    var x = token.x; // int
+    var y = token.y; // int
+    var width = token.width; // int
+    var height = token.height; // int
+    var color = "#000000;"
 
-	var radius = (width + height) / 4;
-	var ox = x + radius;
-	var oy = y + radius;
-	
-	var box_top_y = y + 5 * (height / 6);
-	var box_bottom_y = y + height;
-	
-	var box_height = height / 6;
-	
-	var text_ratio = 0.375 * radius;
-	var box_ratio = 0.5 * radius;
-	
-	var box_width = width;
-	var text_width = label.length * text_ratio;
-	
-	var box_left_x = x;
-	var text_x = box_left_x + (box_width / 2);
-	var text_y = box_bottom_y - (box_height / 6);
-	var char_count = label.length;
-	
-	var horizontal_pixels_per_character = Math.round(box_width / char_count);	
-	// Assume 33% increase converting from text to pixels
-	var text_scale = Math.round(1.2 * Math.min(horizontal_pixels_per_character, box_height));
-	
-	text_x = text_x - ((horizontal_pixels_per_character * char_count) / 2.4);
-	
-	context.save();
-	context.setLineWidth(1);
-	context.setStrokeStyle(color);
-	context.setFillStyle('#ffffff');
-	context.moveTo(box_left_x, box_top_y);
-	context.fillRect(box_left_x, box_top_y, box_width, box_height);
-	context.strokeRect(box_left_x, box_top_y, box_width, box_height);
-	context.restore();
-	
-	context.save();
-	context.setFillStyle(color);
-	context.setFont(text_scale + 'pt Arial');
-	context.fillText(label, text_x, text_y);
+    var box_top_y = y + 5 * (height / 6);
 
-	context.restore();
+    var box_height = height / 6;
+
+    var box_width = width;
+
+    var box_left_x = x;
+
+    context.save();
+    context.setLineWidth(1);
+    context.setStrokeStyle(color);
+    context.setFillStyle('#ffffff');
+    context.moveTo(box_left_x, box_top_y);
+    context.fillRect(box_left_x, box_top_y, box_width, box_height);
+    context.strokeRect(box_left_x, box_top_y, box_width, box_height);
+    context.restore();
+
+    context.save();
+
+    var fontSize = determineFontSize(context, box_width, box_height, label);
+    context.setFont(fontSize.fontSize + 'pt Arial');
+
+    var text_width = context.measureText(label).width;
+    var text_x = box_left_x + (box_width - text_width)/2;
+    var text_y = box_top_y + (box_height - fontSize.characterHeight) / 2;
+
+    context.setTextBaseline("top");
+    context.setFillStyle(color);
+    context.fillText(label, text_x, text_y);
+
+    context.restore();
 }
 
-	
+function determineHealthAngle(intensity) {
+    if ("HEALTHY" === intensity) {
+        return Math.PI * 2;
+    } else if ("MINOR_INJURIES" === intensity) {
+        return Math.PI * 1.5;
+    } else if ("MODERATELY_INJURED" === intensity) {
+        return Math.PI;
+    } else if ("HEAVILY_INJURED" === intensity) {
+        return Math.PI * 0.5;
+    } else if ("DEAD" === intensity) {
+        return 0;
+    }
+
+    // If unknown assume healthy
+    return Math.PI * 2;
+}
 
 function renderToken(context, token) {
-	var src = token.src; // string
-	var borderType = token.border_type; // enum
-	var borderIntensity = token.border_intensity; // enum
-	var label = token.label; // string
-	var x = token.x; // int
-	var y = token.y; // int
-	var width = token.width; // int
-	var height = token.height; // int
+    var src = token.src; // string
+    var borderType = token.border_type; // enum
+    var borderIntensity = token.border_intensity; // enum
+    var label = token.label; // string
+    var x = token.x; // int
+    var y = token.y; // int
+    var width = token.width; // int
+    var height = token.height; // int
 
-	var radius = (width + height) / 4;
-	var ox = x + radius;
-	var oy = y + radius;
-	var color = determineBorderColor(borderType, borderIntensity);
+    var radius = (width + height) / 4;
+    var ox = x + radius;
+    var oy = y + radius;
+    var color = determineBorderColor(borderType);
 
-	var img = new Image();
+    var img = new Image();
 
-	img.onload = function() {
-		// Step 1: Draw image (with circle clip path)
-		context.save();
-		context.beginPath();
-		context.arc(ox, oy, radius, 0, 2 * Math.PI);
-		context.closePath();
-		context.clip();
-		context.drawImage(img, x, y, width, height);
-		context.restore();
+    img.onload = function () {
+        // Step 1: Draw image (with circle clip path)
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.clip();
+        context.drawImage(img, x, y, width, height);
+        context.restore();
 
-		// Step 2: Draw border
-		context.save();
-		context.beginPath();
-		context.arc(ox, oy, radius, 0, 2 * Math.PI);
-		context.closePath();
-		context.setLineWidth(radius / 7);
-		context.setStrokeStyle(color);
-		context.stroke();
-		context.restore();
+        // Step 2: Draw base border (black)
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.setLineWidth(radius / 7);
+        context.setStrokeStyle('#000000');
+        context.stroke();
+        context.restore();
 
-		// Step 3: Draw text
-		if (label) {
-			drawText(context, token);
-		}
-	}
-	img.src = src;
+        // Step 3: Draw health border (user-determined)
+        var healthAngle = determineHealthAngle(borderIntensity);
+
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, healthAngle);
+        context.setLineWidth(radius / 8);
+        context.setStrokeStyle(color);
+        context.stroke();
+        context.restore();
+
+        // Step 4: Draw text
+        if (label) {
+            drawText(context, token);
+        }
+    }
+    img.src = src;
 }

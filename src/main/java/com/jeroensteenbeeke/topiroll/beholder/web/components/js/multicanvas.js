@@ -69,6 +69,10 @@ MultiCanvasContext.prototype.forEachContext = function (name, operation) {
     });
 };
 
+MultiCanvasContext.prototype.measureText = function (text) {
+    return this.drawContexts[0][0].measureText(text);
+}
+
 MultiCanvasContext.prototype.setLineWidth = function (width) {
     this.forEachContext('setLineWidth', function (ctx) {
         ctx.lineWidth = width;
@@ -180,6 +184,12 @@ MultiCanvasContext.prototype.strokeText = function (text, x, y, maxWidth) {
         var adjustedX = x - ctx.canvasOffsetX;
         var adjustedY = y - ctx.canvasOffsetY;
         ctx.strokeText(text, adjustedX, adjustedY, maxWidth)
+    });
+};
+
+MultiCanvasContext.prototype.setTextBaseline = function(baseline) {
+    this.forEachContext("setTextBaseline", function(ctx) {
+        ctx.textBaseline = baseline;
     });
 };
 
