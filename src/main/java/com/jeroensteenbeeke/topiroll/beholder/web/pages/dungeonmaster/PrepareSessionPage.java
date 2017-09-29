@@ -16,9 +16,11 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.*;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -52,6 +54,9 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 	@Inject
 	private PortraitDAO portraitDAO;
+
+	@Inject
+	private YouTubePlaylistDAO playlistDAO;
 
 	public PrepareSessionPage() {
 		super("");
@@ -248,7 +253,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 		};
 
-		tokenView.setItemsPerPage(10);
+		tokenView.setItemsPerPage(25);
 		add(tokenView);
 		add(new BootstrapPagingNavigator("tokennav", tokenView));
 
@@ -314,9 +319,43 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				});
 			}
 		};
-		portraitView.setItemsPerPage(10);
+		portraitView.setItemsPerPage(25);
 		add(portraitView);
 		add(new BootstrapPagingNavigator("portraitnav", portraitView));
+
+		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
+				FilterDataProvider.of(new YouTubePlaylistFilter().owner(getUser()).name().orderBy(true),
+						playlistDAO)) {
+			@Override
+			protected void populateItem(Item<YouTubePlaylist> item) {
+				YouTubePlaylist playlist = item.getModelObject();
+
+				item.add(new Label("name", playlist.getName()));
+				item.add(new ExternalLink("url", playlist.getUrl()).setBody(Model.of(playlist.getUrl())));
+				item.add(new IconLink<YouTubePlaylist>("edit", item.getModel(), GlyphIcon.edit) {
+					@Override
+					public void onClick() {
+						setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
+								edit(getModelObject()).onPage("Edit Playlist").using(playlistDAO)) {
+
+							@Override
+							protected void onSaved(YouTubePlaylist entity) {
+								setResponsePage(new PrepareSessionPage());
+							}
+
+							@Override
+							protected void onCancel(YouTubePlaylist entity) {
+								setResponsePage(new PrepareSessionPage());
+							}
+						});
+					}
+				});
+
+			}
+		};
+		playlistView.setItemsPerPage(25);
+		add(playlistView);
+		add(new BootstrapPagingNavigator("playlistnav", playlistView));
 
 		add(new Link<MapView>("addview") {
 			private static final long serialVersionUID = 1L;
@@ -413,6 +452,34 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				setResponsePage(new UploadPortraitStep1Page());
 			}
 		});
+
+		add(new Link<YouTubePlaylist>("addplaylist") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
+						create(new YouTubePlaylist()).onPage("Add Playlist").using(playlistDAO)) {
+
+					@Override
+					protected void onBeforeSave(YouTubePlaylist entity) {
+						super.onBeforeSave(entity);
+						entity.setOwner(getUser());
+					}
+
+					@Override
+					protected void onSaved(YouTubePlaylist entity) {
+						setResponsePage(new PrepareSessionPage());
+					}
+
+					@Override
+					protected void onCancel(YouTubePlaylist entity) {
+						setResponsePage(new PrepareSessionPage());
+					}
+				});
+			}
+		});
+
 	}
 
 	private ActionResult validateMapView(MapView entity, boolean checkIdentifier) {

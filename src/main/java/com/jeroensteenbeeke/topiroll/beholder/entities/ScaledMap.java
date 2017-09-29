@@ -19,7 +19,9 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.awt.Dimension;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -78,7 +80,8 @@ public class ScaledMap extends BaseDomainObject {
 	private int squareSize;
 
 	@Column(nullable = false)
-	private byte[] data;
+	@Lob
+	private Blob data;
 
 	@OneToMany(mappedBy = "selectedMap", fetch = FetchType.LAZY)
 	private List<MapView> selectedBy = new ArrayList<MapView>();
@@ -106,11 +109,11 @@ public class ScaledMap extends BaseDomainObject {
 	}
 
 	@Nonnull
-	public byte[] getData() {
+	public Blob getData() {
 		return data;
 	}
 
-	public void setData(@Nonnull byte[] data) {
+	public void setData(@Nonnull Blob data) {
 		this.data = data;
 	}
 
@@ -231,7 +234,10 @@ public class ScaledMap extends BaseDomainObject {
 	}
 
 
-
-
-
+	public List<FogOfWarShape> getAllShapes() {
+		List<FogOfWarShape> shapes = new LinkedList<>();
+		shapes.addAll(getFogOfWarShapes());
+		getGroups().stream().flatMap(g -> g.getShapes().stream()).forEach(shapes::add);
+		return shapes;
+	}
 }

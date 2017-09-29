@@ -1,7 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
-import com.jeroensteenbeeke.hyperion.ducktape.web.resources.ThumbnailResource;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
@@ -18,7 +17,6 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSes
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewFolderPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewMapPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -94,8 +92,12 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 				ScaledMap map = item.getModelObject();
 
 				item.add(new Label("name", map.getName()));
-				item.add(new NonCachingImage("thumb",
-						new ThumbnailResource(128, map.getData())));
+				item.add(new AbstractMapPreview("thumb", map, 128) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+
+					}
+				});
 				item.add(new IconLink<ScaledMap>("view", item.getModel(),
 						GlyphIcon.eyeOpen) {
 

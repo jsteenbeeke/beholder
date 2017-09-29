@@ -1,40 +1,36 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.util.LinkedList;
-import java.util.List;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarTrianglePreviewResource;
+import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class FogOfWarTriangle extends FogOfWarShape {
@@ -102,33 +98,10 @@ public class FogOfWarTriangle extends FogOfWarShape {
 		this.orientation = orientation;
 	}
 
-	@Override
-	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-		return new FogOfWarTrianglePreviewResource(ModelMaker.wrap(getMap()),
-				this::getHorizontalSide, this::getVerticalSide,
-				this::getOffsetX, this::getOffsetY, this::getOrientation) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean shouldDrawExistingShapes() {
-				return false;
-			}
-
-			@Override
-			protected byte[] postProcess(byte[] image) {
-
-				return ImageUtil.resize(image, size, size);
-			}
-
-		};
-	}
 
 	@Override
-	public void drawPreviewTo(Graphics2D graphics2D) {
-		graphics2D.setColor(FogOfWarShape.TRANSPARENT_BLUE);
-		graphics2D.fill(getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()));
-
+	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override
@@ -140,20 +113,22 @@ public class FogOfWarTriangle extends FogOfWarShape {
 
 	@Override
 	public boolean containsCoordinate(int x, int y) {
-		return getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()).contains(x, y);
+		List<XY> xyList = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide());
+
+		Polygon poly = new Polygon();
+		xyList.forEach(xy -> poly.addPoint(xy.getX(), xy.getY()));
+
+		return poly.contains(x, y);
 	}
 
 	@Override
 	public JSShape toJS(double factor) {
-		Polygon poly = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide());
+		List<XY> points = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
+				getHorizontalSide(), getVerticalSide()).stream().map(p -> p.adjustByFactor(factor))
+				.collect(
+						Collectors.toList());
 
-		List<XY> points = new LinkedList<>();
-		for (int i = 0; i < poly.npoints; i++) {
-			points.add(new XY(rel(poly.xpoints[i], factor),
-					rel(poly.ypoints[i], factor)));
-		}
 
 		JSPolygon polygon = new JSPolygon();
 		polygon.setPoints(points);

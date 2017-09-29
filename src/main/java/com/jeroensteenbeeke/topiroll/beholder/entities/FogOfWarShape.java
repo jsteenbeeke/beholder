@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
@@ -93,7 +94,7 @@ public abstract class FogOfWarShape extends BaseDomainObject
 	@Transient
 	public abstract String getDescription();
 
-	public abstract void drawPreviewTo(@Nonnull Graphics2D graphics2d);
+	public abstract <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor);
 
 	public boolean shouldRender(MapView view, boolean previewMode) {
 		FogOfWarGroup _group = getGroup();

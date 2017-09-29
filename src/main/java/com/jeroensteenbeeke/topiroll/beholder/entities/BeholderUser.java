@@ -49,6 +49,10 @@ public class BeholderUser extends BaseDomainObject {
 	@Column(nullable = false)
 	private String username;
  	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
+	private List<YouTubePlaylist> playlists = new ArrayList<YouTubePlaylist>();
+
+
+ 	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
 	private List<Portrait> portraits = new ArrayList<Portrait>();
 
 
@@ -160,6 +164,16 @@ public class BeholderUser extends BaseDomainObject {
 	public void setPortraits( @Nonnull List<Portrait> portraits) {
 		this.portraits = portraits;
 	}
+
+	@Nonnull
+	public List<YouTubePlaylist> getPlaylists() {
+		return playlists;
+	}
+	public void setPlaylists( @Nonnull List<YouTubePlaylist> playlists) {
+		this.playlists = playlists;
+	}
+
+
 
 
 

@@ -17,7 +17,11 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import com.google.common.collect.ImmutableList;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
+
 import java.awt.Polygon;
+import java.util.List;
 
 public enum TriangleOrientation {
 	TopLeft("Top left") {
@@ -29,11 +33,11 @@ public enum TriangleOrientation {
 		}
 
 		@Override
-		public Polygon toPolygon(int left, int top, int width, int height) {
+		public List<XY> toPolygon(int left, int top, int width, int height) {
 			int[] x = { left, left + width, left };
 			int[] y = { top, top, top + height };
 
-			return new Polygon(x, y, 3);
+			return xyList(x, y);
 
 		}
 	},
@@ -46,11 +50,11 @@ public enum TriangleOrientation {
 		}
 
 		@Override
-		public Polygon toPolygon(int left, int top, int width, int height) {
+		public List<XY> toPolygon(int left, int top, int width, int height) {
 			int[] x = { left, left + width, left + width };
 			int[] y = { top, top, top + height };
 
-			return new Polygon(x, y, 3);
+			return xyList(x, y);
 		}
 	},
 	BottomLeft("Bottom left") {
@@ -62,11 +66,11 @@ public enum TriangleOrientation {
 		}
 
 		@Override
-		public Polygon toPolygon(int left, int top, int width, int height) {
+		public List<XY> toPolygon(int left, int top, int width, int height) {
 			int[] x = { left, left, left + width };
 			int[] y = { top + height, top, top + height };
 
-			return new Polygon(x, y, 3);
+			return xyList(x, y);
 		}
 	},
 	BottomRight("Bottom right") {
@@ -78,13 +82,25 @@ public enum TriangleOrientation {
 		}
 
 		@Override
-		public Polygon toPolygon(int left, int top, int width, int height) {
+		public List<XY> toPolygon(int left, int top, int width, int height) {
 			int[] x = { left, left + width, left + width };
 			int[] y = { top + height, top, top + height };
 
-			return new Polygon(x, y, 3);
+			return xyList(x, y);
 		}
 	};
+
+	protected List<XY> xyList(int[] x, int[] y) {
+		if (x.length != y.length) {
+			throw new IllegalArgumentException("Arrays should be equal in length");
+		}
+
+		ImmutableList.Builder<XY> builder = ImmutableList.builder();
+		for (int i = 0; i < x.length; i++) {
+			builder.add(new XY(x[i], y[i]));
+		}
+		return builder.build();
+	}
 
 	private final String description;
 
@@ -98,5 +114,5 @@ public enum TriangleOrientation {
 
 	public abstract void renderCSS(StringBuilder builder);
 
-	public abstract Polygon toPolygon(int left, int top, int width, int height);
+	public abstract List<XY> toPolygon(int left, int top, int width, int height);
 }

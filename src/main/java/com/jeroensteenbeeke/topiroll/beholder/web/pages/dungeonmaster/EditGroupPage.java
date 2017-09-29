@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,12 +22,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -51,14 +51,14 @@ public class EditGroupPage extends AuthenticatedPage {
 
 	public EditGroupPage(FogOfWarGroup group) {
 		super("Edit Group");
-		
+
 		add(new Link<ScaledMap>("back", ModelMaker.wrap(group.getMap())) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
 				setResponsePage(new ViewMapPage(getModelObject()));
-				
+
 			}
 		});
 
@@ -75,8 +75,12 @@ public class EditGroupPage extends AuthenticatedPage {
 				FogOfWarShape shape = item.getModelObject();
 
 				item.add(new CheckBox("check", Model.of(shape.getGroup() != null)));
-				item.add(new NonCachingImage("thumb",
-						shape.createThumbnailResource(200)));
+				item.add(new AbstractMapPreview("thumb", shape.getMap(), 200) {
+					@Override
+					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
+					}
+				});
 				item.add(new Label("description", shape.getDescription()));
 
 			}
@@ -102,14 +106,14 @@ public class EditGroupPage extends AuthenticatedPage {
 				shapeView.getItems().forEachRemaining(i -> {
 					CheckBox box = (CheckBox) i.get("check");
 					Boolean checked = box.getModelObject();
-					
+
 					FogOfWarShape shape = i.getModelObject();
 
 					if (checked != null && checked.booleanValue()) {
-						
+
 
 						keep.add(shape);
-					} else if (shape.getGroup() != null){
+					} else if (shape.getGroup() != null) {
 						remove.add(shape);
 					}
 

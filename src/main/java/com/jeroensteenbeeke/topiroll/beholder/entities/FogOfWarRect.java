@@ -17,18 +17,13 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Graphics2D;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.AbstractFogOfWarPreviewResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.FogOfWarRectPreviewResource;
 
 @Entity
 public class FogOfWarRect extends FogOfWarShape {
@@ -89,35 +84,12 @@ public class FogOfWarRect extends FogOfWarShape {
 				getOffsetX(), getOffsetY(), getWidth(), getHeight());
 	}
 
-	@Override
-	public void drawPreviewTo(Graphics2D graphics2d) {
-		graphics2d.setColor(FogOfWarShape.TRANSPARENT_BLUE);
-		graphics2d.fillRect(getOffsetX(), getOffsetY(), getWidth(),
-				getHeight());
-	}
 
 	@Override
-	public AbstractFogOfWarPreviewResource createThumbnailResource(int size) {
-
-		return new FogOfWarRectPreviewResource(ModelMaker.wrap(getMap()),
-				this::getWidth, this::getHeight, this::getOffsetX,
-				this::getOffsetY) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected boolean shouldDrawExistingShapes() {
-				return false;
-			}
-
-			@Override
-			protected byte[] postProcess(byte[] image) {
-
-				return ImageUtil.resize(image, size, size);
-			}
-
-		};
+	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
-	
+
 	@Override
 	public boolean containsCoordinate(int x, int y) {
 		int x2 = getOffsetX() + getWidth();

@@ -1,22 +1,23 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -40,16 +41,16 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 @Component
 public class RandomOtherUserInitializer implements IEntityPopulator {
 	private static final Logger log = LoggerFactory.getLogger(RandomOtherUserInitializer.class);
-	
+
 	@Autowired
 	private MapService mapService;
-	
+
 	@Autowired
 	private MapViewDAO viewDAO;
-	
+
 	@Autowired
 	private FogOfWarShapeDAO shapeDAO;
-	
+
 	@Autowired
 	private BeholderUserDAO userDAO;
 
@@ -59,10 +60,12 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 		user.setAccessToken(Randomizer.random(255));
 		user.setUserId("~~~");
 		user.setUsername("PORRIDGE");
-		user.setAvatar("http://vignette3.wikia.nocookie.net/avatar/images/7/79/Pilot_-_Aang.png/revision/latest?cb=20120311133235");
+		user.setAvatar(
+				"http://vignette3.wikia.nocookie.net/avatar/images/7/79/Pilot_-_Aang" +
+						".png/revision/latest?cb=20120311133235");
 		user.setTeamId("!!!");
 		userDAO.save(user);
-		
+
 		MapView view = new MapView();
 		view.setHeight(1080);
 		view.setWidth(1920);
@@ -70,19 +73,10 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 		view.setScreenDiagonalInInches(24);
 		view.setOwner(user);
 		viewDAO.save(view);
-		
-		try (InputStream stream = TestViewInitializer.class.getResourceAsStream("porridge.jpg"); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-			int in = -1;
-			while ((in = stream.read()) != -1) {
-				bos.write(in);
-			}
-			bos.flush();
-			bos.close();
-			
-			byte[] image = bos.toByteArray();
-			
-			ScaledMap map = mapService.createMap(user, "porridge", 4, image, null).getObject();
-			
+
+		File image = ImageResource.importImage("porridge.jpg");
+
+		mapService.createMap(user, "porridge", 4, image, null).ifOk(map -> {
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(153);
@@ -90,13 +84,11 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 			rect.setHeight(74);
 			rect.setMap(map);
 			shapeDAO.save(rect);
-			
-			log.info("Test data created for user {}", user.getUsername());
-			
-		} catch (IOException e) {
-			log.error(e.getMessage(), e);
-		}
-		
+		});
+
+
+		log.info("Test data created for user {}", user.getUsername());
+
 	}
 
 	@Override

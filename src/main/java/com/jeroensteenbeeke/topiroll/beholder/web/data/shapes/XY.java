@@ -47,5 +47,11 @@ public class XY {
 		this.y = y;
 	}
 
-	
+
+	public XY adjustByFactor(double factor) {
+		int nx = (int) (factor * x);
+		int ny = (int) (factor * y);
+
+		return new XY(nx, ny);
+	}
 }

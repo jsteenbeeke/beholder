@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroensteenbeeke" failOnError="true" id="115">
+    <createTable tableName="youtubeplaylist">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_youtubeplaylist" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="116">
+    <addColumn tableName="youtubeplaylist">
+      <column name="owner" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  <addForeignKeyConstraint baseColumnNames="owner" baseTableName="youtubeplaylist" constraintName="fk_youtubeplaylist_owner" referencedColumnNames="id" referencedTableName="beholderuser"/>
+  <createIndex indexName="idx_youtubeplaylist_owner" tableName="youtubeplaylist">
+      <column name="owner"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="117">
+    <addColumn tableName="youtubeplaylist">
+      <column name="name" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="118">
+    <addColumn tableName="youtubeplaylist">
+      <column name="url" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroensteenbeeke" id="119">
+    <addColumn tableName="youtubeplaylist">
+      <column name="numberofentries" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

@@ -1,35 +1,21 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
 
 import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
@@ -43,6 +29,18 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.FogOfWarPreviewRenderer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HideRevealController extends TypedPanel<ScaledMap> implements IClickListener {
 
@@ -58,7 +56,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 	private MapService mapService;
 
 	private IModel<MapView> mapViewModel;
-	
+
 	public HideRevealController(String id, MapView mapView, ScaledMap map) {
 		this(id, mapView, map, ImmutableList.of(), ImmutableList.of());
 	}
@@ -87,8 +85,13 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 			private static final long serialVersionUID = 1L;
 
 			@Override
+			public List<FogOfWarShape> getShapes(FogOfWarGroup object) {
+				return object.getShapes();
+			}
+
+			@Override
 			public void applyStatus(FogOfWarGroup group,
-					VisibilityStatus status) {
+									VisibilityStatus status) {
 				mapService.setGroupVisibility(mapViewModel.getObject(), group,
 						status);
 			}
@@ -106,8 +109,13 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 			private static final long serialVersionUID = 1L;
 
 			@Override
+			public List<FogOfWarShape> getShapes(FogOfWarShape object) {
+				return ImmutableList.of(object);
+			}
+
+			@Override
 			public void applyStatus(FogOfWarShape shape,
-					VisibilityStatus status) {
+									VisibilityStatus status) {
 				mapService.setShapeVisibility(mapViewModel.getObject(), shape,
 						status);
 			}
@@ -147,13 +155,13 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 		private static final long serialVersionUID = 1L;
 
 		protected VisibilityControlView(String id,
-				IDataProvider<T> dataProvider) {
+										IDataProvider<T> dataProvider) {
 			super(id, dataProvider);
 		}
 
 		@SuppressWarnings("unchecked")
 		public void setStatus(Item<T> item, VisibilityStatus status,
-				AjaxRequestTarget target) {
+							  AjaxRequestTarget target) {
 			final AjaxIconLink<T> hideLink = (AjaxIconLink<T>) item.get("hide");
 			final AjaxIconLink<T> dmLink = (AjaxIconLink<T>) item.get("dm");
 			final AjaxIconLink<T> showLink = (AjaxIconLink<T>) item.get("show");
@@ -168,12 +176,20 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 
 		public abstract void applyStatus(T object, VisibilityStatus status);
 
+		public abstract List<FogOfWarShape> getShapes(T object);
+
 		@Override
 		protected void populateItem(Item<T> item) {
 			T shape = item.getModelObject();
 
-			item.add(new NonCachingImage("thumb",
-					shape.createThumbnailResource(200)));
+			item.add(new AbstractMapPreview("thumb", mapViewModel.getObject().getSelectedMap(), 128) {
+				@Override
+				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+					getShapes(item.getModelObject()).stream()
+							.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+							.forEach(js::append);
+				}
+			});
 			item.add(new Label("description", shape.getDescription()));
 
 			AjaxIconLink<T> hideLink = new AjaxIconLink<T>("hide",
@@ -216,8 +232,8 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 		}
 
 		private void updateVisibility(AjaxRequestTarget target, T shape,
-				AjaxIconLink<T> hideLink, AjaxIconLink<T> dmLink,
-				AjaxIconLink<T> showLink) {
+									  AjaxIconLink<T> hideLink, AjaxIconLink<T> dmLink,
+									  AjaxIconLink<T> showLink) {
 			MapView mapView = mapViewModel.getObject();
 			hideLink.setVisibilityAllowed(
 					shape.getStatus(mapView) != VisibilityStatus.INVISIBLE);
@@ -230,6 +246,8 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 				target.add(hideLink, dmLink, showLink);
 			}
 		}
-	};
+	}
+
+	;
 
 }
