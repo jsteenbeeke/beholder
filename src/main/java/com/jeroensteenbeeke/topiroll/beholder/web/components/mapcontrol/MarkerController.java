@@ -33,6 +33,7 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.AreaMarkerFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers
 		.SelectMarkerTypeController;
@@ -107,15 +108,13 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 
 		this.calculatedWidths = new TreeMap<>();
 
-		Dimension dimensions = ImageUtil.getImageDimensions(map.getData());
 
+		AbstractMapPreview previewImage = new AbstractMapPreview("map",map) {
+			@Override
+			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 
-		ImageContainer previewImage = new ImageContainer("map",
-				UrlUtils.rewriteToContextRelative(
-						String.format("maps/%d?antiCache=%d", map.getId(),
-								System.currentTimeMillis()),
-						RequestCycle.get()),
-				dimensions);
+			}
+		};
 
 		ListView<AreaMarker> mapMarkerView =
 				new ListView<AreaMarker>("mapmarkers", ModelMaker.wrapList(view.getMarkers())) {
@@ -145,7 +144,7 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 																		"100%%; " +
 																		"background-color: " +
 																		"#%2$s; opacity: 0.5;" +
-																		" left: %3$d; top: %4$d;",
+																		" left: %3$dpx; top: %4$dpx; display: block;",
 																wh * 2, marker.getColor(), marker.getOffsetX(),
 																marker.getOffsetY());
 											}
@@ -164,7 +163,7 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 											@Override
 											protected String onLoad(ConeMarker marker) {
 												return String
-														.format("left: %4$d; top: %5$d; width: 0; height: 0; " +
+														.format("left: %4$dpx; top: %5$dpx; width: 0; height: 0; " +
 																		"border-left: %1$dpx solid transparent;\n" +
 																		"\t\t\t\tborder-right: %1$dpx solid " +
 																		"transparent;\n" +
@@ -175,7 +174,7 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 																		"\t\t\t\topacity: 0.5;\n" +
 																		"\t\t\t\ttransform: rotate(%3$fdeg);",
 																wh, marker.getColor(),
-																Math.toDegrees(marker.getTheta() - Math.PI),
+																Math.toDegrees(marker.getTheta())-90,
 																marker.getOffsetX(),
 																marker.getOffsetY()
 														);
@@ -194,8 +193,8 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 											@Override
 											protected String onLoad(CubeMarker marker) {
 												return String.format(
-														"left: %3$d; top: %4$d; width: %1$dpx; height: %1$dpx; " +
-																"background-color: #%2$s; ",
+														"left: %3$dpx; top: %4$dpx; width: %1$dpx; height: %1$dpx; " +
+																"background-color: #%2$s; display: block; position: relative;",
 														wh, marker.getColor(), marker.getOffsetX(),
 														marker.getOffsetY());
 											}
@@ -214,7 +213,7 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 											@Override
 											protected String onLoad(LineMarker marker) {
 												return String.format(
-														"left: %4$d; top: %5$d; width: 1px; height: %1$dpx; background-color: #%2$s; " +
+														"left: %4$dpx; top: %5$dpx; width: 1px; height: %1$dpx; background-color: #%2$s; " +
 																"transform: rotate(%3$fdeg); ",
 														wh, marker.getColor(), Math.toDegrees(marker.getTheta()),
 														marker.getOffsetX(),

@@ -78,8 +78,6 @@ public class MoveTokenController extends Panel {
 
 		this.calculatedWidths = new TreeMap<>();
 
-		Dimension dimensions = new Dimension(map.getBasicWidth(), map.getBasicHeight());
-
 		TokenInstanceFilter filter = new TokenInstanceFilter();
 		filter.map().set(map);
 		filter.show().set(true);
