@@ -523,7 +523,7 @@ class MapServiceImpl implements MapService {
 	private void internalUpdateView(Dimension dimensions, boolean previewMode,
 									String src, Predicate<RegistryEntry> selector, MapView view,
 									ScaledMap map) {
-		double factor = dimensions.getWidth() / map.getBasicWidth();
+		double factor = map.getDisplayFactor(view);
 
 		MapRenderable renderable = mapToJS(dimensions, previewMode, src, view,
 				map, factor);
