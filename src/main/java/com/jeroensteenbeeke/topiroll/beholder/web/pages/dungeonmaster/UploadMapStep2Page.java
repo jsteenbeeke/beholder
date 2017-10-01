@@ -196,7 +196,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 									 int left, int width, int height) {
 				super.onResizeStop(target, top, left, width, height);
 
-				squareSizeField.setModelObject(width / 2);
+				squareSizeField.setModelObject(width);
 
 				target.add(squareSizeField);
 
