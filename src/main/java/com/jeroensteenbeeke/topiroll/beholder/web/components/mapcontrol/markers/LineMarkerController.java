@@ -92,6 +92,12 @@ public class LineMarkerController extends Panel {
 
 	}
 
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		markerModel.detach();
+	}
+
 	public class LineMarkerUpdateBehavior
 			extends AjaxFormComponentUpdatingBehavior {
 		private static final long serialVersionUID = 1L;

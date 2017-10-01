@@ -84,6 +84,12 @@ public class CubeMarkerController extends Panel {
 
 	}
 
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		markerModel.detach();
+	}
+
 	public class CubeMarkerUpdateBehavior
 			extends AjaxFormComponentUpdatingBehavior {
 		private static final long serialVersionUID = 1L;

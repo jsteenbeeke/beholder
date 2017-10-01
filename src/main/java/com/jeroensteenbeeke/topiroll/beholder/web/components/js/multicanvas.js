@@ -63,7 +63,6 @@ MultiCanvasContext.prototype.forEachContext = function (name, operation) {
     this.drawContexts.forEach(function (row) {
 
         row.forEach(function (ctx) {
-            console.debug('Apply ' + name + ' to ' + ctx.id);
             operation(ctx);
         });
     });
