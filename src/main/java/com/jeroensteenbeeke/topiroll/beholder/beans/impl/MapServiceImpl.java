@@ -471,10 +471,9 @@ class MapServiceImpl implements MapService {
 	private void internalUpdateView(MapView view,
 									Predicate<RegistryEntry> selector) {
 		ScaledMap selectedMap = view.getSelectedMap();
-		if (selectedMap == null) {
-			BeholderRegistry.instance.sendToView(view.getId(), selector,
-					new ClearMap());
-		} else {
+		BeholderRegistry.instance.sendToView(view.getId(), selector,
+				new ClearMap());
+		if (selectedMap != null) {
 			updatePreview(view, selector, selectedMap);
 			updateMainView(view, selector, selectedMap);
 		}
@@ -544,7 +543,7 @@ class MapServiceImpl implements MapService {
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
 		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
-                t.getSrc(), previewMode ? "preview=true&" : ""))));
+				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}
