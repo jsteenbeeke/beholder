@@ -471,9 +471,10 @@ class MapServiceImpl implements MapService {
 	private void internalUpdateView(MapView view,
 									Predicate<RegistryEntry> selector) {
 		ScaledMap selectedMap = view.getSelectedMap();
-		BeholderRegistry.instance.sendToView(view.getId(), selector,
-				new ClearMap());
-		if (selectedMap != null) {
+		if (selectedMap == null) {
+			BeholderRegistry.instance.sendToView(view.getId(), selector,
+					new ClearMap());
+		} else {
 			updatePreview(view, selector, selectedMap);
 			updateMainView(view, selector, selectedMap);
 		}

@@ -52,6 +52,9 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
 
     this.canvases = canvases;
     this.drawContexts = contexts;
+
+    this.width = totalWidth;
+    this.height = totalHeight;
 }
 
 function MultiCanvasContext(canvases, contexts) {
