@@ -21,10 +21,7 @@ package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import org.slf4j.Logger;
@@ -58,6 +55,9 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Autowired
 	private FogOfWarGroupDAO groupDAO;
+
+	@Autowired
+	private YouTubePlaylistDAO playlistDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -118,6 +118,12 @@ public class TestViewInitializer implements IAccountInitializer {
 		view2.setOwner(user);
 		viewDAO.save(view2);
 
+		YouTubePlaylist playlist = new YouTubePlaylist();
+		playlist.setOwner(user);
+		playlist.setName("Tavern Music");
+		playlist.setNumberOfEntries(5);
+		playlist.setUrl("https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbmtlOTyZ-JElmEd7VRTBpgr&controls=0&showinfo=0?ecver=2");
+		playlistDAO.save(playlist);
 
 		log.info("Test data created for user {}", user.getUsername());
 

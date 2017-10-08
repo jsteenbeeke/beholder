@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.registry.IKey;
 import org.slf4j.Logger;
@@ -44,10 +46,10 @@ public enum BeholderRegistry {
 		return objectMapper;
 	}
 
-	private Map<String, RegistryEntry> entries;
+	private Multimap<String, RegistryEntry> entries;
 
 	private BeholderRegistry() {
-		entries = new HashMap<>();
+		entries = LinkedHashMultimap.create();
 	}
 
 	public AddKeyStep addLiveSession(String id) {
@@ -60,9 +62,10 @@ public enum BeholderRegistry {
 
 	public void removeSession(String id, IKey key) {
 		if (entries.containsKey(id)) {
-			RegistryEntry entry = entries.get(id);
-			if (entry.getKey().equals(key)) {
-				entries.remove(id);
+			for (RegistryEntry entry : entries.get(id)) {
+				if (entry.getKey().equals(key)) {
+					entries.remove(id, entry);
+				}
 			}
 
 		}
@@ -71,36 +74,38 @@ public enum BeholderRegistry {
 	public void sendToView(long viewId, JSRenderable renderable) {
 		sendToView(viewId, e -> true, renderable);
 	}
-	
+
 	public void sendToView(long viewId, Predicate<RegistryEntry> selector, JSRenderable renderable) {
 
-		entries.forEach((sessionId, entry) -> {
-			if (entry.getViewId() == viewId && selector.test(entry)) {
-				Payload payload = new Payload();
-				payload.setCanvasId(entry.getMarkupId());
-				payload.setData(renderable);
+		entries.asMap().forEach((sessionId, sessionEntries) -> {
+			sessionEntries.forEach(entry -> {
+				if (entry.getViewId() == viewId && selector.test(entry)) {
+					Payload payload = new Payload();
+					payload.setCanvasId(entry.getMarkupId());
+					payload.setData(renderable);
 
-				IWebSocketConnection connection = BeholderApplication.get()
-						.getWebSocketRegistry()
-						.getConnection(BeholderApplication.get(), sessionId,
-								entry.getKey());
-				if (connection != null) {
-				try {
-					connection.sendMessage(mapper.writeValueAsString(payload));
-				} catch (IOException e) {
-					log.error(e.getMessage(), e);
-				}
-				
-				}
+					IWebSocketConnection connection = BeholderApplication.get()
+							.getWebSocketRegistry()
+							.getConnection(BeholderApplication.get(), sessionId,
+									entry.getKey());
+					if (connection != null) {
+						try {
+							connection.sendMessage(mapper.writeValueAsString(payload));
+						} catch (IOException e) {
+							log.error(e.getMessage(), e);
+						}
 
-			}
+					}
+
+				}
+			});
 		});
 
 	}
 
 	public static class RegistryEntry {
 		private final IKey key;
-		
+
 		private final String sessionId;
 
 		private final long viewId;
@@ -110,14 +115,14 @@ public enum BeholderRegistry {
 		private final boolean previewMode;
 
 		private RegistryEntry(IKey key, String sessionId, String markupId, long viewId,
-				boolean previewMode) {
+							  boolean previewMode) {
 			this.markupId = markupId;
 			this.sessionId = sessionId;
 			this.key = key;
 			this.viewId = viewId;
 			this.previewMode = previewMode;
 		}
-		
+
 		public String getSessionId() {
 			return sessionId;
 		}
@@ -147,7 +152,7 @@ public enum BeholderRegistry {
 		private final boolean previewMode;
 
 		private AddKeyStep(String id, boolean previewMode,
-				BeholderRegistry registry) {
+						   BeholderRegistry registry) {
 			this.id = id;
 			this.previewMode = previewMode;
 			this.registry = registry;
@@ -168,7 +173,7 @@ public enum BeholderRegistry {
 		private final boolean previewMode;
 
 		private AddMarkupIdStep(String id, boolean previewMode, IKey key,
-				BeholderRegistry registry) {
+								BeholderRegistry registry) {
 			super();
 			this.id = id;
 			this.key = key;
@@ -194,7 +199,7 @@ public enum BeholderRegistry {
 		private final boolean previewMode;
 
 		private AddViewStep(String sessionId, String markupId,
-				boolean previewMode, IKey key, BeholderRegistry registry) {
+							boolean previewMode, IKey key, BeholderRegistry registry) {
 			this.sessionId = sessionId;
 			this.markupId = markupId;
 			this.previewMode = previewMode;

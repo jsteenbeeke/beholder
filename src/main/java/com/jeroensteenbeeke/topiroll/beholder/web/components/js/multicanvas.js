@@ -73,7 +73,7 @@ MultiCanvasContext.prototype.forEachContext = function (name, operation) {
 
 MultiCanvasContext.prototype.measureText = function (text) {
     return this.drawContexts[0][0].measureText(text);
-}
+};
 
 MultiCanvasContext.prototype.setLineWidth = function (width) {
     this.forEachContext('setLineWidth', function (ctx) {
