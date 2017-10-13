@@ -85,8 +85,12 @@ public class CircleMarkerController extends Panel {
 		add(radiusField);
 
 	}
-	
-	
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		markerModel.detach();
+	}
 
 	public class CircleMarkerUpdateBehavior
 			extends AjaxFormComponentUpdatingBehavior {

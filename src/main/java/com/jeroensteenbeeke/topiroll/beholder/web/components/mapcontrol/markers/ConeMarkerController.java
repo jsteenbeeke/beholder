@@ -93,6 +93,12 @@ public class ConeMarkerController extends Panel {
 
 	}
 
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		markerModel.detach();
+	}
+
 	public class ConeMarkerUpdateBehavior
 			extends AjaxFormComponentUpdatingBehavior {
 		private static final long serialVersionUID = 1L;

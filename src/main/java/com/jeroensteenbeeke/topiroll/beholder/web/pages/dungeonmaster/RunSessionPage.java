@@ -47,11 +47,17 @@ public class RunSessionPage extends AuthenticatedPage {
 						String.format("views/%s", mapView.getIdentifier()),
 						RequestCycle.get());
 
+				final String musicUrl = UrlUtils.rewriteToContextRelative(
+						String.format("music/%s", mapView.getIdentifier()),
+						RequestCycle.get());
+
 				item.add(new Label("width", mapView.getWidth()));
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",
 						mapView.getScreenDiagonalInInches()));
 				item.add(new ExternalLink("player", url)
+						.add(AttributeModifier.replace("target", "_blank")));
+				item.add(new ExternalLink("music", musicUrl)
 						.add(AttributeModifier.replace("target", "_blank")));
 				item.add(new Link<MapView>("dm", item.getModel()) {
 

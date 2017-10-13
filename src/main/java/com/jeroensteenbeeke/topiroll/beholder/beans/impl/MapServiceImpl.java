@@ -523,7 +523,7 @@ class MapServiceImpl implements MapService {
 	private void internalUpdateView(Dimension dimensions, boolean previewMode,
 									String src, Predicate<RegistryEntry> selector, MapView view,
 									ScaledMap map) {
-		double factor = dimensions.getWidth() / map.getBasicWidth();
+		double factor = previewMode ? map.getPreviewFactor() : map.getDisplayFactor(view);
 
 		MapRenderable renderable = mapToJS(dimensions, previewMode, src, view,
 				map, factor);
@@ -543,10 +543,8 @@ class MapServiceImpl implements MapService {
 				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
-		renderable.getTokens().forEach(t -> {
-			t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
-					t.getSrc(), previewMode ? "preview=true&" : "")));
-		});
+		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
+				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}

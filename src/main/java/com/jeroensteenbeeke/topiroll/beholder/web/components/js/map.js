@@ -51,8 +51,6 @@ function renderMap(containerId, map) {
 	var context = multiCanvas.getContext('2d');
 	context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
 
-	context = multiCanvas.getContext('2d');
-	
 	var img = new Image();
 	img.onload = function() {
 	

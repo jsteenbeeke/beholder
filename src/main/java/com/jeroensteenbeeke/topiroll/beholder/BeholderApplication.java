@@ -18,6 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MusicPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.PortraitResource;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -79,6 +80,8 @@ public class BeholderApplication extends WebApplication
 		Slack.integration.initialize(this, "");
 
 		mountPage("views/${identifier}", MapViewPage.class);
+		mountPage("music/${identifier}", MusicPage.class);
+
 		mountResource("maps/${mapId}",
 				new ResourceReference(BeholderApplication.class, "maps") {
 					private static final long serialVersionUID = 1L;

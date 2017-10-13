@@ -52,6 +52,9 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
 
     this.canvases = canvases;
     this.drawContexts = contexts;
+
+    this.width = totalWidth;
+    this.height = totalHeight;
 }
 
 function MultiCanvasContext(canvases, contexts) {
@@ -63,10 +66,13 @@ MultiCanvasContext.prototype.forEachContext = function (name, operation) {
     this.drawContexts.forEach(function (row) {
 
         row.forEach(function (ctx) {
-            console.debug('Apply ' + name + ' to ' + ctx.id);
             operation(ctx);
         });
     });
+};
+
+MultiCanvasContext.prototype.measureText = function (text) {
+    return this.drawContexts[0][0].measureText(text);
 };
 
 MultiCanvasContext.prototype.setLineWidth = function (width) {
@@ -180,6 +186,12 @@ MultiCanvasContext.prototype.strokeText = function (text, x, y, maxWidth) {
         var adjustedX = x - ctx.canvasOffsetX;
         var adjustedY = y - ctx.canvasOffsetY;
         ctx.strokeText(text, adjustedX, adjustedY, maxWidth)
+    });
+};
+
+MultiCanvasContext.prototype.setTextBaseline = function(baseline) {
+    this.forEachContext("setTextBaseline", function(ctx) {
+        ctx.textBaseline = baseline;
     });
 };
 
