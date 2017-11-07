@@ -10,7 +10,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.AreaMarkerFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.JSAreaMarker;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -50,7 +49,7 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 		AbstractMapPreview previewImage = new AbstractMapPreview("map", map) {
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
-					double factor) {
+												   double factor) {
 
 			}
 		};
@@ -70,7 +69,9 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 						WebMarkupContainer marker = areaMarker
 								.visit(new AreaMarkerVisitor<WebMarkupContainer>() {
 									@Override
-									public WebMarkupContainer visit(@Nonnull CircleMarker marker) {
+									public WebMarkupContainer visit(
+											@Nonnull
+													CircleMarker marker) {
 										WebMarkupContainer container = new WebMarkupContainer(
 												MARKER_ID);
 										container.add(AttributeModifier
@@ -78,10 +79,12 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 														new MarkerStyleModel<>(marker,
 																previewImage.getFactor())
 																.setX((m, factor) -> Math
-																		.round((m.getOffsetX()-2*m.getExtent())
+																		.round((m.getOffsetX() -
+																				2 * m.getExtent())
 																				* factor))
 																.setY((m, factor) -> Math
-																		.round((m.getOffsetY()-2*m.getExtent())
+																		.round((m.getOffsetY() -
+																				2 * m.getExtent())
 																				* factor))
 																.setBackgroundColor(
 																		(m, factor) -> marker
@@ -103,7 +106,19 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 									}
 
 									@Override
-									public WebMarkupContainer visit(@Nonnull ConeMarker marker) {
+									public WebMarkupContainer visit(
+											@Nonnull
+													ConeMarker marker) {
+										// CSS offset is interpreted as the top-left of the
+										// element,
+										// whereas the cone origin is halfway along the left border
+										// This requires a translation based on the rotation of
+										// the element
+										double tx = Math.cos(Math.toRadians(marker.getTheta())) -1;
+										double ty = Math.sin(Math.toRadians(marker.getTheta()))
+												-2;
+
+
 										WebMarkupContainer container = new WebMarkupContainer(
 												MARKER_ID);
 										container.add(AttributeModifier
@@ -111,47 +126,66 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 														new MarkerStyleModel<>(marker,
 																previewImage.getFactor())
 																.setX((m, factor) -> Math
-																		.round((m.getOffsetX()-2*m.getExtent())
+																		.round((m.getOffsetX())
 																				* factor))
 																.setY((m, factor) -> Math
-																		.round((m.getOffsetY()-2*m.getExtent())
+																		.round(m.getOffsetY()
 																				* factor))
 																.setWidth((m, factor) -> 0L)
 																.setHeight((m, factor) -> 0L)
-																.setBorderLeft((m, factor) -> String
-																		.format("%fpx solid transparent",
-																				wh * factor))
 																.setBorderTop((m, factor) -> String
-																		.format("%fpx solid #%s",
-																				2*wh * factor, marker.getColor()))
-																.setBorderRight((m, factor) -> String
-																		.format("%fpx solid transparent",
+																		.format("%fpx solid " +
+																						"transparent",
 																				wh * factor))
+																.setBorderRight((m, factor) ->
+																		String
+																				.format("%fpx " +
+																								"solid #%s",
+																						wh *
+																								factor,
+																						marker
+																								.getColor()))
+																.setBorderBottom((m, factor) ->
+																		String
+																				.format("%fpx " +
+																								"solid transparent",
+																						wh *
+																								factor))
 																.setOpacity((m, factor) -> 0.5)
 																.setBorderRadiusPercent(
 																		(m, factor) -> 50L)
 																.setTransform((m, factor) -> String
-																		.format("rotate(%fdeg)",
-																				Math.toDegrees(
-																						m.getTheta())))
+																		.format("translate" +
+																						"(%fpx, " +
+																						"%fpx)" +
+																						" " +
+																						"rotate" +
+																						"(%ddeg)",
+																				factor * tx *
+																						wh / 2,
+																				factor * ty *
+																						wh / 2,
+																				m
+																						.getTheta
+																								()))
 
 												));
 										return container;
 									}
 
 									@Override
-									public WebMarkupContainer visit(@Nonnull CubeMarker marker) {
+									public WebMarkupContainer visit(
+											@Nonnull
+													CubeMarker marker) {
 										WebMarkupContainer container = new WebMarkupContainer(
 												MARKER_ID);
 										container.add(AttributeModifier.replace("style",
 												new MarkerStyleModel<>(marker,
 														previewImage.getFactor())
 														.setX((m, factor) -> Math
-																.round(factor * (m.getOffsetX()
-																		- wh / 2)))
+																.round(factor * m.getOffsetX()))
 														.setY((m, factor) -> Math
-																.round(factor * (m.getOffsetY()
-																		- wh / 2)))
+																.round(factor * m.getOffsetY()))
 														.setWidth((m, factor) -> Math
 																.round(wh * factor))
 														.setHeight(
@@ -166,18 +200,19 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 									}
 
 									@Override
-									public WebMarkupContainer visit(@Nonnull LineMarker marker) {
+									public WebMarkupContainer visit(
+											@Nonnull
+													LineMarker marker) {
 										WebMarkupContainer container = new WebMarkupContainer(
 												MARKER_ID);
 										container.add(AttributeModifier.replace("style",
 												new MarkerStyleModel<>(marker,
 														previewImage.getFactor())
 														.setX((m, factor) -> Math
-																.round(factor * (m.getOffsetX()
-																		- wh / 2)))
+																.round(factor * m.getOffsetX()))
 														.setY((m, factor) -> Math
-																.round(factor * (m.getOffsetY()
-																		- wh / 2)))
+																.round(factor * m.getOffsetY()
+																))
 														.setWidth((m, factor) -> Math
 																.round(wh * factor))
 														.setHeight(
@@ -187,9 +222,8 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 																(m, factor) -> marker
 																		.getColor())
 														.setTransform((m, factor) -> String
-																.format("rotate(%fdeg)",
-																		Math.toDegrees(
-																				m.getTheta())))
+																.format("rotate(%ddeg)",
+																		m.getTheta()))
 										));
 										return container;
 									}
@@ -211,7 +245,7 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 
 									@Override
 									public void onDragStop(AjaxRequestTarget target,
-											int top, int left) {
+														   int top, int left) {
 										super.onDragStop(target, top, left);
 
 										int x = left;
@@ -226,20 +260,26 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 										AreaMarker areaMarker = item.getModelObject();
 										areaMarker.visit(new AreaMarkerVisitor<Void>() {
 											@Override
-											public Void visit(@Nonnull CircleMarker marker) {
+											public Void visit(
+													@Nonnull
+															CircleMarker marker) {
 												markerService
-														.update(marker, marker.getColor(), newX,
-																top,
+														.update(marker, marker.getColor(),
+																newX + marker.getExtent(),
+																top + marker.getExtent(),
 																marker.getExtent());
 
 												return null;
 											}
 
 											@Override
-											public Void visit(@Nonnull ConeMarker marker) {
+											public Void visit(
+													@Nonnull
+															ConeMarker marker) {
 												markerService
 														.update(marker, marker.getColor(), newX,
-																top, marker
+																top + marker.getExtent() / 2,
+																marker
 																		.getTheta(),
 																marker.getExtent());
 
@@ -247,7 +287,9 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											}
 
 											@Override
-											public Void visit(@Nonnull CubeMarker marker) {
+											public Void visit(
+													@Nonnull
+															CubeMarker marker) {
 												markerService
 														.update(marker, marker.getColor(), newX,
 																top,
@@ -257,7 +299,9 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											}
 
 											@Override
-											public Void visit(@Nonnull LineMarker marker) {
+											public Void visit(
+													@Nonnull
+															LineMarker marker) {
 												markerService
 														.update(marker, marker.getColor(), newX,
 																top, marker
@@ -406,6 +450,7 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 		protected String load() {
 			T marker = markerModel.getObject();
 			StringBuilder sb = new StringBuilder();
+			sb.append("position: absolute;");
 			apply(sb, factor, marker, "width", width, null, "px");
 			apply(sb, factor, marker, "height", height, null, "px");
 			apply(sb, factor, marker, "left", x, null, "px");
@@ -423,12 +468,19 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 			return sb.toString();
 		}
 
-		private <U extends Serializable> void apply(@Nonnull StringBuilder builder, double factor,
-				@Nonnull T marker,
-				@Nonnull String field,
-				@Nullable SerializableBiFunction<T, Double, U> input,
-				@Nullable String prefix,
-				@Nullable String unit
+		private <U extends Serializable> void apply(
+				@Nonnull
+						StringBuilder builder, double factor,
+				@Nonnull
+						T marker,
+				@Nonnull
+						String field,
+				@Nullable
+						SerializableBiFunction<T, Double, U> input,
+				@Nullable
+						String prefix,
+				@Nullable
+						String unit
 
 		) {
 			if (input != null) {

@@ -17,17 +17,100 @@
 				border: 1px solid #00ff00;
 			}
 
-			.cone {
+			.cone-default {
 				width: 0;
 				height: 0;
-				border-left: 25px solid transparent;
-				border-right: 25px solid transparent;
-				border-top: 25px solid #0000ff;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #0000ff;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				border-radius: 50%;
+				opacity: 0.5;
+			}
+
+			.cone-90 {
+				width: 0;
+				height: 0;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #0000ff;
 				-moz-border-radius: 50%;
 				-webkit-border-radius: 50%;
 				border-radius: 50%;
 				opacity: 0.5;
 				transform: rotate(90deg);
+			}
+
+			#cone-blue {
+				position: absolute;
+				left: 50px;
+				top: 50px;
+				z-index: 1;
+				width: 0;
+				height: 0;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #0000ff;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				border-radius: 50%;
+				opacity: 0.5;
+				transform: translate(12.5px, 0px) rotate(0deg);
+			}
+
+			#cone-red {
+				position: absolute;
+				left: 50px;
+				top: 50px;
+				z-index: 2;
+
+				width: 0;
+				height: 0;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #ff0000;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				border-radius: 50%;
+				opacity: 0.5;
+				transform: translateY(-75px) rotate(90deg);
+			}
+
+			#cone-yellow {
+				position: absolute;
+				left: 50px;
+				top: 50px;
+				z-index: 3;
+
+				width: 0;
+				height: 0;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #ffff00;
+				-moz-border-radius: 100%;
+				-webkit-border-radius: 100%;
+				border-radius: 100%;
+				opacity: 0.5;
+				transform: translateY(-75px) rotate(180deg);
+			}
+
+			#cone-green {
+				position: absolute;
+				left: 50px;
+				top: 50px;
+				z-index: 4;
+
+				width: 0;
+				height: 0;
+				border-top: 25px solid transparent;
+				border-bottom: 25px solid transparent;
+				border-right: 25px solid #00ff00;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				border-radius: 50%;
+				opacity: 0.5;
+				transform: translateY(-12.5px) rotate(270deg);
 			}
 
 			.ray {
@@ -48,9 +131,21 @@
 		<div class="circle"></div>
 
 		<h2>Cone</h2>
-		<div class="cone"></div>
+		<h3>Default state</h3>
+		<div class="cone-default"></div>
+
+		<h3>90 degree rotation</h3>
+		<div class="cone-90"></div>
 
 		<h2>Ray</h2>
 		<div class="ray"></div>
+
+		<h2>Positioning</h2>
+		<div style="position: relative; border: 1px solid #000000; width: 200px; height: 200px;">
+			<div id="cone-blue"></div>
+			<div id="cone-red"></div>
+			<div id="cone-yellow"></div>
+			<div id="cone-green"></div>
+		</div>
 	</body>
 </html>

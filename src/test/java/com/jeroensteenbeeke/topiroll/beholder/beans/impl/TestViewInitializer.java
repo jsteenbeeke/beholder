@@ -35,6 +35,8 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
@@ -58,6 +60,9 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Autowired
 	private YouTubePlaylistDAO playlistDAO;
+
+	@Autowired
+	private AreaMarkerDAO areaMarkerDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -117,6 +122,26 @@ public class TestViewInitializer implements IAccountInitializer {
 		view2.setScreenDiagonalInInches(24);
 		view2.setOwner(user);
 		viewDAO.save(view2);
+
+		// 194, 277
+		Map<String,Integer> cones = new HashMap<>();
+		cones.put("0000ff", 0);
+		cones.put("ffff00", 90);
+		cones.put("00ff00", 180);
+		cones.put("ff0000", 270);
+
+		cones.forEach((color,theta) -> {
+			ConeMarker marker = new ConeMarker();
+			marker.setTheta(theta);
+			marker.setColor(color);
+			marker.setExtent(25);
+			marker.setOffsetX(277);
+			marker.setOffsetY(194);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+
 
 		YouTubePlaylist playlist = new YouTubePlaylist();
 		playlist.setOwner(user);
