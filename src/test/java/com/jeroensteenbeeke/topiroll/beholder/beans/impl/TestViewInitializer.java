@@ -113,6 +113,20 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setMap(map);
 			rect.setGroup(group);
 			shapeDAO.save(rect);
+
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("ALL");
+			groupDAO.save(group);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(0);
+			rect.setWidth(map.getBasicWidth());
+			rect.setHeight(map.getBasicHeight());
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
 		});
 
 		MapView view2 = new MapView();
@@ -124,19 +138,30 @@ public class TestViewInitializer implements IAccountInitializer {
 		viewDAO.save(view2);
 
 		// 194, 277
-		Map<String,Integer> cones = new HashMap<>();
-		cones.put("0000ff", 0);
-		cones.put("ffff00", 90);
-		cones.put("00ff00", 180);
-		cones.put("ff0000", 270);
+		Map<String,Integer> colorsToDegrees = new HashMap<>();
+		colorsToDegrees.put("0000ff", 0);
+		colorsToDegrees.put("ffff00", 90);
+		colorsToDegrees.put("00ff00", 180);
+		colorsToDegrees.put("ff0000", 270);
 
-		cones.forEach((color,theta) -> {
+		colorsToDegrees.forEach((color,theta) -> {
 			ConeMarker marker = new ConeMarker();
 			marker.setTheta(theta);
 			marker.setColor(color);
-			marker.setExtent(25);
+			marker.setExtent(15);
 			marker.setOffsetX(277);
 			marker.setOffsetY(194);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+		colorsToDegrees.forEach((color,theta) -> {
+			LineMarker marker = new LineMarker();
+			marker.setTheta((theta + 30) % 360);
+			marker.setColor(color);
+			marker.setExtent(25);
+			marker.setOffsetX(385);
+			marker.setOffsetY(88);
 			marker.setView(view2);
 			areaMarkerDAO.save(marker);
 		});
