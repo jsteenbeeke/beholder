@@ -5,6 +5,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveMarkerController;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -70,7 +71,7 @@ public abstract class CreateCircleMarkerController extends TypedPanel<MapView> {
 						colorField.getModelObject(), x, y,
 						radiusField.getModelObject());
 
-				replaceMe(target, new MarkerController(id,
+				replaceMe(target, new MoveMarkerController(id,
 						CreateCircleMarkerController.this.getModelObject()) {
 					@Override
 					public void replaceMe(AjaxRequestTarget target,

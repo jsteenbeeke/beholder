@@ -35,6 +35,10 @@ public abstract class AbstractMapPreview extends Border {
 		factor = (double) desiredWidth / (double) map.getBasicWidth();
 	}
 
+	public double getFactor() {
+		return factor;
+	}
+
 	public int translateToRealImageSize(int number) {
 		return (int) (number / factor);
 	}
@@ -73,17 +77,18 @@ public abstract class AbstractMapPreview extends Border {
 		js.append(String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
 				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth));
 
-		js.append(String.format("$('#%1$s > #dragdrop').css({\n" +
+		StringBuilder onImageDrawComplete = new StringBuilder();
+
+		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();", canvas.getMarkupId()));
+		onImageDrawComplete.append(String.format("$('#%1$s > #dragdrop').css({\n" +
 						"\t\"position\" : \"absolute\",\n" +
 						"\t\"z-index\" :1,\n" +
-						"\t\"left\"     : $('#%2$s').position().left,\n" +
-						"\t\"top\"      : $('#%2$s').position().top,\n" +
+						"\t\"left\"     : (dragDropOffset.left + window.pageXOffset),\n" +
+						"\t\"top\"      : (dragDropOffset.top + window.pageYOffset),\n" +
 						"\t\"width\"	: %3$d,\n" +
 						"\t\"height\"	: %4$d,\n" +
 						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
 				Math.round(getMap().getBasicHeight() * factor)));
-
-		StringBuilder onImageDrawComplete = new StringBuilder();
 
 		addOnDomReadyJavaScript(canvas.getMarkupId(), onImageDrawComplete, factor);
 

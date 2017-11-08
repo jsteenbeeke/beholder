@@ -8,6 +8,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.IClickListener;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveMarkerController;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -88,7 +89,7 @@ public abstract class CreateConeMarkerController extends TypedPanel<MapView> imp
 						colorField.getModelObject(), x, y,
 						radiusField.getModelObject(), thetaField.getModelObject());
 
-				replaceMe(target, new MarkerController(id,
+				replaceMe(target, new MoveMarkerController(id,
 						CreateConeMarkerController.this.getModelObject()) {
 					@Override
 					public void replaceMe(AjaxRequestTarget target,

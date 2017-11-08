@@ -35,6 +35,8 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
@@ -58,6 +60,9 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Autowired
 	private YouTubePlaylistDAO playlistDAO;
+
+	@Autowired
+	private AreaMarkerDAO areaMarkerDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -108,6 +113,20 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setMap(map);
 			rect.setGroup(group);
 			shapeDAO.save(rect);
+
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("ALL");
+			groupDAO.save(group);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(0);
+			rect.setWidth(map.getBasicWidth());
+			rect.setHeight(map.getBasicHeight());
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
 		});
 
 		MapView view2 = new MapView();
@@ -117,6 +136,56 @@ public class TestViewInitializer implements IAccountInitializer {
 		view2.setScreenDiagonalInInches(24);
 		view2.setOwner(user);
 		viewDAO.save(view2);
+
+		// 194, 277
+		Map<String,Integer> colorsToDegrees = new HashMap<>();
+		colorsToDegrees.put("0000ff", 0);
+		colorsToDegrees.put("ffff00", 90);
+		colorsToDegrees.put("00ff00", 180);
+		colorsToDegrees.put("ff0000", 270);
+
+		colorsToDegrees.forEach((color,theta) -> {
+			ConeMarker marker = new ConeMarker();
+			marker.setTheta(theta);
+			marker.setColor(color);
+			marker.setExtent(15);
+			marker.setOffsetX(277);
+			marker.setOffsetY(194);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+		colorsToDegrees.forEach((color,theta) -> {
+			LineMarker marker = new LineMarker();
+			marker.setTheta((theta + 30) % 360);
+			marker.setColor(color);
+			marker.setExtent(25);
+			marker.setOffsetX(385);
+			marker.setOffsetY(88);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+		colorsToDegrees.forEach((color,theta) -> {
+			CubeMarker marker = new CubeMarker();
+			marker.setOffsetX(50+theta);
+			marker.setOffsetY(335);
+			marker.setExtent(12);
+			marker.setColor(color);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+		colorsToDegrees.forEach((color,theta) -> {
+			CircleMarker marker = new CircleMarker();
+			marker.setOffsetX(150+theta);
+			marker.setOffsetY(415);
+			marker.setExtent(12);
+			marker.setColor(color);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
 
 		YouTubePlaylist playlist = new YouTubePlaylist();
 		playlist.setOwner(user);

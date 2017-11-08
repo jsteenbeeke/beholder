@@ -1,84 +1,68 @@
 <html xmlns:wicket>
-<wicket:extend>
-    <div class="btn-group btn-group-justified">
-        <div class="btn-group">
-            <button type="button" wicket:id="back" class="btn btn-info">Back</button>
-        </div>
-    </div>
-
-    <div wicket:id="preview" class="mapcanvas"></div>
-
-    <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group">
-            <div class="btn-group">
-                <button type="button" wicket:id="mapSelect" class="btn btn-info">
-                    <i class="glyphicon glyphicon-ok-sign"></i> Select Map
-                </button>
-            </div>
-            <div class="btn-group">
-                <button type="button" wicket:id="hideReveal" class="btn btn-info">
-                    <i class="glyphicon glyphicon-th-list"></i> Hide/Reveal
-                </button>
-            </div>
-            <div class="btn-group">
-                <button type="button" wicket:id="forceUpdate" class="btn btn-info">
-                    <i class="glyphicon glyphicon glyphicon-exclamation-sign"></i> Force re-render
-                </button>
-            </div>
-
-        </div>
-        <div class="btn-group">
-
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-info" wicket:id="addTokens">
-                    <i class="glyphicon glyphicon-plus"></i> Add Tokens
-                </button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-info" wicket:id="tokenStates">
-                    <i class="glyphicon glyphicon-tower"></i> Token states
-                </button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-info" wicket:id="moveTokens">
-                    <i class="glyphicon glyphicon-arrow-right"></i> Move tokens
-                </button>
-            </div>
-        </div>
-        <div class="btn-group">
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-info" wicket:id="markers">
-                    <i class="glyphicon glyphicon-screenshot"></i> Marker Data
-                </button>
-            </div>
-        </div>
-        <div class="btn-group">
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-info" wicket:id="initiative">
-                    <i class="glyphicon glyphicon-calendar"></i> Initiative
-                </button>
-            </div>
-        </div>
-		<div class="btn-group">
+	<wicket:extend>
+		<div class="btn-group btn-group-justified">
 			<div class="btn-group">
-				<button type="button" class="btn btn-info" wicket:id="portraits">
-					<i class="glyphicon glyphicon-user"></i> Portraits
-				</button>
-			</div>
-			<div class="btn-group">
-				<button type="button" class="btn btn-info" wicket:id="youtube">
-					<i class="glyphicon glyphicon-music"></i> Playlists
-				</button>
+				<button type="button" wicket:id="back" class="btn btn-info">Back</button>
 			</div>
 		</div>
-    </div>
 
-    <div wicket:id="controller"></div>
+		<div wicket:id="preview" class="mapcanvas"></div>
+
+		<div class="btn-toolbar" role="toolbar">
+			<div class="btn-group" wicket:enclosure="hideReveal">
+				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+					Map <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a wicket:id="mapSelect"><i class="glyphicon glyphicon-ok-sign"></i> Select Map</a></li>
+					<li><a wicket:id="hideReveal"><i class="glyphicon glyphicon-th-list"></i> Hide/Reveal</a></li>
+					<li><a wicket:id="forceUpdate"><i class="glyphicon glyphicon-exclamation-sign"></i> Force re-render</a>
+					</li>
+				</ul>
+			</div>
+			<div class="btn-group" wicket:enclosure="addTokens">
+				<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+					Tokens <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a wicket:id="addTokens"><i class="glyphicon glyphicon-plus"></i> Add Tokens</a></li>
+					<li><a wicket:id="tokenStates"><i class="glyphicon glyphicon-tower"></i> Token states</a></li>
+					<li><a wicket:id="moveTokens"><i class="glyphicon glyphicon-arrow-right"></i> Move tokens</a></li>
+				</ul>
+			</div>
+			<div class="btn-group" wicket:enclosure="markers">
+				<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+					Combat <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
 
 
-</wicket:extend>
+					<li>
+						<a wicket:id="markers">
+							<i class="glyphicon glyphicon-screenshot"></i> Add/tune Markers
+						</a>
+					</li>
+					<li><a wicket:id="moveMarkers"> <i class="glyphicon glyphicon-arrow-down"></i> Move Markers</a></li>
+					<li><a wicket:id="initiative"> <i class="glyphicon glyphicon-calendar"></i> Initiative</a></li>
+
+				</ul>
+			</div>
+
+			<div class="btn-group" wicket:enclosure="portraits">
+				<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+					Ambience <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a wicket:id="portraits"><i class="glyphicon glyphicon-user"></i> Portraits</a></li>
+					<li><a wicket:id="youtube"><i class="glyphicon glyphicon-music"></i> Playlists</a></li>
+				</ul>
+
+			</div>
+		</div>
+
+		<div wicket:id="controller"></div>
+
+
+	</wicket:extend>
 
 </html>

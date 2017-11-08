@@ -58,6 +58,8 @@ public class ControlViewPage extends AuthenticatedPage {
 
     private AjaxLink<Void> markersLink;
 
+	private AjaxLink<Void> moveMarkersLink;
+
     private AjaxLink<Void> moveTokenLink;
 
     private AjaxLink<Void> tokenStateLink;
@@ -248,6 +250,28 @@ public class ControlViewPage extends AuthenticatedPage {
 
             }
         });
+        addLink(moveMarkersLink = new AjaxLink<Void>("moveMarkers") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				if (!(controller instanceof MoveMarkerController)) {
+					MapView view = viewModel.getObject();
+
+					WebMarkupContainer newController = new MoveMarkerController(
+							CONTROLLER_ID, view) {
+						@Override
+						public void replaceMe(AjaxRequestTarget target, WebMarkupContainer replacement) {
+							setController(target, replacement);
+						}
+					};
+					setController(target, newController);
+
+				}
+
+			}
+		});
+
         addLink(createTokensLink = new AjaxLink<Void>("addTokens") {
             private static final long serialVersionUID = 1L;
 
@@ -393,7 +417,7 @@ public class ControlViewPage extends AuthenticatedPage {
 
 
 	public Stream<AjaxLink<Void>> links() {
-        return Stream.of(markersLink,
+        return Stream.of(markersLink, moveMarkersLink,
                 moveTokenLink,
                 tokenStateLink,
                 hideRevealLink,

@@ -145,6 +145,8 @@ class MapServiceImpl implements MapService {
 		instance.setShow(true);
 		tokenInstanceDAO.save(instance);
 
+		map.getTokens().add(instance);
+
 		map.getSelectedBy().forEach(this::refreshView);
 	}
 
