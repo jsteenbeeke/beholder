@@ -71,16 +71,16 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 									public MarkerStyleModel<?> visit(
 											@Nonnull
 													CircleMarker marker) {
-										return new MarkerStyleModel<>(marker, previewImage.getFactor()).setX((m, factor) -> Math
-												.round((m.getOffsetX() - 2 * m.getExtent()) * factor))
-												.setY((m, factor) -> Math.round((m.getOffsetY() - 2 * m.getExtent()) * factor))
+										return new MarkerStyleModel<>(marker, previewImage.getFactor())
+												.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
+												.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
 												.setBackgroundColor((m, factor) -> marker.getColor())
 												.setWidth((m, factor) -> Math.round(wh * factor * 2))
 												.setHeight((m, factor) -> Math.round(wh * factor * 2))
 												.setOpacity((m, factor) -> 0.5)
-												.setBorderRadiusPercent((m, factor) -> 100L);
-
-
+												.setBorderRadiusPercent((m, factor) -> 100L)
+												.setTransform((m, factor) -> String.format
+														("translate(%1$dpx,%1$dpx)",-wh));
 									}
 
 									@Override
@@ -121,9 +121,11 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 												.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
 												.setWidth((m, factor) -> Math.round(wh * factor))
 												.setHeight((m, factor) -> Math.round(wh * factor))
-												.setBackgroundColor((m, factor) -> marker.getColor());
+												.setBackgroundColor((m, factor) -> marker.getColor())
+												.setOpacity((m, factor) -> 0.5)
+												.setTransform((m, factor) -> String.format
+														("translate(%1$dpx,%1$dpx)", -wh/2));
 									}
-
 									@Override
 									public MarkerStyleModel<?> visit(
 											@Nonnull
@@ -200,8 +202,8 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 
 												markerService
 														.update(marker, marker.getColor(),
-																newX + marker.getExtent(),
-																newY + marker.getExtent(),
+																newX,
+																newY,
 																marker.getExtent());
 
 												return null;
@@ -211,19 +213,11 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											public Void visit(
 													@Nonnull
 															ConeMarker marker) {
-												double tx = Math.cos(Math.toRadians(marker.getTheta())) + 1;
-												double ty = Math.sin(Math.toRadians(marker.getTheta()))
-														+ 2;
-
-												int skewX = (int) (tx * wh / (2 * previewImage.getFactor()));
-												int skewY = (int) (ty * wh / (2 * previewImage.getFactor()));
-
 												markerService
 														.update(marker, marker.getColor(), newX,
 																newY,
 																marker.getExtent(),
-																marker
-																		.getTheta());
+																marker.getTheta());
 
 												return null;
 											}
@@ -244,12 +238,6 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											public Void visit(
 													@Nonnull
 															LineMarker marker) {
-												double tx = Math.cos(Math.toRadians(marker.getTheta())) + 1;
-												double ty = Math.sin(Math.toRadians(marker.getTheta()));
-
-												int skewX = (int) (previewImage.getFactor() * tx * wh / 2);
-												int skewY = (int) (previewImage.getFactor() * ty * (wh / 2 - 2));
-
 												markerService
 														.update(marker, marker.getColor(), newX,
 																newY,

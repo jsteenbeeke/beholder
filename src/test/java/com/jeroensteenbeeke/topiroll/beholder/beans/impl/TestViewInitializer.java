@@ -166,6 +166,25 @@ public class TestViewInitializer implements IAccountInitializer {
 			areaMarkerDAO.save(marker);
 		});
 
+		colorsToDegrees.forEach((color,theta) -> {
+			CubeMarker marker = new CubeMarker();
+			marker.setOffsetX(50+theta);
+			marker.setOffsetY(335);
+			marker.setExtent(12);
+			marker.setColor(color);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
+
+		colorsToDegrees.forEach((color,theta) -> {
+			CircleMarker marker = new CircleMarker();
+			marker.setOffsetX(150+theta);
+			marker.setOffsetY(415);
+			marker.setExtent(12);
+			marker.setColor(color);
+			marker.setView(view2);
+			areaMarkerDAO.save(marker);
+		});
 
 
 		YouTubePlaylist playlist = new YouTubePlaylist();
