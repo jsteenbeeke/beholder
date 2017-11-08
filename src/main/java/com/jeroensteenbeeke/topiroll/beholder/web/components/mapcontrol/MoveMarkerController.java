@@ -62,6 +62,9 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 
 						int wh = squareSize * areaMarker.getExtent() / 5;
 
+						log.info("Marker of type {}", areaMarker.getClass());
+						log.info("  Offset X = {}", areaMarker.getOffsetX());
+						log.info("  Offset Y = {}", areaMarker.getOffsetY());
 						MarkerStyleModel<?> markerStyleModel = areaMarker
 								.visit(new AreaMarkerVisitor<MarkerStyleModel<?>>() {
 									@Override
@@ -126,69 +129,33 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											@Nonnull
 													LineMarker marker) {
 										// CSS offset is interpreted as the top-left of the
-										// element. But the top-left of the element may, depending on the rotation,
-										// not be the origin
-										int hypothenuse = marker.getExtent();
-
-										int horizontal = (int) (hypothenuse * Math.cos(Math.toRadians(marker.getTheta())));
-										int vertical = (int) (hypothenuse * Math.sin(Math.toRadians(marker.getTheta())));
-
-
-										int ox = marker.getOffsetX();
-										int oy = marker.getOffsetY();
-
-										int dx = marker.getOffsetX() + horizontal;
-										int dy = marker.getOffsetY() + vertical;
-
-										log.info("Line marker");
-										log.info("===========");
-										log.info("Origin ({},{})", ox, oy);
-										int lx = Math.min(ox, dx);
-										int ly = Math.min(oy, dy);
-										int ux = Math.max(ox, dx);
-										int uy = Math.max(oy, dy);
-										log.info("Bounding box ({},{})-({},{})-({},{})-({},{})", lx, ly,
-												ux, ly,
-												ux, uy,
-												lx, uy
-										);
-
-										if (ox == lx && oy == ly) {
-											log.info("Origin is top left");
-											if (marker.getTheta() > 90) {
-												log.warn("\tTHIS IS NOT CORRECT");
-											}
-										} else if (ox == lx && oy == uy) {
-											log.info("Origin is bottom left");
-											if (marker.getTheta() <= 270) {
-												log.warn("\tTHIS IS NOT CORRECT");
-											}
-										} else if (ox == ux && oy == ly) {
-											log.info("Origin is top right");
-											if (marker.getTheta() <= 90 || marker.getTheta() > 180) {
-												log.warn("\tTHIS IS NOT CORRECT");
-											}
-										} else if (ox == ux && oy == uy) {
-											log.info("Origin is bottom right");
-											if (marker.getTheta() <= 180 || marker.getTheta() > 270) {
-												log.warn("\tTHIS IS NOT CORRECT");
-											}
-										}
+										// element,
+										// whereas the cone origin is halfway along the left border
+										// This requires a translation based on the rotation of
+										// the element
+										double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
+										double ty = Math.sin(Math.toRadians(marker.getTheta()));
 
 
-										log.info("===========");
+										return new MarkerStyleModel<>(marker, previewImage.getFactor()).setX((m, factor) -> Math.round((m.getOffsetX()) * factor)).setY((m, factor) -> Math.round(m.getOffsetY() * factor)).setWidth((m, factor) -> 0L)
+												.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "1px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
+														wh * factor, marker.getColor()))
+												.setBorderBottom((m, factor) -> "1px solid transparent")
+												.setOpacity((m, factor) -> 0.5)
+												.setBorderRadiusPercent((m, factor) -> 50L)
+												.setTransform((m, factor) -> String
+														.format("translate(%fpx, %fpx) rotate(%ddeg)",
+																factor * tx * wh / 2, factor * ty *
+																		(wh / 2 - 2), m.getTheta()))
 
-										return new MarkerStyleModel<>(marker, previewImage.getFactor())
-												.setX((m, factor) -> Math.round(factor * Math.min(dx, m.getOffsetX())))
-												.setY((m, factor) -> Math.round(factor * Math.min(dy, m.getOffsetY())))
-												.setWidth((m, factor) -> Math.round(wh * factor))
-												.setHeight((m, factor) -> Math.round(1 * factor))
-												.setBackgroundColor((m, factor) -> marker.getColor())
-												.setTransform((m, factor) -> String.format("rotate(%ddeg)",
-														m.getTheta()))
 												;
 									}
 								});
+
+						log.info("CSS: {}", markerStyleModel.getObject());
+
+						log.info("===========");
+
 
 						WebMarkupContainer marker = new WebMarkupContainer(MARKER_ID);
 						marker.setOutputMarkupId(true);
@@ -221,7 +188,8 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 														   int top, int left) {
 										super.onDragStop(target, top, left);
 
-										final int newX = left;
+										final int newX = (int) (left / previewImage.getFactor());
+										final int newY = (int) (top / previewImage.getFactor());
 
 										AreaMarker areaMarker = item.getModelObject();
 										areaMarker.visit(new AreaMarkerVisitor<Void>() {
@@ -233,7 +201,7 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 												markerService
 														.update(marker, marker.getColor(),
 																newX + marker.getExtent(),
-																top + marker.getExtent(),
+																newY + marker.getExtent(),
 																marker.getExtent());
 
 												return null;
@@ -243,12 +211,16 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											public Void visit(
 													@Nonnull
 															ConeMarker marker) {
-												double tx = Math.cos(Math.toRadians(marker.getTheta()));
-												double ty = Math.sin(Math.toRadians(marker.getTheta()));
+												double tx = Math.cos(Math.toRadians(marker.getTheta())) + 1;
+												double ty = Math.sin(Math.toRadians(marker.getTheta()))
+														+ 2;
+
+												int skewX = (int) (tx * wh / (2 * previewImage.getFactor()));
+												int skewY = (int) (ty * wh / (2 * previewImage.getFactor()));
 
 												markerService
-														.update(marker, marker.getColor(), newX + (int) Math.round(marker.getExtent() * tx),
-																top + (int) Math.round(marker.getExtent() * ty * 2),
+														.update(marker, marker.getColor(), newX,
+																newY,
 																marker.getExtent(),
 																marker
 																		.getTheta());
@@ -262,7 +234,7 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 															CubeMarker marker) {
 												markerService
 														.update(marker, marker.getColor(), newX,
-																top,
+																newY,
 																marker.getExtent());
 
 												return null;
@@ -272,11 +244,17 @@ public abstract class MoveMarkerController extends TypedPanel<MapView> {
 											public Void visit(
 													@Nonnull
 															LineMarker marker) {
+												double tx = Math.cos(Math.toRadians(marker.getTheta())) + 1;
+												double ty = Math.sin(Math.toRadians(marker.getTheta()));
+
+												int skewX = (int) (previewImage.getFactor() * tx * wh / 2);
+												int skewY = (int) (previewImage.getFactor() * ty * (wh / 2 - 2));
+
 												markerService
 														.update(marker, marker.getColor(), newX,
-																top, marker
-																		.getTheta(),
-																marker.getExtent());
+																newY,
+																marker.getExtent(), marker
+																		.getTheta());
 
 												return null;
 											}
