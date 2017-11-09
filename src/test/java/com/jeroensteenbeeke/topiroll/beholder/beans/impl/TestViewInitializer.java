@@ -1,19 +1,12 @@
 /**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of Beholder (C) 2016 Jeroen Steenbeeke <p> This program is free software: you
+ * can redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. <p> You should
+ * have received a copy of the GNU Affero General Public License along with this program.  If not,
+ * see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -40,6 +33,7 @@ import java.util.Map;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
+
 	private static final Logger log = LoggerFactory
 			.getLogger(TestViewInitializer.class);
 
@@ -95,7 +89,6 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 
-
 			rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(119);
@@ -129,6 +122,23 @@ public class TestViewInitializer implements IAccountInitializer {
 			shapeDAO.save(rect);
 		});
 
+		image = ImageResource.importImage("hugecrypt.jpg");
+		mapService.createMap(user, "crypt", 18, image, null).ifOk(map -> {
+			FogOfWarGroup group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("ALL");
+			groupDAO.save(group);
+
+			FogOfWarRect rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(0);
+			rect.setWidth(map.getBasicWidth());
+			rect.setHeight(map.getBasicHeight());
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+		});
+
 		MapView view2 = new MapView();
 		view2.setHeight(1080);
 		view2.setWidth(1920);
@@ -138,13 +148,13 @@ public class TestViewInitializer implements IAccountInitializer {
 		viewDAO.save(view2);
 
 		// 194, 277
-		Map<String,Integer> colorsToDegrees = new HashMap<>();
+		Map<String, Integer> colorsToDegrees = new HashMap<>();
 		colorsToDegrees.put("0000ff", 0);
 		colorsToDegrees.put("ffff00", 90);
 		colorsToDegrees.put("00ff00", 180);
 		colorsToDegrees.put("ff0000", 270);
 
-		colorsToDegrees.forEach((color,theta) -> {
+		colorsToDegrees.forEach((color, theta) -> {
 			ConeMarker marker = new ConeMarker();
 			marker.setTheta(theta);
 			marker.setColor(color);
@@ -155,7 +165,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			areaMarkerDAO.save(marker);
 		});
 
-		colorsToDegrees.forEach((color,theta) -> {
+		colorsToDegrees.forEach((color, theta) -> {
 			LineMarker marker = new LineMarker();
 			marker.setTheta((theta + 30) % 360);
 			marker.setColor(color);
@@ -166,9 +176,9 @@ public class TestViewInitializer implements IAccountInitializer {
 			areaMarkerDAO.save(marker);
 		});
 
-		colorsToDegrees.forEach((color,theta) -> {
+		colorsToDegrees.forEach((color, theta) -> {
 			CubeMarker marker = new CubeMarker();
-			marker.setOffsetX(50+theta);
+			marker.setOffsetX(50 + theta);
 			marker.setOffsetY(335);
 			marker.setExtent(12);
 			marker.setColor(color);
@@ -176,9 +186,9 @@ public class TestViewInitializer implements IAccountInitializer {
 			areaMarkerDAO.save(marker);
 		});
 
-		colorsToDegrees.forEach((color,theta) -> {
+		colorsToDegrees.forEach((color, theta) -> {
 			CircleMarker marker = new CircleMarker();
-			marker.setOffsetX(150+theta);
+			marker.setOffsetX(150 + theta);
 			marker.setOffsetY(415);
 			marker.setExtent(12);
 			marker.setColor(color);
@@ -186,12 +196,12 @@ public class TestViewInitializer implements IAccountInitializer {
 			areaMarkerDAO.save(marker);
 		});
 
-
 		YouTubePlaylist playlist = new YouTubePlaylist();
 		playlist.setOwner(user);
 		playlist.setName("Tavern Music");
 		playlist.setNumberOfEntries(5);
-		playlist.setUrl("https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbmtlOTyZ-JElmEd7VRTBpgr&controls=0&showinfo=0?ecver=2");
+		playlist.setUrl(
+				"https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbmtlOTyZ-JElmEd7VRTBpgr&controls=0&showinfo=0?ecver=2");
 		playlistDAO.save(playlist);
 
 		log.info("Test data created for user {}", user.getUsername());
