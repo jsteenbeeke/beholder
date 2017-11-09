@@ -30,7 +30,7 @@ function resolveOffsetX(expectedComponentId, event) {
     }
   }
 
-  return x;
+  return Math.round(x);
 }
 
 function resolveOffsetY(expectedComponentId, event) {
@@ -48,6 +48,6 @@ function resolveOffsetY(expectedComponentId, event) {
     }
   }
 
-  return y;
+  return Math.round(y);
 }
 
