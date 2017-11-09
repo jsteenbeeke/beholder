@@ -19,45 +19,27 @@
     var canvas = new MultiCanvas('canvas', 5000, 5000);
     var context = canvas.getContext('2d');
 
+		var i,j;
 
+		for (i = 0; i < 5000; i = i + 100) {
+			for (j = 0; j < 5000; j = j + 100) {
+				var evenColumn = (j/100) % 2 === 0;
+				var oddRow = (i/100) % 2 === 1;
 
-    var img = new Image();
-    img.onload = function() {
-        try {
-            context.drawImage(img, 400, 1200);
+				context.save();
+				context.setGlobalAlpha(0.5);
+				if (evenColumn !== oddRow) {
+					context.setFillStyle("#ff0000");
+				} else {
+					context.setFillStyle("#0000ff");
+				}
+				context.moveTo(j, i);
+				context.fillRect(j+25, i+25, 50, 50);
 
-        } catch (e) {
-            console.log(e.message, e.name);
-        }
+				context.restore();
+			}
+		}
 
-        context.save();
-        context.setLineWidth(5);
-        context.setStrokeStyle('red');
-        applyRectangle(context, {
-            x: 200,
-            y: 200,
-            width: 4600,
-            height: 4600
-        });
-        context.stroke();
-        context.restore();
-
-        context.save();
-        context.setLineWidth(5);
-        context.setStrokeStyle('blue');
-        applyCircle(context, {
-            x: 800,
-            y: 800,
-            radius: 200,
-            theta_offset: 0.0,
-            theta_extent: Math.PI * 2
-
-        });
-        context.stroke();
-        context.restore();
-    };
-
-    img.src = 'https://images6.alphacoders.com/343/343040.jpg';
 </script>
 </body>
 </html>

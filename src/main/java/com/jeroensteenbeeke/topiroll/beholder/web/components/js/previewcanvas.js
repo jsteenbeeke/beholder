@@ -16,36 +16,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function previewRectangle(canvasId, color, rect) {
+function previewRectangle(canvasId, color, alpha, rect) {
     var canvas = document.getElementById(canvasId);
     var ctx = canvas.getContext('2d');
 
     ctx.save();
-    ctx.fillStyle = color;
+    ctx.beginPath();
     applyRectangle(ctx, rect);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.closePath();
     ctx.fill();
     ctx.restore();
 
 }
 
-function previewCircle(canvasId, color, circle) {
+function previewCircle(canvasId, color, alpha, circle) {
     var canvas = document.getElementById(canvasId);
     var ctx = canvas.getContext('2d');
 
     ctx.save();
+    ctx.beginPath();
     applyCircle(ctx, circle);
+    ctx.globalAlpha = alpha;
     ctx.fillStyle = color;
+    ctx.closePath();
     ctx.fill();
     ctx.restore();
 }
 
-function previewPolygon(canvasId, color, poly) {
+function previewPolygon(canvasId, color, alpha, poly) {
     var canvas = document.getElementById(canvasId);
     var ctx = canvas.getContext('2d');
 
     ctx.save();
+    ctx.beginPath();
     applyPoly(ctx, poly);
+    ctx.globalAlpha = alpha;
     ctx.fillStyle = color;
+    ctx.closePath();
     ctx.fill();
     ctx.restore();
 }
