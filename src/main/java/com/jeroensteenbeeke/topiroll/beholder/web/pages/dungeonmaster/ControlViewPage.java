@@ -92,7 +92,7 @@ public class ControlViewPage extends AuthenticatedPage {
             protected void onClick(AjaxRequestTarget target, ClickEvent event) {
                 super.onClick(target, event);
 
-                int offsetTop = event.getOffsetTop();
+                int offsetTop = event.getLeft();
                 int offsetLeft = event.getOffsetLeft();
 
                 MapView view = viewModel.getObject();

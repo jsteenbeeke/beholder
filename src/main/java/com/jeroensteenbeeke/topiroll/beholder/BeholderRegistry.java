@@ -46,7 +46,7 @@ public enum BeholderRegistry {
 		return objectMapper;
 	}
 
-	private Multimap<String, RegistryEntry> entries;
+	private final Multimap<String, RegistryEntry> entries;
 
 	private BeholderRegistry() {
 		entries = LinkedHashMultimap.create();
@@ -61,13 +61,14 @@ public enum BeholderRegistry {
 	}
 
 	public void removeSession(String id, IKey key) {
-		if (entries.containsKey(id)) {
-			for (RegistryEntry entry : entries.get(id)) {
-				if (entry.getKey().equals(key)) {
-					entries.remove(id, entry);
+		synchronized (entries) {
+			if (entries.containsKey(id)) {
+				for (RegistryEntry entry : entries.get(id)) {
+					if (entry.getKey().equals(key)) {
+						entries.remove(id, entry);
+					}
 				}
 			}
-
 		}
 	}
 
@@ -76,30 +77,28 @@ public enum BeholderRegistry {
 	}
 
 	public void sendToView(long viewId, Predicate<RegistryEntry> selector, JSRenderable renderable) {
+		synchronized (entries) {
+			entries.asMap().forEach((sessionId, sessionEntries) -> sessionEntries.forEach(entry -> {
+                if (entry.getViewId() == viewId && selector.test(entry)) {
+                    Payload payload = new Payload();
+                    payload.setCanvasId(entry.getMarkupId());
+                    payload.setData(renderable);
 
-		entries.asMap().forEach((sessionId, sessionEntries) -> {
-			sessionEntries.forEach(entry -> {
-				if (entry.getViewId() == viewId && selector.test(entry)) {
-					Payload payload = new Payload();
-					payload.setCanvasId(entry.getMarkupId());
-					payload.setData(renderable);
+                    IWebSocketConnection connection = BeholderApplication.get()
+                            .getWebSocketRegistry()
+                            .getConnection(BeholderApplication.get(), sessionId,
+                                    entry.getKey());
+                    if (connection != null) {
+                        try {
+                            connection.sendMessage(mapper.writeValueAsString(payload));
+                        } catch (IOException e) {
+                            log.error(e.getMessage(), e);
+                        }
 
-					IWebSocketConnection connection = BeholderApplication.get()
-							.getWebSocketRegistry()
-							.getConnection(BeholderApplication.get(), sessionId,
-									entry.getKey());
-					if (connection != null) {
-						try {
-							connection.sendMessage(mapper.writeValueAsString(payload));
-						} catch (IOException e) {
-							log.error(e.getMessage(), e);
-						}
-
-					}
-
-				}
-			});
-		});
+                    }
+                }
+            }));
+		}
 
 	}
 
