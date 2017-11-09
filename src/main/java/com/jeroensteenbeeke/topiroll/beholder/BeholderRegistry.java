@@ -63,11 +63,15 @@ public enum BeholderRegistry {
 	public void removeSession(String id, IKey key) {
 		synchronized (entries) {
 			if (entries.containsKey(id)) {
+				Multimap<String, RegistryEntry> toRemove = LinkedHashMultimap.create();
+
 				for (RegistryEntry entry : entries.get(id)) {
 					if (entry.getKey().equals(key)) {
-						entries.remove(id, entry);
+						toRemove.put(id, entry);
 					}
 				}
+
+				toRemove.asMap().forEach((k,en) -> en.forEach(e -> entries.remove(k,e)));
 			}
 		}
 	}
