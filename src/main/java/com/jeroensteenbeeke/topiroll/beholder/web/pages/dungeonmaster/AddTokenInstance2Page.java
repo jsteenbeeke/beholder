@@ -121,7 +121,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 		ContextImage areaMarker = new ContextImage("areaMarker",
 				"tokens/" + token.getId());
-		int wh = map.getSquareSize() * token.getDiameterInSquares();
+		int wh = previewImage.translateToScaledImageSize(map.getSquareSize() * token.getDiameterInSquares());
 		areaMarker.add(AttributeModifier.replace("style", String.format(
 				"padding: 0px; width: %dpx; height: %dpx; max-width: %dpx !important; max-height:" +
 						" %dpx !important; left:" +
