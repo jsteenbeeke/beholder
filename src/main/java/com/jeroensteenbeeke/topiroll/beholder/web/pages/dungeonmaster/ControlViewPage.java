@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -51,8 +52,9 @@ public class ControlViewPage extends AuthenticatedPage {
     private static final String CONTROLLER_ID = "controller";
 
     private static final long serialVersionUID = 1L;
+	private final AjaxLink<Void> combatMode;
 
-    private IModel<MapView> viewModel;
+	private IModel<MapView> viewModel;
 
     private WebMarkupContainer controller;
 
@@ -105,7 +107,7 @@ public class ControlViewPage extends AuthenticatedPage {
                         int x = (int) (offsetLeft / factor);
                         int y = (int) (offsetTop / factor);
 
-                        log.info("Clicked {},{} ({}, {})", x, y, offsetLeft, offsetTop);
+                        log.info("Clicked {},{}", x, y);
 
                         if (controller instanceof IClickListener) {
                             ((IClickListener) controller).onClick(target, map, x, y);
@@ -377,6 +379,18 @@ public class ControlViewPage extends AuthenticatedPage {
 			}
 		});
 
+		addLink(combatMode = new AjaxLink<Void>("combatMode") {
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				MapView view = viewModel.getObject();
+
+				if (view.getSelectedMap() != null) {
+					ControlViewPage.this.setResponsePage(new CombatControllerPage(view));
+				}
+			}
+		});
+
         links().forEach(l -> l.setOutputMarkupPlaceholderTag(true));
 
         if (view.getSelectedMap() == null) {
@@ -424,6 +438,7 @@ public class ControlViewPage extends AuthenticatedPage {
                 createTokensLink,
                 initiativeLink,
                 mapSelectLink,
+				combatMode,
                 forceUpdateLink, portraitLink, youtubeLink);
     }
 

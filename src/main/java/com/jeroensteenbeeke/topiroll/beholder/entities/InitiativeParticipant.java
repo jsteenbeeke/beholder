@@ -47,6 +47,10 @@ public class InitiativeParticipant extends BaseDomainObject {
  	@Column(nullable=true)
 	private Integer orderOverride;
  	@Column(nullable=false)
+	private boolean player;
+
+
+ 	@Column(nullable=false)
 	private boolean selected;
 
 
@@ -151,6 +155,16 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public void setSelected( @Nonnull boolean selected) {
 		this.selected = selected;
 	}
+
+	@Nonnull
+	public boolean isPlayer() {
+		return player;
+	}
+	public void setPlayer( @Nonnull boolean player) {
+		this.player = player;
+	}
+
+
 
 
 

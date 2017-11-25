@@ -24,10 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -104,6 +101,19 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 			}
 		});
 
+		add(new AjaxLink<InitiativeLocation>("clear") {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				initiativeService.clearNonPlayers(
+						InitiativeOrderController.this.getModelObject());
+				target.add(container);
+
+			}
+		});
+
 		add(new ListView<InitiativeLocation>("positions",
 				Lists.newArrayList(InitiativeLocation.values())) {
 
@@ -161,11 +171,13 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				item.add(nameLabel);
 				item.add(new Label("score", participant.getInitiativeType()
 						.formatBonus(participant.getScore())));
+				item.add(new Label("type", participant.isPlayer() ? "Player" : "DM-controlled"));
 
 				Form<InitiativeParticipant> form = new Form<InitiativeParticipant>("total");
 				NumberTextField<Integer> initiativeField =
 						new NumberTextField<>("initiativeField", Model.of(participant.getTotal()), Integer.class);
 				form.add(initiativeField);
+
 				form.add(new AjaxSubmitLink("update") {
 					@Override
 					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -226,6 +238,39 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 								.canMoveDown(item.getModelObject());
 					}
 				});
+				item.add(new AjaxIconLink<InitiativeParticipant>("player",
+						item.getModel(), GlyphIcon.user) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						initiativeService.markAsPlayer(item.getModelObject());
+						target.add(container);
+					}
+
+					@Override
+					public boolean isVisible() {
+						return super.isVisible() && !item.getModelObject().isPlayer();
+					}
+				});
+				item.add(new AjaxIconLink<InitiativeParticipant>("nonplayer",
+						item.getModel(), GlyphIcon.tower) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						initiativeService.markAsNonPlayer(item.getModelObject());
+						target.add(container);
+					}
+
+					@Override
+					public boolean isVisible() {
+						return super.isVisible() && item.getModelObject().isPlayer();
+
+					}
+				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("delete",
 						item.getModel(), GlyphIcon.trash) {
 
@@ -236,6 +281,11 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 						initiativeService
 								.removeParticipant(item.getModelObject());
 						target.add(container);
+					}
+
+					@Override
+					public boolean isVisible() {
+						return super.isVisible() && !item.getModelObject().isPlayer();
 					}
 				});
 			}
