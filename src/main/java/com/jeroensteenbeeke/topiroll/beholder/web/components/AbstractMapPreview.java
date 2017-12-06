@@ -79,6 +79,8 @@ public abstract class AbstractMapPreview extends Border {
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
+		long height = Math.round(getMap().getBasicHeight() * factor);
+
 		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();", canvas.getMarkupId()));
 		onImageDrawComplete.append(String.format("$('#%1$s > #dragdrop').css({\n" +
 						"\t\"position\" : \"absolute\",\n" +
@@ -88,7 +90,7 @@ public abstract class AbstractMapPreview extends Border {
 						"\t\"width\"	: %3$d,\n" +
 						"\t\"height\"	: %4$d,\n" +
 						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
-				Math.round(getMap().getBasicHeight() * factor)));
+				height));
 
 		addOnDomReadyJavaScript(canvas.getMarkupId(), onImageDrawComplete, factor);
 

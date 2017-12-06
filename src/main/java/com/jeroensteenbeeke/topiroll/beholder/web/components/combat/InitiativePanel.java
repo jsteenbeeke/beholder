@@ -1,6 +1,5 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
@@ -15,7 +14,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class InitiativePanel extends TypedPanel<MapView> {
+public class InitiativePanel extends CombatModePanel<MapView> {
 	private static final String UNKNOWN = "-";
 	@Inject
 	private InitiativeParticipantDAO initiativeDAO;

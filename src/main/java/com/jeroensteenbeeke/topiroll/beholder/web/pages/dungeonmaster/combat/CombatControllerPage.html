@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
 <body>
-	<wicket:extend>
+<wicket:extend>
 	<div wicket:id="preview" class="combat">
 		<div id="combat-navigator" class="btn-group-vertical" role="group">
 			<button class="btn btn-warning" wicket:id="back">Back to DM view</button>
 		</div>
 
 		<div wicket:id="initiative"></div>
+
+		<div wicket:id="tokenStatus"></div>
+
+		<wicket:container wicket:id="tokens">
+			<img wicket:id="token"/>
+		</wicket:container>
+
 	</div>
-	</wicket:extend>
+
+	<div wicket:id="modal"></div>
+
+</wicket:extend>
 </body>
 </html>
