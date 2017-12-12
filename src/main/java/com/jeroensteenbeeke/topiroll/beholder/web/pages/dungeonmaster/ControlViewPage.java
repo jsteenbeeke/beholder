@@ -298,13 +298,13 @@ public class ControlViewPage extends AuthenticatedPage {
                     @Override
                     protected AddTokenInstance2Page createSecondStepPage(
                             ScaledMap map, TokenDefinition token, int current,
-                            int amount) {
+                            int amount, Integer hp) {
                         final IModel<TokenDefinition> tokenModel = ModelMaker
                                 .wrap(token);
                         tokenModel.detach();
 
                         return new AddTokenInstance2Page(map, token,
-                                TokenBorderType.Enemy, current, amount) {
+                                TokenBorderType.Enemy, current, amount, hp) {
 
                             private static final long serialVersionUID = 1L;
 
@@ -333,7 +333,7 @@ public class ControlViewPage extends AuthenticatedPage {
                                                         tokenModel
                                                                 .getObject(),
                                                         current + 1,
-                                                        total));
+                                                        total, hp));
                                     }));
                                 }
                             }

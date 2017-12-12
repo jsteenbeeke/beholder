@@ -8,6 +8,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class TokenStatusPanel extends CombatModePanel<MapView> {
 	@Inject
@@ -22,6 +23,12 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 				callback.createModalWindow(target, ApplyTokenDamagePanel::new, callback
 						.getSelectedToken());
 			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
+						(TokenInstance::getMaxHitpoints).isPresent();
+			}
 		});
 
 		add(new AjaxLink<TokenInstance>("ally") {
@@ -34,22 +41,28 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 
 			@Override
 			public boolean isVisible() {
-				return super.isVisible() && callback.getSelectedToken().getBorderType() != TokenBorderType.Ally;
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
+													.filter(t -> t
+															.getBorderType()
+															!= TokenBorderType.Ally).isPresent();
 			}
 		});
 
 		add(new AjaxLink<TokenInstance>("neutral") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType.Neutral);
+				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType
+						.Neutral);
 				callback.redrawTokens(target);
 
 			}
 
 			@Override
 			public boolean isVisible() {
-				return super.isVisible() && callback.getSelectedToken().getBorderType() != TokenBorderType
-						.Neutral;
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
+													.filter(t -> t
+															.getBorderType()
+															!= TokenBorderType.Neutral).isPresent();
 			}
 		});
 
@@ -63,8 +76,10 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 
 			@Override
 			public boolean isVisible() {
-				return super.isVisible() && callback.getSelectedToken().getBorderType() != TokenBorderType
-						.Enemy;
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
+													.filter(t -> t
+															.getBorderType()
+															!= TokenBorderType.Enemy).isPresent();
 			}
 		});
 

@@ -122,11 +122,17 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 								int actualWH = preview.translateToScaledImageSize(wh);
 
+								String tokenBorderColor = instance.getBorderType().toHexColor();
+
 								return String.format(
 										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
 												"width: %dpx; height: %dpx; max-height: %dpx " +
-												"!important;",
-										left, top, actualWH, actualWH, actualWH, actualWH);
+												"!important; border-radius: 100%%; border: 1px " +
+												"solid" +
+												" " +
+												"#%s",
+										left, top, actualWH, actualWH, actualWH, actualWH,
+										tokenBorderColor);
 							}
 
 						}));
@@ -211,11 +217,11 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Nonnull
 					AjaxRequestTarget target,
 			@Nonnull
-					BiFunction<String, T, CombatModePanel<T>> constructor,
+					PanelConstructor<T> constructor,
 			@Nonnull
 					T object) {
 		WebMarkupContainer oldModal = modal;
-		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object));
+		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
 		target.add(modal);
 	}
 

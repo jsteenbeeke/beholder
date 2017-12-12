@@ -5,15 +5,13 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import javax.annotation.Nonnull;
-import java.util.function.BiFunction;
 
 public interface CombatModeCallback {
 	<T extends DomainObject> void createModalWindow(
 			@Nonnull
 					AjaxRequestTarget target,
 			@Nonnull
-					BiFunction<String, T,
-							CombatModePanel<T>>
+					PanelConstructor<T>
 					constructor,
 			@Nonnull
 					T object);
@@ -21,4 +19,9 @@ public interface CombatModeCallback {
 	void redrawTokens(AjaxRequestTarget target);
 
 	TokenInstance getSelectedToken();
+
+	@FunctionalInterface
+	public interface PanelConstructor<D extends DomainObject> {
+		CombatModePanel<D> apply(String id, D object, CombatModeCallback callback);
+	}
 }

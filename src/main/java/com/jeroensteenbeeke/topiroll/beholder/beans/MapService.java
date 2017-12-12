@@ -47,7 +47,7 @@ public interface MapService {
 								int diameter, @Nonnull byte[] image);
 
 
-	void createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
+	TokenInstance createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
 							 @Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
 
 	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);

@@ -133,7 +133,7 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public void createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
+	public TokenInstance createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
 									@Nonnull TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
@@ -148,6 +148,8 @@ class MapServiceImpl implements MapService {
 		map.getTokens().add(instance);
 
 		map.getSelectedBy().forEach(this::refreshView);
+
+		return instance;
 	}
 
 	@Override
