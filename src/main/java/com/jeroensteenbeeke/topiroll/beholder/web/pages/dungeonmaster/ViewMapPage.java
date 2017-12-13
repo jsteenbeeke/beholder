@@ -89,7 +89,7 @@ public class ViewMapPage extends AuthenticatedPage {
 						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
 						.forEach(js::append);
 				getMap().getTokens().stream()
-						.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
+						.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
 						.forEach(js::append);
 			}
 		});

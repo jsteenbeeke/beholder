@@ -70,18 +70,23 @@ public abstract class AbstractMapPreview extends Border {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/multicanvas.js")));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/previewcanvas.js")));
 
 		StringBuilder js = new StringBuilder();
 
-		js.append(String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
+		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(factor * getMap().getBasicHeight())));
+		js.append(String.format("renderMapToCanvas(multi%s, '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
 				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth));
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
 		long height = Math.round(getMap().getBasicHeight() * factor);
 
-		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();", canvas.getMarkupId()));
+		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
 		onImageDrawComplete.append(String.format("$('#%1$s > #dragdrop').css({\n" +
 						"\t\"position\" : \"absolute\",\n" +
 						"\t\"z-index\" :1,\n" +
@@ -92,7 +97,7 @@ public abstract class AbstractMapPreview extends Border {
 						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
 				height));
 
-		addOnDomReadyJavaScript(canvas.getMarkupId(), onImageDrawComplete, factor);
+		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
 
 		response.render(OnDomReadyHeaderItem
 				.forScript(js.toString().replace("__PLACEHOLDER__", onImageDrawComplete.toString())));

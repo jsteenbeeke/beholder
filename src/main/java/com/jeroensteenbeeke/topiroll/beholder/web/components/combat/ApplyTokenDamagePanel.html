@@ -3,7 +3,7 @@
 <body>
 <wicket:panel>
 
-	<div class="modal fade" tabindex="-1" role="dialog">
+	<div tabindex="-1" role="dialog" id="combat-modal" data-backdrop="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -13,7 +13,7 @@
 				<div class="modal-body">
 					<form wicket:id="form">
 						<div class="form-group">
-							<label wicket:for="amount">Amount</label> <input type="number"
+							<label wicket:for="damage">Amount</label> <input type="number"
 																			 class="form-control" wicket:id="damage" />
 						</div>
 

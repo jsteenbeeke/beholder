@@ -414,21 +414,25 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public void setTokenBorderType(@Nonnull TokenInstance instance,
 								   @Nonnull TokenBorderType type) {
-		instance.setBorderType(type);
-		tokenInstanceDAO.update(instance);
+		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
 
-		instance.getMap().getSelectedBy().forEach(this::refreshView);
+		inst.setBorderType(type);
+		tokenInstanceDAO.update(inst);
+
+		inst.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	@Transactional
 	public void setTokenHP(@Nonnull TokenInstance instance, Integer currentHP,
 						   Integer maxHP) {
-		instance.setCurrentHitpoints(currentHP);
-		instance.setMaxHitpoints(maxHP);
-		tokenInstanceDAO.update(instance);
+		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
 
-		instance.getMap().getSelectedBy().forEach(this::refreshView);
+		inst.setCurrentHitpoints(currentHP);
+		inst.setMaxHitpoints(maxHP);
+		tokenInstanceDAO.update(inst);
+
+		inst.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override

@@ -18,12 +18,12 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
         contexts[y] = [];
         for (x = 0; x < numSegmentsX; x++) {
             canvasHtml = canvasHtml + '--><canvas id="multicanvas-' + x + '-' + y + '" ' +
-                'width="' + SEGMENT_SIZE + '" ' +
-                'height="' + SEGMENT_SIZE + '" style="';
+                'width="' + Math.min(totalWidth, SEGMENT_SIZE) + '" ' +
+                'height="' + Math.min(totalHeight, SEGMENT_SIZE) + '" style="';
 
             canvasHtml = canvasHtml +
                 'display: inline-block;';
-            canvasHtml = canvasHtml + ' width: ' + SEGMENT_SIZE + 'px; height: ' + SEGMENT_SIZE + 'px; padding: 0px; margin: 0px; border: 0px; background: transparent;"></canvas><!--';
+            canvasHtml = canvasHtml + ' width: ' + Math.min(totalWidth, SEGMENT_SIZE) + 'px; height: ' + Math.min(totalHeight, SEGMENT_SIZE) + 'px; padding: 0px; margin: 0px; border: 0px; background: transparent;"></canvas><!--';
         }
 
         // canvasHtml = canvasHtml + '--><br style="display: inline-block;"/><!--';
@@ -45,8 +45,8 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
             contexts[y][x].canvasOffsetX = x * SEGMENT_SIZE;
             contexts[y][x].canvasOffsetY = y * SEGMENT_SIZE;
 
-            canvases[y][x].width = SEGMENT_SIZE;
-            canvases[y][x].height = SEGMENT_SIZE;
+            canvases[y][x].width = Math.min(totalWidth, SEGMENT_SIZE);
+            canvases[y][x].height = Math.min(totalHeight, SEGMENT_SIZE);
         }
     }
 

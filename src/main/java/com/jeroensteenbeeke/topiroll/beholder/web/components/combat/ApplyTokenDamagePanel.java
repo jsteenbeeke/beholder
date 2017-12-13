@@ -27,7 +27,7 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 				TokenInstance token = ApplyTokenDamagePanel.this.getModelObject();
 
 				Integer newHP = Optional.ofNullable(token.getCurrentHitpoints()).map(h -> Math
-						.max(0, h-damageField.getModelObject())).orElse(null);
+						.max(0, h - damageField.getModelObject())).orElse(null);
 
 				mapService.setTokenHP(token, newHP, token.getMaxHitpoints());
 			}
@@ -37,7 +37,7 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 
 		add(damageForm);
 
-		add(new AjaxSubmitLink("submit") {
+		add(new AjaxSubmitLink("submit", damageForm) {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				super.onSubmit(target, form);
@@ -45,6 +45,10 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 				setVisible(false);
 
 				target.add(ApplyTokenDamagePanel.this);
+				target.appendJavaScript("$('#combat-modal').modal('hide');");
+
+				callback.redrawTokens(target);
+				callback.removeModal(target);
 			}
 		});
 	}

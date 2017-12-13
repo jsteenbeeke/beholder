@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.TokenStatusP
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -34,6 +35,7 @@ import org.apache.wicket.model.Model;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
@@ -44,7 +46,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	private final TokenStatusPanel
 			tokenStatusPanel;
 
-	private WebMarkupContainer modal;
+	private Component modal;
 
 	private IModel<TokenInstance> selectedToken = Model.of();
 
@@ -113,7 +115,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int top = i.getOffsetY() - 1;
 
 								for (int v : calculatedWidths.headMap(index)
-															 .values()) {
+										.values()) {
 									left = left - v;
 								}
 
@@ -136,6 +138,15 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 							}
 
 						}));
+				image.add(AttributeModifier.replace("title", new LoadableDetachableModel<String>() {
+					@Override
+					protected String load() {
+						TokenInstance instance = item.getModelObject();
+						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
+								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()
+						).map(p -> String.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
+					}
+				}));
 
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
@@ -200,6 +211,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		add(preview);
 
 		add(modal = new WebMarkupContainer(MODAL_ID));
+		modal.setOutputMarkupPlaceholderTag(true);
 	}
 
 	@Override
@@ -220,10 +232,16 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					PanelConstructor<T> constructor,
 			@Nonnull
 					T object) {
-		WebMarkupContainer oldModal = modal;
+		Component oldModal = modal;
 		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
 		target.add(modal);
+		target.appendJavaScript("$('#combat-modal').modal('show');");
 	}
 
-
+	@Override
+	public void removeModal(AjaxRequestTarget target) {
+		Component oldModal = modal;
+		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID).setOutputMarkupPlaceholderTag(true).setVisible(false));
+		target.add(modal);
+	}
 }

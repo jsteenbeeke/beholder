@@ -20,6 +20,8 @@ public interface CombatModeCallback {
 
 	TokenInstance getSelectedToken();
 
+	void removeModal(AjaxRequestTarget target);
+
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {
 		CombatModePanel<D> apply(String id, D object, CombatModeCallback callback);

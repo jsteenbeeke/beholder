@@ -118,7 +118,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						getMap().getTokens().stream()
-								.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
+								.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
 								.forEach(js::append);
 					}
 				};

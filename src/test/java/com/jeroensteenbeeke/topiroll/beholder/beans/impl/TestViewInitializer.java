@@ -123,7 +123,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		});
 
 		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 18, image, null).ifOk(map -> {
+		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");
