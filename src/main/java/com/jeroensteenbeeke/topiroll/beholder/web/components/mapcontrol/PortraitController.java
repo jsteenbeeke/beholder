@@ -49,6 +49,7 @@ public abstract class PortraitController extends TypedPanel<MapView> {
 	public PortraitController(String id,
 							  @Nonnull MapView view) {
 		super(id);
+		setOutputMarkupId(true);
 		this.viewModel = ModelMaker.wrap(view);
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
@@ -109,9 +110,8 @@ public abstract class PortraitController extends TypedPanel<MapView> {
 				});
 			}
 		};
-		portraitView.setItemsPerPage(10);
+		portraitView.setOutputMarkupId(true);
 		add(portraitView);
-		add(new AjaxBootstrapPagingNavigator("nav", portraitView));
 	}
 
 	@Override

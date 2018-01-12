@@ -58,6 +58,8 @@ public class TestViewInitializer implements IAccountInitializer {
 	@Autowired
 	private AreaMarkerDAO areaMarkerDAO;
 
+
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void onAccountCreated(@Nonnull BeholderUser user) {
@@ -72,6 +74,12 @@ public class TestViewInitializer implements IAccountInitializer {
 
 
 		File image = ImageResource.importImage("temple.jpg");
+
+		byte[] portrait = ImageResource.getImageAsByteArray("random_monster.png");
+
+		for (int i = 0; i < 100; i++) {
+			mapService.createPortrait(user, "Portrait "+ i, portrait);
+		}
 
 		mapService.createMap(user, "temple", 18, image, null).ifOk(map -> {
 
