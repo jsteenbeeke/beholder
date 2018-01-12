@@ -28,6 +28,8 @@ public interface CombatModeCallback {
 
 	Point getClickedLocation();
 
+	Point getPreviousClickedLocation();
+
 
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {

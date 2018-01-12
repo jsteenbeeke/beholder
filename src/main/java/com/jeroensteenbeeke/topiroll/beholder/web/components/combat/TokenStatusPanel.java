@@ -6,6 +6,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.LoadableDetachableModel;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -16,6 +18,14 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 
 	public TokenStatusPanel(String id, CombatModeCallback callback) {
 		super(id);
+
+		add(new Label("name", new LoadableDetachableModel<String>() {
+			@Override
+			protected String load() {
+				return Optional.ofNullable(callback.getSelectedToken()).map(TokenInstance::getBadge)
+						.orElse("-");
+			}
+		}));
 
 		add(new AjaxLink<TokenInstance>("damage") {
 			@Override

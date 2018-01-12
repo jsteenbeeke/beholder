@@ -4,9 +4,7 @@ import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
-import com.jeroensteenbeeke.hyperion.ducktape.web.util.Components;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
-import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
@@ -29,22 +27,23 @@ import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.UrlUtils;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.awt.*;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.awt.Point;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
 	private static final String MODAL_ID = "modal";
@@ -55,19 +54,19 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 
-	private final ListView<TokenInstance> tokenView;
-
-	private final ListView<AreaMarker> markerView;
-
-	private final ListView<InitiativeParticipant> participantsView;
-
 	private Component modal;
 
 	private IModel<TokenInstance> selectedToken = Model.of();
 
 	private IModel<AreaMarker> selectedMarker = Model.of();
 
+	private final IModel<ScaledMap> mapModel;
+
+	private final IModel<MapView> viewModel;
+
 	private Point clickedLocation = null;
+
+	private Point previousClickedLocation = null;
 
 	@Inject
 	private MapService mapService;
@@ -77,6 +76,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 	private final AbstractMapPreview preview;
 
+	private boolean disableClickListener = false;
+
 	public CombatControllerPage(MapView view) {
 		super("Combat Mode");
 
@@ -84,6 +85,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			BeholderSession.get().invalidate();
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
+
+		viewModel = ModelMaker.wrap(view);
 
 		ScaledMap map = view.getSelectedMap();
 
@@ -114,19 +117,34 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				super.onClick(target, event);
 
-				clickedLocation = new Point(event.getOffsetLeft(), event.getOffsetTop());
-				selectedMarker = Model.of();
-				selectedToken = Model.of();
+				if (!disableClickListener) {
+					previousClickedLocation = clickedLocation;
+					clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
 
-				mapOptionsPanel.setVisible(true);
-				tokenStatusPanel.setVisible(false);
-				target.add(mapOptionsPanel);
+							(event
+									.getOffsetTop() / displayFactor));
+					selectedMarker = Model.of();
+					selectedToken = Model.of();
+
+					mapOptionsPanel.setVisible(true);
+					tokenStatusPanel.setVisible(false);
+					target.add(mapOptionsPanel, tokenStatusPanel);
+				}
 			}
 		});
 
 		this.calculatedWidths = new TreeMap<>();
-		preview.add(tokenView = new ListView<TokenInstance>("tokens", ModelMaker.wrapList(map.getTokens(),
-				false)) {
+
+		mapModel = ModelMaker.wrap(map);
+
+		IModel<List<TokenInstance>> tokenModel = new LoadableDetachableModel<List<TokenInstance>>() {
+			@Override
+			protected List<TokenInstance> load() {
+				return mapModel.getObject().getTokens();
+			}
+		};
+
+		preview.add(new ListView<TokenInstance>("tokens", tokenModel) {
 			@Override
 			protected void populateItem(ListItem<TokenInstance> item) {
 				TokenInstance instance = item.getModelObject();
@@ -138,8 +156,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				calculatedWidths.put(item.getIndex(), wh + 4);
 
-				ContextImage image = new ContextImage("token",
-						String.format("tokens/%d",
+				ContextImage image = new ContextImage(TOKEN_ID,
+						String.format("images/token/%d",
 								instance.getDefinition().getId()));
 				image.add(AttributeModifier.replace("style",
 						new LoadableDetachableModel<String>() {
@@ -152,27 +170,23 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int left = i.getOffsetX();
 								int top = i.getOffsetY() - 1;
 
-								for (int v : calculatedWidths.headMap(index)
-										.values()) {
-									left = left - v;
-								}
+//								for (int v : calculatedWidths.headMap(index)
+//										.values()) {
+//									left = left - v;
+//								}
 
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
 
 								int actualWH = preview.translateToScaledImageSize(wh);
 
-								String tokenBorderColor = instance.getBorderType().toHexColor();
-
 								return String.format(
 										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
 												"width: %dpx; height: %dpx; max-height: %dpx " +
 												"!important; border-radius: 100%%; border: 1px " +
-												"solid" +
-												" " +
-												"#%s",
-										left, top, actualWH, actualWH, actualWH, actualWH,
-										tokenBorderColor);
+												"solid #%s;",
+										left, top, actualWH, actualWH, actualWH, actualWH, i
+												.getBorderType().toHexColor());
 							}
 
 						}));
@@ -217,7 +231,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								mapService.updateTokenLocation(
 										item.getModelObject(), x, y);
 
-								target.add(preview);
+								redrawMap(target);
 							}
 						}));
 
@@ -230,18 +244,26 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 						clickedLocation = null;
 						selectedMarker = Model.of();
 
+						mapOptionsPanel.setVisible(false);
 						tokenStatusPanel.setVisible(true);
-						target.add(tokenStatusPanel);
+						target.add(tokenStatusPanel, mapOptionsPanel);
 					}
-				});
+				}.withoutPropagation());
 
 				item.add(image);
 
 			}
 		});
 
+		IModel<List<AreaMarker>> markerModel = new LoadableDetachableModel<List<AreaMarker>>() {
+			@Override
+			protected List<AreaMarker> load() {
+				return viewModel.getObject().getMarkers();
+			}
+		};
 
-		preview.add(markerView = new ListView<AreaMarker>("markers", ModelMaker.wrapList(view.getMarkers(), false)) {
+
+		preview.add(new ListView<AreaMarker>("markers", markerModel) {
 			@Inject
 			private MarkerService markerService;
 
@@ -342,7 +364,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 										;
 							}
 						});
-				WebMarkupContainer marker = new WebMarkupContainer("marker");
+				WebMarkupContainer marker = new WebMarkupContainer(MARKER_ID);
 				marker.setOutputMarkupId(true);
 				marker.add(AttributeModifier.replace("style", markerStyleModel));
 
@@ -440,10 +462,18 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			}
 		});
 
-		InitiativeParticipantFilter initFilter = new InitiativeParticipantFilter();
-		initFilter.player(true);
+		IModel<List<InitiativeParticipant>> participantModel = new LoadableDetachableModel<List<InitiativeParticipant>>() {
+			@Override
+			protected List<InitiativeParticipant> load() {
+				InitiativeParticipantFilter initFilter = new InitiativeParticipantFilter();
+				initFilter.player(true);
+				initFilter.view(viewModel.getObject());
+				return participantDAO.findByFilter(initFilter);
+			}
+		};
 
-		preview.add(participantsView = new ListView<InitiativeParticipant>("participants", ModelMaker.wrapList(participantDAO.findByFilter(initFilter), false)) {
+		preview.add(new ListView<InitiativeParticipant>("participants",
+				participantModel) {
 
 			@Override
 			protected void populateItem(ListItem<InitiativeParticipant> item) {
@@ -452,24 +482,21 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				calculatedWidths.put(item.getIndex(), wh + 4);
 
-				ContextImage image = new ContextImage(PARTICIPANT_ID, "img/player.png");
+				Label image = new Label(PARTICIPANT_ID, participant.getName());
 				image.add(AttributeModifier.replace("style",
 						new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							protected String load() {
-								item.detach();
 								InitiativeParticipant participant = item.getModelObject();
 
-								int index = item.getIndex();
 								int left = Optional.ofNullable(participant.getOffsetX())
 										.map(Math::abs)
 										.orElse((int) (map.getBasicWidth() * displayFactor / 2));
 								int top = Optional.ofNullable(participant.getOffsetY())
 										.map(Math::abs)
 										.orElse((int) (map.getBasicHeight() * displayFactor / 2)) - 1;
-								;
 
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
@@ -478,13 +505,20 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 
 								return String.format(
-										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
-												"width: %dpx; height: %dpx; max-height: %dpx " +
+										"left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
+												" " +
+												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
 												"!important; border-radius: 100%%; border: 1px " +
 												"solid" +
 												" " +
-												"#00ff00;",
-										left, top, actualWH, actualWH, actualWH, actualWH);
+												"#00ff00; text-align: center; word-break: " +
+												"break-all; vertical-align: middle; display: " +
+												"table-cell; color: #cccccc; " +
+												"background-image: url('%4$s'); background-size: " +
+												"%3$dpx %3$dpx;",
+										left, top, actualWH,
+										UrlUtils.rewriteToContextRelative("img/player.png",
+												RequestCycle.get()));
 							}
 
 						}));
@@ -511,36 +545,30 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 												   int top, int left) {
 								super.onDragStop(target, top, left);
 
-								int x = left;
 
-								for (int v : calculatedWidths
-										.headMap(item.getIndex()).values()) {
-									x = x + v;
-								}
+								// TODO: Service method?
+								InitiativeParticipant participant = item.getModelObject();
+								participant.setOffsetX((int) (left / displayFactor));
+								participant.setOffsetY((int) (top / displayFactor));
+								participantDAO.update(participant);
 
-								// TODO: Update fields
 							}
-						}));
+						})).add(new OnClickBehavior() {
+											@Override
+											protected void onClick(AjaxRequestTarget target,
+																   ClickEvent event) {
+												super.onClick(target, event);
 
-				image.add(new
-
-								  OnClickBehavior() {
-									  @Override
-									  protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-										  super.onClick(target, event);
-
-										  // TODO: What happens when clicking a player marker
-									  }
-								  });
+												// TODO: What happens when clicking a player marker
+											}
+										});
 
 				item.add(image);
 			}
 		});
 
 		preview.add(new Link<MapView>("back", ModelMaker.wrap(view))
-
 		{
-
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
@@ -555,9 +583,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 	@Override
 	public void redrawMap(AjaxRequestTarget target) {
-		Components.forEach(tokenView, i -> target.add(i.get(TOKEN_ID)));
-		Components.forEach(markerView, i -> target.add(i.get(MARKER_ID)));
-		Components.forEach(participantsView, i -> target.add(i.get(PARTICIPANT_ID)));
+		clickedLocation = null;
+		previousClickedLocation = null;
+		preview.refresh(target);
 	}
 
 	@Override
@@ -576,6 +604,11 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	}
 
 	@Override
+	public Point getPreviousClickedLocation() {
+		return previousClickedLocation;
+	}
+
+	@Override
 	public <T extends DomainObject> void createModalWindow(
 			@Nonnull
 					AjaxRequestTarget target,
@@ -583,6 +616,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					PanelConstructor<T> constructor,
 			@Nonnull
 					T object) {
+		disableClickListener = true;
 		Component oldModal = modal;
 		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
 		target.add(modal);
@@ -594,5 +628,16 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		Component oldModal = modal;
 		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID).setOutputMarkupPlaceholderTag(true).setVisible(false));
 		target.add(modal);
+	}
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		mapModel.detach();
+		viewModel.detach();
+		selectedMarker.detach();
+		selectedToken.detach();
+
+		disableClickListener = false;
 	}
 }

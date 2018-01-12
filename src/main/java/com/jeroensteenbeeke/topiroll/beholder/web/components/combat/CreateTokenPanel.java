@@ -81,7 +81,8 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 				);
 		borderTypeSelect.setRequired(true);
 
-		final NumberTextField<Integer> hpField = new NumberTextField<Integer>("hp", Model.of());
+		final NumberTextField<Integer> hpField = new NumberTextField<>("hp", Model.of(),
+				Integer.class);
 
 		Form<ScaledMap> tokenForm = new Form<ScaledMap>("form", ModelMaker.wrap(map)) {
 			@Override
@@ -90,7 +91,13 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 				TokenDefinition def = definitions.getModelObject();
 				TokenBorderType type = borderTypeSelect.getModelObject();
 
-				TokenInstance instance = mapService.createTokenInstance(def, map, type, x, y, label);
+				ScaledMap map = getModelObject();
+
+				int diam = def.getDiameterInSquares() * map.getSquareSize();
+				int rad = diam / 2;
+
+				TokenInstance instance = mapService.createTokenInstance(def, map,
+						type, x - rad, y - rad, label);
 				mapService.setTokenHP(instance, hpField.getModelObject(), hpField.getModelObject());
 
 			}

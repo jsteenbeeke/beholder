@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
+import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
@@ -7,6 +8,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.LoadableDetachableModel;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -14,7 +17,18 @@ import java.util.Optional;
 
 public class MapOptionsPanel extends CombatModePanel<MapView> {
 	public MapOptionsPanel(String id, MapView view, CombatModeCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id);
+
+		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
+		setModel(viewModel);
+
+		add(new Label("location", new LoadableDetachableModel<String>() {
+			@Override
+			protected String load() {
+				return Optional.ofNullable(callback.getClickedLocation()).map(p -> String.format
+						("(%d, %d)", p.x, p.y)).orElse("-");
+			}
+		}));
 
 		add(new AjaxLink<InitiativeParticipant>("gather") {
 			@Inject
@@ -23,40 +37,55 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				MapView view = MapOptionsPanel.this.getModelObject();
-				ScaledMap map = view.getSelectedMap();
 
 				Point p = callback.getClickedLocation();
 
-				int x = Optional.ofNullable(map)
-						.map(m -> m.getDisplayFactor(view))
-						.map(f -> p.x / f)
-						.map(Math::round)
-						.map(Long::intValue)
-						.orElse(p.x);
-
-				int y = Optional.ofNullable(map)
-						.map(m -> m.getDisplayFactor(view))
-						.map(f -> p.y / f)
-						.map(Math::round)
-						.map(Long::intValue)
-						.orElse(p.y);
-
-				mapService.gatherPlayerTokens(view, x, y);
+				mapService.gatherPlayerTokens(view, p.x, p.y);
 
 				callback.redrawMap(target);
 			}
 		});
 
-		add(new AjaxLink<InitiativeParticipant>("newmarker") {
+		add(new AjaxLink<InitiativeParticipant>("newcirclemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 			}
 		});
 
-		add(new AjaxLink<ScaledMap>("newtoken", ModelMaker.wrap(view.getSelectedMap())) {
+		add(new AjaxLink<InitiativeParticipant>("newcubemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateTokenPanel::new,getModelObject());
+			}
+
+		});
+
+		add(new AjaxLink<InitiativeParticipant>("newraymarker") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && callback.getPreviousClickedLocation() != null;
+			}
+		});
+
+		add(new AjaxLink<InitiativeParticipant>("newconemarker") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && callback.getPreviousClickedLocation() != null;
+			}
+
+		});
+
+		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateTokenPanel::new, getModelObject());
 			}
 		});
 

@@ -32,6 +32,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.UpdatePortraits;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -60,6 +62,8 @@ import java.util.stream.Collectors;
 @Component
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
+	private static final Logger log = LoggerFactory.getLogger(MapServiceImpl.class);
+
 	@Autowired
 	private ScaledMapDAO mapDAO;
 
@@ -524,21 +528,33 @@ class MapServiceImpl implements MapService {
 
 		List<InitiativeParticipant> participants = participantDAO.findByFilter(filter);
 
-		int angle = 360 / participants.size();
+		double angle = Math.toRadians(360.0 / (double) participants.size());
+
+
 
 		int distance = Optional.ofNullable(view.getSelectedMap())
 				.map(ScaledMap::getSquareSize)
-				.map(s -> s * participants.size() / 2)
+				.map(s -> s * participants.size())
 				.orElse(view.getHeight()/10);
 
-		int nextAngle = 0;
+		double nextAngle = 0.0;
+
+		int i = 0;
 
 		for (InitiativeParticipant participant: participants) {
-			int nx = x + (int) (distance * Math.cos(Math.toRadians(nextAngle)));
-			int ny = y + (int) (distance * Math.sin(Math.toRadians(nextAngle)));
+			double ax = Math.cos(nextAngle);
+			double ay = Math.sin(nextAngle);
 
-			participant.setOffsetX(nx);
-			participant.setOffsetY(ny);
+			double dx = ax * distance;
+			double dy = ay * distance;
+
+			log.info("P{}: θ{} | X{} Y{}", i++, Math.toDegrees(nextAngle), dx, dy);
+
+			double nx = x + dx;
+			double ny = y + dy;
+
+			participant.setOffsetX((int) Math.round(nx));
+			participant.setOffsetY((int) Math.round(ny));
 
 			participantDAO.update(participant);
 

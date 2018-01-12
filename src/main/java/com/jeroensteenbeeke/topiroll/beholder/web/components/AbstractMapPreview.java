@@ -2,18 +2,23 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import org.apache.wicket.Component;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.border.Border;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public abstract class AbstractMapPreview extends Border {
 	private final int desiredWidth;
+
+	private final WebMarkupContainer dragdrop;
+
 	private WebMarkupContainer canvas;
 
 	private final double factor;
@@ -33,6 +38,18 @@ public abstract class AbstractMapPreview extends Border {
 
 		this.desiredWidth = desiredWidth;
 		factor = (double) desiredWidth / (double) map.getBasicWidth();
+
+		dragdrop = new WebMarkupContainer("dragdrop");
+		dragdrop.setOutputMarkupId(true);
+		addToBorder(dragdrop);
+
+
+	}
+
+	@Override
+	protected void onConfigure() {
+		super.onConfigure();
+		// dragdrop.add(getBodyContainer());
 	}
 
 	public double getFactor() {
@@ -49,11 +66,6 @@ public abstract class AbstractMapPreview extends Border {
 
 	protected ScaledMap getMap() {
 		return (ScaledMap) getDefaultModelObject();
-	}
-
-	@Override
-	public Border addToBorder(Component... children) {
-		return super.addToBorder(children);
 	}
 
 	@Override
@@ -87,7 +99,7 @@ public abstract class AbstractMapPreview extends Border {
 		long height = Math.round(getMap().getBasicHeight() * factor);
 
 		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
-		onImageDrawComplete.append(String.format("$('#%1$s > #dragdrop').css({\n" +
+		onImageDrawComplete.append(String.format("$('#%1$s > .dragdrop').css({\n" +
 						"\t\"position\" : \"absolute\",\n" +
 						"\t\"z-index\" :1,\n" +
 						"\t\"left\"     : (dragDropOffset.left + window.pageXOffset),\n" +
@@ -104,4 +116,22 @@ public abstract class AbstractMapPreview extends Border {
 	}
 
 	protected abstract void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor);
+
+	public void refresh(AjaxRequestTarget target) {
+		target.add(dragdrop);
+
+		long height = Math.round(getMap().getBasicHeight() * factor);
+
+		target.appendJavaScript(String.format("var dragDropOffset = document.getElementById('%1$s')" +
+				".getBoundingClientRect();\n", canvas.getMarkupId()) + String.format("$('#%1$s > " +
+						".dragdrop').css({\n" +
+						"\t\"position\" : \"absolute\",\n" +
+						"\t\"z-index\" :1,\n" +
+						"\t\"left\"     : (dragDropOffset.left + window.pageXOffset),\n" +
+						"\t\"top\"      : (dragDropOffset.top + window.pageYOffset),\n" +
+						"\t\"width\"	: %3$d,\n" +
+						"\t\"height\"	: %4$d,\n" +
+						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
+				height));
+	}
 }
