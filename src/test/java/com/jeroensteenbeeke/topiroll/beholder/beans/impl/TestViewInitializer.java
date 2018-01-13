@@ -226,19 +226,15 @@ public class TestViewInitializer implements IAccountInitializer {
 			};
 
 			for (int squares = 1; squares <= 4; squares++) {
-				TokenDefinition token = new TokenDefinition();
-				token.setDiameterInSquares(squares);
-				token.setImageData(imageData);
-				token.setName(names[squares - 1]);
-				token.setOwner(user);
-
-				tokenDAO.save(token);
+				mapService.createToken(user, names[squares - 1], squares, imageData);
 			}
 
 
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
+
+		System.gc();
 
 	}
 

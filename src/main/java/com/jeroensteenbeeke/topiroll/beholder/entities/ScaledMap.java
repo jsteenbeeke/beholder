@@ -52,7 +52,6 @@ public class ScaledMap extends BaseDomainObject {
 	private Long id;
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "folder")
-
 	private MapFolder folder;
 
 
@@ -79,7 +78,6 @@ public class ScaledMap extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String name;
-
 	@Column(nullable = false)
 	private int squareSize;
 

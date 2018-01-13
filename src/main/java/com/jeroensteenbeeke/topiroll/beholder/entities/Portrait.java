@@ -1,24 +1,15 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
+
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import javax.annotation.Nonnull;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.FetchType;
-import javax.persistence.Column;
+import java.sql.Blob;
 import java.util.List;
 import java.util.ArrayList;
-import javax.persistence.OneToMany;
 
-	@Entity 
+@Entity
 public class Portrait extends BaseDomainObject {
 
 
@@ -38,7 +29,8 @@ public class Portrait extends BaseDomainObject {
 
 
  	@Column(nullable=false)
-	private byte[] data;
+	@Lob
+	private Blob data;
 
 
  	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
@@ -71,10 +63,10 @@ public class Portrait extends BaseDomainObject {
 	}
 
 	@Nonnull
-	public byte[] getData() {
+	public Blob getData() {
 		return data;
 	}
-	public void setData( @Nonnull byte[] data) {
+	public void setData( @Nonnull Blob data) {
 		this.data = data;
 	}
 

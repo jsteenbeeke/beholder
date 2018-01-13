@@ -316,8 +316,10 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
 									   int diameter, @Nonnull byte[] image) {
+		Session session = entityManager.unwrap(Session.class);
+
 		TokenDefinition def = new TokenDefinition();
-		def.setImageData(image);
+		def.setImageData(session.getLobHelper().createBlob(image));
 		def.setOwner(user);
 		def.setDiameterInSquares(diameter);
 		def.setName(name);
@@ -330,10 +332,12 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public Portrait createPortrait(@Nonnull BeholderUser user, @Nonnull String name, @Nonnull byte[] image) {
+		Session session = entityManager.unwrap(Session.class);
+
 		Portrait portrait = new Portrait();
 		portrait.setOwner(user);
 		portrait.setName(name);
-		portrait.setData(image);
+		portrait.setData(session.getLobHelper().createBlob(image));
 
 		portraitDAO.save(portrait);
 

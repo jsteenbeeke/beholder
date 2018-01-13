@@ -18,7 +18,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
 import org.apache.wicket.util.string.StringValue;
@@ -27,7 +29,7 @@ import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 
-public class TokenResource extends DynamicImageResource {
+public class TokenResource extends BlobResource {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -42,10 +44,8 @@ public class TokenResource extends DynamicImageResource {
 		this.fixedTokenId = fixedTokenId;
 	}
 
-
-
 	@Override
-	protected byte[] getImageData(Attributes attributes) {
+	protected ResourceResponse newResourceResponse(Attributes attributes) {
 		PageParameters parameters = attributes.getParameters();
 		
 		StringValue tokenId = parameters.get("tokenId");
@@ -61,7 +61,7 @@ public class TokenResource extends DynamicImageResource {
 
 			if (definition != null) {
 
-				return definition.getImageData();
+				return convertBlobToResponse(attributes, definition.getId(), definition::getImageData);
 
 			}
 
@@ -72,20 +72,12 @@ public class TokenResource extends DynamicImageResource {
 
 			if (definition != null) {
 
-				return definition.getImageData();
+				return convertBlobToResponse(attributes, definition.getId(), definition::getImageData);
 
 			}
 		}
 
-		setFormat("gif");
-
-		// Smallest GIF possible
-		return new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,
-				0x01, 0x00, 0x00, 0x00, 0x00, 0x21, (byte) 0xF9, 0x04, 0x01,
-				0x00, 0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x01,
-				0x00, 0x01, 0x00, 0x00, 0x02
-
-		};
+		return null;
 	}
 
 	@Override

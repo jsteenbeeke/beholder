@@ -72,10 +72,8 @@ public abstract class AbstractMapPreview extends Border {
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/previewcanvas.js")));
 
-		StringBuilder js = new StringBuilder();
-
-		js.append(String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
-				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth));
+		String js = String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
+				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth);
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
@@ -93,7 +91,7 @@ public abstract class AbstractMapPreview extends Border {
 		addOnDomReadyJavaScript(canvas.getMarkupId(), onImageDrawComplete, factor);
 
 		response.render(OnDomReadyHeaderItem
-				.forScript(js.toString().replace("__PLACEHOLDER__", onImageDrawComplete.toString())));
+				.forScript(js.replace("__PLACEHOLDER__", onImageDrawComplete.toString())));
 	}
 
 	protected abstract void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor);

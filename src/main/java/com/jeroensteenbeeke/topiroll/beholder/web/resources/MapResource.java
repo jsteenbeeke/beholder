@@ -17,37 +17,30 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.resources;
 
-import org.apache.wicket.markup.html.image.resource.BlobImageResource;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.DynamicImageResource;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceStreamResource;
-import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
-import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
-import org.apache.wicket.util.string.StringValue;
-
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.SQLException;
 
-public class MapResource extends BlobImageResource {
+public class MapResource extends BlobResource {
 
 	private static final long serialVersionUID = 1L;
 
 
-	@Override
-	protected Blob getBlob(Attributes attributes) {
+
+	public MapResource() {
+	}
+
+	protected ResourceResponse newResourceResponse(Attributes attributes) {
+
+
 		PageParameters parameters = attributes.getParameters();
 
 		StringValue mapId = parameters.get("mapId");
 
 		if (!mapId.isNull() && !mapId.isEmpty()) {
-
 			long id = mapId.toLong();
 
 			ScaledMapDAO mapDAO = BeholderApplication.get()
@@ -55,18 +48,13 @@ public class MapResource extends BlobImageResource {
 			ScaledMap map = mapDAO.load(id);
 
 			if (map != null) {
-				return map.getData();
+				return convertBlobToResponse(attributes, map.getId(), map::getData);
 			}
 
 		}
 
-		setFormat("gif");
 		return null;
-
 	}
 
-	@Override
-	protected IResourceCachingStrategy getCachingStrategy() {
-		return NoOpResourceCachingStrategy.INSTANCE;
-	}
+
 }

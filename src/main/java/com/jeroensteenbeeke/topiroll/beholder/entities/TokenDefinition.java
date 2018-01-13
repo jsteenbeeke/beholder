@@ -18,6 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,8 @@ public class TokenDefinition extends BaseDomainObject {
 	private String name;
 
 	@Column(nullable = false)
-	private byte[] imageData;
+	@Lob
+	private Blob imageData;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
@@ -96,11 +98,11 @@ public class TokenDefinition extends BaseDomainObject {
 	}
 
 	@Nonnull
-	public byte[] getImageData() {
+	public Blob getImageData() {
 		return imageData;
 	}
 
-	public void setImageData(@Nonnull byte[] imageData) {
+	public void setImageData(@Nonnull Blob imageData) {
 		this.imageData = imageData;
 	}
 

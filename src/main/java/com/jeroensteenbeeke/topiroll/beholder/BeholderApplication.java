@@ -29,6 +29,8 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -45,6 +47,9 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.MapResource;
 import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
@@ -68,6 +73,10 @@ public class BeholderApplication extends WebApplication
 					"This software is licensed under the Affero GPL, which requires you to provide source code to all " +
 							"users. Please input the source URL");
 		}
+
+		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new StaticResourceVersion(
+				DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())
+		)));
 
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
 
