@@ -56,7 +56,7 @@ public abstract class BlobResource extends AbstractResource {
 			if (contentType == null && Application.exists())
 			{
 				try {
-					contentType = ImageUtil.getMimeType(blobSupplier.get().getBytes(0, 8));
+					contentType = ImageUtil.getMimeType(blobSupplier.get().getBytes(1, 8));
 				} catch (SQLException e) {
 					logger.error(e.getMessage(), e);
 					close(resourceStream);
