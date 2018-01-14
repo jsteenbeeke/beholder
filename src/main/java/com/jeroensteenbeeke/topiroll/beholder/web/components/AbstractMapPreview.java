@@ -73,7 +73,8 @@ public abstract class AbstractMapPreview extends Border {
 						"js/previewcanvas.js")));
 
 		String js = String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
-				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth);
+				UrlUtils.rewriteToContextRelative("images/map", getRequestCycle()), getMap()
+						.getId(),	desiredWidth);
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 

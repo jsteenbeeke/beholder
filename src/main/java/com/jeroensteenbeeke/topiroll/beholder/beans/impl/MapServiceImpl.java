@@ -509,7 +509,7 @@ class MapServiceImpl implements MapService {
 								ScaledMap map) {
 		Dimension dimensions = map.getDisplayDimension(view);
 		String imageUrl = urlService.contextRelative(
-				String.format("/maps/%d?preview=true&", map.getId()));
+				String.format("/images/map/%d?preview=true&", map.getId()));
 
 		internalUpdateView(dimensions, false, imageUrl,
 				selector.and(e -> !e.isPreviewMode()), view, map);
@@ -519,7 +519,7 @@ class MapServiceImpl implements MapService {
 							   ScaledMap map) {
 		Dimension dimensions = view.getPreviewDimensions();
 		String imageUrl = urlService.contextRelative(
-				String.format("/maps/%d?preview=true&", map.getId()));
+				String.format("/images/map/%d?preview=true&", map.getId()));
 
 		internalUpdateView(dimensions, true, imageUrl,
 				selector.and(RegistryEntry::isPreviewMode), view, map);
@@ -549,7 +549,8 @@ class MapServiceImpl implements MapService {
 				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
-		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
+		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format
+				("/images/token/%s?%s",
 				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
