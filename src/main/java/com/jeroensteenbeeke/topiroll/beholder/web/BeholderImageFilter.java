@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web;
 
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
@@ -91,7 +92,10 @@ public class BeholderImageFilter implements Filter {
 			blobExtractor) throws IOException {
 		if (input != null) {
 			try {
-				IOUtils.copy(blobExtractor.apply(input).getBinaryStream(), response.getOutputStream
+				response.addHeader("Cache-control", "max-age=31536000");
+				Blob blob = blobExtractor.apply(input);
+				response.addHeader("Content-type", ImageUtil.getMimeType(blob.getBytes(1, 8)));
+				IOUtils.copy(blob.getBinaryStream(), response.getOutputStream
 						());
 			} catch (SQLException e) {
 				throw new IOException(e);
