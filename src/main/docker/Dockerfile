@@ -1,4 +1,4 @@
-FROM jetty:latest
+FROM jetty:alpine
 MAINTAINER Jeroen Steenbeeke,j.steenbeeke@gmail.com
 
 COPY beholder.war $JETTY_BASE/webapps/root.war
