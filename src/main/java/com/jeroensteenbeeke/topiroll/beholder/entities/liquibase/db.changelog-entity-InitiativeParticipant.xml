@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet author="jeroensteenbeeke" failOnError="true" id="93">
 		<createTable tableName="initiativeparticipant">
@@ -17,9 +15,7 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="view" baseTableName="initiativeparticipant"
-								 constraintName="fk_initiativeparticipant_view" referencedColumnNames="id"
-								 referencedTableName="mapview"/>
+		<addForeignKeyConstraint baseColumnNames="view" baseTableName="initiativeparticipant" constraintName="fk_initiativeparticipant_view" referencedColumnNames="id" referencedTableName="mapview"/>
 		<createIndex indexName="idx_initiativeparticipant_view" tableName="initiativeparticipant">
 			<column name="view"/>
 		</createIndex>
@@ -73,4 +69,18 @@
 			</column>
 		</addColumn>
 	</changeSet>
+<changeSet author="jeroen" id="121">
+    <addColumn tableName="initiativeparticipant">
+      <column name="offsetx" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="122">
+    <addColumn tableName="initiativeparticipant">
+      <column name="offsety" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

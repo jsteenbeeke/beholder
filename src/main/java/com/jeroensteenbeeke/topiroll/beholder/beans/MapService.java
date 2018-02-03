@@ -39,6 +39,8 @@ public interface MapService {
 
 	void refreshView(@Nonnull MapView view);
 
+	void refreshView(@Nonnull Long viewId);
+
 	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 
 	//region Tokens

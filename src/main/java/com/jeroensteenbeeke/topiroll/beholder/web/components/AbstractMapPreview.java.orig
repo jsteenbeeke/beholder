@@ -76,11 +76,17 @@ public abstract class AbstractMapPreview extends Border {
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/previewcanvas.js")));
 
+<<<<<<< HEAD
 		StringBuilder js = new StringBuilder();
 
 		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(factor * getMap().getBasicHeight())));
 		js.append(String.format("renderMapToCanvas(multi%s, '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
-				UrlUtils.rewriteToContextRelative("images/map", getRequestCycle()), getMap().getId(), desiredWidth));
+				UrlUtils.rewriteToContextRelative("maps", getRequestCycle()), getMap().getId(), desiredWidth));
+=======
+		String js = String.format("renderMapToCanvas('%s', '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
+				UrlUtils.rewriteToContextRelative("images/map", getRequestCycle()), getMap()
+						.getId(),	desiredWidth);
+>>>>>>> master
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
@@ -100,7 +106,7 @@ public abstract class AbstractMapPreview extends Border {
 		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
 
 		response.render(OnDomReadyHeaderItem
-				.forScript(js.toString().replace("__PLACEHOLDER__", onImageDrawComplete.toString())));
+				.forScript(js.replace("__PLACEHOLDER__", onImageDrawComplete.toString())));
 	}
 
 	protected abstract void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor);

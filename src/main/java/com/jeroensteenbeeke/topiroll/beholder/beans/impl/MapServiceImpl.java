@@ -480,6 +480,12 @@ class MapServiceImpl implements MapService {
 		internalUpdateView(view, s -> true);
 	}
 
+	@Override
+	@Transactional
+	public void refreshView(@Nonnull Long viewId) {
+		internalUpdateView(viewDAO.load(viewId), s -> true);
+	}
+
 	private void internalUpdateView(MapView view,
 									Predicate<RegistryEntry> selector) {
 		ScaledMap selectedMap = view.getSelectedMap();

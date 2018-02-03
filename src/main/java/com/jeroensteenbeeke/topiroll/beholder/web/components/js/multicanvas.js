@@ -17,7 +17,7 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
         canvases[y] = [];
         contexts[y] = [];
         for (x = 0; x < numSegmentsX; x++) {
-            canvasHtml = canvasHtml + '--><canvas id="multicanvas-' + x + '-' + y + '" ' +
+            canvasHtml = canvasHtml + '--><canvas id="multicanvas-'+ containerId +'-' + x + '-' + y + '" ' +
                 'width="' + Math.min(totalWidth, SEGMENT_SIZE) + '" ' +
                 'height="' + Math.min(totalHeight, SEGMENT_SIZE) + '" style="';
 
@@ -39,7 +39,7 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
     // Step 3: Find all created canvases and add to array
     for (x = 0; x < numSegmentsX; x++) {
         for (y = 0; y < numSegmentsY; y++) {
-            canvases[y][x] = document.getElementById('multicanvas-' + x + '-' + y);
+            canvases[y][x] = document.getElementById('multicanvas-'+ containerId +'-' + x + '-' + y);
             contexts[y][x] = canvases[y][x].getContext('2d');
             contexts[y][x].id = 'x' + x + '/y' + y;
             contexts[y][x].canvasOffsetX = x * SEGMENT_SIZE;
