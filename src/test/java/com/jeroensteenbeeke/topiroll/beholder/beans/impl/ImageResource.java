@@ -1,9 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class ImageResource {
 	public static File importImage(String name) {
@@ -18,6 +15,23 @@ public class ImageResource {
 			}
 
 			return tmp;
+		} catch (IOException ioe) {
+			throw new IllegalStateException("Developer done fucked up");
+		}
+
+	}
+
+	public static byte[] getImageAsByteArray(String name) {
+		try{
+			try  (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				 InputStream in = ImageResource.class.getResourceAsStream(name)) {
+				int i;
+				while ((i = in.read()) != -1) {
+					out.write(i);
+				}
+
+				return out.toByteArray();
+			}
 		} catch (IOException ioe) {
 			throw new IllegalStateException("Developer done fucked up");
 		}

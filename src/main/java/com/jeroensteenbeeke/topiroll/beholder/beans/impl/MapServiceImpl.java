@@ -318,8 +318,10 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
 									   int diameter, @Nonnull byte[] image) {
+		Session session = entityManager.unwrap(Session.class);
+
 		TokenDefinition def = new TokenDefinition();
-		def.setImageData(image);
+		def.setImageData(session.getLobHelper().createBlob(image));
 		def.setOwner(user);
 		def.setDiameterInSquares(diameter);
 		def.setName(name);
@@ -332,10 +334,12 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public Portrait createPortrait(@Nonnull BeholderUser user, @Nonnull String name, @Nonnull byte[] image) {
+		Session session = entityManager.unwrap(Session.class);
+
 		Portrait portrait = new Portrait();
 		portrait.setOwner(user);
 		portrait.setName(name);
-		portrait.setData(image);
+		portrait.setData(session.getLobHelper().createBlob(image));
 
 		portraitDAO.save(portrait);
 
@@ -511,7 +515,7 @@ class MapServiceImpl implements MapService {
 								ScaledMap map) {
 		Dimension dimensions = map.getDisplayDimension(view);
 		String imageUrl = urlService.contextRelative(
-				String.format("/maps/%d?preview=true&", map.getId()));
+				String.format("/images/map/%d?preview=true&", map.getId()));
 
 		internalUpdateView(dimensions, false, imageUrl,
 				selector.and(e -> !e.isPreviewMode()), view, map);
@@ -521,7 +525,7 @@ class MapServiceImpl implements MapService {
 							   ScaledMap map) {
 		Dimension dimensions = view.getPreviewDimensions();
 		String imageUrl = urlService.contextRelative(
-				String.format("/maps/%d?preview=true&", map.getId()));
+				String.format("/images/map/%d?preview=true&", map.getId()));
 
 		internalUpdateView(dimensions, true, imageUrl,
 				selector.and(RegistryEntry::isPreviewMode), view, map);
@@ -551,7 +555,8 @@ class MapServiceImpl implements MapService {
 				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
-		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format("/tokens/%s?%s",
+		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format
+				("/images/token/%s?%s",
 				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));

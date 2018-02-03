@@ -8,14 +8,13 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.*;
+import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -23,14 +22,12 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.DynamicImageResource;
-import org.apache.wicket.request.resource.caching.IResourceCachingStrategy;
-import org.apache.wicket.request.resource.caching.NoOpResourceCachingStrategy;
-import org.apache.wicket.util.time.Time;
+import org.apache.wicket.request.resource.ContextRelativeResource;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.awt.*;
+import java.sql.Blob;
 
 public class PrepareSessionPage extends AuthenticatedPage {
 
@@ -94,7 +91,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 						setResponsePage(new BSEntityFormPage<MapView>(
 								edit(view).onPage("Edit View")
-										.using(mapViewDAO)) {
+										  .using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
@@ -102,7 +99,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 									MapView entity) {
 
 								ActionResult result =
-										validateMapView(entity, !oldIdentifier.equals(entity.getIdentifier()));
+										validateMapView(entity,
+												!oldIdentifier.equals(entity.getIdentifier()));
 
 								if (!result.isOk()) {
 									return result;
@@ -163,12 +161,16 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 		add(new MapOverviewPanel("maps", getUser()) {
 			@Override
-			protected void decorateFolderFilter(@Nonnull MapFolderFilter folderFilter) {
+			protected void decorateFolderFilter(
+					@Nonnull
+							MapFolderFilter folderFilter) {
 				folderFilter.parent().isNull();
 			}
 
 			@Override
-			protected void decorateMapFilter(@Nonnull ScaledMapFilter mapFilter) {
+			protected void decorateMapFilter(
+					@Nonnull
+							ScaledMapFilter mapFilter) {
 				mapFilter.folder().isNull();
 			}
 		});
@@ -190,32 +192,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				item.add(
 						new Label("size", String.format("%d squares (diameter)",
 								definition.getDiameterInSquares())));
-
-				final byte[] imageData = definition.getImageData();
-				final Dimension dimension = ImageUtil.getImageDimensions(imageData);
-
-				if (dimension.getHeight() > TOKEN_THUMB_MAX
-						|| dimension.getWidth() > TOKEN_THUMB_MAX) {
-					item.add(new ContextImage("thumb",
-							String.format("tokens/%d?preview=true", definition.getId())));
-				} else {
-					item.add(new org.apache.wicket.markup.html.image.Image("thumb",
-							new DynamicImageResource(ImageUtil.getMimeType(imageData)) {
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								protected byte[] getImageData(Attributes attributes) {
-									setLastModifiedTime(Time.now());
-
-									return imageData;
-								}
-
-								@Override
-								protected IResourceCachingStrategy getCachingStrategy() {
-									return NoOpResourceCachingStrategy.INSTANCE;
-								}
-							}));
-				}
+				item.add(new ContextImage("thumb",
+						"images/token/" + definition.getId()));
 				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
@@ -224,10 +202,12 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					public void onClick() {
 						TokenDefinition tokenDefinition = getModelObject();
 
-						BSEntityPageSettings<TokenDefinition> settings = tokenDefinition.getInstances().isEmpty() ?
-								edit(tokenDefinition).onPage("Edit Token")
-										.using(tokenDAO) : edit(tokenDefinition).onPage("Edit Token").withoutDelete()
-								.using(tokenDAO);
+						BSEntityPageSettings<TokenDefinition> settings =
+								tokenDefinition.getInstances().isEmpty() ?
+										edit(tokenDefinition).onPage("Edit Token")
+															 .using(tokenDAO) :
+										edit(tokenDefinition).onPage("Edit Token").withoutDelete()
+															 .using(tokenDAO);
 						setResponsePage(new BSEntityFormPage<TokenDefinition>(
 								settings) {
 
@@ -259,37 +239,16 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
-				FilterDataProvider.of(new PortraitFilter().owner(getUser()).name().orderBy(true), portraitDAO)) {
+				FilterDataProvider.of(new PortraitFilter().owner(getUser()).name().orderBy(true),
+						portraitDAO)) {
 			@Override
 			protected void populateItem(Item<Portrait> item) {
 				Portrait portrait = item.getModelObject();
 
 				item.add(new Label("name", portrait.getName()));
-				final byte[] imageData = portrait.getData();
-				final Dimension dimension = ImageUtil.getImageDimensions(imageData);
+				final Blob imageData = portrait.getData();
 
-				if (dimension.getHeight() > TOKEN_THUMB_MAX
-						|| dimension.getWidth() > TOKEN_THUMB_MAX) {
-					item.add(new ContextImage("thumb",
-							String.format("portraits/%d?preview=true", portrait.getId())));
-				} else {
-					item.add(new org.apache.wicket.markup.html.image.Image("thumb",
-							new DynamicImageResource(ImageUtil.getMimeType(imageData)) {
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								protected byte[] getImageData(Attributes attributes) {
-									setLastModifiedTime(Time.now());
-
-									return imageData;
-								}
-
-								@Override
-								protected IResourceCachingStrategy getCachingStrategy() {
-									return NoOpResourceCachingStrategy.INSTANCE;
-								}
-							}));
-				}
+				item.add(new ContextImage("thumb","images/portrait/"+ portrait.getId()));
 				item.add(new IconLink<Portrait>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
@@ -298,7 +257,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					public void onClick() {
 						setResponsePage(new BSEntityFormPage<Portrait>(
 								edit(getModelObject()).onPage("Edit Portrait")
-										.using(portraitDAO)) {
+													  .using(portraitDAO)) {
 
 							private static final long serialVersionUID = 1L;
 
@@ -324,19 +283,22 @@ public class PrepareSessionPage extends AuthenticatedPage {
 		add(new BootstrapPagingNavigator("portraitnav", portraitView));
 
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider.of(new YouTubePlaylistFilter().owner(getUser()).name().orderBy(true),
-						playlistDAO)) {
+				FilterDataProvider
+						.of(new YouTubePlaylistFilter().owner(getUser()).name().orderBy(true),
+								playlistDAO)) {
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {
 				YouTubePlaylist playlist = item.getModelObject();
 
 				item.add(new Label("name", playlist.getName()));
-				item.add(new ExternalLink("url", playlist.getUrl()).setBody(Model.of(playlist.getUrl())));
+				item.add(new ExternalLink("url", playlist.getUrl())
+						.setBody(Model.of(playlist.getUrl())));
 				item.add(new IconLink<YouTubePlaylist>("edit", item.getModel(), GlyphIcon.edit) {
 					@Override
 					public void onClick() {
 						setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
-								edit(getModelObject()).onPage("Edit Playlist").using(playlistDAO)) {
+								edit(getModelObject()).onPage("Edit Playlist").using
+										(playlistDAO)) {
 
 							@Override
 							protected void onSaved(YouTubePlaylist entity) {

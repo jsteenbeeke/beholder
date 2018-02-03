@@ -19,7 +19,6 @@ package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MusicPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.PortraitResource;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -27,8 +26,8 @@ import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.resource.IResource;
-import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -43,8 +42,9 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.MapResource;
-import com.jeroensteenbeeke.topiroll.beholder.web.resources.TokenResource;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BeholderApplication extends WebApplication
 		implements ApplicationContextProvider {
@@ -69,6 +69,10 @@ public class BeholderApplication extends WebApplication
 							"users. Please input the source URL");
 		}
 
+		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new StaticResourceVersion(
+				DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())
+		)));
+
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
 
 		HyperionScheduler.getScheduler().setApplication(this);
@@ -81,38 +85,6 @@ public class BeholderApplication extends WebApplication
 
 		mountPage("views/${identifier}", MapViewPage.class);
 		mountPage("music/${identifier}", MusicPage.class);
-
-		mountResource("maps/${mapId}",
-				new ResourceReference(BeholderApplication.class, "maps") {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public IResource getResource() {
-
-						return new MapResource();
-					}
-				});
-		mountResource("tokens/${tokenId}",
-				new ResourceReference(BeholderApplication.class, "tokens") {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public IResource getResource() {
-
-						return new TokenResource();
-					}
-				});
-
-		mountResource("portraits/${portraitId}",
-				new ResourceReference(BeholderApplication.class, "portraits") {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public IResource getResource() {
-
-						return new PortraitResource();
-					}
-				});
 
 		webSocketRegistry = new SimpleWebSocketConnectionRegistry();
 
