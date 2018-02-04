@@ -113,9 +113,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	private void determineOverrideOrder(MapView view) {
 		Multimap<Integer, InitiativeParticipant> participantScores = LinkedHashMultimap
 				.create();
-		view.getInitiativeParticipants().forEach(i -> {
-			participantScores.put(i.getTotal(), i);
-		});
+		view.getInitiativeParticipants().forEach(i -> participantScores.put(i.getTotal(), i));
 
 		for (Entry<Integer, Collection<InitiativeParticipant>> entry : participantScores
 				.asMap().entrySet()) {
@@ -168,35 +166,51 @@ public class InitiativeServiceImpl implements InitiativeService {
 	public boolean canMoveUp(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
+		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
+		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
+
 		return view.getInitiativeParticipants().stream()
 				.filter(p -> Objects.equals(p.getTotal(),
 						participant.getTotal()))
 				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant)).anyMatch(p -> p
-						.getOrderOverride() < participant.getOrderOverride());
+				.filter(p -> !p.equals(participant))
+				.anyMatch(p -> {
+					int total = Optional.ofNullable(p.getTotal()).orElse(0);
+					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+
+					return override < partOverride;
+				});
 	}
 
 	@Override
 	public boolean canMoveDown(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
+		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
+		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
+
 		return view.getInitiativeParticipants().stream()
 				.filter(p -> Objects.equals(p.getTotal(),
 						participant.getTotal()))
 				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant)).anyMatch(p -> p
-						.getOrderOverride() > participant.getOrderOverride());
+				.filter(p -> !p.equals(participant))
+				.anyMatch(p -> {
+					int total = Optional.ofNullable(p.getTotal()).orElse(0);
+					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+
+					return override < partOverride;
+				});
 	}
 
 	@Override
 	public void moveUp(@Nonnull InitiativeParticipant participant) {
-		setOrderOverride(participant, participant.getOrderOverride() - 1);
+		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) - 1);
 
 	}
 
 	@Override
 	public void moveDown(@Nonnull InitiativeParticipant participant) {
-		setOrderOverride(participant, participant.getOrderOverride() + 1);
+		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) + 1);
 
 	}
 

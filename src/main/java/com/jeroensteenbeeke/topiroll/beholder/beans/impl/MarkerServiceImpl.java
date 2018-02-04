@@ -49,7 +49,7 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setExtent(radius);
 		markerDAO.update(marker);
 		
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 	}
 
 	@Override
@@ -63,7 +63,7 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setTheta(theta);
 		markerDAO.update(marker);
 		
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 	}
 
 	@Override
@@ -76,7 +76,7 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setExtent(extent);
 		markerDAO.update(marker);
 		
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 
 	}
 
@@ -91,7 +91,7 @@ class MarkerServiceImpl implements MarkerService {
 		marker.setTheta(theta);
 		markerDAO.update(marker);
 		
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 
 	}
 
@@ -110,7 +110,7 @@ class MarkerServiceImpl implements MarkerService {
 
 		view.getMarkers().add(marker);
 		
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 
 
 	}
@@ -131,7 +131,7 @@ class MarkerServiceImpl implements MarkerService {
 
 		view.getMarkers().add(marker);
 
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 
 	}
 
@@ -150,7 +150,7 @@ class MarkerServiceImpl implements MarkerService {
 
 		view.getMarkers().add(marker);
 
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 	}
 
 	@Override
@@ -169,7 +169,7 @@ class MarkerServiceImpl implements MarkerService {
 
 		view.getMarkers().add(marker);
 
-		mapService.refreshView(marker.getView().getId());
+		mapService.refreshView(marker.getView());
 
 	}
 

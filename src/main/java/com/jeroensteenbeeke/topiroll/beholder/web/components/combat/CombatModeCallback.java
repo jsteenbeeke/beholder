@@ -18,7 +18,7 @@ public interface CombatModeCallback {
 			@Nonnull
 					T object);
 
-	void redrawTokens(AjaxRequestTarget target);
+	void redrawMap(AjaxRequestTarget target);
 
 	TokenInstance getSelectedToken();
 
@@ -27,6 +27,7 @@ public interface CombatModeCallback {
 	void removeModal(AjaxRequestTarget target);
 
 	Point getClickedLocation();
+
 
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {

@@ -36,7 +36,7 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback
 						.getSelectedToken(), TokenBorderType.Ally);
-				callback.redrawTokens(target);
+				callback.redrawMap(target);
 			}
 
 			@Override
@@ -53,7 +53,7 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType
 						.Neutral);
-				callback.redrawTokens(target);
+				callback.redrawMap(target);
 
 			}
 
@@ -70,7 +70,7 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType.Enemy);
-				callback.redrawTokens(target);
+				callback.redrawMap(target);
 
 			}
 

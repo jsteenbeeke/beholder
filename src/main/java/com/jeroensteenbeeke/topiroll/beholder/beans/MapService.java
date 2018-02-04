@@ -39,8 +39,6 @@ public interface MapService {
 
 	void refreshView(@Nonnull MapView view);
 
-	void refreshView(@Nonnull Long viewId);
-
 	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 
 	//region Tokens
@@ -99,6 +97,8 @@ public interface MapService {
 	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
 
 	void unselectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
+
+	void gatherPlayerTokens(@Nonnull MapView view, int x, int y);
 
 	//endregion
 

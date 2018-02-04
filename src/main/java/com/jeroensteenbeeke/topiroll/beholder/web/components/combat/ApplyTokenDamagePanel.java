@@ -47,7 +47,7 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 				target.add(ApplyTokenDamagePanel.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
-				callback.redrawTokens(target);
+				callback.redrawMap(target);
 				callback.removeModal(target);
 			}
 		});

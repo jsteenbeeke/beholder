@@ -58,7 +58,8 @@ public class TestViewInitializer implements IAccountInitializer {
 	@Autowired
 	private AreaMarkerDAO areaMarkerDAO;
 
-
+	@Autowired
+	private InitiativeParticipantDAO participantDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -71,7 +72,32 @@ public class TestViewInitializer implements IAccountInitializer {
 		view.setOwner(user);
 		viewDAO.save(view);
 
+		InitiativeParticipant jim = new InitiativeParticipant();
+		jim.setName("Jim");
+		jim.setPlayer(true);
+		jim.setInitiativeType(InitiativeType.Normal);
+		jim.setScore(0);
+		jim.setView(view);
+		jim.setSelected(false);
+		participantDAO.save(jim);
 
+		InitiativeParticipant bob = new InitiativeParticipant();
+		bob.setName("Bob");
+		bob.setPlayer(true);
+		bob.setInitiativeType(InitiativeType.Normal);
+		bob.setScore(0);
+		bob.setView(view);
+		bob.setSelected(false);
+		participantDAO.save(bob);
+
+		InitiativeParticipant mike = new InitiativeParticipant();
+		mike.setName("Mike");
+		mike.setPlayer(true);
+		mike.setInitiativeType(InitiativeType.Normal);
+		mike.setScore(0);
+		mike.setView(view);
+		mike.setSelected(false);
+		participantDAO.save(mike);
 
 		File image = ImageResource.importImage("temple.jpg");
 

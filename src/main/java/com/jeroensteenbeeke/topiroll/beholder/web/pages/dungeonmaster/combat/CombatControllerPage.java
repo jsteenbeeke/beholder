@@ -4,6 +4,7 @@ import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
+import com.jeroensteenbeeke.hyperion.ducktape.web.util.Components;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -47,10 +48,18 @@ import java.util.TreeMap;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
 	private static final String MODAL_ID = "modal";
+	public static final String MARKER_ID = "marker";
+	public static final String TOKEN_ID = "token";
+	public static final String PARTICIPANT_ID = "participant";
 	private final SortedMap<Integer, Integer> calculatedWidths;
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 
+	private final ListView<TokenInstance> tokenView;
+
+	private final ListView<AreaMarker> markerView;
+
+	private final ListView<InitiativeParticipant> participantsView;
 
 	private Component modal;
 
@@ -116,7 +125,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		});
 
 		this.calculatedWidths = new TreeMap<>();
-		preview.add(new ListView<TokenInstance>("tokens", ModelMaker.wrapList(map.getTokens(),
+		preview.add(tokenView = new ListView<TokenInstance>("tokens", ModelMaker.wrapList(map.getTokens(),
 				false)) {
 			@Override
 			protected void populateItem(ListItem<TokenInstance> item) {
@@ -232,7 +241,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		});
 
 
-		preview.add(new ListView<AreaMarker>("markers", view.getMarkers()) {
+		preview.add(markerView = new ListView<AreaMarker>("markers", ModelMaker.wrapList(view.getMarkers(), false)) {
 			@Inject
 			private MarkerService markerService;
 
@@ -434,35 +443,33 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		InitiativeParticipantFilter initFilter = new InitiativeParticipantFilter();
 		initFilter.player(true);
 
-		preview.add(new DataView<InitiativeParticipant>("participants", FilterDataProvider.of(initFilter, participantDAO)) {
+		preview.add(participantsView = new ListView<InitiativeParticipant>("participants", ModelMaker.wrapList(participantDAO.findByFilter(initFilter), false)) {
 
 			@Override
-			protected void populateItem(Item<InitiativeParticipant> item) {
+			protected void populateItem(ListItem<InitiativeParticipant> item) {
 				InitiativeParticipant participant = item.getModelObject();
 				int wh = map.getSquareSize();
 
 				calculatedWidths.put(item.getIndex(), wh + 4);
 
-				ContextImage image = new ContextImage("participant", "img/player.png");
+				ContextImage image = new ContextImage(PARTICIPANT_ID, "img/player.png");
 				image.add(AttributeModifier.replace("style",
 						new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							protected String load() {
+								item.detach();
 								InitiativeParticipant participant = item.getModelObject();
 
 								int index = item.getIndex();
 								int left = Optional.ofNullable(participant.getOffsetX())
+										.map(Math::abs)
 										.orElse((int) (map.getBasicWidth() * displayFactor / 2));
 								int top = Optional.ofNullable(participant.getOffsetY())
+										.map(Math::abs)
 										.orElse((int) (map.getBasicHeight() * displayFactor / 2)) - 1;
 								;
-
-								for (int v : calculatedWidths.headMap(index)
-										.values()) {
-									left = left - v;
-								}
 
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
@@ -547,8 +554,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	}
 
 	@Override
-	public void redrawTokens(AjaxRequestTarget target) {
-		target.add(preview);
+	public void redrawMap(AjaxRequestTarget target) {
+		Components.forEach(tokenView, i -> target.add(i.get(TOKEN_ID)));
+		Components.forEach(markerView, i -> target.add(i.get(MARKER_ID)));
+		Components.forEach(participantsView, i -> target.add(i.get(PARTICIPANT_ID)));
 	}
 
 	@Override
