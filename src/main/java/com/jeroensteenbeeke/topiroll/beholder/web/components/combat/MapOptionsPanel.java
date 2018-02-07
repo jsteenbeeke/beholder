@@ -46,15 +46,18 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 			}
 		});
 
-		add(new AjaxLink<InitiativeParticipant>("newcirclemarker") {
+		add(new AjaxLink<MapView>("newcirclemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateCircleMarkerPanel::new, MapOptionsPanel.this.getModelObject());
 			}
 		});
 
 		add(new AjaxLink<InitiativeParticipant>("newcubemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateCubeMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+
 			}
 
 		});
@@ -62,6 +65,8 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<InitiativeParticipant>("newraymarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateLineMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+
 			}
 
 			@Override
@@ -73,6 +78,7 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<InitiativeParticipant>("newconemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateConeMarkerPanel::new, MapOptionsPanel.this.getModelObject());
 			}
 
 			@Override

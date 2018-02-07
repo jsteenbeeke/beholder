@@ -8,6 +8,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.LoadableDetachableModel;
 
@@ -26,6 +27,13 @@ public class InitiativePanel extends CombatModePanel<MapView> {
 		super(id, ModelMaker.wrap(view));
 
 		setOutputMarkupId(true);
+
+		add(new WebMarkupContainer("header") {
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && UNKNOWN.equals(getDefaultModelObject());
+			}
+		});
 
 		add(new Label("current", new LoadableDetachableModel<String>() {
 			@Override

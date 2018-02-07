@@ -16,10 +16,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MarkerStyleModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModeCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.InitiativePanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.MapOptionsPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.TokenStatusPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
 import org.apache.wicket.AttributeModifier;
@@ -53,6 +50,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	private final SortedMap<Integer, Integer> calculatedWidths;
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
+	private final MarkerStatusPanel markerStatusPanel;
 
 	private Component modal;
 
@@ -109,8 +107,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		preview.add(new InitiativePanel("initiative", view));
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
 		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this);
+		markerStatusPanel = new MarkerStatusPanel("markerStatus", this);
 		preview.add(tokenStatusPanel.setVisible(false));
 		preview.add(mapOptionsPanel.setVisible(false));
+		preview.add(markerStatusPanel.setVisible(false));
 
 		preview.add(new OnClickBehavior() {
 			@Override
@@ -128,7 +128,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 					mapOptionsPanel.setVisible(true);
 					tokenStatusPanel.setVisible(false);
-					target.add(mapOptionsPanel, tokenStatusPanel);
+					markerStatusPanel.setVisible(false);
+					target.add(mapOptionsPanel, tokenStatusPanel, markerStatusPanel);
 				}
 			}
 		});
@@ -140,7 +141,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		IModel<List<TokenInstance>> tokenModel = new LoadableDetachableModel<List<TokenInstance>>() {
 			@Override
 			protected List<TokenInstance> load() {
-				return mapModel.getObject().getTokens();
+				return mapModel.getObject().getTokens().stream()
+						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0).collect(Collectors.toList());
 			}
 		};
 
@@ -156,16 +158,13 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				calculatedWidths.put(item.getIndex(), wh + 4);
 
-				ContextImage image = new ContextImage(TOKEN_ID,
-						String.format("images/token/%d",
-								instance.getDefinition().getId()));
+				Label image = new Label(TOKEN_ID, instance.getLabel());
 				image.add(AttributeModifier.replace("style",
 						new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							protected String load() {
-								int index = item.getIndex();
 								TokenInstance i = item.getModelObject();
 								int left = i.getOffsetX();
 								int top = i.getOffsetY() - 1;
@@ -181,12 +180,15 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int actualWH = preview.translateToScaledImageSize(wh);
 
 								return String.format(
-										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
-												"width: %dpx; height: %dpx; max-height: %dpx " +
-												"!important; border-radius: 100%%; border: 1px " +
-												"solid #%s;",
-										left, top, actualWH, actualWH, actualWH, actualWH, i
-												.getBorderType().toHexColor());
+										"z-index: 2; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important; " +
+												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+												"!important; background-size: %3$dpx %3$dpx; border-radius: 100%%; border: 1px " +
+												"solid #%4$s; background-image: url('%5$s'); display: table-cell; vertical-align: bottom; color: #000000; text-align: center;",
+										left, top, actualWH, i
+												.getBorderType().toHexColor(),
+										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
+												instance.getDefinition().getId()), RequestCycle.get())
+										);
 							}
 
 						}));
@@ -246,7 +248,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 						mapOptionsPanel.setVisible(false);
 						tokenStatusPanel.setVisible(true);
-						target.add(tokenStatusPanel, mapOptionsPanel);
+						markerStatusPanel.setVisible(false);
+						target.add(tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
 					}
 				}.withoutPropagation());
 
@@ -457,6 +460,21 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 							}
 						}));
+				marker.add(new OnClickBehavior() {
+					@Override
+					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
+						super.onClick(target, event);
+
+						selectedToken = Model.of();
+						clickedLocation = null;
+						selectedMarker = ModelMaker.wrap(item.getModelObject());;
+
+						mapOptionsPanel.setVisible(false);
+						tokenStatusPanel.setVisible(false);
+						markerStatusPanel.setVisible(true);
+						target.add(tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
+					}
+				}.withoutPropagation());
 
 				item.add(marker);
 			}
