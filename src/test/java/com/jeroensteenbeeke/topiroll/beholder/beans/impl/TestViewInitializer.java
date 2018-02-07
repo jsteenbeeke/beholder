@@ -58,7 +58,8 @@ public class TestViewInitializer implements IAccountInitializer {
 	@Autowired
 	private AreaMarkerDAO areaMarkerDAO;
 
-
+	@Autowired
+	private InitiativeParticipantDAO participantDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -70,7 +71,6 @@ public class TestViewInitializer implements IAccountInitializer {
 		view.setScreenDiagonalInInches(32);
 		view.setOwner(user);
 		viewDAO.save(view);
-
 
 
 		File image = ImageResource.importImage("temple.jpg");
@@ -131,7 +131,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		});
 
 		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 18, image, null).ifOk(map -> {
+		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");
@@ -233,6 +233,34 @@ public class TestViewInitializer implements IAccountInitializer {
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
+
+		InitiativeParticipant jim = new InitiativeParticipant();
+		jim.setName("Jim");
+		jim.setPlayer(true);
+		jim.setInitiativeType(InitiativeType.Normal);
+		jim.setScore(0);
+		jim.setView(view2);
+		jim.setSelected(false);
+		participantDAO.save(jim);
+
+		InitiativeParticipant bob = new InitiativeParticipant();
+		bob.setName("Bob");
+		bob.setPlayer(true);
+		bob.setInitiativeType(InitiativeType.Normal);
+		bob.setScore(0);
+		bob.setView(view2);
+		bob.setSelected(false);
+		participantDAO.save(bob);
+
+		InitiativeParticipant mike = new InitiativeParticipant();
+		mike.setName("Mike");
+		mike.setPlayer(true);
+		mike.setInitiativeType(InitiativeType.Normal);
+		mike.setScore(0);
+		mike.setView(view2);
+		mike.setSelected(false);
+		participantDAO.save(mike);
+
 
 		System.gc();
 

@@ -57,12 +57,14 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 	private NumberTextField<Integer> offsetYField;
 
+	private NumberTextField<Integer> hpField;
+
 	private IModel<ScaledMap> mapModel;
 
 	private IModel<TokenDefinition> tokenModel;
 
 	public AddTokenInstance2Page(ScaledMap map, TokenDefinition token, TokenBorderType borderType,
-								 int current, int total) {
+								 int current, int total, Integer hp) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -108,12 +110,15 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		offsetYField.setRequired(true);
 		offsetYField.setEnabled(false);
 
+		hpField = new NumberTextField<>("hp", Model.of(hp), Integer.class);
+		hpField.setMinimum(0);
+
 		final AbstractMapPreview previewImage =
 				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						getMap().getTokens().stream()
-								.map(t -> String.format("previewToken('%s', %s);\n", canvasId, t.toPreview(factor)))
+								.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
 								.forEach(js::append);
 					}
 				};
@@ -170,11 +175,16 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 			protected void onSubmit() {
 				ScaledMap map = mapModel.getObject();
 
-				mapService.createTokenInstance(tokenModel.getObject(), map,
+				TokenInstance token = mapService.createTokenInstance(tokenModel.getObject(), map,
 						borderSelect.getModelObject(),
 						offsetXField.getModelObject(),
 						offsetYField.getModelObject(),
 						badgeField.getModelObject());
+
+				Integer enteredHp = hpField.getModelObject();
+				if (enteredHp != null) {
+					mapService.setTokenHP(token, enteredHp, enteredHp);
+				}
 			}
 		};
 
@@ -182,6 +192,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		configureForm.add(borderSelect);
 		configureForm.add(offsetXField);
 		configureForm.add(offsetYField);
+		configureForm.add(hpField);
 
 		add(configureForm);
 
@@ -197,7 +208,8 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		} else {
 			add(new SubmitPanel<ScaledMap>("submit", configureForm, m -> {
 				setResponsePage(new AddTokenInstance2Page(m,
-						tokenModel.getObject(), borderSelect.getModelObject(), current + 1, total));
+						tokenModel.getObject(), borderSelect.getModelObject(), current + 1,
+						total, hpField.getModelObject()));
 			}) {
 				private static final long serialVersionUID = 1L;
 

@@ -14,6 +14,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
+import com.googlecode.wicket.jquery.core.Options;
 import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -30,6 +31,8 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
 
+import java.io.Serializable;
+
 public class OnClickBehavior extends JQueryUIBehavior
 		implements IJQueryAjaxAware {
 
@@ -39,8 +42,16 @@ public class OnClickBehavior extends JQueryUIBehavior
 
 	private OnClickAjaxBehavior onClickBehavior;
 
+	private boolean stopPropagation = false;
+
 	public OnClickBehavior() {
 		super(null, "click");
+
+	}
+
+	public OnClickBehavior withoutPropagation() {
+		stopPropagation = true;
+		return this;
 	}
 
 	@Override
@@ -59,7 +70,7 @@ public class OnClickBehavior extends JQueryUIBehavior
 			this.selector = JQueryWidget.getSelector(this.component);
 		}
 
-		this.onClickBehavior = new OnClickAjaxBehavior(this);
+		this.onClickBehavior = new OnClickAjaxBehavior(this, stopPropagation);
 		this.component.add(this.onClickBehavior);
 
 	}
@@ -93,13 +104,27 @@ public class OnClickBehavior extends JQueryUIBehavior
 
 		private static final long serialVersionUID = 1L;
 
-		public OnClickAjaxBehavior(IJQueryAjaxAware source) {
+		private final boolean stopPropagation;
+
+		public OnClickAjaxBehavior(IJQueryAjaxAware source, boolean stopPropagation) {
 			super(source);
+			this.stopPropagation = stopPropagation;
 		}
 
 		@Override
 		protected JQueryEvent newEvent() {
 			return new ClickEvent();
+		}
+
+		@Override
+		public CharSequence getCallbackFunctionBody(CallbackParameter... extraParameters) {
+			CharSequence script = super.getCallbackFunctionBody(extraParameters);
+
+			if (stopPropagation) {
+				script =  "event.stopPropagation();\n" + script;
+			}
+
+			return script;
 		}
 
 		@Override
@@ -134,7 +159,7 @@ public class OnClickBehavior extends JQueryUIBehavior
 		}
 	}
 
-	public static class ClickEvent extends JQueryEvent {
+	public static class ClickEvent extends JQueryEvent implements Serializable {
 
 		private int top;
 
@@ -143,6 +168,8 @@ public class OnClickBehavior extends JQueryUIBehavior
 		private int offsetTop;
 
 		private int offsetLeft;
+
+		private long timeMarker;
 
 		private ClickEvent() {
 			this.top = RequestCycleUtils.getQueryParameterValue("top")
@@ -153,6 +180,7 @@ public class OnClickBehavior extends JQueryUIBehavior
 					.getQueryParameterValue("offsetTop").toInt(-1);
 			this.offsetLeft = RequestCycleUtils
 					.getQueryParameterValue("offsetLeft").toInt(-1);
+			this.timeMarker = System.currentTimeMillis() / 5000;
 		}
 
 		public int getLeft() {
@@ -169,6 +197,34 @@ public class OnClickBehavior extends JQueryUIBehavior
 
 		public int getOffsetTop() {
 			return offsetTop;
+		}
+
+		public long getTimeMarker() {
+			return timeMarker;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			ClickEvent that = (ClickEvent) o;
+
+			if (top != that.top) return false;
+			if (left != that.left) return false;
+			if (offsetTop != that.offsetTop) return false;
+			if (offsetLeft != that.offsetLeft) return false;
+			return timeMarker == that.timeMarker;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = top;
+			result = 31 * result + left;
+			result = 31 * result + offsetTop;
+			result = 31 * result + offsetLeft;
+			result = 31 * result + (int) (timeMarker ^ (timeMarker >>> 32));
+			return result;
 		}
 	}
 

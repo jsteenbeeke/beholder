@@ -50,4 +50,10 @@ public interface InitiativeService {
 	void setViewInitiativeMargin(@Nonnull MapView view, @Nonnull Integer margin);
 
 	void setParticipantTotal(@Nonnull InitiativeParticipant participant, int total);
+
+	void markAsPlayer(@Nonnull InitiativeParticipant participant);
+
+	void markAsNonPlayer(@Nonnull InitiativeParticipant participant);
+
+	void clearNonPlayers(@Nonnull MapView view);
 }

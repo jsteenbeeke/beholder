@@ -44,6 +44,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFil
 
 public class AddTokenInstance1Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
+	private final NumberTextField<Integer> hpField;
 
 	private DropDownChoice<TokenDefinition> tokenSelect;
 
@@ -86,6 +87,9 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 		amountField.setRequired(true);
 		amountField.setMinimum(1);
 
+		hpField = new NumberTextField<>("hp", Model.of((Integer) null), Integer.class);
+		hpField.setMinimum(0);
+
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm",
 				mapModel) {
 			private static final long serialVersionUID = 1L;
@@ -96,13 +100,14 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 				TokenDefinition token = tokenSelect.getModelObject();
 				Integer amount = amountField.getModelObject();
 
-				setResponsePage(createSecondStepPage(map, token, 1, amount));
+				setResponsePage(createSecondStepPage(map, token, 1, amount, hpField.getModelObject()));
 			}
 
 		};
 
 		configureForm.add(tokenSelect);
 		configureForm.add(amountField);
+		configureForm.add(hpField);
 
 		add(configureForm);
 
@@ -131,9 +136,9 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 
 	protected AddTokenInstance2Page createSecondStepPage(ScaledMap map,
 			TokenDefinition token, int current,
-			int amount) {
+			int amount, Integer hp) {
 		return new AddTokenInstance2Page(map, token, TokenBorderType.Enemy, current,
-				amount);
+				amount, hp);
 	}
 
 }

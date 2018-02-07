@@ -21,14 +21,14 @@ public class FogOfWarPreviewRenderer implements FogOfWarShapeVisitor<String> {
 
 	@Override
 	public String visit(FogOfWarCircle circle) {
-		return String.format("previewCircle('%s', '#0000ff', 0.2, {'x': %d, 'y': %d, 'radius': %d, 'theta_offset': 0, 'theta_extent': (Math.PI*2)});\n",
+		return String.format("previewCircle(%s, '#0000ff', 0.2, {'x': %d, 'y': %d, 'radius': %d, 'theta_offset': 0, 'theta_extent': (Math.PI*2)});\n",
 				canvasId, scaled(circle.getOffsetX()), scaled(circle.getOffsetY()), scaled(circle.getRadius())
 		);
 	}
 
 	@Override
 	public String visit(FogOfWarRect rect) {
-		return String.format("previewRectangle('%s', '#0000ff', 0.2, { 'x': %d, 'y': %d, 'width': %d, 'height': %d });\n",
+		return String.format("previewRectangle(%s, '#0000ff', 0.2, { 'x': %d, 'y': %d, 'width': %d, 'height': %d });\n",
 				canvasId,
 				scaled(rect.getOffsetX()), scaled(rect.getOffsetY()), scaled(rect.getWidth()), scaled(rect.getHeight())
 		);
@@ -47,7 +47,7 @@ public class FogOfWarPreviewRenderer implements FogOfWarShapeVisitor<String> {
 						scaled(triangle.getHorizontalSide()),
 						scaled(triangle.getVerticalSide()));
 
-		return String.format("previewPolygon('%s', '#0000ff', 0.2, { points: [%s] });\n", canvasId,
+		return String.format("previewPolygon(%s, '#0000ff', 0.2, { points: [%s] });\n", canvasId,
 				poly.stream().map(xy -> String.format("{'x': %d, 'y': %d}", xy.getX(), xy.getY())).collect(
 						Collectors.joining(", ")));
 	}

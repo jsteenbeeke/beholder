@@ -44,6 +44,9 @@ public enum TokenBorderType {
 	public int getBlue() {
 		return blue;
 	}
-	
-	
+
+
+	public String toHexColor() {
+		return String.format("%02X%02X%02X", getRed(), getGreen(), getBlue());
+	}
 }

@@ -27,10 +27,13 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.UpdatePortraits;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -51,6 +54,7 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -58,6 +62,8 @@ import java.util.stream.Collectors;
 @Component
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
+	private static final Logger log = LoggerFactory.getLogger(MapServiceImpl.class);
+
 	@Autowired
 	private ScaledMapDAO mapDAO;
 
@@ -93,6 +99,9 @@ class MapServiceImpl implements MapService {
 
 	@Autowired
 	private PortraitVisibilityDAO portraitVisibilityDAO;
+
+	@Autowired
+	private InitiativeParticipantDAO participantDAO;
 
 	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	private EntityManager entityManager;
@@ -133,7 +142,7 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public void createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
+	public TokenInstance createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
 									@Nonnull TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
@@ -148,6 +157,8 @@ class MapServiceImpl implements MapService {
 		map.getTokens().add(instance);
 
 		map.getSelectedBy().forEach(this::refreshView);
+
+		return instance;
 	}
 
 	@Override
@@ -416,21 +427,25 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public void setTokenBorderType(@Nonnull TokenInstance instance,
 								   @Nonnull TokenBorderType type) {
-		instance.setBorderType(type);
-		tokenInstanceDAO.update(instance);
+		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
 
-		instance.getMap().getSelectedBy().forEach(this::refreshView);
+		inst.setBorderType(type);
+		tokenInstanceDAO.update(inst);
+
+		inst.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	@Transactional
 	public void setTokenHP(@Nonnull TokenInstance instance, Integer currentHP,
 						   Integer maxHP) {
-		instance.setCurrentHitpoints(currentHP);
-		instance.setMaxHitpoints(maxHP);
-		tokenInstanceDAO.update(instance);
+		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
 
-		instance.getMap().getSelectedBy().forEach(this::refreshView);
+		inst.setCurrentHitpoints(currentHP);
+		inst.setMaxHitpoints(maxHP);
+		tokenInstanceDAO.update(inst);
+
+		inst.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
@@ -502,7 +517,49 @@ class MapServiceImpl implements MapService {
 			BeholderRegistry.instance.sendToView(view.getId(), s -> !s.isPreviewMode(), new UpdatePortraits(view));
 
 		}
+	}
 
+	@Override
+	@Transactional
+	public void gatherPlayerTokens(@Nonnull MapView view, int x, int y) {
+		InitiativeParticipantFilter filter = new InitiativeParticipantFilter();
+		filter.player(true);
+		filter.view(view);
+
+		List<InitiativeParticipant> participants = participantDAO.findByFilter(filter);
+
+		double angle = Math.toRadians(360.0 / (double) participants.size());
+
+
+
+		int distance = Optional.ofNullable(view.getSelectedMap())
+				.map(ScaledMap::getSquareSize)
+				.map(s -> s * participants.size())
+				.orElse(view.getHeight()/10);
+
+		double nextAngle = 0.0;
+
+		int i = 0;
+
+		for (InitiativeParticipant participant: participants) {
+			double ax = Math.cos(nextAngle);
+			double ay = Math.sin(nextAngle);
+
+			double dx = ax * distance;
+			double dy = ay * distance;
+
+			log.info("P{}: θ{} | X{} Y{}", i++, Math.toDegrees(nextAngle), dx, dy);
+
+			double nx = x + dx;
+			double ny = y + dy;
+
+			participant.setOffsetX((int) Math.round(nx));
+			participant.setOffsetY((int) Math.round(ny));
+
+			participantDAO.update(participant);
+
+			nextAngle += angle;
+		}
 	}
 
 	private void updateMainView(MapView view, Predicate<RegistryEntry> selector,

@@ -44,8 +44,22 @@ public class InitiativeParticipant extends BaseDomainObject {
 	
  	@Column(nullable=false)
 	private InitiativeType initiativeType;
+ 	
  	@Column(nullable=true)
 	private Integer orderOverride;
+
+ 	@Column(nullable=false)
+	private boolean player;
+ 	@Column(nullable=true)
+	private Integer offsetY;
+
+
+ 	@Column(nullable=true)
+	private Integer offsetX;
+
+
+
+
  	@Column(nullable=false)
 	private boolean selected;
 
@@ -66,7 +80,6 @@ public class InitiativeParticipant extends BaseDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "view")
-
 	private MapView view;
 
 	public Long getId() {
@@ -151,6 +164,36 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public void setSelected( @Nonnull boolean selected) {
 		this.selected = selected;
 	}
+
+	@Nonnull
+	public boolean isPlayer() {
+		return player;
+	}
+	public void setPlayer( @Nonnull boolean player) {
+		this.player = player;
+	}
+
+	@CheckForNull
+	public Integer getOffsetX() {
+		return offsetX;
+	}
+	public void setOffsetX( @Nullable Integer offsetX) {
+		this.offsetX = offsetX;
+	}
+
+	@CheckForNull
+	public Integer getOffsetY() {
+		return offsetY;
+	}
+	public void setOffsetY( @Nullable Integer offsetY) {
+		this.offsetY = offsetY;
+	}
+
+
+
+
+
+
 
 
 

@@ -1,27 +1,24 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -116,9 +113,7 @@ public class InitiativeServiceImpl implements InitiativeService {
 	private void determineOverrideOrder(MapView view) {
 		Multimap<Integer, InitiativeParticipant> participantScores = LinkedHashMultimap
 				.create();
-		view.getInitiativeParticipants().forEach(i -> {
-			participantScores.put(i.getTotal(), i);
-		});
+		view.getInitiativeParticipants().forEach(i -> participantScores.put(i.getTotal(), i));
 
 		for (Entry<Integer, Collection<InitiativeParticipant>> entry : participantScores
 				.asMap().entrySet()) {
@@ -171,40 +166,56 @@ public class InitiativeServiceImpl implements InitiativeService {
 	public boolean canMoveUp(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
+		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
+		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
+
 		return view.getInitiativeParticipants().stream()
 				.filter(p -> Objects.equals(p.getTotal(),
 						participant.getTotal()))
 				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant)).anyMatch(p -> p
-						.getOrderOverride() < participant.getOrderOverride());
+				.filter(p -> !p.equals(participant))
+				.anyMatch(p -> {
+					int total = Optional.ofNullable(p.getTotal()).orElse(0);
+					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+
+					return override < partOverride;
+				});
 	}
 
 	@Override
 	public boolean canMoveDown(@Nonnull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
+		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
+		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
+
 		return view.getInitiativeParticipants().stream()
 				.filter(p -> Objects.equals(p.getTotal(),
 						participant.getTotal()))
 				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant)).anyMatch(p -> p
-						.getOrderOverride() > participant.getOrderOverride());
+				.filter(p -> !p.equals(participant))
+				.anyMatch(p -> {
+					int total = Optional.ofNullable(p.getTotal()).orElse(0);
+					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+
+					return override < partOverride;
+				});
 	}
 
 	@Override
 	public void moveUp(@Nonnull InitiativeParticipant participant) {
-		setOrderOverride(participant, participant.getOrderOverride() - 1);
+		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) - 1);
 
 	}
 
 	@Override
 	public void moveDown(@Nonnull InitiativeParticipant participant) {
-		setOrderOverride(participant, participant.getOrderOverride() + 1);
+		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) + 1);
 
 	}
 
 	private void setOrderOverride(InitiativeParticipant participant,
-			int orderOverride) {
+								  int orderOverride) {
 		InitiativeParticipantFilter filter = new InitiativeParticipantFilter();
 		MapView view = participant.getView();
 		filter.view().set(view);
@@ -243,6 +254,11 @@ public class InitiativeServiceImpl implements InitiativeService {
 		List<InitiativeParticipant> participants = view
 				.getInitiativeParticipants().stream().sorted(MapView.INITIATIVE_ORDER)
 				.collect(Collectors.toList());
+
+		if (participants.isEmpty()) {
+			return;
+		}
+
 		int selected = -1;
 		int i = 0;
 
@@ -259,4 +275,22 @@ public class InitiativeServiceImpl implements InitiativeService {
 		select(participants.get(next));
 	}
 
+	@Override
+	public void markAsPlayer(@Nonnull InitiativeParticipant participant) {
+		participant.setPlayer(true);
+		participantDAO.update(participant);
+	}
+
+	@Override
+	public void markAsNonPlayer(@Nonnull InitiativeParticipant participant) {
+		participant.setPlayer(false);
+		participantDAO.update(participant);
+	}
+
+	@Override
+	public void clearNonPlayers(@Nonnull MapView view) {
+		Set<InitiativeParticipant> toDelete = view.getInitiativeParticipants().stream().filter(i -> !i.isPlayer()).collect(Collectors.toSet());
+		toDelete.forEach(participantDAO::delete);
+		toDelete.forEach(view.getInitiativeParticipants()::remove);
+	}
 }

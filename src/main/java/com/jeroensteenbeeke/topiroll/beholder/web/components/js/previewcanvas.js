@@ -16,30 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function previewRectangle(canvasId, color, alpha, rect) {
-    var canvas = document.getElementById(canvasId);
+function previewRectangle(canvas, color, alpha, rect) {
     var ctx = canvas.getContext('2d');
 
     ctx.save();
     ctx.beginPath();
     applyRectangle(ctx, rect);
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
 
 }
 
-function previewCircle(canvasId, color, alpha, circle) {
-    var canvas = document.getElementById(canvasId);
+function previewCircle(canvas, color, alpha, circle) {
     var ctx = canvas.getContext('2d');
 
     ctx.save();
     ctx.beginPath();
     applyCircle(ctx, circle);
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
@@ -52,8 +50,8 @@ function previewPolygon(canvasId, color, alpha, poly) {
     ctx.save();
     ctx.beginPath();
     applyPoly(ctx, poly);
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
@@ -72,8 +70,7 @@ function determineBorderColor(type) {
     return "#000000";
 }
 
-function previewToken(canvasId, token) {
-    var canvas = document.getElementById(canvasId);
+function previewToken(canvas, token) {
     var context = canvas.getContext('2d');
 
     var src = token.src; // string
@@ -105,8 +102,8 @@ function previewToken(canvasId, token) {
         context.beginPath();
         context.arc(ox, oy, radius, 0, 2 * Math.PI);
         context.closePath();
-        context.lineWidth = radius / 7;
-        context.strokeStyle = color;
+        context.setLineWidth(radius / 7);
+        context.setStrokeStyle(color);
         context.stroke();
         context.restore();
 
@@ -114,9 +111,7 @@ function previewToken(canvasId, token) {
     img.src = src;
 }
 
-function renderMapToCanvas(canvasId, src, targetWidth, onDrawn) {
-    var canvas = document.getElementById(canvasId);
-
+function renderMapToCanvas(canvas, src, targetWidth, onDrawn) {
     var img = new Image();
     img.onload = function () {
         var ctx = canvas.getContext('2d');
@@ -129,9 +124,6 @@ function renderMapToCanvas(canvasId, src, targetWidth, onDrawn) {
             w = targetWidth;
             h = (targetWidth / img.width) * img.height;
         }
-
-        canvas.width = w;
-        canvas.height = h;
 
         ctx.drawImage(img, 0, 0, w, h);
 
