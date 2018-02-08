@@ -81,54 +81,6 @@ public class TestViewInitializer implements IAccountInitializer {
 			mapService.createPortrait(user, "Portrait "+ i, portrait);
 		}
 
-		mapService.createMap(user, "temple", 18, image, null).ifOk(map -> {
-
-			FogOfWarGroup group = new FogOfWarGroup();
-			group.setMap(map);
-			group.setName("P3");
-			groupDAO.save(group);
-
-			FogOfWarRect rect = new FogOfWarRect();
-			rect.setOffsetX(187);
-			rect.setOffsetY(153);
-			rect.setWidth(147);
-			rect.setHeight(74);
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-
-			rect = new FogOfWarRect();
-			rect.setOffsetX(187);
-			rect.setOffsetY(119);
-			rect.setWidth(79);
-			rect.setHeight(35);
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-
-			rect = new FogOfWarRect();
-			rect.setOffsetX(228);
-			rect.setOffsetY(219);
-			rect.setWidth(104);
-			rect.setHeight(39);
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-
-			group = new FogOfWarGroup();
-			group.setMap(map);
-			group.setName("ALL");
-			groupDAO.save(group);
-
-			rect = new FogOfWarRect();
-			rect.setOffsetX(0);
-			rect.setOffsetY(0);
-			rect.setWidth(map.getBasicWidth());
-			rect.setHeight(map.getBasicHeight());
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-		});
 
 
 
@@ -227,14 +179,47 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		final TokenDefinition monster = m;
 
-		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
+
+		mapService.createMap(user, "temple", 18, image, null).ifOk(map -> {
+
 			FogOfWarGroup group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("P3");
+			groupDAO.save(group);
+
+			FogOfWarRect rect = new FogOfWarRect();
+			rect.setOffsetX(187);
+			rect.setOffsetY(153);
+			rect.setWidth(147);
+			rect.setHeight(74);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(187);
+			rect.setOffsetY(119);
+			rect.setWidth(79);
+			rect.setHeight(35);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(228);
+			rect.setOffsetY(219);
+			rect.setWidth(104);
+			rect.setHeight(39);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");
 			groupDAO.save(group);
 
-			FogOfWarRect rect = new FogOfWarRect();
+			rect = new FogOfWarRect();
 			rect.setOffsetX(0);
 			rect.setOffsetY(0);
 			rect.setWidth(map.getBasicWidth());
@@ -251,6 +236,25 @@ public class TestViewInitializer implements IAccountInitializer {
 					}
 				}
 			}
+		});
+
+		image = ImageResource.importImage("hugecrypt.jpg");
+		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
+			FogOfWarGroup group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("ALL");
+			groupDAO.save(group);
+
+			FogOfWarRect rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(0);
+			rect.setWidth(map.getBasicWidth());
+			rect.setHeight(map.getBasicHeight());
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+
 		});
 
 

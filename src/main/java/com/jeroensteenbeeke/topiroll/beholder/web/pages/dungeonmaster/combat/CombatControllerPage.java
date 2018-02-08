@@ -16,6 +16,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MarkerStyleModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.StopEnabledDraggableBehavior;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
@@ -25,7 +26,6 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -38,8 +38,10 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.awt.Point;
-import java.util.*;
 import java.util.List;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
@@ -182,7 +184,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int actualWH = preview.translateToScaledImageSize(wh);
 
 								return String.format(
-										"z-index: %6$d; left: %1$dpx; top: %2$dpx; max-width: " +
+										"left: %1$dpx; top: %2$dpx; max-width: " +
 												"%3$dpx !important; " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
 												"!important; background-size: %3$dpx %3$dpx; border-radius: 100%%; border: 1px " +
@@ -193,8 +195,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 												.getBorderType().toHexColor(),
 										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
 												instance.getDefinition().getId()), RequestCycle
-												.get()),
-										2+item.getIndex()
+												.get())
 										);
 							}
 
@@ -212,37 +213,16 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
-				image.add(new DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
+				image.add(new StopEnabledDraggableBehavior(draggableOptions) {
+					@Override
+					protected void onStop(AjaxRequestTarget target, int left, int top) {
+						mapService.updateTokenLocation(
+								item.getModelObject(), (int) (left / displayFactor), (int) (top /
+										displayFactor));
 
-							@Override
-							public boolean isStopEventEnabled() {
-
-								return true;
-							}
-
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-												   int top, int left) {
-								super.onDragStop(target, top, left);
-
-								int x = left;
-
-//								for (int v : calculatedWidths
-//										.headMap(item.getIndex()).values()) {
-//									x = x + v;
-//								}
-
-								x = preview.translateToRealImageSize(x);
-								int y = preview.translateToRealImageSize(top + 1);
-
-								mapService.updateTokenLocation(
-										item.getModelObject(), x, y);
-
-								redrawMap(target);
-							}
-						}));
+						redrawMap(target);
+					}
+				});
 
 				image.add(new OnClickBehavior() {
 					@Override

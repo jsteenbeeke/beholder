@@ -18,13 +18,16 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import java.awt.Dimension;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.inject.Inject;
-
+import com.googlecode.wicket.jquery.core.Options;
+import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.StopEnabledDraggableBehavior;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -38,21 +41,10 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
 
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import javax.inject.Inject;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class MoveTokenController extends Panel {
 	
@@ -133,34 +125,22 @@ public class MoveTokenController extends Panel {
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
-				image.add(new DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
+				image.add(new StopEnabledDraggableBehavior(draggableOptions) {
+					@Override
+					protected void onStop(AjaxRequestTarget target, int left, int top) {
+						int x = left;
 
-							@Override
-							public boolean isStopEventEnabled() {
+						for (int v : calculatedWidths
+								.headMap(item.getIndex()).values()) {
+							x = x + v;
+						}
 
-								return true;
-							}
+						mapService.updateTokenLocation(item.getModelObject(), x, top);
 
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-									int top, int left) {
-								super.onDragStop(target, top, left);
+						target.add(precisionContainer);
 
-								int x = left;
-
-								for (int v : calculatedWidths
-										.headMap(item.getIndex()).values()) {
-									x = x + v;
-								}
-
-								mapService.updateTokenLocation(
-										item.getModelObject(), x, top + 1);
-								
-								target.add(precisionContainer);
-							}
-						}));
+					}
+				});
 
 				item.add(image);
 
