@@ -102,7 +102,7 @@ public class MoveTokenController extends Panel {
 				calculatedWidths.put(item.getIndex(), wh + 4);
 
 				ContextImage image = new ContextImage("token",
-						String.format("tokens/%d?antiCache=%d",
+						String.format("images/token/%d",
 								instance.getDefinition().getId(),
 								System.currentTimeMillis()));
 				image.add(AttributeModifier.replace("style",

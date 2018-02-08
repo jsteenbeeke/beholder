@@ -607,7 +607,7 @@ class MapServiceImpl implements MapService {
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
 		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format
-				("/images/token/%s?%s",
+				("images/token/%s?%s",
 				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
