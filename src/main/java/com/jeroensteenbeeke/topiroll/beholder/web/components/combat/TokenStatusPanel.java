@@ -93,6 +93,33 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			}
 		});
 
+		add(new AjaxLink<TokenInstance>("hide") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				TokenInstance token = callback.getSelectedToken();
+				if (token.isShow()) {
+					mapService.hideToken(token);
+				} else {
+					mapService.showToken(token);
+				}
+				callback.redrawMap(target);
+
+			}
+
+		
+		}.setBody(new LoadableDetachableModel<String>() {
+			@Override
+			protected String load() {
+				TokenInstance token = callback.getSelectedToken();
+				if (token.isShow()) {
+					return "Hide";
+				} else {
+					return "Reveal";
+				}
+			}
+		}));
+
 	}
 
 }

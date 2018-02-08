@@ -187,15 +187,17 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 										"left: %1$dpx; top: %2$dpx; max-width: " +
 												"%3$dpx !important; " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-												"!important; background-size: %3$dpx %3$dpx; border-radius: 100%%; border: 1px " +
-												"solid #%4$s; background-image: url('%5$s'); " +
+												"!important; background-size: %3$dpx %3$dpx; " +
+												"border-radius: 100%%; border: 3px " +
+												"%6$s #%4$s; background-image: url('%5$s'); " +
 												"display: table-cell; vertical-align: bottom; " +
 												"color: #cccccc; text-align: center;",
 										left, top, actualWH, i
 												.getBorderType().toHexColor(),
 										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
 												instance.getDefinition().getId()), RequestCycle
-												.get())
+												.get()),
+										i.isShow() ? "solid" : "dashed"
 										);
 							}
 
