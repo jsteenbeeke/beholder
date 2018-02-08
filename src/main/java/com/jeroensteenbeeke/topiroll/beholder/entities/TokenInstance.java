@@ -262,7 +262,8 @@ public class TokenInstance extends BaseDomainObject {
 	}
 
 	public String toPreview(double factor) {
-		final String url = UrlUtils.rewriteToContextRelative("images/token/" + getId(),
+		final String url = UrlUtils.rewriteToContextRelative("images/token/" + getDefinition()
+						.getId(),
 				RequestCycle.get());
 
 		return String.format("{\n" +

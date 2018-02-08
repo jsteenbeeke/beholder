@@ -130,22 +130,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			shapeDAO.save(rect);
 		});
 
-		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
-			FogOfWarGroup group = new FogOfWarGroup();
-			group.setMap(map);
-			group.setName("ALL");
-			groupDAO.save(group);
 
-			FogOfWarRect rect = new FogOfWarRect();
-			rect.setOffsetX(0);
-			rect.setOffsetY(0);
-			rect.setWidth(map.getBasicWidth());
-			rect.setHeight(map.getBasicHeight());
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-		});
 
 		MapView view2 = new MapView();
 		view2.setHeight(1080);
@@ -214,6 +199,8 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		log.info("Test data created for user {}", user.getUsername());
 
+		TokenDefinition m = null;
+
 		try (InputStream stream = TestViewInitializer.class
 				.getResourceAsStream("random_monster.png")) {
 			byte[] imageData = readImage(stream);
@@ -226,13 +213,47 @@ public class TestViewInitializer implements IAccountInitializer {
 			};
 
 			for (int squares = 1; squares <= 4; squares++) {
-				mapService.createToken(user, names[squares - 1], squares, imageData);
+				TokenDefinition def = mapService.createToken(user, names[squares - 1], squares,
+						imageData);
+				if (m == null) {
+					m = def;
+				}
 			}
 
 
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
+
+		final TokenDefinition monster = m;
+
+		image = ImageResource.importImage("hugecrypt.jpg");
+		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
+			FogOfWarGroup group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("ALL");
+			groupDAO.save(group);
+
+			FogOfWarRect rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(0);
+			rect.setWidth(map.getBasicWidth());
+			rect.setHeight(map.getBasicHeight());
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			if (monster != null) {
+				for (int x = 40; x <= 80; x += 20) {
+					for (int y = 40; y <= 80; y += 20) {
+						mapService.createTokenInstance(monster, map, TokenBorderType.Enemy, x, y,
+								String.format("Monster (%d,%d)", x, y));
+					}
+				}
+			}
+		});
+
+
 
 		InitiativeParticipant jim = new InitiativeParticipant();
 		jim.setName("Jim");

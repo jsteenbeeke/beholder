@@ -156,7 +156,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
 
-				calculatedWidths.put(item.getIndex(), wh + 4);
+				if (!calculatedWidths.containsKey(item.getIndex())) {
+					calculatedWidths.put(item.getIndex(), wh);
+				}
 
 				Label image = new Label(TOKEN_ID, instance.getLabel());
 				image.add(AttributeModifier.replace("style",
@@ -167,12 +169,12 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 							protected String load() {
 								TokenInstance i = item.getModelObject();
 								int left = i.getOffsetX();
-								int top = i.getOffsetY() - 1;
+								int top = i.getOffsetY();
 
-//								for (int v : calculatedWidths.headMap(index)
-//										.values()) {
-//									left = left - v;
-//								}
+								for (int v : calculatedWidths.headMap(item.getIndex())
+										.values()) {
+									left = left - v;
+								}
 
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
@@ -180,14 +182,19 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int actualWH = preview.translateToScaledImageSize(wh);
 
 								return String.format(
-										"z-index: 2; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important; " +
+										"z-index: %6$d; left: %1$dpx; top: %2$dpx; max-width: " +
+												"%3$dpx !important; " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
 												"!important; background-size: %3$dpx %3$dpx; border-radius: 100%%; border: 1px " +
-												"solid #%4$s; background-image: url('%5$s'); display: table-cell; vertical-align: bottom; color: #000000; text-align: center;",
+												"solid #%4$s; background-image: url('%5$s'); " +
+												"display: table-cell; vertical-align: bottom; " +
+												"color: #cccccc; text-align: center;",
 										left, top, actualWH, i
 												.getBorderType().toHexColor(),
 										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
-												instance.getDefinition().getId()), RequestCycle.get())
+												instance.getDefinition().getId()), RequestCycle
+												.get()),
+										2+item.getIndex()
 										);
 							}
 
@@ -222,10 +229,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 								int x = left;
 
-								for (int v : calculatedWidths
-										.headMap(item.getIndex()).values()) {
-									x = x + v;
-								}
+//								for (int v : calculatedWidths
+//										.headMap(item.getIndex()).values()) {
+//									x = x + v;
+//								}
 
 								x = preview.translateToRealImageSize(x);
 								int y = preview.translateToRealImageSize(top + 1);
@@ -497,8 +504,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			protected void populateItem(ListItem<InitiativeParticipant> item) {
 				InitiativeParticipant participant = item.getModelObject();
 				int wh = map.getSquareSize();
-
-				calculatedWidths.put(item.getIndex(), wh + 4);
 
 				Label image = new Label(PARTICIPANT_ID, participant.getName());
 				image.add(AttributeModifier.replace("style",
