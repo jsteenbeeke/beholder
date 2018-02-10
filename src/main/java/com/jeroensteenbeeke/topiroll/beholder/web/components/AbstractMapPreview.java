@@ -46,6 +46,10 @@ public abstract class AbstractMapPreview extends Border {
 
 	}
 
+	public WebMarkupContainer getDragdrop() {
+		return dragdrop;
+	}
+
 	@Override
 	protected void onConfigure() {
 		super.onConfigure();

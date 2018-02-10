@@ -101,7 +101,7 @@ public class BeholderImageFilter implements Filter {
 			} catch (SQLException e) {
 				throw new IOException(e);
 			} catch (EOFException e) {
-				response.sendError(408, "Client closed connection prematurely");
+				// Silent ignore, this usually means the client closed the connection
 			}
 		} else {
 			response.sendError(404, "Invalid map ID");
