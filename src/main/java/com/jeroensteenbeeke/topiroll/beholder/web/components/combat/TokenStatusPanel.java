@@ -1,6 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
@@ -23,6 +24,15 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getSelectedToken()).map(TokenInstance::getBadge)
+						.orElse("-");
+			}
+		}));
+
+		add(new Label("hp", new LoadableDetachableModel<String>() {
+			@Override
+			protected String load() {
+				return Optional.ofNullable(callback.getSelectedToken()).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
+						.map(i -> String.format("%d/%d HP", i.getCurrentHitpoints(), i.getMaxHitpoints()))
 						.orElse("-");
 			}
 		}));
@@ -119,6 +129,22 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 				}
 			}
 		}));
+
+		add(new AjaxLink<TokenInstance>("delete") {
+			@Inject
+			private TokenInstanceDAO instanceDAO;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				TokenInstance token = callback.getSelectedToken();
+				instanceDAO.delete(token);
+				callback.redrawMap(target);
+
+			}
+
+
+		});
 
 	}
 

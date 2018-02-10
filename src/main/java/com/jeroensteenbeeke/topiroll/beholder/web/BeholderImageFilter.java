@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.EOFException;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -99,6 +100,8 @@ public class BeholderImageFilter implements Filter {
 						());
 			} catch (SQLException e) {
 				throw new IOException(e);
+			} catch (EOFException e) {
+				response.sendError(408, "Client closed connection prematurely");
 			}
 		} else {
 			response.sendError(404, "Invalid map ID");

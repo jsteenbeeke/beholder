@@ -245,7 +245,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				item.add(image);
 
 			}
-		});
+		}.setReuseItems(true));
 
 		IModel<List<AreaMarker>> markerModel = new LoadableDetachableModel<List<AreaMarker>>() {
 			@Override
@@ -467,7 +467,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				item.add(marker);
 			}
-		});
+		}.setReuseItems(true));
 
 		IModel<List<InitiativeParticipant>> participantModel = new LoadableDetachableModel<List<InitiativeParticipant>>() {
 			@Override
@@ -570,7 +570,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				item.add(image);
 			}
-		});
+		}.setReuseItems(true));
 
 		preview.add(new Link<MapView>("back", ModelMaker.wrap(view))
 		{

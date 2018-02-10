@@ -229,8 +229,8 @@ public class TestViewInitializer implements IAccountInitializer {
 			shapeDAO.save(rect);
 
 			if (monster != null) {
-				for (int x = 40; x <= 80; x += 20) {
-					for (int y = 40; y <= 80; y += 20) {
+				for (int x = 40; x <= 120; x += 20) {
+					for (int y = 40; y <= 120; y += 20) {
 						mapService.createTokenInstance(monster, map, TokenBorderType.Enemy, x, y,
 								String.format("Monster (%d,%d)", x, y));
 					}
