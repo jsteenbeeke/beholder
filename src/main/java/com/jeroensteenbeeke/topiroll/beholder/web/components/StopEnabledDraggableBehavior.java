@@ -16,7 +16,7 @@ public abstract class StopEnabledDraggableBehavior extends DraggableBehavior {
 		super.onAjax(target, event);
 		if (event instanceof DragStopEvent) {
 			DragStopEvent stop = (DragStopEvent) event;
-			onStop(target, stop.getOffsetLeft(), stop.getOffsetTop());
+			onStop(target, stop.getLeft(), stop.getTop());
 		}
 	}
 

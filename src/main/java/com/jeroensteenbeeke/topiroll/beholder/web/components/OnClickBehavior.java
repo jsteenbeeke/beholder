@@ -30,7 +30,7 @@ import org.apache.wicket.resource.JQueryPluginResourceReference;
 
 import java.io.Serializable;
 
-public class OnClickBehavior extends JQueryUIBehavior
+public abstract class OnClickBehavior extends JQueryUIBehavior
 		implements IJQueryAjaxAware {
 
 	private static final long serialVersionUID = 1L;
@@ -93,9 +93,7 @@ public class OnClickBehavior extends JQueryUIBehavior
 						"js/click.js")));
 	}
 
-	protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-
-	}
+	protected abstract void onClick(AjaxRequestTarget target, ClickEvent event);
 
 	public static class OnClickAjaxBehavior extends JQueryAjaxBehavior {
 

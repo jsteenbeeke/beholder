@@ -13,11 +13,9 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MarkerStyleModel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.StopEnabledDraggableBehavior;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
 import org.apache.wicket.AttributeModifier;
@@ -34,6 +32,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -45,11 +45,11 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
+	private static final Logger log = LoggerFactory.getLogger(CombatControllerPage.class);
 	private static final String MODAL_ID = "modal";
 	public static final String MARKER_ID = "marker";
 	public static final String TOKEN_ID = "token";
 	public static final String PARTICIPANT_ID = "participant";
-	private final SortedMap<Integer, Integer> calculatedWidths;
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 	private final MarkerStatusPanel markerStatusPanel;
@@ -117,8 +117,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		preview.add(new OnClickBehavior() {
 			@Override
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-				super.onClick(target, event);
-
 				if (!disableClickListener) {
 					previousClickedLocation = clickedLocation;
 					clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
@@ -135,8 +133,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				}
 			}
 		});
-
-		this.calculatedWidths = new TreeMap<>();
 
 		mapModel = ModelMaker.wrap(map);
 
@@ -158,54 +154,51 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
 
-				if (!calculatedWidths.containsKey(item.getIndex())) {
-					calculatedWidths.put(item.getIndex(), wh);
-				}
-
 				Label image = new Label(TOKEN_ID, instance.getLabel());
 				image.add(AttributeModifier.replace("style",
-						new LoadableDetachableModel<String>() {
+						new DependentModel<TokenInstance,String>(item.getModel()) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
-							protected String load() {
-								TokenInstance i = item.getModelObject();
+							protected String load(TokenInstance i ) {
 								int left = i.getOffsetX();
 								int top = i.getOffsetY();
 
-								for (int v : calculatedWidths.headMap(item.getIndex())
-										.values()) {
-									left = left - v;
-								}
+
+								log.info("Token {} left {} top {}", i.getLabel(), left, top);
 
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
 
+								log.info("-> left {} top {}", left, top);
+
+
 								int actualWH = preview.translateToScaledImageSize(wh);
 
-								return String.format(
-										"left: %1$dpx; top: %2$dpx; max-width: " +
+								String css = String.format(
+										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
 												"%3$dpx !important; " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
 												"!important; background-size: %3$dpx %3$dpx; " +
 												"border-radius: 100%%; border: 3px " +
 												"%6$s #%4$s; background-image: url('%5$s'); " +
 												"display: table-cell; vertical-align: bottom; " +
-												"color: #cccccc; text-align: center;",
+												"color: #cccccc; text-align: center; margin: 0; padding: 0;",
 										left, top, actualWH, i
 												.getBorderType().toHexColor(),
 										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
 												instance.getDefinition().getId()), RequestCycle
 												.get()),
 										i.isShow() ? "solid" : "dashed"
-										);
+								);
+								log.info("-> css {}", css);
+								return css;
 							}
 
 						}));
-				image.add(AttributeModifier.replace("title", new LoadableDetachableModel<String>() {
+				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance,String>(item.getModel()) {
 					@Override
-					protected String load() {
-						TokenInstance instance = item.getModelObject();
+					protected String load(TokenInstance instance) {
 						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
 								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()
 						).map(p -> String.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
@@ -226,11 +219,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					}
 				});
 
-				image.add(new OnClickBehavior() {
+				image.add(new DependentOnClickBehavior<TokenInstance>(item.getModel()) {
 					@Override
-					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-						super.onClick(target, event);
-
+					protected void onClick(AjaxRequestTarget target, OnClickBehavior.ClickEvent event, TokenInstance instance) {
 						selectedToken = ModelMaker.wrap(item.getModelObject());
 						clickedLocation = null;
 						selectedMarker = Model.of();
@@ -452,8 +443,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				marker.add(new OnClickBehavior() {
 					@Override
 					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-						super.onClick(target, event);
-
 						selectedToken = Model.of();
 						clickedLocation = null;
 						selectedMarker = ModelMaker.wrap(item.getModelObject());;
@@ -510,7 +499,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 
 								return String.format(
-										"left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
+										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
 												" " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
 												"!important; border-radius: 100%%; border: 1px " +
@@ -562,8 +551,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 											@Override
 											protected void onClick(AjaxRequestTarget target,
 																   ClickEvent event) {
-												super.onClick(target, event);
-
 												// TODO: What happens when clicking a player marker
 											}
 										});

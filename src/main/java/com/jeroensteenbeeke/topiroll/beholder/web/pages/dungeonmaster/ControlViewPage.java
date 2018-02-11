@@ -92,8 +92,6 @@ public class ControlViewPage extends AuthenticatedPage {
 
             @Override
             protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-                super.onClick(target, event);
-
                 int offsetTop = event.getOffsetTop();
                 int offsetLeft = event.getOffsetLeft();
 

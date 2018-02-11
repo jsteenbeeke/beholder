@@ -57,8 +57,6 @@ public class MoveTokenController extends Panel {
 	@Inject
 	private MapService mapService;
 	
-	private SortedMap<Integer, Integer> calculatedWidths;
-
 	private DataView<TokenInstance> tokenView;
 
 	private AbstractMapPreview previewImage;
@@ -67,8 +65,6 @@ public class MoveTokenController extends Panel {
 
 	public MoveTokenController(String id, MapView view, ScaledMap map) {
 		super(id);
-
-		this.calculatedWidths = new TreeMap<>();
 
 		TokenInstanceFilter filter = new TokenInstanceFilter();
 		filter.map().set(map);
@@ -91,30 +87,21 @@ public class MoveTokenController extends Panel {
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
 
-				calculatedWidths.put(item.getIndex(), wh + 4);
-
 				ContextImage image = new ContextImage("token",
 						String.format("images/token/%d",
-								instance.getDefinition().getId(),
-								System.currentTimeMillis()));
+								instance.getDefinition().getId()));
 				image.add(AttributeModifier.replace("style",
 						new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							protected String load() {
-								int index = item.getIndex();
 								TokenInstance i = item.getModelObject();
 								int left = i.getOffsetX();
 								int top = i.getOffsetY() - 1;
 
-								for (int v : calculatedWidths.headMap(index)
-										.values()) {
-									left = left - v;
-								}
-
 								return String.format(
-										"left: %dpx; top: %dpx; max-width: %dpx !important; " +
+										"position: absolute; left: %dpx; top: %dpx; max-width: %dpx !important; " +
 												"width: %dpx; height: %dpx; max-height: %dpx " +
 												"!important;",
 										left, top, wh, wh, wh, wh);
@@ -128,15 +115,9 @@ public class MoveTokenController extends Panel {
 				image.add(new StopEnabledDraggableBehavior(draggableOptions) {
 					@Override
 					protected void onStop(AjaxRequestTarget target, int left, int top) {
-						int x = left;
 
-						for (int v : calculatedWidths
-								.headMap(item.getIndex()).values()) {
-							x = x + v;
-						}
-
-						mapService.updateTokenLocation(item.getModelObject(), x, top);
-
+						mapService.updateTokenLocation(item.getModelObject(), left, top);
+						previewImage.refresh(target);
 						target.add(precisionContainer);
 
 					}
