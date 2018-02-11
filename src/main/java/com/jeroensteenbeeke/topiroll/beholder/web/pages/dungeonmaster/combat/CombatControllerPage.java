@@ -154,7 +154,12 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
 
-				Label image = new Label(TOKEN_ID, instance.getLabel());
+				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance,String>(item.getModel()) {
+					@Override
+					protected String load(TokenInstance object) {
+						return object.getLabel();
+					}
+				});
 				image.add(AttributeModifier.replace("style",
 						new DependentModel<TokenInstance,String>(item.getModel()) {
 							private static final long serialVersionUID = 1L;
@@ -187,7 +192,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 										left, top, actualWH, i
 												.getBorderType().toHexColor(),
 										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
-												instance.getDefinition().getId()), RequestCycle
+												i.getDefinition().getId()), RequestCycle
 												.get()),
 										i.isShow() ? "solid" : "dashed"
 								);
