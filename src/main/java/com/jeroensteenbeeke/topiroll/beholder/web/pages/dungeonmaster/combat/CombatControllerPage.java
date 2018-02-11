@@ -169,14 +169,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								int left = i.getOffsetX();
 								int top = i.getOffsetY();
 
-
-								log.info("Token {} left {} top {}", i.getLabel(), left, top);
-
 								left = preview.translateToScaledImageSize(left);
 								top = preview.translateToScaledImageSize(top);
-
-								log.info("-> left {} top {}", left, top);
-
 
 								int actualWH = preview.translateToScaledImageSize(wh);
 
@@ -196,7 +190,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 												.get()),
 										i.isShow() ? "solid" : "dashed"
 								);
-								log.info("-> css {}", css);
 								return css;
 							}
 
@@ -213,11 +206,11 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
-				image.add(new StopEnabledDraggableBehavior(draggableOptions) {
+				image.add(new DependentStopEnabledDraggableBehavior<TokenInstance>(item.getModel(), draggableOptions) {
 					@Override
-					protected void onStop(AjaxRequestTarget target, int left, int top) {
+					protected void onStop(AjaxRequestTarget target, TokenInstance instance, int left, int top) {
 						mapService.updateTokenLocation(
-								item.getModelObject(), (int) (left / displayFactor), (int) (top /
+								instance, (int) (left / displayFactor), (int) (top /
 										displayFactor));
 
 						redrawMap(target);
@@ -227,7 +220,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				image.add(new DependentOnClickBehavior<TokenInstance>(item.getModel()) {
 					@Override
 					protected void onClick(AjaxRequestTarget target, OnClickBehavior.ClickEvent event, TokenInstance instance) {
-						selectedToken = ModelMaker.wrap(item.getModelObject());
+						selectedToken = ModelMaker.wrap(instance);
 						clickedLocation = null;
 						selectedMarker = Model.of();
 
