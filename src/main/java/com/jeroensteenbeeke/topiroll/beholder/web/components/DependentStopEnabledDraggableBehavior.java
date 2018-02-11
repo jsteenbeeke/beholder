@@ -7,7 +7,7 @@ import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.model.IModel;
 
 public abstract class DependentStopEnabledDraggableBehavior<T> extends StopEnabledDraggableBehavior {
-	private final IModel<T> model;
+	protected final IModel<T> model;
 
 	public DependentStopEnabledDraggableBehavior(IModel<T> model, Options options) {
 		super(options);

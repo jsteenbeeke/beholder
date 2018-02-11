@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat;
 
+import com.googlecode.wicket.jquery.core.JQueryEvent;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
@@ -38,10 +39,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.awt.Point;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
@@ -140,7 +138,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			protected List<TokenInstance> load() {
 				return mapModel.getObject().getTokens().stream()
-						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0).collect(Collectors.toList());
+						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
+						.sorted(Comparator.comparing(TokenInstance::getId))
+						.collect(Collectors.toList());
 			}
 		};
 
@@ -174,7 +174,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 								int actualWH = preview.translateToScaledImageSize(wh);
 
-								String css = String.format(
+								return String.format(
 										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
 												"%3$dpx !important; " +
 												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
@@ -190,7 +190,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 												.get()),
 										i.isShow() ? "solid" : "dashed"
 								);
-								return css;
 							}
 
 						}));
@@ -239,7 +238,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		IModel<List<AreaMarker>> markerModel = new LoadableDetachableModel<List<AreaMarker>>() {
 			@Override
 			protected List<AreaMarker> load() {
-				return viewModel.getObject().getMarkers();
+				return viewModel.getObject().getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId)).collect(Collectors.toList());
 			}
 		};
 
@@ -462,6 +461,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				InitiativeParticipantFilter initFilter = new InitiativeParticipantFilter();
 				initFilter.player(true);
 				initFilter.view(viewModel.getObject());
+				initFilter.id().orderBy(true);
 				return participantDAO.findByFilter(initFilter);
 			}
 		};
