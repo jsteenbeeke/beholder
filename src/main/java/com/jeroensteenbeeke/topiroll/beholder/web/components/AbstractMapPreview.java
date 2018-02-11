@@ -135,7 +135,7 @@ public abstract class AbstractMapPreview extends Border {
 						"\t\"top\"      : (dragDropOffset.top + window.pageYOffset),\n" +
 						"\t\"width\"	: %3$d,\n" +
 						"\t\"height\"	: %4$d,\n" +
-						"});\n\n", getMarkupId(), canvas.getMarkupId(), desiredWidth,
-				height));
+						"});\n\n", getMarkupId(), canvas.getMarkupId(), (int) (desiredWidth * 1.5),
+				(int) (height * 1.5 )));
 	}
 }
