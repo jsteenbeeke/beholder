@@ -1,4 +1,8 @@
 pipeline {
+    agent {
+	    label 'docker'
+    }
+
 	options {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
 		disableConcurrentBuilds()
@@ -20,20 +24,12 @@ pipeline {
 			}
 		}
 		stage('Dockerize') {
-		    agent {
-		        label 'docker'
-		    }
-
 			steps {
 				sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:latest'
 				sh 'docker build -t registry.jeroensteenbeeke.nl/beholder:latest .'
 			} 
 		}
 		stage('Publish') {
-            agent {
-                label 'docker'
-            }
-
 			steps {
 				sh 'docker push registry.jeroensteenbeeke.nl/beholder:latest'
 			}
