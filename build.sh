@@ -8,8 +8,8 @@ maven() {
     fi
 }
 
+echo `git log -n 1 --pretty=format:"%H"` > src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt
 maven clean package -U
-docker pull jetty:alpine
-maven docker:build
+docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:latest
+docker build --no-cache -t beholder:latest .
 docker save beholder:latest > beholder-docker.tar.gz
-echo `git log -n 1 --pretty=format:"%H"` > revision.txt

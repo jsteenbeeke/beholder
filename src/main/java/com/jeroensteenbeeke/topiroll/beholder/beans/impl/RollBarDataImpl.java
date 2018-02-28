@@ -16,6 +16,9 @@ class RollBarDataImpl implements RollBarData {
 	@Value("${rollbar.environment:}")
 	private String environment;
 
+	@Value("${rollbar.localuser}")
+	private String localUser;
+
 	@Override
 	public String getServerKey() {
 		return serverApiKey;
@@ -31,4 +34,8 @@ class RollBarDataImpl implements RollBarData {
 		return environment;
 	}
 
+	@Override
+	public String getLocalUsername() {
+		return localUser;
+	}
 }

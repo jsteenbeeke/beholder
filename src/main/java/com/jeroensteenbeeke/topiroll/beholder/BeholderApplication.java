@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MusicPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
@@ -95,6 +96,7 @@ public class BeholderApplication extends WebApplication
 //					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
 		}
 
+		getApplicationListeners().add(new RollbarDeployListener(data));
 	}
 
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {

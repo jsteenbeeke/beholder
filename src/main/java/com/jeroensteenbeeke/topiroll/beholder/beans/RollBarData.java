@@ -6,4 +6,6 @@ public interface RollBarData {
 	String getClientKey();
 
 	String getEnvironment();
+
+	String getLocalUsername();
 }
