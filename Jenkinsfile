@@ -16,8 +16,8 @@ pipeline {
            }
 
 			steps {
-	            sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
-			    sh 'mvn clean package'
+			    sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
+			    sh 'mvn clean package -U'
 			    stash name: 'war', includes: '**/*.war'
 			}
 		}
