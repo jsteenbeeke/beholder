@@ -24,14 +24,15 @@ public class RollbarDeployListener implements IApplicationListener {
 	public void onAfterInitialized(Application application) {
 		if (data.getEnvironment() != null) {
 			OkHttpClient client = new OkHttpClient();
+			MultipartBody body = new MultipartBody.Builder()
+					.addFormDataPart("access_token", data.getServerKey())
+					.addFormDataPart("environment", data.getEnvironment())
+					.addFormDataPart("revision", getRevision())
+					.addFormDataPart("local_username", data.getLocalUsername())
+					.setType(MultipartBody.FORM)
+					.build();
 			Request request = new Request.Builder().url("https://api.rollbar.com/api/1/deploy/")
-												   .post(new MultipartBody.Builder()
-												   .addFormDataPart("access_token", data.getServerKey())
-												   .addFormDataPart("environment", data.getEnvironment())
-												   .addFormDataPart("revision", getRevision())
-												   .addFormDataPart("local_username", data.getLocalUsername())
-												   .setType(MultipartBody.FORM)
-														   	   .build()
+												   .post(body
 
 												   ).build();
 			try {
@@ -42,6 +43,7 @@ public class RollbarDeployListener implements IApplicationListener {
 				} else {
 					log.info("Rollbar deploy notification failed: {} {}", response.code(), response.body().string());
 				}
+				response.close();
 			} catch (IOException e) {
 				log.error(e.getMessage(), e);
 			}
