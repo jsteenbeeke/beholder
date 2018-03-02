@@ -35,15 +35,12 @@ public class RollbarDeployListener implements IApplicationListener {
 												   .post(body
 
 												   ).build();
-			try {
-				Response response = client.newCall(request).execute();
-
+			try (Response response = client.newCall(request).execute()) {
 				if (response.isSuccessful()) {
 					log.info("Rollbar deploy notification done");
 				} else {
 					log.info("Rollbar deploy notification failed: {} {}", response.code(), response.body().string());
 				}
-				response.close();
 			} catch (IOException e) {
 				log.error(e.getMessage(), e);
 			}

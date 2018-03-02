@@ -1,0 +1,24 @@
+pipeline {
+	agent {
+        	docker {
+                	image 'maven:3.5-jdk-8'
+			label 'docker'
+		}
+	}
+
+
+	options {
+		buildDiscarder(logRotator(numToKeepStr: '5'))
+		disableConcurrentBuilds()
+	}
+
+	stages {
+		stage('Build') {
+			steps {
+			    sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
+			    sh 'mvn clean package -U'
+			    stash name: 'war', includes: '**/*.war'
+			}
+		}
+	}
+}
