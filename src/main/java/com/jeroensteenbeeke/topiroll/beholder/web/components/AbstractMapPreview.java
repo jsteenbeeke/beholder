@@ -95,7 +95,7 @@ public abstract class AbstractMapPreview extends Border {
 
 		StringBuilder js = new StringBuilder();
 
-		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, height * 1.5));
+		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(height * 1.5)));
 		js.append(String.format("renderMapToCanvas(multi%s, '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
 				UrlUtils.rewriteToContextRelative("images/map", getRequestCycle()), getMap().getId(), desiredWidth));
 
