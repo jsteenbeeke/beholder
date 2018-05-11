@@ -91,16 +91,16 @@ public abstract class AbstractMapPreview extends Border {
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/previewcanvas.js")));
+		long height = Math.round(getMap().getBasicHeight() * factor);
 
 		StringBuilder js = new StringBuilder();
 
-		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(factor * getMap().getBasicHeight())));
+		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, height * 1.5));
 		js.append(String.format("renderMapToCanvas(multi%s, '%s/%d', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
 				UrlUtils.rewriteToContextRelative("images/map", getRequestCycle()), getMap().getId(), desiredWidth));
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
-		long height = Math.round(getMap().getBasicHeight() * factor);
 
 		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
 		onImageDrawComplete.append(String.format("$('#%1$s > .dragdrop').css({\n" +
