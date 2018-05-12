@@ -30,6 +30,10 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 						.max(0, h - damageField.getModelObject())).orElse(null);
 
 				mapService.setTokenHP(token, newHP, token.getMaxHitpoints());
+
+				if (newHP != null && newHP == 0) {
+					mapService.hideToken(token);
+				}
 			}
 		};
 

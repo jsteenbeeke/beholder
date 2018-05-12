@@ -45,9 +45,9 @@ import java.util.stream.Collectors;
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
 	private static final Logger log = LoggerFactory.getLogger(CombatControllerPage.class);
 	private static final String MODAL_ID = "modal";
-	public static final String MARKER_ID = "marker";
-	public static final String TOKEN_ID = "token";
-	public static final String PARTICIPANT_ID = "participant";
+	private static final String MARKER_ID = "marker";
+	private static final String TOKEN_ID = "token";
+	private static final String PARTICIPANT_ID = "participant";
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 	private final MarkerStatusPanel markerStatusPanel;
