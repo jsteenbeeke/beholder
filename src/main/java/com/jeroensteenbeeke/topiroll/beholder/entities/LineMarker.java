@@ -37,8 +37,6 @@ public class LineMarker extends AreaMarker {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger log = LoggerFactory.getLogger(LineMarker.class);
-
 	public static final int LINE_ANGLE = 3;
 	private static final int LINE_MARKER_CUTOFF = 15;
 
@@ -84,8 +82,6 @@ public class LineMarker extends AreaMarker {
 
 		circle.setThetaOffset(Math.toRadians((double) getTheta()-(angle/2.0)));
 		circle.setThetaExtent(Math.toRadians(angle));
-
-		log.info("Line r {} \u03b8 {} {}", circle.getRadius(), circle.getThetaOffset(), circle.getThetaExtent());
 
 		return circle;
 	}
