@@ -21,6 +21,7 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.sound.sampled.Line;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -28,11 +29,16 @@ import org.apache.wicket.markup.html.panel.Panel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.LineMarkerController;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 public class LineMarker extends AreaMarker {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger log = LoggerFactory.getLogger(LineMarker.class);
+
 	public static final int LINE_ANGLE = 3;
 	private static final int LINE_MARKER_CUTOFF = 15;
 
@@ -63,21 +69,23 @@ public class LineMarker extends AreaMarker {
 	@Override
 	public JSShape getShape(double factor, int squareSize) {
 		JSCircle circle = new JSCircle();
-		circle.setRadius((int) (getExtent() * factor * squareSize / 5));
-		circle.setX((int) (getOffsetX() * factor) - circle.getRadius());
-		circle.setY((int) (getOffsetY() * factor) - circle.getRadius());
+		circle.setRadius((int) (factor * (getExtent() * squareSize / 5)));
+		circle.setX((int) (getOffsetX() * factor));
+		circle.setY((int) (getOffsetY() * factor));
 
 		double angle = LINE_ANGLE;
 
-		int ext = circle.getRadius();
+		long ext = Math.round(circle.getRadius());
 
 		while (ext > 50) {
-			angle = angle * 0.75;
+			angle = angle * 0.9;
 			ext = ext / 2;
 		}
 
 		circle.setThetaOffset(Math.toRadians((double) getTheta()-(angle/2.0)));
 		circle.setThetaExtent(Math.toRadians(angle));
+
+		log.info("Line r {} \u03b8 {} {}", circle.getRadius(), circle.getThetaOffset(), circle.getThetaExtent());
 
 		return circle;
 	}

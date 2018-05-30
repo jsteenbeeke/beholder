@@ -50,8 +50,8 @@ public class CubeMarker extends AreaMarker {
 		rect.setWidth(hw);
 
 		// Note: while this property is called offset, we treat it as the center of the cube
-		rect.setX((int) (getOffsetX() * factor - (hw/2)));
-		rect.setY((int) (getOffsetY() * factor - (hw/2)));
+		rect.setX((int) (getOffsetX() * factor));
+		rect.setY((int) (getOffsetY() * factor));
 
 		return rect;
 	}

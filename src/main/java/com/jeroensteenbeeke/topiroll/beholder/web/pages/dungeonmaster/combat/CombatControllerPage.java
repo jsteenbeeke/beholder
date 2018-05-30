@@ -287,7 +287,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 										- 2;
 
 
-								return new MarkerStyleModel<>(marker, displayFactor).setX((m, factor) -> Math.round((m.getOffsetX()) * factor)).setY((m, factor) -> Math.round(m.getOffsetY() * factor)).setWidth((m, factor) -> 0L)
+								return new MarkerStyleModel<>(marker, displayFactor)
+										.setX((m, factor) -> Math.round((m.getOffsetX()+wh) * factor))
+										.setY((m, factor) -> Math.round((m.getOffsetY()+wh) * factor))
+										.setWidth((m, factor) -> 0L)
 										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> String
 												.format("%fpx solid transparent", wh * factor)).setBorderRight((m, factor) -> String.format("%fpx solid #%s",
 												wh * factor, marker.getColor()))
@@ -330,8 +333,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 								double ty = Math.sin(Math.toRadians(marker.getTheta()));
 
 
-								return new MarkerStyleModel<>(marker, displayFactor).setX((m, factor) -> Math.round((m.getOffsetX()) * factor)).setY((m, factor) -> Math.round(m.getOffsetY() * factor)).setWidth((m, factor) -> 0L)
-										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "1px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
+								return new MarkerStyleModel<>(marker, displayFactor)
+										.setX((m, factor) -> Math.round((m.getOffsetX()+wh) * factor))
+										.setY((m, factor) -> Math.round((m.getOffsetY()+wh) * factor)).setWidth((m, factor) -> 0L)
+										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "5px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
 												wh * factor, marker.getColor()))
 										.setBorderBottom((m, factor) -> "1px solid transparent")
 										.setOpacity((m, factor) -> 0.5)
@@ -400,8 +405,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 											@Nonnull
 													ConeMarker marker) {
 										markerService
-												.update(marker, marker.getColor(), newX,
-														newY,
+												.update(marker, marker.getColor(), newX-wh,
+														newY-wh,
 														marker.getExtent(),
 														marker.getTheta());
 
@@ -425,8 +430,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 											@Nonnull
 													LineMarker marker) {
 										markerService
-												.update(marker, marker.getColor(), newX,
-														newY,
+												.update(marker, marker.getColor(), newX-wh,
+														newY-wh,
 														marker.getExtent(), marker
 																.getTheta());
 
