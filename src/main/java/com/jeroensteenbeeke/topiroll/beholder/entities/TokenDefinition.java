@@ -29,9 +29,11 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 @Entity
-public class TokenDefinition extends BaseDomainObject {
+public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,6 +45,8 @@ public class TokenDefinition extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@Column(nullable=true, name = "amazon_key")
+	private String amazonKey;
 
 	@Column(nullable = false)
 	@EntityFormField(label = "Diameter", required = true,
@@ -54,13 +58,12 @@ public class TokenDefinition extends BaseDomainObject {
 	@EntityFormField(label = "Name", required = true)
 	private String name;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	@Lob
 	private Blob imageData;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
-
 	private BeholderUser owner;
 
 	@OneToMany(mappedBy = "definition", fetch = FetchType.LAZY)
@@ -123,5 +126,17 @@ public class TokenDefinition extends BaseDomainObject {
 	public void setDiameterInSquares(@Nonnull int diameterInSquares) {
 		this.diameterInSquares = diameterInSquares;
 	}
+
+	@CheckForNull
+	@Override
+	public String getAmazonKey() {
+		return amazonKey;
+	}
+
+	public void setAmazonKey( @Nullable String amazonKey) {
+		this.amazonKey = amazonKey;
+	}
+
+
 
 }

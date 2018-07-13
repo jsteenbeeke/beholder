@@ -8,9 +8,11 @@ import javax.annotation.Nonnull;
 import java.sql.Blob;
 import java.util.List;
 import java.util.ArrayList;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 @Entity
-public class Portrait extends BaseDomainObject {
+public class Portrait extends BaseDomainObject implements AmazonStored {
 
 
 
@@ -20,6 +22,10 @@ public class Portrait extends BaseDomainObject {
  	@Access(value=AccessType.PROPERTY)
 
 	private Long id;
+ 	@Column(nullable=true, name="amazon_key")
+	private String amazonKey;
+
+
  	@OneToMany(mappedBy="portrait", fetch=FetchType.LAZY)
 	private List<PortraitVisibility> visibilities = new ArrayList<PortraitVisibility>();
 
@@ -28,19 +34,13 @@ public class Portrait extends BaseDomainObject {
 	private String name;
 
 
- 	@Column(nullable=false)
+ 	@Column(nullable=true)
 	@Lob
 	private Blob data;
 
 
  	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
-
 	private BeholderUser owner;
-
-
-
-
-
 
 	public Long getId() {
 		return id;
@@ -66,6 +66,7 @@ public class Portrait extends BaseDomainObject {
 	public Blob getData() {
 		return data;
 	}
+
 	public void setData( @Nonnull Blob data) {
 		this.data = data;
 	}
@@ -86,14 +87,13 @@ public class Portrait extends BaseDomainObject {
 		this.visibilities = visibilities;
 	}
 
+	@CheckForNull
+	@Override
+	public String getAmazonKey() {
+		return amazonKey;
+	}
 
-
-
-
-
-
-
-
-
-
+	public void setAmazonKey( @Nullable String amazonKey) {
+		this.amazonKey = amazonKey;
+	}
 }

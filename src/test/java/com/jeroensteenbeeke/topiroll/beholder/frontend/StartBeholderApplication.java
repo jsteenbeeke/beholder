@@ -33,10 +33,11 @@ import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
 
 public class StartBeholderApplication {
 	public static void main(String[] args) throws Exception {
-		if (args.length < 2) {
+		if (args.length < 6) {
 			System.err.println("Usage:");
 			System.err.println(
-					"\tStartBeholderApplication clientId clientSecret");
+					"\tStartBeholderApplication slackClientId slackClientSecret amazonClientId " +
+							"amazonClientSecret");
 			System.exit(-1);
 			return;
 		}
@@ -57,11 +58,16 @@ public class StartBeholderApplication {
 			}
 		};
 
-		if (args.length < 5) {
+		if (args.length < 9) {
 			return InMemory.run("beholder-web").withContextPath("/beholder/")
 					.withContextConsumer(initWebsockets)
 					.withProperty("slack.clientid", args[0])
 					.withProperty("slack.clientsecret", args[1])
+				    .withProperty("amazon.clientid", args[2])
+				    .withProperty("amazon.clientsecret", args[3])
+				    .withProperty("amazon.bucketname", args[4])
+				    .withProperty("amazon.url.prefix", args[5])
+				    .withProperty("amazon.region", "eu-central-1")
 					.withProperty("application.baseurl",
 							"http://localhost:8081/beholder/")
 					.withProperty("application.sourceurl",
@@ -72,9 +78,14 @@ public class StartBeholderApplication {
 					.withContextConsumer(initWebsockets)
 					.withProperty("slack.clientid", args[0])
 					.withProperty("slack.clientsecret", args[1])
-					.withProperty("rollbar.server.apiKey", args[2])
-					.withProperty("rollbar.client.apiKey", args[3])
-					.withProperty("rollbar.environment", args[4])
+				    .withProperty("amazon.clientid", args[2])
+				    .withProperty("amazon.clientsecret", args[3])
+			 	    .withProperty("amazon.bucketname", args[4])
+				    .withProperty("amazon.url.prefix", args[5])
+					.withProperty("rollbar.server.apiKey", args[6])
+					.withProperty("rollbar.client.apiKey", args[7])
+					.withProperty("rollbar.environment", args[8])
+  				    .withProperty("amazon.region", "eu-central-1")
 					.withProperty("application.baseurl",
 							"http://localhost:8081/beholder/")
 					.withProperty("application.sourceurl",

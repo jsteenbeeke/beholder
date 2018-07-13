@@ -75,10 +75,10 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 		filter.name().orderBy(true);
 
 		List<TokenDefinition> tokens = tokenDAO.findByFilter(filter);
-		tokenSelect = new DropDownChoice<TokenDefinition>("token",
+		tokenSelect = new DropDownChoice<>("token",
 				tokens.isEmpty()
 						? EntityEncapsulator
-								.createNullModel(TokenDefinition.class)
+						.createNullModel(TokenDefinition.class)
 						: ModelMaker.wrap(tokens.get(0)),
 				ModelMaker.wrapList(tokens),
 				LambdaRenderer.of(TokenDefinition::getName));

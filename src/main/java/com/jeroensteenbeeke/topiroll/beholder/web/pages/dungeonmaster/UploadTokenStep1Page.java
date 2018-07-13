@@ -50,7 +50,7 @@ public class UploadTokenStep1Page extends AuthenticatedPage {
 		});
 
 		FileUploadField uploadField = new FileUploadField("file",
-				new ListModel<FileUpload>(new LinkedList<FileUpload>()));
+				new ListModel<>(new LinkedList<>()));
 		uploadField.setRequired(true);
 
 		Form<ScaledMap> uploadForm = new Form<ScaledMap>("uploadForm") {

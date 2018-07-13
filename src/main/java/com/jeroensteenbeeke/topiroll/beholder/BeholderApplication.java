@@ -17,11 +17,21 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
+import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
+import com.jeroensteenbeeke.hyperion.social.Slack;
+import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
+import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
+import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
+import com.jeroensteenbeeke.topiroll.beholder.jobs.MigrateImagesToAmazonJob;
+import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MusicPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
-import org.apache.wicket.event.IEvent;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
@@ -30,19 +40,9 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
-import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
-import com.jeroensteenbeeke.hyperion.social.Slack;
-import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
-import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
-import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
-import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
-import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -77,6 +77,7 @@ public class BeholderApplication extends WebApplication
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
 
 		HyperionScheduler.getScheduler().setApplication(this);
+		onSchedulerInitialized();
 
 		getMarkupSettings().setStripWicketTags(true);
 
@@ -133,4 +134,9 @@ public class BeholderApplication extends WebApplication
 	public <T> T getBean(Class<T> beanClass) {
 		return getApplicationContext().getBean(beanClass);
 	}
+
+	public void onSchedulerInitialized() {
+		HyperionScheduler.getScheduler().scheduleTask(DateTime.now(), new MigrateImagesToAmazonJob());
+	}
+
 }

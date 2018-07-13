@@ -43,8 +43,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class MoveTokenController extends Panel {
 	

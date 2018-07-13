@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry.RegistryEntry;
+import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
@@ -47,10 +48,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.sound.sampled.Port;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Blob;
 import java.util.HashSet;
 import java.util.List;
@@ -103,8 +101,8 @@ class MapServiceImpl implements MapService {
 	@Autowired
 	private InitiativeParticipantDAO participantDAO;
 
-	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
-	private EntityManager entityManager;
+	@Autowired
+	private AmazonS3Service amazonS3Service;
 
 	@Nonnull
 	@Override
@@ -119,16 +117,31 @@ class MapServiceImpl implements MapService {
 
 		Dimension dimension = dimResult.getObject();
 
-		Session session = entityManager.unwrap(Session.class);
+		TypedActionResult<String> uploadResult;
+
+		try {
+			TypedActionResult<String> mimeType = ImageUtil.getMimeType
+					(data);
+			if (!mimeType.isOk()) {
+				return TypedActionResult.fail(mimeType);
+			}
+
+			uploadResult =
+					amazonS3Service
+							.uploadImage(AmazonS3Service.ImageType.MAP, mimeType.getObject(), new
+									FileInputStream(data), data.length());
+		} catch (IOException e) {
+			return TypedActionResult.fail("Could not open file for upload: %s", e.getMessage());
+		}
+
+		if (!uploadResult.isOk()) {
+			return TypedActionResult.fail(uploadResult);
+		}
 
 
 		ScaledMap map = new ScaledMap();
-		try {
-			map.setData(session.getLobHelper().createBlob(new FileInputStream(data), data.length()));
-		} catch (FileNotFoundException e) {
-			return TypedActionResult.fail(e.getMessage());
-		}
 
+		map.setAmazonKey(uploadResult.getObject());
 		map.setName(name);
 		map.setSquareSize(squareSize);
 		map.setOwner(user);
@@ -325,34 +338,48 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
+	public TypedActionResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
+			String name,
 									   int diameter, @Nonnull byte[] image) {
-		Session session = entityManager.unwrap(Session.class);
+		TypedActionResult<String> uploadResult =
+				amazonS3Service.uploadImage(AmazonS3Service.ImageType.TOKEN,
+						image);
 
-		TokenDefinition def = new TokenDefinition();
-		def.setImageData(session.getLobHelper().createBlob(image));
-		def.setOwner(user);
-		def.setDiameterInSquares(diameter);
-		def.setName(name);
+		if (uploadResult.isOk()) {
+			TokenDefinition def = new TokenDefinition();
+			def.setOwner(user);
+			def.setDiameterInSquares(diameter);
+			def.setName(name);
+			def.setAmazonKey(uploadResult.getObject());
 
-		tokenDefinitionDAO.save(def);
+			tokenDefinitionDAO.save(def);
 
-		return def;
+			return TypedActionResult.ok(def);
+		}
+
+		return TypedActionResult.fail(uploadResult);
 	}
 
 	@Override
 	@Transactional
-	public Portrait createPortrait(@Nonnull BeholderUser user, @Nonnull String name, @Nonnull byte[] image) {
-		Session session = entityManager.unwrap(Session.class);
+	public TypedActionResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
+			name, @Nonnull byte[] image) {
+		TypedActionResult<String> uploadResult =
+				amazonS3Service.uploadImage(AmazonS3Service.ImageType.PORTRAIT, image);
 
-		Portrait portrait = new Portrait();
-		portrait.setOwner(user);
-		portrait.setName(name);
-		portrait.setData(session.getLobHelper().createBlob(image));
+		if (uploadResult.isOk()) {
 
-		portraitDAO.save(portrait);
+			Portrait portrait = new Portrait();
+			portrait.setOwner(user);
+			portrait.setName(name);
+			portrait.setAmazonKey(uploadResult.getObject());
 
-		return portrait;
+			portraitDAO.save(portrait);
+
+			return TypedActionResult.ok(portrait);
+		}
+
+		return TypedActionResult.fail(uploadResult);
 	}
 
 	@Override
@@ -530,8 +557,6 @@ class MapServiceImpl implements MapService {
 
 		double angle = Math.toRadians(360.0 / (double) participants.size());
 
-
-
 		int distance = Optional.ofNullable(view.getSelectedMap())
 				.map(ScaledMap::getSquareSize)
 				.map(s -> s * participants.size())
@@ -565,30 +590,26 @@ class MapServiceImpl implements MapService {
 	private void updateMainView(MapView view, Predicate<RegistryEntry> selector,
 								ScaledMap map) {
 		Dimension dimensions = map.getDisplayDimension(view);
-		String imageUrl = urlService.contextRelative(
-				String.format("/images/map/%d?preview=true&", map.getId()));
 
-		internalUpdateView(dimensions, false, imageUrl,
+		internalUpdateView(dimensions, false,
 				selector.and(e -> !e.isPreviewMode()), view, map);
 	}
 
 	private void updatePreview(MapView view, Predicate<RegistryEntry> selector,
 							   ScaledMap map) {
 		Dimension dimensions = view.getPreviewDimensions();
-		String imageUrl = urlService.contextRelative(
-				String.format("/images/map/%d?preview=true&", map.getId()));
 
-		internalUpdateView(dimensions, true, imageUrl,
+		internalUpdateView(dimensions, true,
 				selector.and(RegistryEntry::isPreviewMode), view, map);
 
 	}
 
 	private void internalUpdateView(Dimension dimensions, boolean previewMode,
-									String src, Predicate<RegistryEntry> selector, MapView view,
+									Predicate<RegistryEntry> selector, MapView view,
 									ScaledMap map) {
 		double factor = previewMode ? map.getPreviewFactor() : map.getDisplayFactor(view);
 
-		MapRenderable renderable = mapToJS(dimensions, previewMode, src, view,
+		MapRenderable renderable = mapToJS(dimensions, previewMode, view,
 				map, factor);
 
 		BeholderRegistry.instance.sendToView(view.getId(), selector,
@@ -596,9 +617,9 @@ class MapServiceImpl implements MapService {
 	}
 
 	private MapRenderable mapToJS(Dimension dimensions, boolean previewMode,
-								  String src, MapView view, ScaledMap map, double factor) {
+								  MapView view, ScaledMap map, double factor) {
 		MapRenderable renderable = new MapRenderable();
-		renderable.setSrc(src);
+		renderable.setSrc(map.getImageUrl());
 		renderable.setWidth((int) dimensions.getWidth());
 		renderable.setHeight((int) dimensions.getHeight());
 
@@ -606,9 +627,6 @@ class MapServiceImpl implements MapService {
 				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
 				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
-		renderable.getTokens().forEach(t -> t.setSrc(urlService.contextRelative(String.format
-				("images/token/%s?%s",
-				t.getSrc(), previewMode ? "preview=true&" : ""))));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}
