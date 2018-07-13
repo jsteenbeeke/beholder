@@ -19,6 +19,15 @@ package com.jeroensteenbeeke.topiroll.beholder;
 
 import javax.persistence.EntityManagerFactory;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -79,5 +88,36 @@ public class BeholderApplicationConfig {
 	@Bean
 	public TestModeEntityPopulator testPopulator() {
 		return new TestModeEntityPopulator();
+	}
+
+	@Bean
+	public TransferManager transferManager(@Value("${amazon.clientid}") String clientId,
+										   @Value("${amazon.clientsecret}") String clientSecret,
+										   @Value("${amazon.region}") String region
+
+	) {
+		AWSCredentials credentials = new BasicAWSCredentials(clientId, clientSecret);
+		AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
+
+		return TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard()
+				.withCredentials(provider).withRegion(region).build()).build();
+
+	}
+
+	@Bean
+	public AmazonS3 amazonS3(@Value("${amazon.clientid}") String clientId,
+							 @Value("${amazon.clientsecret}") String clientSecret,
+							 @Value("${amazon.region}") String region
+
+	) {
+		AWSCredentials credentials = new BasicAWSCredentials(clientId, clientSecret);
+		AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
+
+		return AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(provider).build();
+	}
+
+	@Bean
+	public AmazonData amazonData(@Value("${amazon.url.prefix}") String urlPrefix) {
+		return new AmazonData(urlPrefix);
 	}
 }

@@ -65,4 +65,5 @@
 		<addNotNullConstraint columnDataType="java.sql.Types.INTEGER" columnName="basicheight" tableName="scaledmap"/>
 	</changeSet>
 
+
 </databaseChangeLog>

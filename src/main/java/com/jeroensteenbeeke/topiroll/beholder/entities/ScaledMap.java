@@ -37,7 +37,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 @Entity
-public class ScaledMap extends BaseDomainObject {
+public class ScaledMap extends BaseDomainObject implements AmazonStored {
 
 	private static final long serialVersionUID = 1L;
 
@@ -50,13 +50,17 @@ public class ScaledMap extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@Column(nullable=true, name="amazon_key")
+	private String amazonKey;
+
+
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "folder")
 	private MapFolder folder;
 
 
 	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-	private List<TokenInstance> tokens = new ArrayList<TokenInstance>();
+	private List<TokenInstance> tokens = new ArrayList<>();
 
 
 	@Column(nullable = false)
@@ -66,10 +70,10 @@ public class ScaledMap extends BaseDomainObject {
 	private int basicWidth;
 
 	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-	private List<FogOfWarGroup> groups = new ArrayList<FogOfWarGroup>();
+	private List<FogOfWarGroup> groups = new ArrayList<>();
 
 	@OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-	private List<FogOfWarShape> fogOfWarShapes = new ArrayList<FogOfWarShape>();
+	private List<FogOfWarShape> fogOfWarShapes = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
@@ -78,15 +82,16 @@ public class ScaledMap extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String name;
+
 	@Column(nullable = false)
 	private int squareSize;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	@Lob
 	private Blob data;
 
 	@OneToMany(mappedBy = "selectedMap", fetch = FetchType.LAZY)
-	private List<MapView> selectedBy = new ArrayList<MapView>();
+	private List<MapView> selectedBy = new ArrayList<>();
 
 	public Long getId() {
 		return id;
@@ -245,4 +250,15 @@ public class ScaledMap extends BaseDomainObject {
 				.filter(s -> !shapes.containsKey(s.getId())).forEach(s -> shapes.put(s.getId(), s));
 		return new ArrayList<>(shapes.values());
 	}
+
+	@CheckForNull
+	@Override
+	public String getAmazonKey() {
+		return amazonKey;
+	}
+	public void setAmazonKey( @Nullable String amazonKey) {
+		this.amazonKey = amazonKey;
+	}
+
+
 }

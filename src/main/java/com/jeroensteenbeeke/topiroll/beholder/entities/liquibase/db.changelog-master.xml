@@ -26,4 +26,6 @@
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-Portrait.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-PortraitVisibility.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-YouTubePlaylist.xml"/>
+
+	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-amazon-migration.xml"/>
 </databaseChangeLog>

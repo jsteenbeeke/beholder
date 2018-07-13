@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+	<changeSet author="jeroensteenbeeke" id="123">
+		<addColumn tableName="portrait">
+			<column name="amazon_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroensteenbeeke" id="124">
+		<addColumn tableName="scaledmap">
+			<column name="amazon_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="jeroensteenbeeke" id="125">
+		<addColumn tableName="tokendefinition">
+			<column name="amazon_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="126" author="jeroensteenbeeke">
+		<dropNotNullConstraint tableName="tokendefinition" columnName="imagedata" columnDataType="BLOB" />
+		<dropNotNullConstraint tableName="portrait" columnName="data" columnDataType="BLOB" />
+		<dropNotNullConstraint tableName="scaledmap" columnName="data" columnDataType="BLOB" />
+	</changeSet>
+</databaseChangeLog>

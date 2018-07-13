@@ -254,7 +254,7 @@ public class TokenInstance extends BaseDomainObject {
 		token.setDiameterInSquares(getDefinition().getDiameterInSquares());
 		token.setLabel(getLabel());
 		// Workaround, will be transformed to URL
-		token.setSrc(Long.toString(getDefinition().getId()));
+		token.setSrc(getDefinition().getImageUrl());
 		token.setX((int) (getOffsetX() * factor));
 		token.setY((int) (getOffsetY() * factor));
 
@@ -262,10 +262,6 @@ public class TokenInstance extends BaseDomainObject {
 	}
 
 	public String toPreview(double factor) {
-		final String url = UrlUtils.rewriteToContextRelative("images/token/" + getDefinition()
-						.getId(),
-				RequestCycle.get());
-
 		return String.format("{\n" +
 						"\t'src': '%s',\n" +
 						"\t'border_type': '%s',\n" +
@@ -274,7 +270,7 @@ public class TokenInstance extends BaseDomainObject {
 						"\t'width': %d,\n" +
 						"\t'height': %d,\n" +
 						"}",
-				url,
+				getDefinition().getImageUrl(),
 				getBorderType().name(), (int) (getOffsetX() * factor), (int) (getOffsetY() * factor),
 				(int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()),
 				(int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));

@@ -43,7 +43,7 @@ public interface MapService {
 
 	//region Tokens
 
-	TokenDefinition createToken(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedActionResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,
 								int diameter, @Nonnull byte[] image);
 
 
@@ -92,7 +92,8 @@ public interface MapService {
 	//endregion
 
 	//region Portraits
-	Portrait createPortrait(@Nonnull BeholderUser user, @Nonnull String name, @Nonnull byte[] image);
+	TypedActionResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String name,
+											  @Nonnull byte[] image);
 
 	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
 

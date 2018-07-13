@@ -46,9 +46,10 @@
   </changeSet>
 <changeSet author="jeroen" id="61">
     <addColumn tableName="tokendefinition">
-      <column name="diameterinsquares" type="java.sql.Types.INTEGER" defaultValueNumeric="1">
+      <column defaultValueNumeric="1" name="diameterinsquares" type="java.sql.Types.INTEGER">
         <constraints nullable="false"/>
       </column>
     </addColumn>
   </changeSet>
+
 </databaseChangeLog>

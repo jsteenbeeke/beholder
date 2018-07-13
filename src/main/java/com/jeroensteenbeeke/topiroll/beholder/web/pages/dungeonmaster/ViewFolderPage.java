@@ -20,9 +20,6 @@ public class ViewFolderPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private ScaledMapDAO mapDAO;
-
-	@Inject
 	private MapFolderDAO mapFolderDAO;
 
 	private IModel<MapFolder> folderModel;

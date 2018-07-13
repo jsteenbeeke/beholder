@@ -193,7 +193,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						new Label("size", String.format("%d squares (diameter)",
 								definition.getDiameterInSquares())));
 				item.add(new ContextImage("thumb",
-						"images/token/" + definition.getId()));
+						definition.getImageUrl()));
 				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
@@ -246,9 +246,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				Portrait portrait = item.getModelObject();
 
 				item.add(new Label("name", portrait.getName()));
-				final Blob imageData = portrait.getData();
 
-				item.add(new ContextImage("thumb","images/portrait/"+ portrait.getId()));
+				item.add(new ContextImage("thumb", portrait.getImageUrl()));
 				item.add(new IconLink<Portrait>("edit", item.getModel(),
 						GlyphIcon.edit) {
 					private static final long serialVersionUID = 1L;
