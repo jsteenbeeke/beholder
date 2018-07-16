@@ -13,8 +13,7 @@ public class JSPortrait {
 	}
 
 	public JSPortrait(PortraitVisibility portraitVisibility) {
-		this.url = BeholderApplication.get().getBean(URLService.class).contextRelative(String
-				.format("/images/portrait/%d", portraitVisibility.getPortrait().getId()));
+		this.url = portraitVisibility.getPortrait().getImageUrl();
 		this.location = portraitVisibility.getLocation().name().toLowerCase();
 
 	}

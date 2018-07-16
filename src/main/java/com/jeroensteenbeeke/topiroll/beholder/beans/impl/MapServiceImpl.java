@@ -120,8 +120,7 @@ class MapServiceImpl implements MapService {
 		TypedActionResult<String> uploadResult;
 
 		try {
-			TypedActionResult<String> mimeType = ImageUtil.getMimeType
-					(data);
+			TypedActionResult<String> mimeType = ImageUtil.getMimeType(data);
 			if (!mimeType.isOk()) {
 				return TypedActionResult.fail(mimeType);
 			}

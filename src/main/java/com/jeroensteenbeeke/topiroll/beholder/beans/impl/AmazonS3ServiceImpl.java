@@ -1,6 +1,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
@@ -20,7 +23,6 @@ import java.util.UUID;
 @Component
 public class AmazonS3ServiceImpl implements AmazonS3Service {
 	private final String amazonBucketName;
-	private final String amazonUrlPrefix;
 
 	private final TransferManager transferManager;
 
@@ -29,13 +31,10 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 	@Autowired
 	public AmazonS3ServiceImpl(TransferManager transferManager,
 							   AmazonS3 s3,
-							   @Value("${amazon.bucketname}") String amazonBucketName,
-							   @Value("${amazon.url.prefix}")
-							   String amazonUrlPrefix) {
+							   @Value("${amazon.bucketname}") String amazonBucketName) {
 		this.transferManager = transferManager;
 		this.s3 = s3;
 		this.amazonBucketName = amazonBucketName;
-		this.amazonUrlPrefix = amazonUrlPrefix;
 	}
 
 	@Override
@@ -64,6 +63,13 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 
 	@Override
 	public ActionResult removeImage(String imageKey) {
-		return null;
+
+		try {
+			s3.deleteObject(new DeleteObjectRequest(amazonBucketName, imageKey));
+
+			return ActionResult.ok();
+		} catch (SdkClientException e) {
+			return ActionResult.error(e.getMessage());
+		}
 	}
 }

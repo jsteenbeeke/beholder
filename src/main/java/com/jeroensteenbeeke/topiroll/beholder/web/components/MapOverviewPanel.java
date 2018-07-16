@@ -6,6 +6,8 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -116,13 +118,28 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 					private static final long serialVersionUID = 1L;
 
+					@Inject
+					private AmazonS3Service amazon;
+
 					@Override
 					public void onClick() {
 						ScaledMap map = item.getModelObject();
-						MapFolder folder = map.getFolder();
-						mapDAO.delete(map);
 
-						goToFolderParentPage(folder);
+						ActionResult amazonResult;
+						if (map.getAmazonKey() != null) {
+							amazonResult = amazon.removeImage(map.getAmazonKey());
+						} else {
+							amazonResult = ActionResult.ok();
+						}
+
+						if (amazonResult.isOk()) {
+							MapFolder folder = map.getFolder();
+							mapDAO.delete(map);
+
+							goToFolderParentPage(folder);
+						} else {
+							error(amazonResult.getMessage());
+						}
 
 					}
 				}.setVisible(

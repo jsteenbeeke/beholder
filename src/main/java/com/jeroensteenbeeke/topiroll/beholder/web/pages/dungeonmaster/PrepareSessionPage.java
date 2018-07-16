@@ -8,6 +8,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
@@ -54,6 +55,9 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 	@Inject
 	private YouTubePlaylistDAO playlistDAO;
+
+	@Inject
+	private AmazonS3Service amazon;
 
 	public PrepareSessionPage() {
 		super("");
@@ -214,6 +218,20 @@ public class PrepareSessionPage extends AuthenticatedPage {
 							private static final long serialVersionUID = 1L;
 
 							@Override
+							protected ActionResult onBeforeDelete(TokenDefinition entity) {
+								if (entity.getAmazonKey() != null) {
+									return amazon.removeImage(entity.getAmazonKey());
+								}
+
+								return ActionResult.ok();
+							}
+
+							@Override
+							protected void onDeleted() {
+								setResponsePage(new PrepareSessionPage());
+							}
+
+							@Override
 							protected void onSaved(TokenDefinition entity) {
 								setResponsePage(new PrepareSessionPage());
 
@@ -261,6 +279,21 @@ public class PrepareSessionPage extends AuthenticatedPage {
 							private static final long serialVersionUID = 1L;
 
 							@Override
+							protected ActionResult onBeforeDelete(Portrait entity) {
+								if (entity.getAmazonKey() != null) {
+									return amazon.removeImage(entity.getAmazonKey());
+								}
+
+								return ActionResult.ok();
+							}
+
+
+							@Override
+							protected void onDeleted() {
+								setResponsePage(new PrepareSessionPage());
+							}
+
+							@Override
 							protected void onSaved(Portrait entity) {
 								setResponsePage(new PrepareSessionPage());
 
@@ -306,6 +339,11 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 							@Override
 							protected void onCancel(YouTubePlaylist entity) {
+								setResponsePage(new PrepareSessionPage());
+							}
+
+							@Override
+							protected void onDeleted() {
 								setResponsePage(new PrepareSessionPage());
 							}
 						});
@@ -437,6 +475,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					protected void onCancel(YouTubePlaylist entity) {
 						setResponsePage(new PrepareSessionPage());
 					}
+
 				});
 			}
 		});
