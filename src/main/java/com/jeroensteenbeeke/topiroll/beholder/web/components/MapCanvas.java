@@ -148,7 +148,9 @@ public class MapCanvas extends WebComponent {
 		response.render(wicketEvent);
 		response.render(wicketWebsocket);
 
-
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/images.js")));
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/multicanvas.js")));

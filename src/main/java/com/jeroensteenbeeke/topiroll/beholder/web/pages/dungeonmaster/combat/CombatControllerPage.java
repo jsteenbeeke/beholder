@@ -185,9 +185,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 												"color: #cccccc; text-align: center; margin: 0; padding: 0;",
 										left, top, actualWH, i
 												.getBorderType().toHexColor(),
-										UrlUtils.rewriteToContextRelative(String.format("images/token/%d",
-												i.getDefinition().getId()), RequestCycle
-												.get()),
+										i.getDefinition().getImageUrl(),
 										i.isShow() ? "solid" : "dashed"
 								);
 							}

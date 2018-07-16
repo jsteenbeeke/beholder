@@ -51,9 +51,7 @@ function renderMap(containerId, map) {
 	var context = multiCanvas.getContext('2d');
 	context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
 
-	var img = new Image();
-	img.onload = function() {
-	
+	Images.load(src, function(img) {
 		context.save();
 		context.beginPath();
 		if (revealed) {
@@ -86,7 +84,5 @@ function renderMap(containerId, map) {
 		}
 		
 		context.restore();
-	};
-	
-	img.src = src;
+    });
 }

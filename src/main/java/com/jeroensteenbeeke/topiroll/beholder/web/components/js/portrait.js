@@ -66,12 +66,9 @@ function updatePortraits(data) {
         }
 
         if (target !== '') {
-            var img = new Image();
-
-            img.onload = function() {
+            Images.load(p.url, function(img) {
                 document.getElementById(target).appendChild(img);
-            };
-            img.src = p.url;
+            });
         }
     });
 }

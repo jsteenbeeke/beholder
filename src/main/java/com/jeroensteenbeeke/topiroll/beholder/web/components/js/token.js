@@ -137,9 +137,7 @@ function renderToken(context, token) {
     var oy = y + radius;
     var color = determineBorderColor(borderType);
 
-    var img = new Image();
-
-    img.onload = function () {
+    Images.load(src, function(img) {
         // Step 1: Draw image (with circle clip path)
         context.save();
         context.beginPath();
@@ -173,6 +171,5 @@ function renderToken(context, token) {
         if (label) {
             drawText(context, token);
         }
-    }
-    img.src = src;
+    });
 }

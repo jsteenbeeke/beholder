@@ -85,9 +85,7 @@ function previewToken(canvas, token) {
     var oy = y + radius;
     var color = determineBorderColor(borderType);
 
-    var img = new Image();
-
-    img.onload = function () {
+    Images.load(src, function(img) {
         // Step 1: Draw image (with circle clip path)
         context.save();
         context.beginPath();
@@ -106,14 +104,13 @@ function previewToken(canvas, token) {
         context.setStrokeStyle(color);
         context.stroke();
         context.restore();
+    });
 
-    }
-    img.src = src;
 }
 
 function renderMapToCanvas(canvas, src, targetWidth, onDrawn) {
-    var img = new Image();
-    img.onload = function () {
+    Images.load(src, function(img) {
+
         var ctx = canvas.getContext('2d');
         var w, h;
 
@@ -128,7 +125,5 @@ function renderMapToCanvas(canvas, src, targetWidth, onDrawn) {
         ctx.drawImage(img, 0, 0, w, h);
 
         onDrawn();
-    };
-
-    img.src = src;
+    });
 }

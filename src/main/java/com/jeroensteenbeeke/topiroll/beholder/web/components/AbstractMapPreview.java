@@ -86,6 +86,10 @@ public abstract class AbstractMapPreview extends Border {
 
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
+						"js/images.js")));
+
+		response.render(JavaScriptHeaderItem
+				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/multicanvas.js")));
 
 		response.render(JavaScriptHeaderItem

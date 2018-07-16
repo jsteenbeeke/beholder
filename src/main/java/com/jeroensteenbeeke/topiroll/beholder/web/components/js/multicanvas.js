@@ -228,9 +228,6 @@ MultiCanvasContext.prototype.closePath = function () {
 
 MultiCanvasContext.prototype.drawImage = function (img, x, y, sWidth, sHeight, dx, dy, dWidth, dHeight) {
     this.forEachContext('drawImage', function (ctx) {
-        // var _img = new Image();
-
-        // _img.onload = function () {
             var adjustedX = x - ctx.canvasOffsetX;
             var adjustedY = y - ctx.canvasOffsetY;
 
@@ -241,10 +238,6 @@ MultiCanvasContext.prototype.drawImage = function (img, x, y, sWidth, sHeight, d
             } else {
                 ctx.drawImage(img, adjustedX, adjustedY, sWidth, sHeight, dx, dy, dWidth, dHeight);
             }
-
-
-        // }
-        // _img.src = img.src;
     });
 };
 

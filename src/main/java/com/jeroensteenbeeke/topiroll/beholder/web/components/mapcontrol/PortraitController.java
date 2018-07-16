@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
+import org.apache.wicket.markup.html.image.ExternalImage;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -58,8 +59,8 @@ public abstract class PortraitController extends TypedPanel<MapView> {
 			protected void populateItem(Item<Portrait> item) {
 				Portrait portrait = item.getModelObject();
 				item.add(new Label("name", portrait.getName()));
-				item.add(new ContextImage("thumb",
-						String.format("portraits/%d", portrait.getId())));
+				item.add(new ExternalImage("thumb",
+						portrait.getImageUrl()));
 				item.add(new ListView<PortraitVisibilityLocation>("locations",
 						Lists.newArrayList(PortraitVisibilityLocation.values())) {
 
