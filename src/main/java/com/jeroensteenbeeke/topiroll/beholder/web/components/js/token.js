@@ -123,53 +123,57 @@ function determineHealthAngle(intensity) {
 }
 
 function renderToken(context, token) {
-    var src = token.src; // string
-    var borderType = token.border_type; // enum
-    var borderIntensity = token.border_intensity; // enum
-    var label = token.label; // string
-    var x = token.x; // int
-    var y = token.y; // int
-    var width = token.width; // int
-    var height = token.height; // int
+    return new Promise(resolve => {
+        var src = token.src; // string
+        var borderType = token.border_type; // enum
+        var borderIntensity = token.border_intensity; // enum
+        var label = token.label; // string
+        var x = token.x; // int
+        var y = token.y; // int
+        var width = token.width; // int
+        var height = token.height; // int
 
-    var radius = (width + height) / 4;
-    var ox = x + radius;
-    var oy = y + radius;
-    var color = determineBorderColor(borderType);
+        var radius = (width + height) / 4;
+        var ox = x + radius;
+        var oy = y + radius;
+        var color = determineBorderColor(borderType);
 
-    Images.load(src, function(img) {
-        // Step 1: Draw image (with circle clip path)
-        context.save();
-        context.beginPath();
-        context.arc(ox, oy, radius, 0, 2 * Math.PI);
-        context.closePath();
-        context.clip();
-        context.drawImage(img, x, y, width, height);
-        context.restore();
+        Images.load(src, function (img) {
+            // Step 1: Draw image (with circle clip path)
+            context.save();
+            context.beginPath();
+            context.arc(ox, oy, radius, 0, 2 * Math.PI);
+            context.closePath();
+            context.clip();
+            context.drawImage(img, x, y, width, height);
+            context.restore();
 
-        // Step 2: Draw base border (black)
-        context.save();
-        context.beginPath();
-        context.arc(ox, oy, radius, 0, 2 * Math.PI);
-        context.setLineWidth(radius / 7);
-        context.setStrokeStyle('#000000');
-        context.stroke();
-        context.restore();
+            // Step 2: Draw base border (black)
+            context.save();
+            context.beginPath();
+            context.arc(ox, oy, radius, 0, 2 * Math.PI);
+            context.setLineWidth(radius / 7);
+            context.setStrokeStyle('#000000');
+            context.stroke();
+            context.restore();
 
-        // Step 3: Draw health border (user-determined)
-        var healthAngle = determineHealthAngle(borderIntensity);
+            // Step 3: Draw health border (user-determined)
+            var healthAngle = determineHealthAngle(borderIntensity);
 
-        context.save();
-        context.beginPath();
-        context.arc(ox, oy, radius, 0, healthAngle);
-        context.setLineWidth(radius / 8);
-        context.setStrokeStyle(color);
-        context.stroke();
-        context.restore();
+            context.save();
+            context.beginPath();
+            context.arc(ox, oy, radius, 0, healthAngle);
+            context.setLineWidth(radius / 8);
+            context.setStrokeStyle(color);
+            context.stroke();
+            context.restore();
 
-        // Step 4: Draw text
-        if (label) {
-            drawText(context, token);
-        }
+            // Step 4: Draw text
+            if (label) {
+                drawText(context, token);
+            }
+
+            resolve();
+        });
     });
 }

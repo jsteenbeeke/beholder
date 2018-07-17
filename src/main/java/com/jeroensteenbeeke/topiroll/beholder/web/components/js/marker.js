@@ -16,22 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 function renderMarker(context, marker) {
-	var color = marker.color;
-	var shape = marker.shape;
-	
-	context.save();
-	context.setGlobalAlpha(0.5);
-	context.beginPath();
-	if (shape.type === 'rect') {
-		applyRectangle(context, shape);
-	} else if (shape.type === 'circle') {
-		applyCircle(context, shape);
-	} else if (shape.type === 'polygon') {
-		applyPoly(context, shape);
-	}
-	context.closePath();
-	context.setFillStyle(color);
-	context.fill();
-	
-	context.restore();
+	return new Promise(resolve => {
+        var color = marker.color;
+        var shape = marker.shape;
+
+        context.save();
+        context.setGlobalAlpha(0.5);
+        context.beginPath();
+        if (shape.type === 'rect') {
+            applyRectangle(context, shape);
+        } else if (shape.type === 'circle') {
+            applyCircle(context, shape);
+        } else if (shape.type === 'polygon') {
+            applyPoly(context, shape);
+        }
+        context.closePath();
+        context.setFillStyle(color);
+        context.fill();
+
+        context.restore();
+
+        resolve();
+    });
 }

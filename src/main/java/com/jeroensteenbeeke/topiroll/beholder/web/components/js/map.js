@@ -33,56 +33,69 @@ function clearMap(containerId) {
 }
 
 function renderMap(containerId, map) {
-	var src = map.src; // String
-	var width = map.width; // int
-	var height = map.height; // int
-	var revealed = map.revealed; // Array of shapes
-	var tokens = map.tokens; // Array of tokens
-	var markers = map.area_markers; // Array of area markers
+        var src = map.src; // String
+        var width = map.width; // int
+        var height = map.height; // int
+        var revealed = map.revealed; // Array of shapes
+        var tokens = map.tokens; // Array of tokens
+        var markers = map.area_markers; // Array of area markers
+		var promise;
 
-	if (lastRenderedMap !== src) {
-		clearMap(containerId);
+        if (lastRenderedMap !== src) {
+            clearMap(containerId);
 
-		multiCanvas = new MultiCanvas(containerId, width, height);
+            multiCanvas = new MultiCanvas(containerId, width, height);
 
-		lastRenderedMap = src;
-	}
+            lastRenderedMap = src;
+        }
 
-	var context = multiCanvas.getContext('2d');
-	context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
+        var context = multiCanvas.getContext('2d');
+        context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
 
-	Images.load(src, function(img) {
-		context.save();
-		context.beginPath();
-		if (revealed) {
-			revealed.forEach(function(shape) {
-				if (shape.type === 'rect') {
-					applyRectangle(context, shape);
-				} else if (shape.type === 'circle') {
-					applyCircle(context, shape);
-				} else if (shape.type === 'polygon') {
-					applyPoly(context, shape);
-				}
-			});
-		}
-		
-		context.closePath();
-		context.clip();
-		
-		try {
-			context.drawImage(img, 0, 0, width, height);
-			
-			tokens.forEach(function(token) {
-				renderToken(context, token);
-			});
-			
-			markers.forEach(function(marker) {
-				renderMarker(context, marker);
-			});
-		} catch (e) {
-			console.log(e.message, e.name);
-		}
-		
-		context.restore();
-    });
+        Images.load(src, function (img) {
+            context.save();
+            context.beginPath();
+            if (revealed) {
+                revealed.forEach(function (shape) {
+                    if (shape.type === 'rect') {
+                        applyRectangle(context, shape);
+                    } else if (shape.type === 'circle') {
+                        applyCircle(context, shape);
+                    } else if (shape.type === 'polygon') {
+                        applyPoly(context, shape);
+                    }
+                });
+            }
+
+            context.closePath();
+            context.clip();
+
+            try {
+                context.drawImage(img, 0, 0, width, height);
+
+                promise = new Promise(resolve => {resolve();});
+
+                tokens.forEach(function (token) {
+                	promise = promise.then(function() {
+                        return renderToken(context, token);
+                    });
+                });
+
+                markers.forEach(function (marker) {
+                    promise = promise.then(function() {
+                        return renderMarker(context, marker);
+                    });
+                });
+
+                promise.then(function() {
+                	multiCanvas.switchBuffer();
+				});
+
+
+            } catch (e) {
+                console.log(e.message, e.name);
+            }
+
+            context.restore();
+        });
 }

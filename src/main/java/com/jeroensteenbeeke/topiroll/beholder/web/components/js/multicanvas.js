@@ -1,14 +1,21 @@
 const SEGMENT_SIZE = 500;
-
+const CANVAS_RED = "red";
+const CANVAS_BLACK = "black";
+const CANVAS_TYPES = [ CANVAS_BLACK, CANVAS_RED ];
 
 function MultiCanvas(containerId, requiredWidth, requiredHeight) {
+    var container = document.getElementById(containerId);
+    var bounds = container.getBoundingClientRect();
+    var offsetX = bounds.left + window.pageXOffset;
+    var offsetY = bounds.top + window.pageYOffset;
+
     var totalWidth = Math.ceil(requiredWidth / SEGMENT_SIZE) * SEGMENT_SIZE;
     var totalHeight = Math.ceil(requiredHeight / SEGMENT_SIZE) * SEGMENT_SIZE;
     var numSegmentsX = totalWidth / SEGMENT_SIZE;
     var numSegmentsY = totalHeight / SEGMENT_SIZE;
     var canvases = [];
     var contexts = [];
-    var x, y;
+    var x, y, t;
 
     // Step 1: Create Canvas HTML
     var canvasHtml = '<!--';
@@ -17,13 +24,23 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
         canvases[y] = [];
         contexts[y] = [];
         for (x = 0; x < numSegmentsX; x++) {
-            canvasHtml = canvasHtml + '--><canvas id="multicanvas-'+ containerId +'-' + x + '-' + y + '" ' +
+            canvasHtml = canvasHtml + '--><canvas id="multicanvas-red-'+ containerId +'-' + x + '-' + y + '" ' +
                 'width="' + Math.min(totalWidth, SEGMENT_SIZE) + '" ' +
                 'height="' + Math.min(totalHeight, SEGMENT_SIZE) + '" style="';
 
-            canvasHtml = canvasHtml +
-                'display: inline-block;';
-            canvasHtml = canvasHtml + ' width: ' + Math.min(totalWidth, SEGMENT_SIZE) + 'px; height: ' + Math.min(totalHeight, SEGMENT_SIZE) + 'px; padding: 0px; margin: 0px; border: 0px; background: transparent;"></canvas><!--';
+            canvasHtml = canvasHtml + this.getCanvasCSS(0,
+                offsetX + x * SEGMENT_SIZE,
+                offsetY + y * SEGMENT_SIZE, totalWidth, totalHeight) + '"></canvas><!--';
+
+            canvasHtml = canvasHtml + '--><canvas id="multicanvas-black-'+ containerId +'-' + x + '-' + y + '" ' +
+                'width="' + Math.min(totalWidth, SEGMENT_SIZE) + '" ' +
+                'height="' + Math.min(totalHeight, SEGMENT_SIZE) + '" style="';
+
+            canvasHtml = canvasHtml + this.getCanvasCSS(-1, offsetX + x * SEGMENT_SIZE,
+                offsetY + y * SEGMENT_SIZE, totalWidth, totalHeight) + '"></canvas><!--';
+
+            canvases[y][x] = [];
+            contexts[y][x] = [];
         }
 
         // canvasHtml = canvasHtml + '--><br style="display: inline-block;"/><!--';
@@ -39,14 +56,18 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
     // Step 3: Find all created canvases and add to array
     for (x = 0; x < numSegmentsX; x++) {
         for (y = 0; y < numSegmentsY; y++) {
-            canvases[y][x] = document.getElementById('multicanvas-'+ containerId +'-' + x + '-' + y);
-            contexts[y][x] = canvases[y][x].getContext('2d');
-            contexts[y][x].id = 'x' + x + '/y' + y;
-            contexts[y][x].canvasOffsetX = x * SEGMENT_SIZE;
-            contexts[y][x].canvasOffsetY = y * SEGMENT_SIZE;
+            for (t = 0; t < CANVAS_TYPES.length; t++) {
+                let z = CANVAS_TYPES[t];
 
-            canvases[y][x].width = Math.min(totalWidth, SEGMENT_SIZE);
-            canvases[y][x].height = Math.min(totalHeight, SEGMENT_SIZE);
+                canvases[y][x][z] = document.getElementById('multicanvas-' + z + '-' + containerId + '-' + x + '-' + y);
+                contexts[y][x][z] = canvases[y][x][z].getContext('2d');
+                contexts[y][x][z].id = 'x' + x + '/y' + y + '/' + z;
+                contexts[y][x][z].canvasOffsetX = x * SEGMENT_SIZE;
+                contexts[y][x][z].canvasOffsetY = y * SEGMENT_SIZE;
+
+                canvases[y][x][z].width = Math.min(totalWidth, SEGMENT_SIZE);
+                canvases[y][x][z].height = Math.min(totalHeight, SEGMENT_SIZE);
+            }
         }
     }
 
@@ -55,24 +76,70 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
 
     this.width = totalWidth;
     this.height = totalHeight;
+
+    this.selectedBuffer = CANVAS_BLACK;
 }
 
-function MultiCanvasContext(canvases, contexts) {
+function MultiCanvasContext(canvases, contexts, canvas) {
     this.canvases = canvases;
     this.drawContexts = contexts;
+    this.parentCanvas = canvas;
 }
 
-MultiCanvasContext.prototype.forEachContext = function (name, operation) {
-    this.drawContexts.forEach(function (row) {
+MultiCanvas.prototype.getCanvasCSS = function(zIndex, offsetX, offsetY, totalWidth, totalHeight) {
+    return 'display: inline-block; ' +
+        'width: ' + Math.min(totalWidth, SEGMENT_SIZE) + 'px; ' +
+        'height: ' + Math.min(totalHeight, SEGMENT_SIZE) + 'px; ' +
+        'padding: 0px; ' +
+        'margin: 0px; ' +
+        'border: 0px; ' +
+        'background: transparent; ' +
+        'position: absolute;' +
+        'left: '+ offsetX + 'px;' +
+        'top: ' + offsetY + 'px;' +
+        'z-index: ' + zIndex + ';';
+};
 
-        row.forEach(function (ctx) {
-            operation(ctx);
+MultiCanvasContext.prototype.forEachContext = function (name, operation) {
+    var self = this;
+
+    this.drawContexts.forEach(row => {
+        row.forEach(ctx => {
+            operation(ctx[self.parentCanvas.selectedBuffer]);
         });
     });
 };
 
+MultiCanvas.prototype.switchBuffer = function() {
+    var self = this;
+    var notSelected;
+
+    if (this.selectedBuffer === CANVAS_BLACK) {
+        notSelected = CANVAS_RED;
+    } else {
+        notSelected = CANVAS_BLACK;
+    }
+
+    this.canvases.forEach(row => {
+        row.forEach(redAndBlack => {
+            let offsetX = redAndBlack[notSelected].offsetLeft;
+            let offsetY = redAndBlack[notSelected].offsetTop;
+
+            // 1. Set z-index of non-selected to -2
+           redAndBlack[notSelected].style = self.getCanvasCSS(-2, offsetX, offsetY, self.width, self.height);
+            // 2. Set z-index of selected to 0
+            redAndBlack[self.selectedBuffer].style = self.getCanvasCSS(0, offsetX, offsetY, self.width, self.height);
+            // 3. Set z-index of non-selected to -1
+            redAndBlack[notSelected].style = self.getCanvasCSS(-1, offsetX, offsetY, self.width, self.height);
+        });
+    });
+    // 4. Set selected to non-selected
+   this.selectedBuffer = notSelected;
+
+};
+
 MultiCanvasContext.prototype.measureText = function (text) {
-    return this.drawContexts[0][0].measureText(text);
+    return this.drawContexts[0][0][this.parentCanvas.selectedBuffer].measureText(text);
 };
 
 MultiCanvasContext.prototype.setLineWidth = function (width) {
@@ -243,7 +310,7 @@ MultiCanvasContext.prototype.drawImage = function (img, x, y, sWidth, sHeight, d
 
 MultiCanvas.prototype.getContext = function (contextId) {
     if (contextId === '2d') {
-        return new MultiCanvasContext(this.canvases, this.drawContexts);
+        return new MultiCanvasContext(this.canvases, this.drawContexts, this);
     }
 
     return null;
