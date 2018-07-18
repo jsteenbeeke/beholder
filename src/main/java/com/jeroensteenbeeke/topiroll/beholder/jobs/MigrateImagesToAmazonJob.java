@@ -27,7 +27,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 	private static final Logger log = LoggerFactory.getLogger(MigrateImagesToAmazonJob.class);
 
 	public  MigrateImagesToAmazonJob() {
-		super("Migrates images stored in the database to Amazon S3", Jobs.Updates);
+		super("Migrates images stored in the database to Amazon S3", Jobs.Initialize);
 	}
 
 

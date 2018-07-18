@@ -23,6 +23,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -567,6 +568,16 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				setResponsePage(new ControlViewPage(getModelObject()));
 			}
 		});
+
+		preview.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				createModalWindow(target, CompendiumPanel::new, getModelObject());
+			}
+
+		});
+
 
 		add(preview);
 

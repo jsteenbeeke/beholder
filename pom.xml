@@ -176,6 +176,12 @@
 			<artifactId>okhttp</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.atlassian.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.11.0</version>
+		</dependency>
+
 		<!-- Annotation Processors -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -279,6 +285,7 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+
 			<plugin>
 				<groupId>com.jeroensteenbeeke.andalite</groupId>
 				<artifactId>andalite-maven-plugin</artifactId>
