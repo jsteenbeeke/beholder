@@ -41,7 +41,7 @@ function renderMap(containerId, map) {
         var markers = map.area_markers; // Array of area markers
 		var promise;
 
-		if (multiCanvas === null) {
+		if (!multiCanvas) {
 			multiCanvas = new MultiCanvas(containerId, width, height);
 		}
 
