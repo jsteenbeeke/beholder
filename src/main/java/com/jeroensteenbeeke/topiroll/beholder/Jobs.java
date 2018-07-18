@@ -20,7 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.TaskGroup;
 
 public enum Jobs implements TaskGroup {
-Updates("Send updates to users")	;
+Updates("Send updates to users"), Initialize("Start application");
 
 	private final String descriptor;
 

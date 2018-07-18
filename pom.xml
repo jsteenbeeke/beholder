@@ -176,6 +176,11 @@
 			<artifactId>okhttp</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+		</dependency>
+
 		<!-- Annotation Processors -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -279,6 +284,19 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>com.jeroensteenbeeke.andalite</groupId>
 				<artifactId>andalite-maven-plugin</artifactId>
