@@ -48,7 +48,6 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
     canvasHtml = canvasHtml + '-->';
 
     // Step 2: Replace indicated canvas with canvas grid
-    var container = document.getElementById(containerId);
     container.style = 'line-height: 0; padding: 0; margin: 0; width: ' + totalWidth + 'px; height: ' + totalHeight + 'px;';
 
     container.insertAdjacentHTML('beforeend', canvasHtml);

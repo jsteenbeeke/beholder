@@ -105,8 +105,7 @@ public abstract class AbstractMapPreview extends Border {
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
 
-
-		onImageDrawComplete.append(String.format("var dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
+		onImageDrawComplete.append(String.format("\nvar dragDropOffset = document.getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
 		onImageDrawComplete.append(String.format("$('#%1$s > .dragdrop').css({\n" +
 						"\t\"position\" : \"absolute\",\n" +
 						"\t\"z-index\" :1,\n" +

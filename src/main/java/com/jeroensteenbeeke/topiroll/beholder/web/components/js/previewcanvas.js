@@ -28,6 +28,7 @@ function previewRectangle(canvas, color, alpha, rect) {
     ctx.fill();
     ctx.restore();
 
+    canvas.switchBuffer();
 }
 
 function previewCircle(canvas, color, alpha, circle) {
@@ -41,6 +42,8 @@ function previewCircle(canvas, color, alpha, circle) {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
+
+    canvas.switchBuffer();
 }
 
 function previewPolygon(canvasId, color, alpha, poly) {
@@ -55,6 +58,8 @@ function previewPolygon(canvasId, color, alpha, poly) {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
+
+    canvas.switchBuffer();
 }
 
 function determineBorderColor(type) {
@@ -104,6 +109,8 @@ function previewToken(canvas, token) {
         context.setStrokeStyle(color);
         context.stroke();
         context.restore();
+
+        canvas.switchBuffer();
     });
 
 }
@@ -123,6 +130,8 @@ function renderMapToCanvas(canvas, src, targetWidth, onDrawn) {
         }
 
         ctx.drawImage(img, 0, 0, w, h);
+
+        canvas.switchBuffer();
 
         onDrawn();
     });

@@ -41,13 +41,9 @@ function renderMap(containerId, map) {
         var markers = map.area_markers; // Array of area markers
 		var promise;
 
-        if (lastRenderedMap !== src) {
-            clearMap(containerId);
-
-            multiCanvas = new MultiCanvas(containerId, width, height);
-
-            lastRenderedMap = src;
-        }
+		if (multiCanvas === null) {
+			multiCanvas = new MultiCanvas(containerId, width, height);
+		}
 
         var context = multiCanvas.getContext('2d');
         context.clearRect(0, 0, multiCanvas.width, multiCanvas.height);
