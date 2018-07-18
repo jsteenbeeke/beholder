@@ -1,13 +1,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.util.compendium;
 
-import com.jeroensteenbeeke.topiroll.beholder.util.compendium.parser.HtmlListener;
-import com.jeroensteenbeeke.topiroll.beholder.util.compendium.parser.ReStructuredTextLexer;
-import com.jeroensteenbeeke.topiroll.beholder.util.compendium.parser.ReStructuredTextParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
+import com.google.common.collect.ImmutableMap;
 import org.apache.wicket.util.io.IOUtils;
+import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.Heading;
+import org.commonmark.node.Node;
+import org.commonmark.node.Text;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassRelativeResourceLoader;
@@ -19,38 +19,32 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-public enum Compendium {
-	INSTANCE;
-
+public class Compendium {
 	private static final Logger log = LoggerFactory.getLogger(Compendium.class);
 
-	private final Map<CompendiumIndexEntry, CompendiumArticle> articles;
+	public static Map<CompendiumIndexEntry, CompendiumArticle> scanArticles() {
+		ImmutableMap.Builder<CompendiumIndexEntry, CompendiumArticle> articles = ImmutableMap.builder();
 
-	Compendium() {
-		this.articles = new TreeMap<>();
-	}
-
-	public void init() {
 		ClassRelativeResourceLoader loader = new ClassRelativeResourceLoader(Compendium.class);
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(loader);
 
-		log.info("Scanning for RST files");
+		log.info("Scanning for MD files");
 
 		try {
-			Resource[] resources = resolver.getResources("open5e/source/**/*.rst");
+			Resource[] resources = resolver.getResources("5thsrd/docs/**/*.md");
 
 			for (Resource res : resources) {
 				String ref = res.getURL().toString();
 
-				if (ref.contains("open5e")) {
-					ref = ref.substring(ref.indexOf("open5e")+7);
+				if (ref.contains("5thsrd")) {
+					ref = ref.substring(ref.indexOf("5thsrd")+7);
 				}
 
 				if (res.isReadable()) {
 					try {
 
 						String source = IOUtils.toString(res.getInputStream(), "UTF-8");
-						HtmlOutput output = textToHtml(ref, source);
+						HtmlOutput output = textToHtml(source);
 
 						CompendiumIndexEntry index = new CompendiumIndexEntry(ref, output.getTitle());
 						CompendiumArticle article = new CompendiumArticle(source, output.getText());
@@ -59,41 +53,48 @@ public enum Compendium {
 
 						log.info("\t- {} @ {}", index.getTitle(), index.getPath());
 						log.info("\t\t{}", article.getHtmlText());
-					} catch (ParseCancellationException | IOException ioe) {
+					} catch (IOException ioe) {
 						log.error("\tCould not parse {}", ref);
 					}
 				}
 			}
-			log.info("Found {} RST files", resources.length);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
 
+		ImmutableMap<CompendiumIndexEntry, CompendiumArticle> result = articles.build();
+
+		log.info("Found {} MD files", result.size());
+
+		return result;
 	}
 
-	static HtmlOutput textToHtml(String path, String source) {
+	static HtmlOutput textToHtml(String source) {
 		AtomicReference<String> ref = new AtomicReference<>("");
 
-		StringBuilder output = new StringBuilder();
-		ReStructuredTextParser parser = new ReStructuredTextParser(
-				new BufferedTokenStream(
-						new ReStructuredTextLexer(
-								new ANTLRInputStream(source))));
-		parser.setErrorHandler(new BailErrorStrategy());
-		parser.addParseListener(new HtmlListener(output) {
-			@Override
-			public void exitTitle(ReStructuredTextParser.TitleContext ctx) {
-				super.exitTitle(ctx);
+		Parser parser = Parser.builder().build();
+		Node document = parser.parse(source);
+		HtmlRenderer renderer = HtmlRenderer.builder().build();
 
-				if (ctx.textStart() != null) {
-					ref.compareAndSet("", ctx.textStart().getText());
+		document.accept(new AbstractVisitor() {
+			@Override
+			public void visit(Heading heading) {
+				super.visit(heading);
+
+				if (heading.getLevel() == 1) {
+					heading.accept(new AbstractVisitor() {
+						@Override
+						public void visit(Text text) {
+							super.visit(text);
+
+							ref.compareAndSet("", text.getLiteral());
+						}
+					});
 				}
 			}
 		});
 
-		parser.parse();
-
-		return new HtmlOutput(ref.get(), output.toString());
+		return new HtmlOutput(ref.get(), renderer.render(document));
 	}
 
 	static class HtmlOutput {

@@ -2,23 +2,39 @@ package com.jeroensteenbeeke.topiroll.beholder.jobs;
 
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionTask;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.ServiceProvider;
+import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.Jobs;
+import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.CompendiumEntryDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
+import com.jeroensteenbeeke.topiroll.beholder.util.compendium.CompendiumArticle;
+import com.jeroensteenbeeke.topiroll.beholder.util.compendium.CompendiumIndexEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class InitializeCompendiumJob extends HyperionTask {
 	private static final Logger log = LoggerFactory.getLogger(InitializeCompendiumJob.class);
 
 	public InitializeCompendiumJob() {
-		super("Ínitialize Compendium by reading RST files", Jobs.Initialize);
+		super("Ínitialize Compendium by reading MD files", Jobs.Initialize);
 	}
-
-
 
 	@Override
 	public void run(ServiceProvider provider) {
-		Compendium.INSTANCE.init();
+		Map<CompendiumIndexEntry, CompendiumArticle> articles = Compendium.scanArticles();
+		CompendiumService compendiumService = provider.getService(CompendiumService.class);
+
+		articles.forEach((k,v) -> {
+			if (!compendiumService.articleExists(k.getPath())) {
+				TypedActionResult<CompendiumEntry> result = compendiumService.createArticle(k.getTitle(), k.getPath(), v.getHtmlText());
+				if (!result.isOk()) {
+					log.warn("Could not create entry for {}: {}", k.getPath(), result.getMessage());
+				}
+			}
+		});
 
 	}
 }

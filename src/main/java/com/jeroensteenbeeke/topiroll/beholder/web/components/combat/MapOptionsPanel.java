@@ -95,5 +95,6 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 			}
 		});
 
+
 	}
 }

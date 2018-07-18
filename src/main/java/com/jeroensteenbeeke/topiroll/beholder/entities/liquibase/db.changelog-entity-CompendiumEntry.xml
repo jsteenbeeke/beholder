@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="127">
+    <createTable tableName="compendiumentry">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_compendiumentry" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="128">
+    <addColumn tableName="compendiumentry">
+      <column name="title" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="129">
+    <addColumn tableName="compendiumentry">
+      <column name="body" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="130">
+    <addColumn tableName="compendiumentry">
+      <column name="originalpath" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

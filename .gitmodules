@@ -1,3 +1,3 @@
-[submodule "src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/open5e"]
-	path = src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/open5e
-	url = git@github.com:eepMoody/open5e.git
+[submodule "src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/5thsrd"]
+	path = src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/5thsrd
+	url = git@github.com:vitusventure/5thSRD.git
