@@ -115,7 +115,8 @@ public abstract class AbstractMapPreview extends Border {
 						"\t\"height\"	: %4$d,\n" +
 						"});\n", getMarkupId(), canvas.getMarkupId(), (int) (desiredWidth * 1.5),
 				(int) (height * 1.5 )));
-		onImageDrawComplete.append("if (typeof renderListeners === 'array') {\n");
+		onImageDrawComplete.append("if (typeof renderListeners === 'array' || typeof " +
+				"renderListeners === 'object') {\n");
 		onImageDrawComplete.append("\trenderListeners.push(function() {\n");
 		onImageDrawComplete.append(String.format("\t\tvar canvasContainerOffset = document" +
 				".getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
