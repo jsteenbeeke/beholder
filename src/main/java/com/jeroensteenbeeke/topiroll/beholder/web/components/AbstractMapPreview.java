@@ -120,8 +120,9 @@ public abstract class AbstractMapPreview extends Border {
 		onImageDrawComplete.append(String.format("\t\tvar canvasContainerOffset = document" +
 				".getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
 		onImageDrawComplete.append(String.format("\t\tmulti%s.recalculateOffset(canvasContainerOffset" +
-				".left + window.pageXOffset, canvasContainerOffset.top + window.pageYOffset);", canvas.getMarkupId()));
-		onImageDrawComplete.append("\t});");
+				".left + window.pageXOffset, canvasContainerOffset.top + window.pageYOffset);\n",
+				canvas.getMarkupId()));
+		onImageDrawComplete.append("\t});\n");
 	    onImageDrawComplete.append("}\n");
 
 		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
