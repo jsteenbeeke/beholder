@@ -113,8 +113,16 @@ public abstract class AbstractMapPreview extends Border {
 						"\t\"top\"      : (dragDropOffset.top + window.pageYOffset),\n" +
 						"\t\"width\"	: %3$d,\n" +
 						"\t\"height\"	: %4$d,\n" +
-						"});\n\n", getMarkupId(), canvas.getMarkupId(), (int) (desiredWidth * 1.5),
+						"});\n", getMarkupId(), canvas.getMarkupId(), (int) (desiredWidth * 1.5),
 				(int) (height * 1.5 )));
+		onImageDrawComplete.append("if (typeof renderListeners === 'array') {\n");
+		onImageDrawComplete.append("\trenderListeners.push(function() {\n");
+		onImageDrawComplete.append(String.format("\t\tvar canvasContainerOffset = document" +
+				".getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
+		onImageDrawComplete.append(String.format("\t\tmulti%s.recalculateOffset(canvasContainerOffset" +
+				".left + window.pageXOffset, canvasContainerOffset.top + window.pageYOffset);", canvas.getMarkupId()));
+		onImageDrawComplete.append("\t});");
+	    onImageDrawComplete.append("}\n");
 
 		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
 

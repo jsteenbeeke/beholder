@@ -17,6 +17,7 @@
  */
 
 var enableWebSocketReloadOnError = true;
+var renderListeners = [];
 
 
 Wicket.Event.subscribe("/websocket/notsupported", function(jqEvent, message) {

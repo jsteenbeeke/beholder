@@ -85,6 +85,24 @@ function MultiCanvasContext(canvases, contexts, canvas) {
     this.parentCanvas = canvas;
 }
 
+MultiCanvas.prototype.recalculateOffset = function(offsetX, offsetY) {
+    var numSegmentsX = this.width / SEGMENT_SIZE;
+    var numSegmentsY = this.height / SEGMENT_SIZE;
+
+    var selected = this.selectedBuffer;
+
+    for (x = 0; x < numSegmentsX; x++) {
+        for (y = 0; y < numSegmentsY; y++) {
+            for (t = 0; t < CANVAS_TYPES.length; t++) {
+                let z = CANVAS_TYPES[t];
+                let index = z === selected ? 0 : -1;
+
+                canvases[y][x][z].style = getCanvasCss(index, offsetY, offsetY, this.width, this.height);
+            }
+        }
+    }
+}
+
 MultiCanvas.prototype.getCanvasCSS = function(zIndex, offsetX, offsetY, totalWidth, totalHeight) {
     return 'display: inline-block; ' +
         'width: ' + Math.min(totalWidth, SEGMENT_SIZE) + 'px; ' +

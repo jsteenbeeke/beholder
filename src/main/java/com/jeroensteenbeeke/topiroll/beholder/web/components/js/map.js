@@ -30,6 +30,10 @@ function clearMap(containerId) {
     });
     lastRenderedMap = null;
     multiCanvas = null;
+
+    renderListeners.forEach(function(listener) {
+        listener();
+    });
 }
 
 function renderMap(containerId, map) {
@@ -85,6 +89,10 @@ function renderMap(containerId, map) {
 
                 promise.then(function() {
                 	multiCanvas.switchBuffer();
+
+                    renderListeners.forEach(function(listener) {
+                        listener();
+                    });
 				});
 
 
