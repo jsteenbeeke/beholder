@@ -77,6 +77,12 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
     this.height = totalHeight;
 
     this.selectedBuffer = CANVAS_BLACK;
+
+    if (typeof renderListeners === 'object' || typeof renderListeners === 'array') {
+        renderListeners.forEach(function(listener) {
+            listener();
+        });
+    }
 }
 
 function MultiCanvasContext(canvases, contexts, canvas) {
@@ -100,7 +106,7 @@ MultiCanvas.prototype.recalculateOffset = function(offsetX, offsetY) {
                 let segmentX = SEGMENT_SIZE * x;
                 let segmentY = SEGMENT_SIZE * y;
 
-                canvases[y][x][z].style = getCanvasCss(index, segmentX + offsetY, segmentY + offsetY, this.width, this.height);
+                this.canvases[y][x][z].style = this.getCanvasCSS(index, segmentX + offsetY, segmentY + offsetY, this.width, this.height);
             }
         }
     }

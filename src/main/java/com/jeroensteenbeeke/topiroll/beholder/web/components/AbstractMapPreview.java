@@ -117,13 +117,20 @@ public abstract class AbstractMapPreview extends Border {
 				(int) (height * 1.5 )));
 		onImageDrawComplete.append("if (typeof renderListeners === 'array' || typeof " +
 				"renderListeners === 'object') {\n");
-		onImageDrawComplete.append("\trenderListeners.push(function() {\n");
-		onImageDrawComplete.append(String.format("\t\tvar canvasContainerOffset = document" +
-				".getElementById('%1$s').getBoundingClientRect();\n", canvas.getMarkupId()));
-		onImageDrawComplete.append(String.format("\t\tmulti%s.recalculateOffset(canvasContainerOffset" +
+		onImageDrawComplete.append("\tvar callback = function() {\n");
+		onImageDrawComplete.append(String.format("\t\tvar canvasContainer = document" +
+				".getElementById('%1$s');\n", canvas.getMarkupId()));
+		onImageDrawComplete.append("\t\tif (canvasContainer !== null && typeof canvasContainer " +
+				"=== \"object\") {\n");
+		onImageDrawComplete.append("\t\t\tvar canvasContainerOffset = canvasContainer" +
+				".getBoundingClientRect();\n");
+		onImageDrawComplete.append(String.format("\t\t\tmulti%s.recalculateOffset" +
+						"(canvasContainerOffset" +
 				".left + window.pageXOffset, canvasContainerOffset.top + window.pageYOffset);\n",
 				canvas.getMarkupId()));
-		onImageDrawComplete.append("\t});\n");
+		onImageDrawComplete.append("\t\t}\n");
+		onImageDrawComplete.append("\t}\n");
+		onImageDrawComplete.append("\trenderListeners.push(callback);\n");
 	    onImageDrawComplete.append("}\n");
 
 		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
