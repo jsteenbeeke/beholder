@@ -97,7 +97,10 @@ MultiCanvas.prototype.recalculateOffset = function(offsetX, offsetY) {
                 let z = CANVAS_TYPES[t];
                 let index = z === selected ? 0 : -1;
 
-                canvases[y][x][z].style = getCanvasCss(index, offsetY, offsetY, this.width, this.height);
+                let segmentX = SEGMENT_SIZE * x;
+                let segmentY = SEGMENT_SIZE * y;
+
+                canvases[y][x][z].style = getCanvasCss(index, segmentX + offsetY, segmentY + offsetY, this.width, this.height);
             }
         }
     }
