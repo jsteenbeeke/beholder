@@ -46,8 +46,7 @@ function previewCircle(canvas, color, alpha, circle) {
     canvas.switchBuffer();
 }
 
-function previewPolygon(canvasId, color, alpha, poly) {
-    var canvas = document.getElementById(canvasId);
+function previewPolygon(canvas, color, alpha, poly) {
     var ctx = canvas.getContext('2d');
 
     ctx.save();
