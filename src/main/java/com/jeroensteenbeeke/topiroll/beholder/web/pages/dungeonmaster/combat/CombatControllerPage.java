@@ -80,8 +80,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	private InitiativeParticipantDAO participantDAO;
 
 	@Inject
-	private CompendiumService compendiumService;
-
 	private PinnedCompendiumEntryDAO compendiumEntryDAO;
 
 	private final AbstractMapPreview preview;
@@ -573,14 +571,17 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			}
 		}.setReuseItems(true));
 
-		preview.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
+		combatNavigator = new WebMarkupContainer("combatNavigator");
+		combatNavigator.setOutputMarkupId(true);
+
+		combatNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
 			}
 		});
 
-		preview.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+		combatNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -603,9 +604,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			}
 		};
 
-		combatNavigator = new WebMarkupContainer("combatNavigator");
-		combatNavigator.setOutputMarkupId(true);
-
 
 		combatNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
 
@@ -618,7 +616,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 					}
 				};
-				entryLink.setBody(Model.of(item.getModelObject().getTitle()));
+				entryLink.setBody(Model.of("Compendium: "+ item.getModelObject().getTitle()));
 				item.add(entryLink);
 
 			}

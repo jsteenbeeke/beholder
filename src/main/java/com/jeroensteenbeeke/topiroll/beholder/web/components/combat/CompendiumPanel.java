@@ -80,41 +80,38 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 
 		add(pinLink = new AjaxLink<CompendiumEntry>("pin", getModel()) {
 			@Override
-			protected void onConfigure() {
-				super.onConfigure();
-
-				CompendiumPanel.this.setVisible(getModelObject() != null &&
-						getModelObject().getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(pb -> pb.equals(BeholderSession.get().getUser())));
-			}
-
-			@Override
 			public void onClick(AjaxRequestTarget target) {
 				compendiumService.pinEntry(BeholderSession.get().getUser(), getModelObject());
+
+				unpinLink.setVisible(true);
+				pinLink.setVisible(false);
 
 				target.add(pinLink, unpinLink);
 
 				callback.refreshMenus(target);
 			}
 		});
+		pinLink.setVisible(entry != null &&
+				entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(pb -> pb.equals(BeholderSession.get().getUser())));
+		pinLink.setOutputMarkupPlaceholderTag(true);
 
 		add(unpinLink = new AjaxLink<CompendiumEntry>("unpin", getModel()) {
-			@Override
-			protected void onConfigure() {
-				super.onConfigure();
-
-				CompendiumPanel.this.setVisible(getModelObject() != null &&
-						getModelObject().getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(pb -> pb.equals(BeholderSession.get().getUser())));
-			}
-
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				compendiumService.unpinEntry(BeholderSession.get().getUser(), getModelObject());
 
+				unpinLink.setVisible(false);
+				pinLink.setVisible(true);
+
 				target.add(pinLink, unpinLink);
 
 				callback.refreshMenus(target);
 			}
 		});
+		unpinLink.setVisible(entry != null &&
+				entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(pb -> pb.equals(BeholderSession.get().getUser())));
+		unpinLink.setOutputMarkupPlaceholderTag(true);
+
 
 		add(searchResultsContainer = new WebMarkupContainer("results"));
 		searchResultsContainer.setOutputMarkupPlaceholderTag(true);
@@ -129,10 +126,14 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), GlyphIcon.check) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						CompendiumPanel.this.setModelObject(item.getModelObject());
-						article.setDefaultModel(Model.of(getModelObject().getBody()));
+						CompendiumEntry entry = item.getModelObject();
+						CompendiumPanel.this.setModelObject(entry);
+						article.setDefaultModel(Model.of(entry.getBody()));
 						searchResultsContainer.setVisible(false);
 						queryField.setVisible(false);
+
+						pinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(pb -> pb.equals(BeholderSession.get().getUser())));
+						unpinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(pb -> pb.equals(BeholderSession.get().getUser())));
 
 						target.add(article, searchResultsContainer, queryField, pinLink, unpinLink);
 
