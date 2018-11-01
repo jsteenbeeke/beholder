@@ -3,9 +3,12 @@
 <body>
 <wicket:extend>
 	<div wicket:id="preview" class="combat">
-		<div id="combat-navigator" class="btn-group-vertical" role="group">
+		<div id="combat-navigator" class="btn-group-vertical" role="group" wicket:id="combatNavigator">
 			<button class="btn btn-warning" wicket:id="back">Back to DM view</button>
 			<button class="btn btn-primary" wicket:id="compendium">Compendium</button>
+			<wicket:container wicket:id="pinnedEntries">
+				<button class="btn btn-primary" wicket:id="entry">Entry</button>
+			</wicket:container>
 		</div>
 
 		<div wicket:id="initiative"></div>

@@ -29,4 +29,5 @@
 
 	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-amazon-migration.xml"/>
 <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CompendiumEntry.xml"/>
+<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-PinnedCompendiumEntry.xml"/>
 </databaseChangeLog>
