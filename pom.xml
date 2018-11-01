@@ -14,6 +14,10 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
+	<properties>
+		<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
