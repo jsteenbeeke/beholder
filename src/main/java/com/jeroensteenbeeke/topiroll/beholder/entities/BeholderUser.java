@@ -48,6 +48,10 @@ public class BeholderUser extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String username;
+ 	@OneToMany(mappedBy="pinnedBy", fetch=FetchType.LAZY)
+	private List<PinnedCompendiumEntry> pinnedEntries = new ArrayList<PinnedCompendiumEntry>();
+
+
  	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
 	private List<YouTubePlaylist> playlists = new ArrayList<YouTubePlaylist>();
 
@@ -172,6 +176,16 @@ public class BeholderUser extends BaseDomainObject {
 	public void setPlaylists( @Nonnull List<YouTubePlaylist> playlists) {
 		this.playlists = playlists;
 	}
+
+	@Nonnull
+	public List<PinnedCompendiumEntry> getPinnedEntries() {
+		return pinnedEntries;
+	}
+	public void setPinnedEntries( @Nonnull List<PinnedCompendiumEntry> pinnedEntries) {
+		this.pinnedEntries = pinnedEntries;
+	}
+
+
 
 
 

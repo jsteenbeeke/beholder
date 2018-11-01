@@ -5,6 +5,8 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class CompendiumEntry extends BaseDomainObject {
@@ -22,6 +24,10 @@ public class CompendiumEntry extends BaseDomainObject {
  	@Column(nullable=false)
 	@Lob
 	private String body;
+ 	@OneToMany(mappedBy="entry", fetch=FetchType.LAZY)
+	private List<PinnedCompendiumEntry> pinnedBy = new ArrayList<PinnedCompendiumEntry>();
+
+
  	@Column(nullable=false)
 	private String originalPath;
 
@@ -69,6 +75,16 @@ public class CompendiumEntry extends BaseDomainObject {
 	public void setOriginalPath( @Nonnull String originalPath) {
 		this.originalPath = originalPath;
 	}
+
+	@Nonnull
+	public List<PinnedCompendiumEntry> getPinnedBy() {
+		return pinnedBy;
+	}
+	public void setPinnedBy( @Nonnull List<PinnedCompendiumEntry> pinnedBy) {
+		this.pinnedBy = pinnedBy;
+	}
+
+
 
 
 

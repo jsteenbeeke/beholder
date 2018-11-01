@@ -6,6 +6,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public interface CombatModeCallback {
@@ -15,10 +16,12 @@ public interface CombatModeCallback {
 			@Nonnull
 					PanelConstructor<T>
 					constructor,
-			@Nonnull
+			@Nullable
 					T object);
 
 	void redrawMap(AjaxRequestTarget target);
+
+	void refreshMenus(AjaxRequestTarget target);
 
 	TokenInstance getSelectedToken();
 
@@ -29,7 +32,6 @@ public interface CombatModeCallback {
 	Point getClickedLocation();
 
 	Point getPreviousClickedLocation();
-
 
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {

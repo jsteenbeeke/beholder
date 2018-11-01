@@ -7,11 +7,15 @@ import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
@@ -38,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.awt.Point;
 import java.util.*;
@@ -52,6 +57,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 	private final MarkerStatusPanel markerStatusPanel;
+	private final WebMarkupContainer combatNavigator;
 
 	private Component modal;
 
@@ -72,6 +78,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 	@Inject
 	private InitiativeParticipantDAO participantDAO;
+
+	@Inject
+	private PinnedCompendiumEntryDAO compendiumEntryDAO;
 
 	private final AbstractMapPreview preview;
 
@@ -155,18 +164,18 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
 
-				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance,String>(item.getModel()) {
+				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance, String>(item.getModel()) {
 					@Override
 					protected String load(TokenInstance object) {
 						return object.getLabel();
 					}
 				});
 				image.add(AttributeModifier.replace("style",
-						new DependentModel<TokenInstance,String>(item.getModel()) {
+						new DependentModel<TokenInstance, String>(item.getModel()) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
-							protected String load(TokenInstance i ) {
+							protected String load(TokenInstance i) {
 								int left = i.getOffsetX();
 								int top = i.getOffsetY();
 
@@ -192,7 +201,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 							}
 
 						}));
-				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance,String>(item.getModel()) {
+				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					@Override
 					protected String load(TokenInstance instance) {
 						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
@@ -287,8 +296,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 
 								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX()+wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY()+wh) * factor))
+										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
+										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor))
 										.setWidth((m, factor) -> 0L)
 										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> String
 												.format("%fpx solid transparent", wh * factor)).setBorderRight((m, factor) -> String.format("%fpx solid #%s",
@@ -333,8 +342,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 
 								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX()+wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY()+wh) * factor)).setWidth((m, factor) -> 0L)
+										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
+										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor)).setWidth((m, factor) -> 0L)
 										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "5px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
 												wh * factor, marker.getColor()))
 										.setBorderBottom((m, factor) -> "1px solid transparent")
@@ -404,8 +413,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 											@Nonnull
 													ConeMarker marker) {
 										markerService
-												.update(marker, marker.getColor(), newX-wh,
-														newY-wh,
+												.update(marker, marker.getColor(), newX - wh,
+														newY - wh,
 														marker.getExtent(),
 														marker.getTheta());
 
@@ -429,8 +438,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 											@Nonnull
 													LineMarker marker) {
 										markerService
-												.update(marker, marker.getColor(), newX-wh,
-														newY-wh,
+												.update(marker, marker.getColor(), newX - wh,
+														newY - wh,
 														marker.getExtent(), marker
 																.getTheta());
 
@@ -446,7 +455,8 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 						selectedToken = Model.of();
 						clickedLocation = null;
-						selectedMarker = ModelMaker.wrap(item.getModelObject());;
+						selectedMarker = ModelMaker.wrap(item.getModelObject());
+						;
 
 						mapOptionsPanel.setVisible(false);
 						tokenStatusPanel.setVisible(false);
@@ -550,33 +560,68 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 							}
 						})).add(new OnClickBehavior() {
-											@Override
-											protected void onClick(AjaxRequestTarget target,
-																   ClickEvent event) {
-												// TODO: What happens when clicking a player marker
-											}
-										});
+					@Override
+					protected void onClick(AjaxRequestTarget target,
+										   ClickEvent event) {
+						// TODO: What happens when clicking a player marker
+					}
+				});
 
 				item.add(image);
 			}
 		}.setReuseItems(true));
 
-		preview.add(new Link<MapView>("back", ModelMaker.wrap(view))
-		{
+		combatNavigator = new WebMarkupContainer("combatNavigator");
+		combatNavigator.setOutputMarkupId(true);
+
+		combatNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
 			}
 		});
 
-		preview.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+		combatNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
-				createModalWindow(target, CompendiumPanel::new, getModelObject());
+				createModalWindow(target, CompendiumPanel::new, null);
 			}
 
 		});
+
+		PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
+		filter.pinnedBy().set(BeholderSession.get().getUser());
+
+		IModel<List<CompendiumEntry>> pinnedEntryModel = new LoadableDetachableModel<List<CompendiumEntry>>() {
+			@Override
+			protected List<CompendiumEntry> load() {
+				return compendiumEntryDAO.findByFilter(filter)
+						.stream()
+						.map(PinnedCompendiumEntry::getEntry)
+						.sorted(Comparator.comparing(CompendiumEntry::getTitle))
+						.collect(Collectors.toList());
+			}
+		};
+
+
+		combatNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
+
+			@Override
+			protected void populateItem(ListItem<CompendiumEntry> item) {
+				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						createModalWindow(target, CompendiumPanel::new, getModelObject());
+
+					}
+				};
+				entryLink.setBody(Model.of("Compendium: "+ item.getModelObject().getTitle()));
+				item.add(entryLink);
+
+			}
+		});
+		preview.add(combatNavigator);
 
 
 		add(preview);
@@ -590,6 +635,11 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		clickedLocation = null;
 		previousClickedLocation = null;
 		preview.refresh(target);
+	}
+
+	@Override
+	public void refreshMenus(AjaxRequestTarget target) {
+		target.add(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
 	}
 
 	@Override
@@ -618,7 +668,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					AjaxRequestTarget target,
 			@Nonnull
 					PanelConstructor<T> constructor,
-			@Nonnull
+			@Nullable
 					T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
