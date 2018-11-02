@@ -14,6 +14,7 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.*;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.ExternalLink;
@@ -36,31 +37,12 @@ public class PrepareSessionPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
 
 
-	protected static final double TOKEN_THUMB_MAX = 40;
-
 	@Inject
 	private MapViewDAO mapViewDAO;
 
-	@Inject
-	private ScaledMapDAO mapDAO;
-
-	@Inject
-	private TokenDefinitionDAO tokenDAO;
-
-	@Inject
-	private MapFolderDAO mapFolderDAO;
-
-	@Inject
-	private PortraitDAO portraitDAO;
-
-	@Inject
-	private YouTubePlaylistDAO playlistDAO;
-
-	@Inject
-	private AmazonS3Service amazon;
 
 	public PrepareSessionPage() {
-		super("");
+		super("Prepare Session");
 
 		MapViewFilter viewFilter = new MapViewFilter();
 		viewFilter.owner().set(getUser());
@@ -163,198 +145,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 		add(viewView);
 		add(new BootstrapPagingNavigator("viewnav", viewView));
 
-		add(new MapOverviewPanel("maps", getUser()) {
-			@Override
-			protected void decorateFolderFilter(
-					@Nonnull
-							MapFolderFilter folderFilter) {
-				folderFilter.parent().isNull();
-			}
 
-			@Override
-			protected void decorateMapFilter(
-					@Nonnull
-							ScaledMapFilter mapFilter) {
-				mapFilter.folder().isNull();
-			}
-		});
-
-		TokenDefinitionFilter tokenFilter = new TokenDefinitionFilter();
-		tokenFilter.owner().set(getUser());
-		tokenFilter.name().orderBy(true);
-
-		DataView<TokenDefinition> tokenView = new DataView<TokenDefinition>(
-				"tokens", FilterDataProvider.of(tokenFilter, tokenDAO)) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void populateItem(Item<TokenDefinition> item) {
-				TokenDefinition definition = item.getModelObject();
-
-				item.add(new Label("name", definition.getName()));
-				item.add(
-						new Label("size", String.format("%d squares (diameter)",
-								definition.getDiameterInSquares())));
-				item.add(new ContextImage("thumb",
-						definition.getImageUrl()));
-				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
-						GlyphIcon.edit) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						TokenDefinition tokenDefinition = getModelObject();
-
-						BSEntityPageSettings<TokenDefinition> settings =
-								tokenDefinition.getInstances().isEmpty() ?
-										edit(tokenDefinition).onPage("Edit Token")
-															 .using(tokenDAO) :
-										edit(tokenDefinition).onPage("Edit Token").withoutDelete()
-															 .using(tokenDAO);
-						setResponsePage(new BSEntityFormPage<TokenDefinition>(
-								settings) {
-
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							protected ActionResult onBeforeDelete(TokenDefinition entity) {
-								if (entity.getAmazonKey() != null) {
-									return amazon.removeImage(entity.getAmazonKey());
-								}
-
-								return ActionResult.ok();
-							}
-
-							@Override
-							protected void onDeleted() {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-							@Override
-							protected void onSaved(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
-
-							}
-
-							@Override
-							protected void onCancel(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-						});
-
-					}
-				});
-
-			}
-
-		};
-
-		tokenView.setItemsPerPage(25);
-		add(tokenView);
-		add(new BootstrapPagingNavigator("tokennav", tokenView));
-
-
-		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
-				FilterDataProvider.of(new PortraitFilter().owner(getUser()).name().orderBy(true),
-						portraitDAO)) {
-			@Override
-			protected void populateItem(Item<Portrait> item) {
-				Portrait portrait = item.getModelObject();
-
-				item.add(new Label("name", portrait.getName()));
-
-				item.add(new ContextImage("thumb", portrait.getImageUrl()));
-				item.add(new IconLink<Portrait>("edit", item.getModel(),
-						GlyphIcon.edit) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						setResponsePage(new BSEntityFormPage<Portrait>(
-								edit(getModelObject()).onPage("Edit Portrait")
-													  .using(portraitDAO)) {
-
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							protected ActionResult onBeforeDelete(Portrait entity) {
-								if (entity.getAmazonKey() != null) {
-									return amazon.removeImage(entity.getAmazonKey());
-								}
-
-								return ActionResult.ok();
-							}
-
-
-							@Override
-							protected void onDeleted() {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-							@Override
-							protected void onSaved(Portrait entity) {
-								setResponsePage(new PrepareSessionPage());
-
-							}
-
-							@Override
-							protected void onCancel(Portrait entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-						});
-
-					}
-				});
-			}
-		};
-		portraitView.setItemsPerPage(25);
-		add(portraitView);
-		add(new BootstrapPagingNavigator("portraitnav", portraitView));
-
-		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider
-						.of(new YouTubePlaylistFilter().owner(getUser()).name().orderBy(true),
-								playlistDAO)) {
-			@Override
-			protected void populateItem(Item<YouTubePlaylist> item) {
-				YouTubePlaylist playlist = item.getModelObject();
-
-				item.add(new Label("name", playlist.getName()));
-				item.add(new ExternalLink("url", playlist.getUrl())
-						.setBody(Model.of(playlist.getUrl())));
-				item.add(new IconLink<YouTubePlaylist>("edit", item.getModel(), GlyphIcon.edit) {
-					@Override
-					public void onClick() {
-						setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
-								edit(getModelObject()).onPage("Edit Playlist").using
-										(playlistDAO)) {
-
-							@Override
-							protected void onSaved(YouTubePlaylist entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-							@Override
-							protected void onCancel(YouTubePlaylist entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-							@Override
-							protected void onDeleted() {
-								setResponsePage(new PrepareSessionPage());
-							}
-						});
-					}
-				});
-
-			}
-		};
-		playlistView.setItemsPerPage(25);
-		add(playlistView);
-		add(new BootstrapPagingNavigator("playlistnav", playlistView));
 
 		add(new Link<MapView>("addview") {
 			private static final long serialVersionUID = 1L;
@@ -402,81 +193,48 @@ public class PrepareSessionPage extends AuthenticatedPage {
 			}
 		});
 
-		add(new Link<ScaledMap>("addmap") {
+		add(new Link<ScaledMap>("maps") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new UploadMapStep1Page(null));
-
+				setResponsePage(new PrepareMapsPage());
 			}
 		});
 
-		add(new Link<TokenDefinition>("addtoken") {
+		add(new Link<TokenDefinition>("tokens") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new UploadTokenStep1Page());
-
+				setResponsePage(new PrepareTokensPage());
 			}
 		});
 
-		add(new Link<MapFolder>("addfolder") {
+		add(new Link<MapFolder>("portraits") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<MapFolder>(
-						create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
-
-					@Override
-					protected void onSaved(MapFolder entity) {
-						setResponsePage(new ViewFolderPage(entity));
-					}
-
-					@Override
-					protected void onCancel(MapFolder entity) {
-						setResponsePage(new PrepareSessionPage());
-					}
-				});
+				setResponsePage(new PreparePortraitsPage());
 			}
 		});
 
-		add(new Link<MapFolder>("addportrait") {
+		add(new Link<YouTubePlaylist>("playlists") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new UploadPortraitStep1Page());
+				setResponsePage(new PrepareMusicPage());
 			}
 		});
 
-		add(new Link<YouTubePlaylist>("addplaylist") {
+		add(new Link<YouTubePlaylist>("compendium") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
-						create(new YouTubePlaylist()).onPage("Add Playlist").using(playlistDAO)) {
-
-					@Override
-					protected void onBeforeSave(YouTubePlaylist entity) {
-						super.onBeforeSave(entity);
-						entity.setOwner(getUser());
-					}
-
-					@Override
-					protected void onSaved(YouTubePlaylist entity) {
-						setResponsePage(new PrepareSessionPage());
-					}
-
-					@Override
-					protected void onCancel(YouTubePlaylist entity) {
-						setResponsePage(new PrepareSessionPage());
-					}
-
-				});
+				setResponsePage(new PrepareCompendiumPage());
 			}
 		});
 

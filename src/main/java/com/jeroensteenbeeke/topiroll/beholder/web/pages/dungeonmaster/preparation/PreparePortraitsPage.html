@@ -1,0 +1,46 @@
+<html xmlns:wicket>
+<wicket:extend>
+	<div class="btn-group btn-group-justified" role="group">
+		<div class="btn-group" role="group">
+			<button type="button" wicket:id="back"
+					class="btn btn-info btn-lg ">
+				<i class="glyphicon glyphicon-chevron-left"></i> Back
+			</button>
+		</div>
+
+		<div class="btn-group" role="group">
+			<button type="button" wicket:id="addportrait"
+					class="btn btn-info btn-lg ">
+				<i class="glyphicon glyphicon-user"></i> Add portrait
+			</button>
+		</div>
+
+	</div>
+
+	<h2>Portraits</h2>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Thumbnail</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr wicket:id="portraits">
+			<td wicket:id="name"></td>
+			<td><img wicket:id="thumb" class="img-responsive" /></td>
+			<td><span wicket:id="edit"></span></td>
+		</tr>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="3">
+				<div wicket:id="portraitnav"></div>
+			</td>
+		</tr>
+		</tfoot>
+	</table>
+
+</wicket:extend>
+</html>

@@ -69,7 +69,7 @@ public class Compendium {
 		return result;
 	}
 
-	static HtmlOutput textToHtml(String source) {
+	public static HtmlOutput textToHtml(String source) {
 		AtomicReference<String> ref = new AtomicReference<>("");
 
 		Parser parser = Parser.builder().build();
@@ -97,12 +97,12 @@ public class Compendium {
 		return new HtmlOutput(ref.get(), renderer.render(document));
 	}
 
-	static class HtmlOutput {
+	public static class HtmlOutput {
 		private final String title;
 
 		private final String text;
 
-		public HtmlOutput(String title, String text) {
+		HtmlOutput(String title, String text) {
 			this.title = title;
 			this.text = text;
 		}

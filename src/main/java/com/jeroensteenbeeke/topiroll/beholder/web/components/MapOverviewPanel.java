@@ -18,6 +18,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewFolderPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewMapPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -164,7 +165,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 	private void goToFolderParentPage(MapFolder parent) {
 		if (parent == null) {
-			setResponsePage(new PrepareSessionPage());
+			setResponsePage(new PrepareMapsPage());
 		} else {
 			setResponsePage(new ViewFolderPage(parent));
 		}

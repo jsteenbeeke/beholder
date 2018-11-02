@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareTokensPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.SubmitLink;
@@ -45,7 +46,7 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new PrepareSessionPage());
+				setResponsePage(new PrepareTokensPage());
 
 			}
 		});
@@ -82,7 +83,7 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 				mapService.createToken(getUser(), nameField.getModelObject(),
 						sizeField.getModelObject(), image);
 
-				setResponsePage(new PrepareSessionPage());
+				setResponsePage(new PrepareTokensPage());
 			}
 		};
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareTokensPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -44,7 +45,7 @@ public class UploadTokenStep1Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new PrepareSessionPage());
+				setResponsePage(new PrepareTokensPage());
 
 			}
 		});

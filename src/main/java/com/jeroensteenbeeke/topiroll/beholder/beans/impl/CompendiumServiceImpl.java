@@ -38,7 +38,7 @@ class CompendiumServiceImpl implements CompendiumService {
 	}
 
 	@Override
-	public TypedActionResult<CompendiumEntry> createArticle(String title, String path, String html) {
+	public TypedActionResult<CompendiumEntry> createImportedArticle(String title, String path, String html) {
 		if (!articleExists(path)) {
 			CompendiumEntry entry = new CompendiumEntry();
 			entry.setBody(html);
@@ -54,9 +54,10 @@ class CompendiumServiceImpl implements CompendiumService {
 	}
 
 	@Override
-	public List<CompendiumEntry> performSearch(String query) {
+	public List<CompendiumEntry> performSearch(BeholderUser user, String query) {
 		CompendiumEntryFilter filter = new CompendiumEntryFilter();
 		filter.title().ilike(String.format("%%%s%%", query));
+		filter.author().equalToOrNull(user);
 		filter.title().orderBy(true);
 
 		return dao.findByFilter(filter);
