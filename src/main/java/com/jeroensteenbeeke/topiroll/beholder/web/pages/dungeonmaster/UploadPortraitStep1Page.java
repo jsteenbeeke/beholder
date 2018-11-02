@@ -20,6 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PreparePortraitsPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -43,7 +44,7 @@ public class UploadPortraitStep1Page extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new PrepareSessionPage());
+				setResponsePage(new PreparePortraitsPage());
 
 			}
 		});

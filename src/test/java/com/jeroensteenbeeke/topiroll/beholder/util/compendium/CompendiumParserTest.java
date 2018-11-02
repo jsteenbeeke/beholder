@@ -22,7 +22,12 @@ public class CompendiumParserTest {
 			" Tiny or larger creature touches or enters the warded area. When you cast the spell, you can designate creatures that won't set off the alarm. You also choose whether the alarm is " +
 			"mental or audible.    \n" +
 			"A mental alarm alerts you with a ping in your mind if you are within 1 mile of the warded area. This ping awakens you if you are sleeping.    \n" +
-			"An audible alarm produces the sound of a hand bell for 10 seconds within 60 feet. ";
+			"An audible alarm produces the sound of a hand bell for 10 seconds within 60 feet.\n"+
+			"\n"+
+			"| Table | Test |\n"+
+			"|-------|------|\n"+
+			"| Cell  | Cell |";
+
 
 	@Test
 	public void testCompendiumParseLogic() {
@@ -30,6 +35,9 @@ public class CompendiumParserTest {
 		assertEquals("Alarm", output.getTitle());
 
 		assertTrue(output.getText(), output.getText().contains("<h1>Alarm</h1>"));
+		assertTrue(output.getText(), output.getText().contains("<th>Table</th>"));
+		assertTrue(output.getText(), output.getText().contains("<th>Test</th>"));
+		assertTrue(output.getText(), output.getText().contains("<td>Cell</td>"));
 
 		System.out.println(output.getText());
 	}

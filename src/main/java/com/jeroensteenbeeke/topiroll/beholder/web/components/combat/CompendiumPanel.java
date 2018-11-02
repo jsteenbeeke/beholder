@@ -4,10 +4,8 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
@@ -18,10 +16,13 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.List;
 
 public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
@@ -40,6 +41,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 
 	public CompendiumPanel(String id, CompendiumEntry entry, CombatModeCallback callback) {
 		super(id, entry != null ? ModelMaker.wrap(entry, true) : ModelMaker.wrap(CompendiumEntry.class));
+		setOutputMarkupId(true);
 
 		final TextField<String> queryField = new TextField<>("query", Model.of(""));
 		queryField.setOutputMarkupId(true);
@@ -50,7 +52,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 				String query = queryField.getModelObject();
 
 				if (query != null && query.length() >= 2) {
-					List<CompendiumEntry> entries = compendiumService.performSearch(query);
+					List<CompendiumEntry> entries = compendiumService.performSearch(BeholderSession.get().getUser(), query);
 
 					searchResults.setModel(ModelMaker.wrapList(entries));
 					article.setDefaultModel(Model.of(""));
@@ -74,7 +76,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 		form.setVisible(entry == null);
 		add(form);
 
-		add(article = new Label("article", Model.of(entry != null ? entry.getBody() : "")));
+		add(article = new Label("article", new ArticleModel()));
 		article.setEscapeModelStrings(false);
 		article.setOutputMarkupId(true);
 
@@ -122,13 +124,16 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 				CompendiumEntry entry = item.getModelObject();
 
 				item.add(new Label("title", entry.getTitle()));
-				item.add(new Label("path", entry.getOriginalPath()));
+				item.add(new Label("path", entry.getOriginalPath() != null ? entry.getOriginalPath() : "-"));
 				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), GlyphIcon.check) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();
 						CompendiumPanel.this.setModelObject(entry);
-						article.setDefaultModel(Model.of(entry.getBody()));
+						CompendiumPanel.this.detach();
+
+						article.setDefaultModel(new ArticleModel());
+
 						searchResultsContainer.setVisible(false);
 						queryField.setVisible(false);
 
@@ -141,6 +146,24 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 				});
 			}
 		});
+
+	}
+
+	private class ArticleModel extends LoadableDetachableModel<String> {
+		@Override
+		protected String load() {
+			CompendiumEntry compendiumEntry = CompendiumPanel.this.getModelObject();
+
+			if (compendiumEntry == null) {
+				return "";
+			} else {
+				if (compendiumEntry.getAuthor() == null) {
+					return compendiumEntry.getBody();
+				} else {
+					return Compendium.textToHtml(compendiumEntry.getBody()).getText();
+				}
+			}
+		}
 
 	}
 }

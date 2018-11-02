@@ -35,6 +35,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilte
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -75,7 +76,7 @@ public class ViewMapPage extends AuthenticatedPage {
 				if (folder != null) {
 					setResponsePage(new ViewFolderPage(folder));
 				} else {
-					setResponsePage(new PrepareSessionPage());
+					setResponsePage(new PrepareMapsPage());
 				}
 
 			}

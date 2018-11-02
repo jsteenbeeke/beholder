@@ -9,11 +9,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public interface CompendiumService {
-	List<CompendiumEntry> performSearch(String query);
+	List<CompendiumEntry> performSearch(BeholderUser user, String query);
 
 	boolean articleExists(String path);
 
-	TypedActionResult<CompendiumEntry> createArticle(String title, String path, String html);
+	TypedActionResult<CompendiumEntry> createImportedArticle(String title, String path, String html);
 
 	void pinEntry(@Nullable BeholderUser user, @Nonnull CompendiumEntry entry);
 

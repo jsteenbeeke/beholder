@@ -9,6 +9,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -48,7 +49,7 @@ public class ViewFolderPage extends AuthenticatedPage {
 			public void onClick() {
 				MapFolder parent = folderModel.getObject().getParent();
 				if (parent == null) {
-					setResponsePage(new PrepareSessionPage());
+					setResponsePage(new PrepareMapsPage());
 				} else {
 					setResponsePage(new ViewFolderPage(parent));
 				}

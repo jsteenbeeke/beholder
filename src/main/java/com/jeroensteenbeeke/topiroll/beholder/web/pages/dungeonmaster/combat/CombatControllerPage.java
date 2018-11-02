@@ -616,7 +616,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 					}
 				};
-				entryLink.setBody(Model.of("Compendium: "+ item.getModelObject().getTitle()));
+				entryLink.add(new Label("label", Model.of("Compendium: "+ item.getModelObject().getTitle())));
 				item.add(entryLink);
 
 			}
