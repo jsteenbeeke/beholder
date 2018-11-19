@@ -6,6 +6,11 @@ pipeline {
 		disableConcurrentBuilds()
 	}
 
+	triggers {
+		pollSCM('H/5 * * * *')
+		upstream (upstreamProjects: 'docker-hyperion-jetty,hyperion/experimental', threshold: hudson.model.Result.SUCCESS)
+	}
+
 	stages {
 		stage('Build') {
 		   agent {
@@ -14,6 +19,7 @@ pipeline {
                    label 'docker'
                }
            }
+
 
 			steps {
 			    sh 'git submodule update --init --recursive'
