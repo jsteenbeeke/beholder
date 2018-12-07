@@ -1,35 +1,26 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.*;
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.*;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.ContextImage;
-import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ContextRelativeResource;
-import org.apache.wicket.request.resource.ResourceStreamResource;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.sql.Blob;
 
 public class PrepareSessionPage extends AuthenticatedPage {
 
@@ -66,7 +57,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				item.add(new Label("diagonal",
 						mapView.getScreenDiagonalInInches()));
 				item.add(new IconLink<MapView>("edit", item.getModel(),
-						GlyphIcon.edit) {
+						FontAwesome.edit) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -80,9 +71,10 @@ public class PrepareSessionPage extends AuthenticatedPage {
 										  .using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
 
+							@Nonnull
 							@Override
 							protected ActionResult validateEntity(
-									MapView entity) {
+									@Nonnull MapView entity) {
 
 								ActionResult result =
 										validateMapView(entity,
@@ -110,7 +102,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					}
 				});
 				item.add(new IconLink<MapView>("delete", item.getModel(),
-						GlyphIcon.trash) {
+						FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -160,8 +152,9 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						.onPage("Create Map View").using(mapViewDAO)) {
 					private static final long serialVersionUID = 1L;
 
+					@Nonnull
 					@Override
-					protected ActionResult validateEntity(MapView entity) {
+					protected ActionResult validateEntity(@Nonnull MapView entity) {
 
 						ActionResult result = validateMapView(entity, true);
 

@@ -1,11 +1,11 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
@@ -15,7 +15,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewFolderPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewMapPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
@@ -61,7 +60,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 						setResponsePage(new ViewFolderPage(item.getModelObject()));
 					}
 				}.setBody(Model.of(folder.getName())));
-				item.add(new IconLink<MapFolder>("delete", item.getModel(), GlyphIcon.trash) {
+				item.add(new IconLink<MapFolder>("delete", item.getModel(), FontAwesome.trash) {
 					@Override
 					public void onClick() {
 						MapFolder folder = item.getModelObject();
@@ -102,7 +101,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 					}
 				});
 				item.add(new IconLink<ScaledMap>("view", item.getModel(),
-						GlyphIcon.eyeOpen) {
+						FontAwesome.eye) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -115,7 +114,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 					}
 				});
 				item.add(new IconLink<ScaledMap>("delete", item.getModel(),
-						GlyphIcon.trash) {
+						FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 

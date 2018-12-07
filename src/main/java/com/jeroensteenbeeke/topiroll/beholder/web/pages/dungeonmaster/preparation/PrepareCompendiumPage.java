@@ -1,9 +1,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.topiroll.beholder.dao.CompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
@@ -34,13 +34,13 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 			@Override
 			protected void populateItem(Item<CompendiumEntry> item) {
 				item.add(new Label("title", item.getModelObject().getTitle()));
-				item.add(new IconLink<CompendiumEntry>("edit", item.getModel(), GlyphIcon.edit) {
+				item.add(new IconLink<CompendiumEntry>("edit", item.getModel(), FontAwesome.edit) {
 					@Override
 					public void onClick() {
 						setResponsePage(new CompendiumEditorPage(item.getModelObject()));
 					}
 				});
-				item.add(new IconLink<CompendiumEntry>("delete", item.getModel(), GlyphIcon.trash) {
+				item.add(new IconLink<CompendiumEntry>("delete", item.getModel(), FontAwesome.trash) {
 					@Override
 					public void onClick() {
 						setResponsePage(new ConfirmationPage("Confirm deletion", String.format("Are you sure you wish to delete the article titled \"%s\"", getModelObject().getTitle()),

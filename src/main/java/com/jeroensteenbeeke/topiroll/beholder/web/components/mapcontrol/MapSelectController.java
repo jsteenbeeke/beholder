@@ -17,40 +17,34 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
+import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
-
-import com.jeroensteenbeeke.hyperion.ducktape.web.resources.ThumbnailResource;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
-import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import org.apache.wicket.model.Model;
 
-import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 public abstract class MapSelectController extends Panel {
 	private static final long serialVersionUID = 1L;
@@ -104,7 +98,7 @@ public abstract class MapSelectController extends Panel {
 												getModelObject()) {
 											@Override
 											public void replaceMe(@Nonnull AjaxRequestTarget target,
-																  WebMarkupContainer component) {
+																  @Nonnull WebMarkupContainer component) {
 												MapSelectController.this.replaceMe(target, component);
 											}
 
@@ -151,7 +145,7 @@ public abstract class MapSelectController extends Panel {
 					}
 				});
 				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
-						GlyphIcon.screenshot) {
+						FontAwesome.camera) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -170,7 +164,7 @@ public abstract class MapSelectController extends Panel {
 		add(new BootstrapPagingNavigator("mapnav", mapView));
 
 
-		add(new AjaxIconLink<MapFolder>("back", parentModel, GlyphIcon.chevronLeft) {
+		add(new AjaxIconLink<MapFolder>("back", parentModel, FontAwesome.chevron_left) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				replaceMe(target,
@@ -190,7 +184,7 @@ public abstract class MapSelectController extends Panel {
 		}.setVisible(folder != null));
 
 		add(new AjaxIconLink<MapView>("unselect", viewModel,
-				GlyphIcon.removeCircle) {
+				FontAwesome.unlink) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

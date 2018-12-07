@@ -47,6 +47,17 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-icons-fontawesome</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-heinlein-entitypage</artifactId>
+		</dependency>
+
+
+		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>
 		</dependency>

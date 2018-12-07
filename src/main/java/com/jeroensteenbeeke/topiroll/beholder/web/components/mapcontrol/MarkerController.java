@@ -18,11 +18,11 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
@@ -60,7 +60,7 @@ public abstract class MarkerController extends TypedPanel<MapView> implements IC
 				AreaMarker marker = item.getModelObject();
 
 				item.add(marker.createPanel("marker"));
-				item.add(new AjaxIconLink<AreaMarker>("delete", item.getModel(), GlyphIcon.trash) {
+				item.add(new AjaxIconLink<AreaMarker>("delete", item.getModel(), FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
 
 					@Inject

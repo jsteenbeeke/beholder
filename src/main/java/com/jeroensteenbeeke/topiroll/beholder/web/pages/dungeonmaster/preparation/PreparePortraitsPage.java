@@ -1,31 +1,25 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Portrait;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadPortraitStep1Page;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
-import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 public class PreparePortraitsPage extends AuthenticatedPage {
@@ -67,7 +61,7 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 
 				item.add(new ContextImage("thumb", portrait.getImageUrl()));
 				item.add(new IconLink<Portrait>("edit", item.getModel(),
-						GlyphIcon.edit) {
+						FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
