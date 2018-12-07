@@ -18,8 +18,8 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.Minimum;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeRenderable;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSRenderable;
 import org.danekja.java.misc.serializable.SerializableComparator;
@@ -28,7 +28,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

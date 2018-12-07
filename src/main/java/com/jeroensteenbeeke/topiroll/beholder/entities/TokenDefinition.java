@@ -26,9 +26,10 @@ import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.Minimum;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.Minimum;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
@@ -50,7 +51,7 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 
 	@Column(nullable = false)
 	@EntityFormField(label = "Diameter", required = true,
-			type = FieldType.NUMBER)
+			type = DefaultFieldType.Number.class)
 	@Minimum(1)
 	private int diameterInSquares;
 
