@@ -1,6 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.*;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;

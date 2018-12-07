@@ -1,6 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -11,7 +11,7 @@ public abstract class SelectMarkerTypeController extends TypedPanel<MapView> {
 	public SelectMarkerTypeController(String id, MapView view, int x, int y) {
 		super(id, ModelMaker.wrap(view));
 
-		add(new AjaxLink("circle") {
+		add(new AjaxLink<Void>("circle") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				replaceMe(target, new CreateCircleMarkerController(id, view, x, y) {
@@ -23,7 +23,7 @@ public abstract class SelectMarkerTypeController extends TypedPanel<MapView> {
 				});
 			}
 		});
-		add(new AjaxLink("cone") {
+		add(new AjaxLink<Void>("cone") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				replaceMe(target, new CreateConeMarkerController(id, view, x, y) {
@@ -35,7 +35,7 @@ public abstract class SelectMarkerTypeController extends TypedPanel<MapView> {
 				});
 			}
 		});
-		add(new AjaxLink("cube") {
+		add(new AjaxLink<Void>("cube") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				replaceMe(target, new CreateCubeMarkerController(id, view, x, y) {
@@ -47,7 +47,7 @@ public abstract class SelectMarkerTypeController extends TypedPanel<MapView> {
 				});
 			}
 		});
-		add(new AjaxLink("line") {
+		add(new AjaxLink<Void>("line") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				replaceMe(target, new CreateLineMarkerController(id, view, x, y) {

@@ -35,7 +35,7 @@ import org.apache.wicket.model.util.ListModel;
 
 import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;

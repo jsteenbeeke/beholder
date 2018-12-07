@@ -1,7 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import com.google.common.collect.Lists;
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxBootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
