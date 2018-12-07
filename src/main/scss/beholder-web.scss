@@ -1,13 +1,13 @@
-@import 'heinlein/heinlein.less';
-@import 'combatmode.less';
+@import 'heinlein/heinlein';
+@import 'combatmode';
 
-@kuler-left: #4C1A21;
-@kuler-middle-left: #D48893;
-@kuler-middle: #CC4559;
-@kuler-middle-right: #4C181F;
-@kuler-right: #993442;
-@whitish: #ccc;
-@blackish: #222;
+$kuler-left: #4C1A21;
+$kuler-middle-left: #D48893;
+$kuler-middle: #CC4559;
+$kuler-middle-right: #4C181F;
+$kuler-right: #993442;
+$whitish: #ccc;
+$blackish: #222;
 
 html, body, div, canvas {
   margin: 0;
@@ -19,76 +19,77 @@ html, body {
   height: 100%;
 }
 
-.dropshadow (@shadowcolor) {
-  box-shadow: 10px 10px 5px 0px rgba(red(@shadowcolor), green(@shadowcolor), blue(@shadowcolor), 1);
+@mixin dropshadow ($shadowcolor) {
+  box-shadow: 10px 10px 5px 0 rgba(red($shadowcolor), green($shadowcolor), blue($shadowcolor), 1);
 
 }
 
 .login {
+	@include make-col-ready();
+	@include make-col(4);
+	@include make-col-offset(4);
+
   margin-top: 15px;
 
-  .make-md-column(4);
-  .make-md-column-offset(4);
-
   border-radius: 15px;
-  background-color: @kuler-middle;
+  background-color: $kuler-middle;
   padding: 25px;
 
   text-align: center;
 
-  .dropshadow(@kuler-middle-right);
+  @include dropshadow($kuler-middle-right);
 }
 
 .navbar {
-  background-color: @kuler-right;
+  background-color: $kuler-right;
 }
 
 .navbar-default .navbar-brand {
-  color: @whitish;
+  color: $whitish;
 }
 
 .navbar-default .navbar-nav {
 
   li {
 	a {
-	  color: @whitish;
+	  color: $whitish;
 	}
   }
 
   .dropdown {
-	background-color: @kuler-right;
+	background-color: $kuler-right;
 
 	li {
 	  a {
-		color: @blackish;
+		color: $blackish;
 	  }
 	}
   }
 }
 
 .item {
-  .dropshadow(@kuler-left);
+  @include dropshadow($kuler-left);
 
-  background-color: @kuler-middle-left;
+  background-color: $kuler-middle-left;
 
   margin-top: 15px;
   padding: 25px;
 
-  .make-md-column(2);
-  .make-md-column-offset(1);
+  @include make-col(2);
+  @include make-col-offset(1);
 
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .navbar-brand {
-  padding: 0px;
+  padding: 0;
 }
 
 .navbar-brand > img {
   height: 100%;
   display: inline-block;
-  border: 0px;
+  border: 0;
   background: none;
 }
 
@@ -97,34 +98,34 @@ html, body {
 }
 
 html {
-  margin: 0px;
+  margin: 0;
 }
 
 body.mapview {
-  margin: 0px;
+  margin: 0;
 }
 
 .base--container {
-  .make-lg-column-offset(2);
-  .row();
+  @include make-col-offset(3);
+  @extend .row;
 }
 
 .base--panel {
-  .make-md-column(6);
-  .make-md-column-offset(3);
+  @include make-col(6);
+  @include make-col-offset(3);
 
 }
 
 .areamarker {
   .ui-resizable-handle {
-	.clearfix();
+	@extend .clearfix;
 	min-width: 5px !important;
 	min-height: 5px !important;
   }
 }
 
 .img-token {
-  .img-circle();
+  @extend .rounded-circle;
   border: 1px solid #000 !important;
   max-width: 40px;
 }
