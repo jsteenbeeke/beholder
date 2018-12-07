@@ -3,7 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.jobs;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionTask;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.ServiceProvider;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.Jobs;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitDAO;
@@ -49,7 +49,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		filter.amazonKey().isNull();
 
 		for (Portrait portrait: portraitDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
 					.PORTRAIT, portrait.getData());
 			uploadResult.ifOk(key -> {
 				portrait.setAmazonKey(key);
@@ -65,7 +65,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		filter.amazonKey().isNull();
 
 		for (TokenDefinition def: tokenDefinitionDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
 					.TOKEN, def.getImageData());
 			uploadResult.ifOk(key -> {
 				def.setAmazonKey(key);
@@ -80,7 +80,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		filter.amazonKey().isNull();
 
 		for (ScaledMap map: mapDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult =
+			TypedResult<String> uploadResult =
 					uploadBlobAs(s3, AmazonS3Service.ImageType.MAP, map.getData());
 			uploadResult.ifOk((String key) -> {
 				map.setAmazonKey(key);
@@ -90,10 +90,10 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		}
 	}
 
-	private TypedActionResult<String> uploadBlobAs(AmazonS3Service s3, AmazonS3Service.ImageType
+	private TypedResult<String> uploadBlobAs(AmazonS3Service s3, AmazonS3Service.ImageType
 			imageType, Blob data) {
 		if (data == null) {
-			return TypedActionResult.fail("Image has no data");
+			return TypedResult.fail("Image has no data");
 		}
 
 		String mimeType = getMimeType(ImageUtil.getBlobType(data));
@@ -103,7 +103,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 
 			return s3.uploadImage(imageType, mimeType, stream, data.length());
 		} catch (SQLException e) {
-			return TypedActionResult.fail(e.getMessage());
+			return TypedResult.fail(e.getMessage());
 		}
 	}
 

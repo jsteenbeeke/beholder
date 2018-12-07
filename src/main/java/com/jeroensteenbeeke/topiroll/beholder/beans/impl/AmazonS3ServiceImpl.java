@@ -8,9 +8,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
-import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,7 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 	}
 
 	@Override
-	public TypedActionResult<String> uploadImage(ImageType imageType, String mimeType, InputStream
+	public TypedResult<String> uploadImage(ImageType imageType, String mimeType, InputStream
 			image, long imageSize) {
 		final UUID uuid = UUID.randomUUID();
 		final String extension = ImageUtil.getExtensionByMimeType(mimeType);
@@ -55,9 +55,9 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 		try {
 			UploadResult uploadResult = upload.waitForUploadResult();
 
-			return TypedActionResult.ok(uploadResult.getKey());
+			return TypedResult.ok(uploadResult.getKey());
 		} catch (InterruptedException e) {
-			return TypedActionResult.fail("Upload failed: %s", e.getMessage());
+			return TypedResult.fail("Upload failed: %s", e.getMessage());
 		}
 	}
 

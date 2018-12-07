@@ -6,7 +6,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;

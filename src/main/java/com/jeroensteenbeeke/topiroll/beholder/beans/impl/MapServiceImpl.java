@@ -18,7 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry.RegistryEntry;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
@@ -107,22 +107,22 @@ class MapServiceImpl implements MapService {
 	@Nonnull
 	@Override
 	@Transactional
-	public TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user,
+	public TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user,
 												  @Nonnull String name, int squareSize, @Nonnull File data,
 												  @Nullable MapFolder folder) {
-		TypedActionResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
+		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
 		if (!dimResult.isOk()) {
-			return TypedActionResult.fail(dimResult);
+			return TypedResult.fail(dimResult);
 		}
 
 		Dimension dimension = dimResult.getObject();
 
-		TypedActionResult<String> uploadResult;
+		TypedResult<String> uploadResult;
 
 		try {
-			TypedActionResult<String> mimeType = ImageUtil.getMimeType(data);
+			TypedResult<String> mimeType = ImageUtil.getMimeType(data);
 			if (!mimeType.isOk()) {
-				return TypedActionResult.fail(mimeType);
+				return TypedResult.fail(mimeType);
 			}
 
 			uploadResult =
@@ -130,11 +130,11 @@ class MapServiceImpl implements MapService {
 							.uploadImage(AmazonS3Service.ImageType.MAP, mimeType.getObject(), new
 									FileInputStream(data), data.length());
 		} catch (IOException e) {
-			return TypedActionResult.fail("Could not open file for upload: %s", e.getMessage());
+			return TypedResult.fail("Could not open file for upload: %s", e.getMessage());
 		}
 
 		if (!uploadResult.isOk()) {
-			return TypedActionResult.fail(uploadResult);
+			return TypedResult.fail(uploadResult);
 		}
 
 
@@ -149,7 +149,7 @@ class MapServiceImpl implements MapService {
 		map.setFolder(folder);
 		mapDAO.save(map);
 
-		return TypedActionResult.ok(map);
+		return TypedResult.ok(map);
 	}
 
 	@Override
@@ -241,10 +241,10 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
+	public TypedResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
 														@Nonnull String name, @Nonnull List<FogOfWarShape> shapes) {
 		if (shapes.isEmpty()) {
-			return TypedActionResult.fail("No shapes selected");
+			return TypedResult.fail("No shapes selected");
 		}
 
 		FogOfWarGroup group = new FogOfWarGroup();
@@ -257,16 +257,16 @@ class MapServiceImpl implements MapService {
 			shapeDAO.update(shape);
 		});
 
-		return TypedActionResult.ok(group);
+		return TypedResult.ok(group);
 	}
 
 	@Override
 	@Transactional
-	public TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+	public TypedResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
 													  @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
 													  @Nonnull List<FogOfWarShape> remove) {
 		if (keep.isEmpty()) {
-			return TypedActionResult.fail("No shapes selected");
+			return TypedResult.fail("No shapes selected");
 		}
 
 		group.setName(name);
@@ -282,7 +282,7 @@ class MapServiceImpl implements MapService {
 			shapeDAO.update(shape);
 		});
 
-		return TypedActionResult.ok(group);
+		return TypedResult.ok(group);
 	}
 
 	@Override
@@ -337,10 +337,10 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedActionResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
+	public TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
 			String name,
 									   int diameter, @Nonnull byte[] image) {
-		TypedActionResult<String> uploadResult =
+		TypedResult<String> uploadResult =
 				amazonS3Service.uploadImage(AmazonS3Service.ImageType.TOKEN,
 						image);
 
@@ -353,17 +353,17 @@ class MapServiceImpl implements MapService {
 
 			tokenDefinitionDAO.save(def);
 
-			return TypedActionResult.ok(def);
+			return TypedResult.ok(def);
 		}
 
-		return TypedActionResult.fail(uploadResult);
+		return TypedResult.fail(uploadResult);
 	}
 
 	@Override
 	@Transactional
-	public TypedActionResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
+	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
 			name, @Nonnull byte[] image) {
-		TypedActionResult<String> uploadResult =
+		TypedResult<String> uploadResult =
 				amazonS3Service.uploadImage(AmazonS3Service.ImageType.PORTRAIT, image);
 
 		if (uploadResult.isOk()) {
@@ -375,10 +375,10 @@ class MapServiceImpl implements MapService {
 
 			portraitDAO.save(portrait);
 
-			return TypedActionResult.ok(portrait);
+			return TypedResult.ok(portrait);
 		}
 
-		return TypedActionResult.fail(uploadResult);
+		return TypedResult.fail(uploadResult);
 	}
 
 	@Override

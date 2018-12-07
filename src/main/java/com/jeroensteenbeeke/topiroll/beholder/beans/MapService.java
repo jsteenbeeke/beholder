@@ -23,12 +23,12 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 public interface MapService {
 	@Nonnull
-	TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
 										   int squareSize, @Nonnull File data, @Nullable MapFolder folder);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
@@ -43,7 +43,7 @@ public interface MapService {
 
 	//region Tokens
 
-	TypedActionResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,
 								int diameter, @Nonnull byte[] image);
 
 
@@ -69,7 +69,7 @@ public interface MapService {
 	void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height, int offsetX,
 						 int offsetY);
 
-	TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
+	TypedResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
 												 @Nonnull String name, @Nonnull List<FogOfWarShape> shapes);
 
 	void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
@@ -80,7 +80,7 @@ public interface MapService {
 
 	void ungroup(@Nonnull FogOfWarGroup group);
 
-	TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+	TypedResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
 											   @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
 											   @Nonnull List<FogOfWarShape> remove);
 
@@ -92,7 +92,7 @@ public interface MapService {
 	//endregion
 
 	//region Portraits
-	TypedActionResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String name,
 											  @Nonnull byte[] image);
 
 	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);

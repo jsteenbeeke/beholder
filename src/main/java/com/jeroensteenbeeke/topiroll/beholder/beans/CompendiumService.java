@@ -1,6 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
 
@@ -13,7 +13,7 @@ public interface CompendiumService {
 
 	boolean articleExists(String path);
 
-	TypedActionResult<CompendiumEntry> createImportedArticle(String title, String path, String html);
+	TypedResult<CompendiumEntry> createImportedArticle(String title, String path, String html);
 
 	void pinEntry(@Nullable BeholderUser user, @Nonnull CompendiumEntry entry);
 

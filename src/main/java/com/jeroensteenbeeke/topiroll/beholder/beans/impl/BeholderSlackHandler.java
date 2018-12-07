@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService.UserDescriptor;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -86,7 +86,7 @@ public class BeholderSlackHandler extends SlackHandler {
 									  @Nonnull OAuth2AccessToken accessToken) {
 		String tokenString = accessToken.getAccessToken();
 
-		TypedActionResult<JSONObject> result = getUserInfo(service,
+		TypedResult<JSONObject> result = getUserInfo(service,
 				accessToken);
 
 		if (result.isOk()) {

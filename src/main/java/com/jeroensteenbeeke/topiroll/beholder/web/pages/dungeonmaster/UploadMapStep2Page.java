@@ -58,7 +58,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPa
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -94,7 +94,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 		add(new BootstrapFeedbackPanel("feedback"));
 
-		TypedActionResult<Dimension> dimResult = ImageUtil.getImageDimensions(image);
+		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(image);
 		if (!dimResult.isOk()) {
 			UploadMapStep1Page page = new UploadMapStep1Page(folderModel.getObject());
 			page.error(dimResult.getMessage());
@@ -218,7 +218,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 				int squareSize = 5 * squareSizeOnMap / indicatorSize;
 
-				TypedActionResult<ScaledMap> result = mapService.createMap(getUser(),
+				TypedResult<ScaledMap> result = mapService.createMap(getUser(),
 						nameField.getModelObject(),
 						squareSize, image, folderModel.getObject());
 				if (result.isOk()) {

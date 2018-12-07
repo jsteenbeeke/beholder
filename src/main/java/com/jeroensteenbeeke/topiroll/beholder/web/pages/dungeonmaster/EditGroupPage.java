@@ -35,7 +35,7 @@ import org.apache.wicket.model.Model;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
@@ -119,7 +119,7 @@ public class EditGroupPage extends AuthenticatedPage {
 
 				});
 
-				TypedActionResult<FogOfWarGroup> result = mapService
+				TypedResult<FogOfWarGroup> result = mapService
 						.editGroup(getModelObject(),
 								nameField.getModelObject(), keep, remove);
 				if (result.isOk()) {
