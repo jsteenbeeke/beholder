@@ -1,6 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;

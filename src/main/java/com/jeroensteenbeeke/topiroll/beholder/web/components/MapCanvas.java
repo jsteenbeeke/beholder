@@ -17,16 +17,17 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import javax.inject.Inject;
-
 import com.google.common.collect.ImmutableList;
+import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
+import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.jobs.InitialRenderTask;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -34,16 +35,10 @@ import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
 import org.apache.wicket.protocol.ws.api.WicketWebSocketJQueryResourceReference;
 import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
 import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
-import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.joda.time.DateTime;
 
-import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
-import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.jobs.InitialRenderTask;
-
+import javax.inject.Inject;
 import java.util.List;
 
 public class MapCanvas extends WebComponent {
@@ -141,11 +136,8 @@ public class MapCanvas extends WebComponent {
 
 		super.renderHead(response);
 
-		HeaderItem wicketEvent = JavaScriptHeaderItem
-				.forReference(WicketEventJQueryResourceReference.get());
 		HeaderItem wicketWebsocket = JavaScriptHeaderItem.forReference(WicketWebSocketJQueryResourceReference.get());
 
-		response.render(wicketEvent);
 		response.render(wicketWebsocket);
 
 		response.render(JavaScriptHeaderItem
@@ -176,7 +168,7 @@ public class MapCanvas extends WebComponent {
 						"js/renderer.js") {
 					@Override
 					public List<HeaderItem> getDependencies() {
-						return ImmutableList.of(wicketEvent, wicketWebsocket);
+						return ImmutableList.of(wicketWebsocket);
 					}
 				}));
 

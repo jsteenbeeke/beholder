@@ -1,10 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.FontAwesome;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;

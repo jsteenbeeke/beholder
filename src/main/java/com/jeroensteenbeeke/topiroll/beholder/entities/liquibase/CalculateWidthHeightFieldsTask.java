@@ -58,6 +58,7 @@ public class CalculateWidthHeightFieldsTask implements CustomTaskChange {
 	}
 
 	@Override
+	@SuppressWarnings("deprecated")
 	public void execute(Database database) throws CustomChangeException {
 		JdbcConnection db = (JdbcConnection) database.getConnection();
 
@@ -72,12 +73,13 @@ public class CalculateWidthHeightFieldsTask implements CustomTaskChange {
 				long id = r.getLong("id");
 				byte[] image = r.getBytes("data");
 
-				Dimension imageDimensions = ImageUtil.getImageDimensions(image);
+				ImageUtil.getImageDimensions(image).map(imageDimensions -> {
 
 				updates.add(String.format(
 						"UPDATE scaledmap SET basicwidth = %d, basicheight = %d WHERE id=%d",
 						(int) imageDimensions.getWidth(),
 						(int) imageDimensions.getHeight(), id));
+				});
 			}
 
 			for (String sql : updates) {

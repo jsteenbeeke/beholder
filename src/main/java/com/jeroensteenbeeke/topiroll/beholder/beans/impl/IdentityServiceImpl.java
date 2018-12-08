@@ -17,18 +17,17 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.jeroensteenbeeke.hyperion.solstice.api.Any;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.BeholderUserDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter;
+import io.vavr.control.Option;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -49,10 +48,10 @@ class IdentityServiceImpl implements IdentityService {
 		BeholderUserFilter filter = new BeholderUserFilter();
 		filter.userId().set(descriptor.getUserId());
 
-		BeholderUser user = userDAO.getUniqueByFilter(filter);
+		Option<BeholderUser> userOption = userDAO.getUniqueByFilter(filter);
 
-		if (user == null) {
-			user = new BeholderUser();
+		if (userOption.isEmpty()) {
+			BeholderUser user = new BeholderUser();
 			user.setAccessToken(descriptor.getAccessToken());
 			user.setAvatar(descriptor.getAvatar());
 			user.setTeamId(descriptor.getTeamId());
@@ -64,14 +63,18 @@ class IdentityServiceImpl implements IdentityService {
 					initializer.onAccountCreated(user);
 				}
 			}
+
+			return user;
 		} else {
+			BeholderUser user = userOption.get();
+
 			user.setAccessToken(descriptor.getAccessToken());
 			user.setAvatar(descriptor.getAvatar());
 			user.setTeamId(descriptor.getTeamId());
 			user.setUsername(descriptor.getUserName());
 			userDAO.update(user);
-		}
 
-		return user;
+			return user;
+		}
 	}
 }

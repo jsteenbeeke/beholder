@@ -1,8 +1,8 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
 import com.google.common.collect.Lists;
-import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
@@ -13,7 +13,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -54,7 +53,7 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 
 		final DropDownChoice<TokenDefinition> definitions = new DropDownChoice<>("type",
 				ModelMaker.wrap((TokenDefinition) null, true),
-				ModelMaker.wrapList(definitionDAO.findByFilter(filter), false),
+				ModelMaker.wrapList(definitionDAO.findByFilter(filter).toJavaList(), false),
 				LambdaRenderer.of(TokenDefinition::getName)
 				);
 		definitions.setRequired(true);
@@ -111,8 +110,8 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 		add(tokenForm);
 		add(new AjaxSubmitLink("submit", tokenForm) {
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				super.onSubmit(target, form);
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
 
 				setVisible(false);
 
