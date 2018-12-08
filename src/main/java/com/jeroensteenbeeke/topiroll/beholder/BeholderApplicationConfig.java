@@ -27,6 +27,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.jeroensteenbeeke.hyperion.solstice.spring.db.EnableSolstice;
 import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -48,42 +49,9 @@ import liquibase.integration.spring.SpringLiquibase;
 				"com.jeroensteenbeeke.topiroll.beholder.entities.populators" },
 		scopedProxy = ScopedProxyMode.INTERFACES)
 @EnableTransactionManagement
-@Import(SolsticeConfig.class)
+@EnableSolstice(entityBasePackage = "com.jeroensteenbeeke.topiroll.beholder.entities", liquibaseChangelog = "classpath:/com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-master.xml")
 @PropertySource("file:${hyperion.configdir:${user.home}/.hyperion}/beholder-web.properties")
 public class BeholderApplicationConfig {
-	@Bean
-	public SpringLiquibase liquibase(
-			@Value("${liquibase.contexts:production}") String liquibaseContexts,
-			HikariDataSource dataSource) {
-		SpringLiquibase liquibase = new SpringLiquibase();
-		liquibase.setDataSource(dataSource);
-		liquibase.setChangeLog(
-				"classpath:/com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-master.xml");
-		liquibase.setContexts(liquibaseContexts);
-
-		return liquibase;
-	}
-
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-			HikariDataSource dataSource, JpaVendorAdapter vendorAdapter) {
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setDataSource(dataSource);
-		factory.setPackagesToScan(
-				"com.jeroensteenbeeke.topiroll.beholder.entities");
-		factory.setJpaVendorAdapter(vendorAdapter);
-
-		return factory;
-	}
-
-	@Bean
-	public JpaTransactionManager transactionManager(
-			EntityManagerFactory factory) {
-		JpaTransactionManager manager = new JpaTransactionManager();
-		manager.setEntityManagerFactory(factory);
-
-		return manager;
-	}
 
 	@Bean
 	public TestModeEntityPopulator testPopulator() {
