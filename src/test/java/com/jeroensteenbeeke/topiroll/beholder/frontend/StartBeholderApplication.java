@@ -17,19 +17,12 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import javax.servlet.ServletException;
-import javax.websocket.DeploymentException;
-
-import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
-
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
+import org.eclipse.jetty.webapp.WebAppContext;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class StartBeholderApplication {
 	public static void main(String[] args) throws Exception {
@@ -48,14 +41,7 @@ public class StartBeholderApplication {
 	public static Optional<Handler> createApplicationHandler(String[] args)
 			throws Exception {
 		Consumer<WebAppContext> initWebsockets = context -> {
-			try {
-				ServerContainer wscontainer = WebSocketServerContainerInitializer
-						.configureContext(context);
-
-				wscontainer.addEndpoint(new WicketServerEndpointConfig());
-			} catch (DeploymentException | ServletException e) {
-				e.printStackTrace();
-			}
+			// FIXME: Test if websockets still work
 		};
 
 		if (args.length < 9) {

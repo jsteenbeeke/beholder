@@ -13,7 +13,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 public class InitiativePanel extends CombatModePanel<MapView> {
 	private static final String UNKNOWN = "-";
@@ -38,11 +37,11 @@ public class InitiativePanel extends CombatModePanel<MapView> {
 		add(new Label("current", new LoadableDetachableModel<String>() {
 			@Override
 			protected String load() {
-				return Optional.ofNullable(initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
+				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
 						.view(getModelObject())
-						.selected(true)))
+						.selected(true))
 						.map(InitiativeParticipant::getName)
-						.orElse(UNKNOWN);
+						.getOrElse(UNKNOWN);
 			}
 		}) {
 			@Override

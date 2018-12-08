@@ -46,12 +46,11 @@ public class PrepareMusicPage extends AuthenticatedPage {
 	public PrepareMusicPage() {
 		super("Prepare music");
 
-
+		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
+		playlistFilter.owner(getUser()).name().orderBy(true);
 
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider
-						.of(new YouTubePlaylistFilter().owner(getUser()).name().orderBy(true),
-								playlistDAO)) {
+				FilterDataProvider.of(playlistFilter, playlistDAO)) {
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {
 				YouTubePlaylist playlist = item.getModelObject();

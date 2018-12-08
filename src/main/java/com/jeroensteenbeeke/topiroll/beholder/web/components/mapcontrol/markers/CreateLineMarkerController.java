@@ -82,8 +82,8 @@ public abstract class CreateLineMarkerController extends TypedPanel<MapView> imp
 
 		form.add(new AjaxSubmitLink("submit", form) {
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				super.onSubmit(target, form);
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
 
 				markerService.createLine(
 						CreateLineMarkerController.this.getModelObject(),

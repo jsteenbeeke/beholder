@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
 public class MigrateImagesToAmazonJob extends HyperionTask {
 	private static final Logger log = LoggerFactory.getLogger(MigrateImagesToAmazonJob.class);
@@ -51,11 +50,12 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		for (Portrait portrait: portraitDAO.findByFilter(filter)) {
 			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
 					.PORTRAIT, portrait.getData());
-			uploadResult.ifOk(key -> {
+			uploadResult.map(key -> {
 				portrait.setAmazonKey(key);
 				portraitDAO.update(portrait);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return portrait;
+			}).ifNotOk(log::error);
 		}
 	}
 
@@ -67,11 +67,12 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		for (TokenDefinition def: tokenDefinitionDAO.findByFilter(filter)) {
 			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
 					.TOKEN, def.getImageData());
-			uploadResult.ifOk(key -> {
+			uploadResult.map(key -> {
 				def.setAmazonKey(key);
 				tokenDefinitionDAO.update(def);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return def;
+			}).ifNotOk(log::error);
 		}
 	}
 
@@ -82,11 +83,12 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		for (ScaledMap map: mapDAO.findByFilter(filter)) {
 			TypedResult<String> uploadResult =
 					uploadBlobAs(s3, AmazonS3Service.ImageType.MAP, map.getData());
-			uploadResult.ifOk((String key) -> {
+			uploadResult.map((String key) -> {
 				map.setAmazonKey(key);
 				mapDAO.update(map);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return map;
+			}).ifNotOk(log::error);
 		}
 	}
 
@@ -96,9 +98,10 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 			return TypedResult.fail("Image has no data");
 		}
 
-		String mimeType = getMimeType(ImageUtil.getBlobType(data));
 
 		try {
+			String mimeType = ImageUtil.getMimeType(data.getBytes(0, 9));
+
 			InputStream stream = data.getBinaryStream();
 
 			return s3.uploadImage(imageType, mimeType, stream, data.length());

@@ -152,7 +152,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 					public IResource getResource() {
 						return new ResourceStreamResource() {
 							@Override
-							protected IResourceStream getResourceStream() {
+							protected IResourceStream getResourceStream(Attributes attributes) {
 								return new FileResourceStream(image);
 							}
 						};

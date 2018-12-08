@@ -27,8 +27,11 @@ public class YoutubeController extends TypedPanel<MapView> {
 	public YoutubeController(String id, MapView view) {
 		super(id, ModelMaker.wrap(view));
 
+		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
+		playlistFilter.owner(view.getOwner()).name().orderBy(true);
+
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider.of(new YouTubePlaylistFilter().owner(view.getOwner()).name().orderBy(true),
+				FilterDataProvider.of(playlistFilter,
 						playlistDAO)) {
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {

@@ -3,7 +3,6 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -74,8 +73,8 @@ public class CreateLineMarkerPanel extends CombatModePanel<MapView> {
 
 		add(new AjaxSubmitLink("submit", damageForm) {
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				super.onSubmit(target, form);
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
 
 				setVisible(false);
 

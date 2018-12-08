@@ -49,10 +49,12 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 		super("Prepare portraits");
 
 
+		PortraitFilter portraitFilter = new PortraitFilter();
+		portraitFilter.owner(getUser());
+		portraitFilter.name().orderBy(true);
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
-				FilterDataProvider.of(new PortraitFilter().owner(getUser()).name().orderBy(true),
-						portraitDAO)) {
+				FilterDataProvider.of(portraitFilter, portraitDAO)) {
 			@Override
 			protected void populateItem(Item<Portrait> item) {
 				Portrait portrait = item.getModelObject();

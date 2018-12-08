@@ -60,7 +60,7 @@ class CompendiumServiceImpl implements CompendiumService {
 		filter.author().equalToOrNull(user);
 		filter.title().orderBy(true);
 
-		return dao.findByFilter(filter);
+		return dao.findByFilter(filter).toJavaList();
 	}
 
 	@Override
