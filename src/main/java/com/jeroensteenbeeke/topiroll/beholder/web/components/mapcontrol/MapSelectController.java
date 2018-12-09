@@ -145,7 +145,7 @@ public abstract class MapSelectController extends Panel {
 					}
 				});
 				item.add(new AjaxIconLink<ScaledMap>("select", item.getModel(),
-						FontAwesome.camera) {
+						FontAwesome.hand_pointer) {
 					private static final long serialVersionUID = 1L;
 
 					@Override

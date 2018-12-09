@@ -19,8 +19,13 @@ package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
+import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 
+import javax.servlet.ServletException;
+import javax.websocket.DeploymentException;
+import javax.websocket.server.ServerContainer;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -41,7 +46,14 @@ public class StartBeholderApplication {
 	public static Optional<Handler> createApplicationHandler(String[] args)
 			throws Exception {
 		Consumer<WebAppContext> initWebsockets = context -> {
-			// FIXME: Test if websockets still work
+			try {
+				ServerContainer wscontainer = WebSocketServerContainerInitializer
+						.configureContext(context);
+
+				wscontainer.addEndpoint(new WicketServerEndpointConfig());
+			} catch (DeploymentException | ServletException e) {
+				e.printStackTrace();
+			}
 		};
 
 		if (args.length < 9) {

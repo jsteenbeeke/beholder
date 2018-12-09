@@ -105,6 +105,15 @@ body.mapview {
   margin: 0;
 }
 
+h2 {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.navbar {
+	margin-bottom: 2em;
+}
+
 .base--container {
   @include make-col-offset(3);
   @extend .row;

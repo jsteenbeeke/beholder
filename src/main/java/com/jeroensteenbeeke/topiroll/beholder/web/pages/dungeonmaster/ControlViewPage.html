@@ -13,50 +13,44 @@
 				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 					Map <span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a wicket:id="mapSelect"><i class="fas fa-check-circle"></i> Select Map</a></li>
-					<li><a wicket:id="hideReveal"><i class="fas fa-list"></i> Hide/Reveal</a></li>
-					<li><a wicket:id="forceUpdate"><i class="fas fa-exclamation-triangle"></i> Force re-render</a>
-					</li>
-				</ul>
+				<div class="dropdown-menu" role="menu">
+					<a class="dropdown-item" wicket:id="mapSelect"><i class="fas fa-check-circle"></i> Select Map</a>
+					<a class="dropdown-item" wicket:id="hideReveal"><i class="fas fa-list"></i> Hide/Reveal</a>
+					<a class="dropdown-item" wicket:id="forceUpdate"><i class="fas fa-exclamation-triangle"></i> Force re-render</a>
+				</div>
 			</div>
 			<div class="btn-group" wicket:enclosure="addTokens">
 				<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
 					Tokens <span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a wicket:id="addTokens"><i class="fas fa-chess-rook"></i> Add Tokens</a></li>
-					<li><a wicket:id="tokenStates"><i class="fas fa-chess-queen"></i> Token states</a></li>
-					<li><a wicket:id="moveTokens"><i class="fas fa-chess-pawn"></i> Move tokens</a></li>
-				</ul>
+				<div class="dropdown-menu" role="menu">
+					<a class="dropdown-item" wicket:id="addTokens"><i class="fas fa-chess-rook"></i> Add Tokens</a>
+					<a class="dropdown-item" wicket:id="tokenStates"><i class="fas fa-chess-queen"></i> Token states</a>
+					<a class="dropdown-item" wicket:id="moveTokens"><i class="fas fa-chess-pawn"></i> Move tokens</a>
+				</div>
 			</div>
 			<div class="btn-group" wicket:enclosure="markers">
 				<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
 					Combat <span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" role="menu">
-
-
-					<li>
-						<a wicket:id="markers">
+				<div class="dropdown-menu" role="menu">
+						<a class="dropdown-item" wicket:id="markers">
 							<i class="fas fa-plus-square"></i> Add/tune Markers
 						</a>
-					</li>
-					<li><a wicket:id="moveMarkers"> <i class="fas fa-arrows"></i> Move Markers</a></li>
-					<li><a wicket:id="initiative"> <i class="fas fa-calendar"></i> Initiative</a></li>
-					<li><a wicket:id="combatMode"> <i class="fas fa-gamepad"></i> Combat Mode</a></li>
-
-				</ul>
+					<a class="dropdown-item" wicket:id="moveMarkers"> <i class="fas fa-arrows-alt"></i> Move Markers</a>
+					<a class="dropdown-item" wicket:id="initiative"> <i class="fas fa-calendar"></i> Initiative</a>
+					<a class="dropdown-item" wicket:id="combatMode"> <i class="fas fa-gamepad"></i> Combat Mode</a>
+				</div>
 			</div>
 
 			<div class="btn-group" wicket:enclosure="portraits">
 				<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
 					Ambience <span class="caret"></span>
 				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a wicket:id="portraits"><i class="fas fa-user"></i> Portraits</a></li>
-					<li><a wicket:id="youtube"><i class="fas fa-spotify"></i> Playlists</a></li>
-				</ul>
+				<div class="dropdown-menu" role="menu">
+					<a class="dropdown-item" wicket:id="portraits"><i class="fas fa-user"></i> Portraits</a>
+					<a class="dropdown-item" wicket:id="youtube"><i class="fab fa-spotify"></i> Playlists</a>
+				</div>
 
 			</div>
 		</div>
