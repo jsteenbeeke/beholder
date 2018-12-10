@@ -17,15 +17,10 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
+import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService.UserDescriptor;
@@ -33,22 +28,22 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackErrorPage;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.json.simple.JSONObject;
 
 import javax.annotation.Nonnull;
 
-public class BeholderSlackHandler extends SlackHandler {
+public class FakeSlackHandler extends SlackHandler {
+	private final String clientId;
+	private final String clientSecret;
 	private String applicationBaseUrl;
-
-	private String clientId;
-
-	private String clientSecret;
 
 	private IdentityService identityService;
 
-	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, IdentityService identityService) {
+	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
 		this.applicationBaseUrl = applicationBaseUrl;
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
+		this.clientId = Randomizer.random(12);
+		this.clientSecret = Randomizer.random(44);
 		this.identityService = identityService;
 	}
 
