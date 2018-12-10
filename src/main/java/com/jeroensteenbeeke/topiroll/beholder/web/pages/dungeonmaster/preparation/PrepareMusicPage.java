@@ -5,7 +5,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
@@ -41,7 +41,7 @@ public class PrepareMusicPage extends AuthenticatedPage {
 	private YouTubePlaylistDAO playlistDAO;
 
 	@Inject
-	private AmazonS3Service amazon;
+	private RemoteImageService amazon;
 
 	public PrepareMusicPage() {
 		super("Prepare music");

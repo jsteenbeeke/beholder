@@ -17,30 +17,23 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder;
 
-import javax.persistence.EntityManagerFactory;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.jeroensteenbeeke.hyperion.solstice.spring.db.EnableSolstice;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.AmazonS3ServiceImpl;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.LocalInstanceImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.jeroensteenbeeke.hyperion.solstice.spring.TestModeEntityPopulator;
-import com.jeroensteenbeeke.hyperion.solstice.spring.db.SolsticeConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import liquibase.integration.spring.SpringLiquibase;
 
 @Configuration
 @ComponentScan(
@@ -59,6 +52,7 @@ public class BeholderApplicationConfig {
 	}
 
 	@Bean
+	@Conditional(AmazonEnabledCondition.class)
 	public TransferManager transferManager(@Value("${amazon.clientid}") String clientId,
 										   @Value("${amazon.clientsecret}") String clientSecret,
 										   @Value("${amazon.region}") String region
@@ -73,6 +67,20 @@ public class BeholderApplicationConfig {
 	}
 
 	@Bean
+	@Conditional(AmazonEnabledCondition.class)
+	public RemoteImageService amazonImageService(TransferManager manager, AmazonS3 amazonS3,
+												 @Value("${amazon.bucketname}") String amazonBucketName) {
+		return new AmazonS3ServiceImpl(manager, amazonS3, amazonBucketName);
+	}
+
+	@Bean
+	@Conditional(NoAmazonCondition.class)
+	public RemoteImageService localImageService() {
+		return new LocalInstanceImageService();
+	}
+
+	@Bean
+	@Conditional(AmazonEnabledCondition.class)
 	public AmazonS3 amazonS3(@Value("${amazon.clientid}") String clientId,
 							 @Value("${amazon.clientsecret}") String clientSecret,
 							 @Value("${amazon.region}") String region
@@ -85,7 +93,7 @@ public class BeholderApplicationConfig {
 	}
 
 	@Bean
-	public AmazonData amazonData(@Value("${amazon.url.prefix}") String urlPrefix) {
-		return new AmazonData(urlPrefix);
+	public RemoteImageData remoteImageData(@Value("${remote.image.url.prefix}") String urlPrefix) {
+		return new RemoteImageData(urlPrefix);
 	}
 }

@@ -7,7 +7,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityPageSetti
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
@@ -31,7 +31,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 	private TokenDefinitionDAO tokenDAO;
 
 	@Inject
-	private AmazonS3Service amazon;
+	private RemoteImageService amazon;
 
 	public PrepareTokensPage() {
 		super("Prepare tokens");

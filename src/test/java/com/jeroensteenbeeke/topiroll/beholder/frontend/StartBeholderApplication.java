@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
+import com.jeroensteenbeeke.imagesrv.ImageServer;
 import com.sun.org.apache.xpath.internal.Arg;
 import org.apache.commons.cli.*;
 import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
@@ -29,6 +30,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
 import javax.servlet.ServletException;
 import javax.websocket.DeploymentException;
 import javax.websocket.server.ServerContainer;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -93,11 +95,24 @@ public class StartBeholderApplication {
 		if (!amazonEnabled) {
 			System.out.printf("Amazon S3 image storage disabled, please specify arguments --%1$s, --%2$s, --%3$s and --%4$s to enable",
 					Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX).println();
+			finalizer.withProperty("remote.image.url.prefix", "http://localhost:4040/images/");
+
+			System.setProperty("amazon.images.disabled", "true");
+
+			final ImageServer localImageServer = new ImageServer(4040);
+
+			finalizer.withStartListener(server -> {
+				try {
+					localImageServer.start();
+				} catch (IOException ioe) {
+					throw new RuntimeException(ioe);
+				}
+			}).withStopListener(server -> localImageServer.stop());
 		} else {
 			finalizer.withProperty("amazon.clientid", cmd.getOptionValue(Arguments.AMAZON_CLIENT_ID))
 					.withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
 					.withProperty("amazon.bucketname", cmd.getOptionValue(Arguments.AMAZON_BUCKET))
-					.withProperty("amazon.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
+					.withProperty("remote.image.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
 			if (cmd.hasOption(Arguments.AMAZON_REGION)) {
 				finalizer.withProperty("amazon.region", cmd.getOptionValue(Arguments.AMAZON_REGION));
 			} else {
@@ -116,32 +131,32 @@ public class StartBeholderApplication {
 					.withProperty("rollbar.environment", args[8]);
 		}
 
-		if (!slackEnabled || !amazonEnabled) {
-			System.err.println("Startup without Slack or Amazon not yet implemented, aborting launch");
+		if (!slackEnabled) {
+			System.err.println("Startup without Slack not yet implemented, aborting launch");
 			System.exit(-1);
 		}
 
 		return finalizer.withProperty("application.baseurl",
-						"http://localhost:8081/beholder/")
+				"http://localhost:8081/beholder/")
 				.withProperty("application.sourceurl",
 						"file://" + System.getProperty("user.dir"))
 				.atPort(8081);
 	}
 
 	public static class Arguments {
-		public static final String SLACK_CLIENT_ID = "slack-client-id";
-		public static final String SLACK_CLIENT_SECRET = "slack-client-secret";
-		public static final String AMAZON_CLIENT_ID = "amazon-client-id";
-		public static final String AMAZON_CLIENT_SECRET = "amazon-client-secret";
-		public static final String AMAZON_BUCKET = "amazon-bucket";
-		public static final String AMAZON_URL_PREFIX = "amazon-url-prefix";
-		public static final String AMAZON_REGION = "amazon-region";
-		public static final String ROLLBAR_CLIENT_ID = "rollbar-client-id";
-		public static final String ROLLBAR_CLIENT_SECRET = "rollbar-client-secret";
-		public static final String ROLLBAR_ENVIRONMENT = "rollbar-environment";
+		static final String SLACK_CLIENT_ID = "slack-client-id";
+		static final String SLACK_CLIENT_SECRET = "slack-client-secret";
+		static final String AMAZON_CLIENT_ID = "amazon-client-id";
+		static final String AMAZON_CLIENT_SECRET = "amazon-client-secret";
+		static final String AMAZON_BUCKET = "amazon-bucket";
+		static final String AMAZON_URL_PREFIX = "amazon-url-prefix";
+		static final String AMAZON_REGION = "amazon-region";
+		static final String ROLLBAR_CLIENT_ID = "rollbar-client-id";
+		static final String ROLLBAR_CLIENT_SECRET = "rollbar-client-secret";
+		static final String ROLLBAR_ENVIRONMENT = "rollbar-environment";
 
-		public static final String HELP_SHORT = "?";
-		public static final String HELP_LONG = "help";
+		static final String HELP_SHORT = "?";
+		static final String HELP_LONG = "help";
 
 	}
 }

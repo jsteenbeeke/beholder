@@ -7,7 +7,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -119,7 +119,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 					private static final long serialVersionUID = 1L;
 
 					@Inject
-					private AmazonS3Service amazon;
+					private RemoteImageService amazon;
 
 					@Override
 					public void onClick() {

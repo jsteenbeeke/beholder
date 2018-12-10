@@ -1,6 +1,5 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -11,24 +10,21 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
-@Component
-public class AmazonS3ServiceImpl implements AmazonS3Service {
+public class AmazonS3ServiceImpl implements RemoteImageService {
 	private final String amazonBucketName;
 
 	private final TransferManager transferManager;
 
 	private final AmazonS3 s3;
 
-	@Autowired
 	public AmazonS3ServiceImpl(TransferManager transferManager,
 							   AmazonS3 s3,
 							   @Value("${amazon.bucketname}") String amazonBucketName) {

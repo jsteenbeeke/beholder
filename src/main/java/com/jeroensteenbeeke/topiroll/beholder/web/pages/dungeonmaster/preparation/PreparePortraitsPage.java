@@ -6,7 +6,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.Portrait;
@@ -43,7 +43,7 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 	private YouTubePlaylistDAO playlistDAO;
 
 	@Inject
-	private AmazonS3Service amazon;
+	private RemoteImageService amazon;
 
 	public PreparePortraitsPage() {
 		super("Prepare portraits");

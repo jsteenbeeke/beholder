@@ -5,7 +5,7 @@ import com.jeroensteenbeeke.hyperion.tardis.scheduler.ServiceProvider;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.Jobs;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
@@ -33,22 +33,22 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 
 	@Override
 	public void run(ServiceProvider provider) {
-		AmazonS3Service amazonS3Service = provider.getService(AmazonS3Service.class);
+		RemoteImageService remoteImageService = provider.getService(RemoteImageService.class);
 		PortraitDAO portraitDAO = provider.getService(PortraitDAO.class);
 		ScaledMapDAO mapDAO = provider.getService(ScaledMapDAO.class);
 		TokenDefinitionDAO tokenDefinitionDAO = provider.getService(TokenDefinitionDAO.class);
 
-		migrateMaps(mapDAO, amazonS3Service);
-		migrateTokens(tokenDefinitionDAO, amazonS3Service);
-		migratePortraits(portraitDAO, amazonS3Service);
+		migrateMaps(mapDAO, remoteImageService);
+		migrateTokens(tokenDefinitionDAO, remoteImageService);
+		migratePortraits(portraitDAO, remoteImageService);
 	}
 
-	private void migratePortraits(PortraitDAO portraitDAO, AmazonS3Service s3) {
+	private void migratePortraits(PortraitDAO portraitDAO, RemoteImageService s3) {
 		PortraitFilter filter = new PortraitFilter();
 		filter.amazonKey().isNull();
 
 		for (Portrait portrait: portraitDAO.findByFilter(filter)) {
-			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, RemoteImageService.ImageType
 					.PORTRAIT, portrait.getData());
 			uploadResult.map(key -> {
 				portrait.setAmazonKey(key);
@@ -60,12 +60,12 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 	}
 
 
-	private void migrateTokens(TokenDefinitionDAO tokenDefinitionDAO, AmazonS3Service s3) {
+	private void migrateTokens(TokenDefinitionDAO tokenDefinitionDAO, RemoteImageService s3) {
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.amazonKey().isNull();
 
 		for (TokenDefinition def: tokenDefinitionDAO.findByFilter(filter)) {
-			TypedResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, RemoteImageService.ImageType
 					.TOKEN, def.getImageData());
 			uploadResult.map(key -> {
 				def.setAmazonKey(key);
@@ -76,13 +76,13 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		}
 	}
 
-	private void migrateMaps(ScaledMapDAO mapDAO, AmazonS3Service s3) {
+	private void migrateMaps(ScaledMapDAO mapDAO, RemoteImageService s3) {
 		ScaledMapFilter filter = new ScaledMapFilter();
 		filter.amazonKey().isNull();
 
 		for (ScaledMap map: mapDAO.findByFilter(filter)) {
 			TypedResult<String> uploadResult =
-					uploadBlobAs(s3, AmazonS3Service.ImageType.MAP, map.getData());
+					uploadBlobAs(s3, RemoteImageService.ImageType.MAP, map.getData());
 			uploadResult.map((String key) -> {
 				map.setAmazonKey(key);
 				mapDAO.update(map);
@@ -92,7 +92,7 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 		}
 	}
 
-	private TypedResult<String> uploadBlobAs(AmazonS3Service s3, AmazonS3Service.ImageType
+	private TypedResult<String> uploadBlobAs(RemoteImageService s3, RemoteImageService.ImageType
 			imageType, Blob data) {
 		if (data == null) {
 			return TypedResult.fail("Image has no data");

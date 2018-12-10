@@ -7,7 +7,7 @@ import com.jeroensteenbeeke.lux.TypedResult;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public interface AmazonS3Service {
+public interface RemoteImageService {
 	default TypedResult<String> uploadImage(ImageType imageType, byte[] image) {
 		return uploadImage(imageType, ImageUtil.getMimeType(image), new ByteArrayInputStream
 				(image), image.length);

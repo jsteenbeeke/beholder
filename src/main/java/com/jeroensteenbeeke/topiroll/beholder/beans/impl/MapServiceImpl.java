@@ -21,7 +21,7 @@ import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry.RegistryEntry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
@@ -100,7 +100,7 @@ class MapServiceImpl implements MapService {
 	private InitiativeParticipantDAO participantDAO;
 
 	@Autowired
-	private AmazonS3Service amazonS3Service;
+	private RemoteImageService remoteImageService;
 
 	@Nonnull
 	@Override
@@ -124,8 +124,8 @@ class MapServiceImpl implements MapService {
 			}
 
 			uploadResult =
-					amazonS3Service
-							.uploadImage(AmazonS3Service.ImageType.MAP, mimeType.getObject(), new
+					remoteImageService
+							.uploadImage(RemoteImageService.ImageType.MAP, mimeType.getObject(), new
 									FileInputStream(data), data.length());
 		} catch (IOException e) {
 			return TypedResult.fail("Could not open file for upload: %s", e.getMessage());
@@ -341,7 +341,7 @@ class MapServiceImpl implements MapService {
 			String name,
 													int diameter, @Nonnull byte[] image) {
 		TypedResult<String> uploadResult =
-				amazonS3Service.uploadImage(AmazonS3Service.ImageType.TOKEN,
+				remoteImageService.uploadImage(RemoteImageService.ImageType.TOKEN,
 						image);
 
 		if (uploadResult.isOk()) {
@@ -364,7 +364,7 @@ class MapServiceImpl implements MapService {
 	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
 			name, @Nonnull byte[] image) {
 		TypedResult<String> uploadResult =
-				amazonS3Service.uploadImage(AmazonS3Service.ImageType.PORTRAIT, image);
+				remoteImageService.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
 
 		if (uploadResult.isOk()) {
 
