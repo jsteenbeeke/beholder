@@ -17,10 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -31,16 +37,8 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.renderer.LambdaRenderer;
-import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import javax.inject.Inject;
+import java.util.List;
 
 public class AddTokenInstance1Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -74,8 +72,8 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 		filter.owner().set(getUser());
 		filter.name().orderBy(true);
 
-		List<TokenDefinition> tokens = tokenDAO.findByFilter(filter);
-		tokenSelect = new DropDownChoice<>("token",
+		List<TokenDefinition> tokens = tokenDAO.findByFilter(filter).toJavaList();
+		tokenSelect = new DropDownChoice<TokenDefinition>("token",
 				tokens.isEmpty()
 						? EntityEncapsulator
 						.createNullModel(TokenDefinition.class)

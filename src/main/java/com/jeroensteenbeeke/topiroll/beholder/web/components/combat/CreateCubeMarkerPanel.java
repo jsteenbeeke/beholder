@@ -62,8 +62,8 @@ public class CreateCubeMarkerPanel extends CombatModePanel<MapView> {
 
 		add(new AjaxSubmitLink("submit", damageForm) {
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				super.onSubmit(target, form);
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
 
 				setVisible(false);
 

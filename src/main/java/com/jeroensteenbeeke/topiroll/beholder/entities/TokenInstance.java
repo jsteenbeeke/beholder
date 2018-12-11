@@ -35,9 +35,9 @@ import javax.imageio.ImageIO;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.FieldType;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
-import com.jeroensteenbeeke.hyperion.util.ActionResult;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
+import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSToken;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -80,7 +80,7 @@ public class TokenInstance extends BaseDomainObject {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	@EntityFormField(label = "Border", required = true, type = FieldType.DROPDOWN)
+	@EntityFormField(label = "Border", required = true, type = DefaultFieldType.DropDownChoice.class)
 	private TokenBorderType borderType;
 
 	@Column(nullable = false)

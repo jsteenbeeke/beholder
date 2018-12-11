@@ -8,8 +8,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -45,12 +45,12 @@ public class MusicPage extends BootstrapBasePage {
 		this.filter = new MapViewFilter();
 		filter.identifier().set(identifier.toOptionalString());
 
-		MapView currentView = viewDAO.getUniqueByFilter(filter);
-		if (currentView == null) {
+		Option<MapView> currentView = viewDAO.getUniqueByFilter(filter);
+		if (currentView.isEmpty()) {
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
 
-		viewId = currentView.getId();
+		viewId = currentView.map(MapView::getId).get();
 
 		add(new ContextImage("image", "img/logo.png"));
 	}
@@ -87,11 +87,8 @@ public class MusicPage extends BootstrapBasePage {
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 
-		HeaderItem wicketEvent = JavaScriptHeaderItem
-				.forReference(WicketEventJQueryResourceReference.get());
 		HeaderItem wicketWebsocket = JavaScriptHeaderItem.forReference(WicketWebSocketJQueryResourceReference.get());
 
-		response.render(wicketEvent);
 		response.render(wicketWebsocket);
 
 		response.render(JavaScriptHeaderItem
@@ -99,7 +96,7 @@ public class MusicPage extends BootstrapBasePage {
 						"js/musicplayer.js") {
 					@Override
 					public List<HeaderItem> getDependencies() {
-						return ImmutableList.of(wicketEvent, wicketWebsocket);
+						return ImmutableList.of(wicketWebsocket);
 					}
 				}));
 	}

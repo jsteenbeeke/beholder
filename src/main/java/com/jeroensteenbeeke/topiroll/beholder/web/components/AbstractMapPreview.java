@@ -2,16 +2,12 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.WicketEventJQueryResourceReference;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.border.Border;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public abstract class AbstractMapPreview extends Border {
@@ -76,9 +72,6 @@ public abstract class AbstractMapPreview extends Border {
 	public void renderHead(IHeaderResponse response) {
 
 		super.renderHead(response);
-
-		response.render(JavaScriptHeaderItem
-				.forReference(WicketEventJQueryResourceReference.get()));
 
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,

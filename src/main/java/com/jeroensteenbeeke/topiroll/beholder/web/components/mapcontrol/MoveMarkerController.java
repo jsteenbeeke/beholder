@@ -3,7 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;

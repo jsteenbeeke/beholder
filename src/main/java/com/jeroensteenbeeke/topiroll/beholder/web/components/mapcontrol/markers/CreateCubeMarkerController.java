@@ -1,10 +1,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MarkerController;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveMarkerController;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -63,8 +62,8 @@ public abstract class CreateCubeMarkerController extends TypedPanel<MapView> {
 
 		form.add(new AjaxSubmitLink("submit", form) {
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				super.onSubmit(target, form);
+			protected void onSubmit(AjaxRequestTarget target) {
+				super.onSubmit(target);
 
 				markerService.createCube(
 						CreateCubeMarkerController.this.getModelObject(),

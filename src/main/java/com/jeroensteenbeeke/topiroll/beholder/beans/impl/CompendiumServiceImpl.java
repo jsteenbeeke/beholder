@@ -1,6 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.CompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
@@ -38,7 +38,7 @@ class CompendiumServiceImpl implements CompendiumService {
 	}
 
 	@Override
-	public TypedActionResult<CompendiumEntry> createImportedArticle(String title, String path, String html) {
+	public TypedResult<CompendiumEntry> createImportedArticle(String title, String path, String html) {
 		if (!articleExists(path)) {
 			CompendiumEntry entry = new CompendiumEntry();
 			entry.setBody(html);
@@ -47,10 +47,10 @@ class CompendiumServiceImpl implements CompendiumService {
 
 			dao.save(entry);
 
-			return TypedActionResult.ok(entry);
+			return TypedResult.ok(entry);
 		}
 
-		return TypedActionResult.fail("Path already exists");
+		return TypedResult.fail("Path already exists");
 	}
 
 	@Override
@@ -60,7 +60,7 @@ class CompendiumServiceImpl implements CompendiumService {
 		filter.author().equalToOrNull(user);
 		filter.title().orderBy(true);
 
-		return dao.findByFilter(filter);
+		return dao.findByFilter(filter).toJavaList();
 	}
 
 	@Override

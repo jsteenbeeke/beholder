@@ -76,7 +76,7 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 
 		File image = ImageResource.importImage("porridge.jpg");
 
-		mapService.createMap(user, "porridge", 4, image, null).ifOk(map -> {
+		mapService.createMap(user, "porridge", 4, image, null).map(map -> {
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(153);
@@ -84,6 +84,8 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 			rect.setHeight(74);
 			rect.setMap(map);
 			shapeDAO.save(rect);
+
+			return map;
 		});
 
 

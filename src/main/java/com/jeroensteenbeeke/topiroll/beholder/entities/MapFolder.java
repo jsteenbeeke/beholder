@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.ducktape.web.pages.entity.annotation.EntityFormField;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;

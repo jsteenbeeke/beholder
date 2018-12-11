@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -40,10 +41,8 @@ import org.apache.wicket.model.Model;
 import org.danekja.java.util.function.serializable.SerializableBiConsumer;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -120,9 +119,8 @@ public abstract class TokenStateController extends Panel {
 		filter.show().set(true);
 		filter.badge().orderBy(true);
 
-		List<TokenInstance> tokens = tokenDAO.findByFilter(filter).stream()
-				.filter(i -> i.isVisible(view, true))
-				.collect(Collectors.toCollection(ArrayList::new));
+		List<TokenInstance> tokens = tokenDAO.findByFilter(filter)
+				.filter(i -> i.isVisible(view, true)).toJavaList();
 
 		ListView<TokenInstance> tokenView = new ListView<TokenInstance>(
 				"tokens", ModelMaker.wrap(tokens)) {
@@ -227,7 +225,7 @@ public abstract class TokenStateController extends Panel {
 				item.add(noteField);
 
 				item.add(new AjaxIconLink<TokenInstance>("hide",
-						item.getModel(), GlyphIcon.eyeClose) {
+						item.getModel(), FontAwesome.eye_slash) {
 					private static final long serialVersionUID = 1L;
 
 					@Override

@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -35,9 +36,8 @@ import org.apache.wicket.model.util.ListModel;
 
 import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
@@ -180,8 +180,8 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 
 				form.add(new AjaxSubmitLink("update") {
 					@Override
-					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-						super.onSubmit(target, form);
+					protected void onSubmit(AjaxRequestTarget target) {
+						super.onSubmit(target);
 
 						InitiativeParticipant participant = item.getModelObject();
 
@@ -194,7 +194,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 				});
 				item.add(form);
 				item.add(new AjaxIconLink<InitiativeParticipant>("select",
-						item.getModel(), GlyphIcon.screenshot) {
+						item.getModel(), FontAwesome.location_arrow) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -205,7 +205,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 					}
 				}.setVisible(!participant.isSelected()));
 				item.add(new AjaxIconLink<InitiativeParticipant>("up",
-						item.getModel(), GlyphIcon.arrowUp) {
+						item.getModel(), FontAwesome.arrow_up) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -222,7 +222,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 					}
 				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("down",
-						item.getModel(), GlyphIcon.arrowDown) {
+						item.getModel(), FontAwesome.arrow_down) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -239,7 +239,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 					}
 				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("player",
-						item.getModel(), GlyphIcon.user) {
+						item.getModel(), FontAwesome.user) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -255,7 +255,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 					}
 				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("nonplayer",
-						item.getModel(), GlyphIcon.tower) {
+						item.getModel(), FontAwesome.chess_rook) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -272,7 +272,7 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 					}
 				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("delete",
-						item.getModel(), GlyphIcon.trash) {
+						item.getModel(), FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -314,9 +314,9 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+			protected void onSubmit(AjaxRequestTarget target) {
 
-				super.onSubmit(target, form);
+				super.onSubmit(target);
 
 				initiativeService.addInitiative(getModelObject(),
 						nameField.getModelObject(), scoreField.getModelObject(),
@@ -338,9 +338,9 @@ public class InitiativeOrderController extends TypedPanel<MapView> {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+			protected void onSubmit(AjaxRequestTarget target) {
 
-				super.onSubmit(target, form);
+				super.onSubmit(target);
 
 				Integer margin = marginField.getModelObject();
 				MapView view = getModelObject();

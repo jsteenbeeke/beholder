@@ -1,19 +1,16 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat;
 
-import com.googlecode.wicket.jquery.core.JQueryEvent;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
@@ -44,8 +41,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.awt.Point;
-import java.util.*;
+import java.awt.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
@@ -476,7 +475,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				initFilter.player(true);
 				initFilter.view(viewModel.getObject());
 				initFilter.id().orderBy(true);
-				return participantDAO.findByFilter(initFilter);
+				return participantDAO.findByFilter(initFilter).toJavaList();
 			}
 		};
 
@@ -597,10 +596,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			protected List<CompendiumEntry> load() {
 				return compendiumEntryDAO.findByFilter(filter)
-						.stream()
 						.map(PinnedCompendiumEntry::getEntry)
 						.sorted(Comparator.comparing(CompendiumEntry::getTitle))
-						.collect(Collectors.toList());
+						.toJavaList();
 			}
 		};
 

@@ -1,10 +1,12 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
+import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -16,13 +18,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
-import java.io.Serializable;
 import java.util.List;
 
 public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
@@ -125,7 +125,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 
 				item.add(new Label("title", entry.getTitle()));
 				item.add(new Label("path", entry.getOriginalPath() != null ? entry.getOriginalPath() : "-"));
-				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), GlyphIcon.check) {
+				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), FontAwesome.check) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();

@@ -19,9 +19,9 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import com.google.common.collect.Lists;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -117,7 +117,7 @@ public class ViewMapPage extends AuthenticatedPage {
 					}
 				});
 				item.add(new IconLink<FogOfWarGroup>("edit", item.getModel(),
-						GlyphIcon.edit) {
+						FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -127,7 +127,7 @@ public class ViewMapPage extends AuthenticatedPage {
 					}
 				});
 				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
-						GlyphIcon.trash) {
+						FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -162,7 +162,7 @@ public class ViewMapPage extends AuthenticatedPage {
 					}
 				});
 				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(),
-						GlyphIcon.trash) {
+						FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -193,7 +193,7 @@ public class ViewMapPage extends AuthenticatedPage {
 						item.add(new Label("token", instance.getLabel()));
 						item.add(new Label("location",
 								String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
-						item.add(new IconLink<TokenInstance>("reveal", item.getModel(), GlyphIcon.eyeOpen) {
+						item.add(new IconLink<TokenInstance>("reveal", item.getModel(), FontAwesome.eye) {
 							private static final long serialVersionUID = 1L;
 
 							@Inject
@@ -206,7 +206,7 @@ public class ViewMapPage extends AuthenticatedPage {
 							}
 						}.setVisible(!instance.isShow()));
 						item.add(new IconLink<TokenInstance>("edit", item.getModel(),
-								GlyphIcon.edit) {
+								FontAwesome.edit) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
@@ -229,13 +229,13 @@ public class ViewMapPage extends AuthenticatedPage {
 
 
 								};
-								page.setChoices(TokenBorderType.class, Lists.newArrayList(TokenBorderType.values()));
+								page.setChoices(TokenInstance_.borderType, Lists.newArrayList(TokenBorderType.values()));
 
 								setResponsePage(page);
 
 							}
 						});
-						item.add(new IconLink<TokenInstance>("delete", item.getModel(), GlyphIcon.trash) {
+						item.add(new IconLink<TokenInstance>("delete", item.getModel(), FontAwesome.trash) {
 							private static final long serialVersionUID = 1L;
 
 							@Override

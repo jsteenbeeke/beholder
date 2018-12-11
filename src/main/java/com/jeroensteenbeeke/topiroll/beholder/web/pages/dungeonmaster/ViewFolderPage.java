@@ -1,9 +1,8 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;

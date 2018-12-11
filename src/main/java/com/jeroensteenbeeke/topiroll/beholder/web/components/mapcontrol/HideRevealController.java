@@ -18,11 +18,11 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
 import com.google.common.collect.ImmutableList;
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
@@ -31,6 +31,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilte
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.FogOfWarPreviewRenderer;
+import io.vavr.collection.Array;
+import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
@@ -58,10 +60,10 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 	private IModel<MapView> mapViewModel;
 
 	public HideRevealController(String id, MapView mapView, ScaledMap map) {
-		this(id, mapView, map, ImmutableList.of(), ImmutableList.of());
+		this(id, mapView, map, Array.empty(), Array.empty());
 	}
 
-	public HideRevealController(String id, MapView mapView, ScaledMap map, List<Long> groupIds, List<Long> shapeIds) {
+	public HideRevealController(String id, MapView mapView, ScaledMap map, Seq<Long> groupIds, Seq<Long> shapeIds) {
 		super(id, ModelMaker.wrap(map));
 		setOutputMarkupId(true);
 
@@ -72,7 +74,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 		setOutputMarkupId(true);
 	}
 
-	private void drawListViews(ScaledMap map, List<Long> groupIds, List<Long> shapeIds) {
+	private void drawListViews(ScaledMap map, Seq<Long> groupIds, Seq<Long> shapeIds) {
 		FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
 		if (!groupIds.isEmpty()) {
 			groupFilter.id().in(groupIds);
@@ -125,16 +127,14 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 	@Override
 	public void onClick(AjaxRequestTarget target, ScaledMap map, int x, int y) {
 
-		List<Long> selectedShapes = map.getFogOfWarShapes()
-				.stream().filter(s -> s.getGroup() == null)
+		Array<Long> selectedShapes = Array.ofAll(map.getFogOfWarShapes())
+				.filter(s -> s.getGroup() == null)
 				.filter(s -> s.containsCoordinate(x, y))
-				.map(FogOfWarShape::getId)
-				.collect(Collectors.toList());
+				.map(FogOfWarShape::getId);
 
-		List<Long> selectedGroups = map.getGroups().stream()
+		Array<Long> selectedGroups = Array.ofAll(map.getGroups())
 				.filter(s -> s.containsCoordinate(x, y))
-				.map(FogOfWarGroup::getId)
-				.collect(Collectors.toList());
+				.map(FogOfWarGroup::getId);
 
 		if (!selectedShapes.isEmpty()
 				|| !selectedGroups.isEmpty()) {
@@ -193,7 +193,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 			item.add(new Label("description", shape.getDescription()));
 
 			AjaxIconLink<T> hideLink = new AjaxIconLink<T>("hide",
-					item.getModel(), GlyphIcon.eyeClose) {
+					item.getModel(), FontAwesome.eye_slash) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -205,7 +205,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 			item.add(hideLink);
 
 			AjaxIconLink<T> dmLink = new AjaxIconLink<T>("dm", item.getModel(),
-					GlyphIcon.search) {
+					FontAwesome.search) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -217,7 +217,7 @@ public class HideRevealController extends TypedPanel<ScaledMap> implements IClic
 			item.add(dmLink);
 
 			AjaxIconLink<T> showLink = new AjaxIconLink<T>("show",
-					item.getModel(), GlyphIcon.eyeOpen) {
+					item.getModel(), FontAwesome.eye) {
 				private static final long serialVersionUID = 1L;
 
 				@Override

@@ -18,10 +18,10 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry.RegistryEntry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
@@ -32,7 +32,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticip
 import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.UpdatePortraits;
-import org.hibernate.Session;
+import io.vavr.collection.Seq;
+import io.vavr.control.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.sound.sampled.Port;
 import java.awt.*;
-import java.io.*;
-import java.sql.Blob;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -102,39 +100,39 @@ class MapServiceImpl implements MapService {
 	private InitiativeParticipantDAO participantDAO;
 
 	@Autowired
-	private AmazonS3Service amazonS3Service;
+	private RemoteImageService remoteImageService;
 
 	@Nonnull
 	@Override
 	@Transactional
-	public TypedActionResult<ScaledMap> createMap(@Nonnull BeholderUser user,
-												  @Nonnull String name, int squareSize, @Nonnull File data,
-												  @Nullable MapFolder folder) {
-		TypedActionResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
+	public TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user,
+											@Nonnull String name, int squareSize, @Nonnull File data,
+											@Nullable MapFolder folder) {
+		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
 		if (!dimResult.isOk()) {
-			return TypedActionResult.fail(dimResult);
+			return dimResult.map(d -> null);
 		}
 
 		Dimension dimension = dimResult.getObject();
 
-		TypedActionResult<String> uploadResult;
+		TypedResult<String> uploadResult;
 
 		try {
-			TypedActionResult<String> mimeType = ImageUtil.getMimeType(data);
+			TypedResult<String> mimeType = ImageUtil.getMimeType(data);
 			if (!mimeType.isOk()) {
-				return TypedActionResult.fail(mimeType);
+				return mimeType.map(s -> null);
 			}
 
 			uploadResult =
-					amazonS3Service
-							.uploadImage(AmazonS3Service.ImageType.MAP, mimeType.getObject(), new
+					remoteImageService
+							.uploadImage(RemoteImageService.ImageType.MAP, mimeType.getObject(), new
 									FileInputStream(data), data.length());
 		} catch (IOException e) {
-			return TypedActionResult.fail("Could not open file for upload: %s", e.getMessage());
+			return TypedResult.fail("Could not open file for upload: %s", e.getMessage());
 		}
 
 		if (!uploadResult.isOk()) {
-			return TypedActionResult.fail(uploadResult);
+			return uploadResult.map(s -> null);
 		}
 
 
@@ -149,13 +147,13 @@ class MapServiceImpl implements MapService {
 		map.setFolder(folder);
 		mapDAO.save(map);
 
-		return TypedActionResult.ok(map);
+		return TypedResult.ok(map);
 	}
 
 	@Override
 	@Transactional
 	public TokenInstance createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
-									@Nonnull TokenBorderType borderType, int x, int y, String badge) {
+											 @Nonnull TokenBorderType borderType, int x, int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
 		instance.setBorderType(borderType);
@@ -241,10 +239,10 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedActionResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
-														@Nonnull String name, @Nonnull List<FogOfWarShape> shapes) {
+	public TypedResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
+												  @Nonnull String name, @Nonnull List<FogOfWarShape> shapes) {
 		if (shapes.isEmpty()) {
-			return TypedActionResult.fail("No shapes selected");
+			return TypedResult.fail("No shapes selected");
 		}
 
 		FogOfWarGroup group = new FogOfWarGroup();
@@ -257,16 +255,16 @@ class MapServiceImpl implements MapService {
 			shapeDAO.update(shape);
 		});
 
-		return TypedActionResult.ok(group);
+		return TypedResult.ok(group);
 	}
 
 	@Override
 	@Transactional
-	public TypedActionResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
-													  @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
-													  @Nonnull List<FogOfWarShape> remove) {
+	public TypedResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
+												@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
+												@Nonnull List<FogOfWarShape> remove) {
 		if (keep.isEmpty()) {
-			return TypedActionResult.fail("No shapes selected");
+			return TypedResult.fail("No shapes selected");
 		}
 
 		group.setName(name);
@@ -282,7 +280,7 @@ class MapServiceImpl implements MapService {
 			shapeDAO.update(shape);
 		});
 
-		return TypedActionResult.ok(group);
+		return TypedResult.ok(group);
 	}
 
 	@Override
@@ -293,16 +291,17 @@ class MapServiceImpl implements MapService {
 		filter.view().set(view);
 		filter.group().set(group);
 
-		FogOfWarGroupVisibility visibility = groupVisibilityDAO
+		Option<FogOfWarGroupVisibility> optVisibility = groupVisibilityDAO
 				.getUniqueByFilter(filter);
 
-		if (visibility == null) {
-			visibility = new FogOfWarGroupVisibility();
+		if (optVisibility.isEmpty()) {
+			FogOfWarGroupVisibility visibility = new FogOfWarGroupVisibility();
 			visibility.setGroup(group);
 			visibility.setView(view);
 			visibility.setStatus(status);
 			groupVisibilityDAO.save(visibility);
 		} else {
+			FogOfWarGroupVisibility visibility = optVisibility.get();
 			visibility.setStatus(status);
 			groupVisibilityDAO.update(visibility);
 		}
@@ -318,16 +317,17 @@ class MapServiceImpl implements MapService {
 		filter.view().set(view);
 		filter.shape().set(shape);
 
-		FogOfWarShapeVisibility visibility = shapeVisibilityDAO
+		Option<FogOfWarShapeVisibility> optVisibility = shapeVisibilityDAO
 				.getUniqueByFilter(filter);
 
-		if (visibility == null) {
-			visibility = new FogOfWarShapeVisibility();
+		if (optVisibility.isEmpty()) {
+			FogOfWarShapeVisibility visibility = new FogOfWarShapeVisibility();
 			visibility.setShape(shape);
 			visibility.setView(view);
 			visibility.setStatus(status);
 			shapeVisibilityDAO.save(visibility);
 		} else {
+			FogOfWarShapeVisibility visibility = optVisibility.get();
 			visibility.setStatus(status);
 			shapeVisibilityDAO.update(visibility);
 		}
@@ -337,11 +337,11 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedActionResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
+	public TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
 			String name,
-									   int diameter, @Nonnull byte[] image) {
-		TypedActionResult<String> uploadResult =
-				amazonS3Service.uploadImage(AmazonS3Service.ImageType.TOKEN,
+													int diameter, @Nonnull byte[] image) {
+		TypedResult<String> uploadResult =
+				remoteImageService.uploadImage(RemoteImageService.ImageType.TOKEN,
 						image);
 
 		if (uploadResult.isOk()) {
@@ -353,18 +353,18 @@ class MapServiceImpl implements MapService {
 
 			tokenDefinitionDAO.save(def);
 
-			return TypedActionResult.ok(def);
+			return TypedResult.ok(def);
 		}
 
-		return TypedActionResult.fail(uploadResult);
+		return uploadResult.map(s -> null);
 	}
 
 	@Override
 	@Transactional
-	public TypedActionResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
+	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
 			name, @Nonnull byte[] image) {
-		TypedActionResult<String> uploadResult =
-				amazonS3Service.uploadImage(AmazonS3Service.ImageType.PORTRAIT, image);
+		TypedResult<String> uploadResult =
+				remoteImageService.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
 
 		if (uploadResult.isOk()) {
 
@@ -375,10 +375,10 @@ class MapServiceImpl implements MapService {
 
 			portraitDAO.save(portrait);
 
-			return TypedActionResult.ok(portrait);
+			return TypedResult.ok(portrait);
 		}
 
-		return TypedActionResult.fail(uploadResult);
+		return uploadResult.map(s -> null);
 	}
 
 	@Override
@@ -453,25 +453,27 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public void setTokenBorderType(@Nonnull TokenInstance instance,
 								   @Nonnull TokenBorderType type) {
-		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
+		instance.setBorderType(type);
+		tokenInstanceDAO.update(instance);
 
-		inst.setBorderType(type);
-		tokenInstanceDAO.update(inst);
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 
-		inst.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 
 	@Override
 	@Transactional
 	public void setTokenHP(@Nonnull TokenInstance instance, Integer currentHP,
 						   Integer maxHP) {
-		TokenInstance inst = tokenInstanceDAO.load(instance.getId());
+		tokenInstanceDAO.load(instance.getId()).map(inst -> {
 
-		inst.setCurrentHitpoints(currentHP);
-		inst.setMaxHitpoints(maxHP);
-		tokenInstanceDAO.update(inst);
+			inst.setCurrentHitpoints(currentHP);
+			inst.setMaxHitpoints(maxHP);
+			tokenInstanceDAO.update(inst);
 
-		inst.getMap().getSelectedBy().forEach(this::refreshView);
+			inst.getMap().getSelectedBy().forEach(this::refreshView);
+
+			return inst;
+		});
 	}
 
 	@Override
@@ -531,8 +533,7 @@ class MapServiceImpl implements MapService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void initializeView(long viewId, @Nonnull String sessionId,
 							   boolean previewMode) {
-		MapView view = viewDAO.load(viewId);
-		if (view != null) {
+		viewDAO.load(viewId).map(view -> {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
 					&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
 			BeholderRegistry.instance
@@ -542,7 +543,8 @@ class MapServiceImpl implements MapService {
 							view.getInitiativeJS());
 			BeholderRegistry.instance.sendToView(view.getId(), s -> !s.isPreviewMode(), new UpdatePortraits(view));
 
-		}
+			return view;
+		});
 	}
 
 	@Override
@@ -552,20 +554,20 @@ class MapServiceImpl implements MapService {
 		filter.player(true);
 		filter.view(view);
 
-		List<InitiativeParticipant> participants = participantDAO.findByFilter(filter);
+		Seq<InitiativeParticipant> participants = participantDAO.findByFilter(filter);
 
 		double angle = Math.toRadians(360.0 / (double) participants.size());
 
 		int distance = Optional.ofNullable(view.getSelectedMap())
 				.map(ScaledMap::getSquareSize)
 				.map(s -> s * participants.size())
-				.orElse(view.getHeight()/10);
+				.orElse(view.getHeight() / 10);
 
 		double nextAngle = 0.0;
 
 		int i = 0;
 
-		for (InitiativeParticipant participant: participants) {
+		for (InitiativeParticipant participant : participants) {
 			double ax = Math.cos(nextAngle);
 			double ay = Math.sin(nextAngle);
 

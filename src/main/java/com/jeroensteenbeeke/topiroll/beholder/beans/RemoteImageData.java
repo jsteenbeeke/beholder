@@ -1,9 +1,9 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-public class AmazonData {
+public class RemoteImageData {
 	private final String baseUrl;
 
-	public AmazonData(String baseUrl) {
+	public RemoteImageData(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 

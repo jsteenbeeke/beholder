@@ -1,26 +1,21 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol;
 
-import com.jeroensteenbeeke.hyperion.ducktape.web.components.TypedPanel;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.*;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxBootstrapPagingNavigator;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.TypedPanel;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.YouTubePlaylistDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSPlaylist;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
 import java.util.Random;
@@ -32,15 +27,18 @@ public class YoutubeController extends TypedPanel<MapView> {
 	public YoutubeController(String id, MapView view) {
 		super(id, ModelMaker.wrap(view));
 
+		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
+		playlistFilter.owner(view.getOwner()).name().orderBy(true);
+
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider.of(new YouTubePlaylistFilter().owner(view.getOwner()).name().orderBy(true),
+				FilterDataProvider.of(playlistFilter,
 						playlistDAO)) {
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {
 				YouTubePlaylist playlist = item.getModelObject();
 
 				item.add(new Label("name", playlist.getName()));
-				item.add(new AjaxIconLink<YouTubePlaylist>("play", item.getModel(), GlyphIcon.play) {
+				item.add(new AjaxIconLink<YouTubePlaylist>("play", item.getModel(), FontAwesome.play) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						YouTubePlaylist playlist = getModelObject();

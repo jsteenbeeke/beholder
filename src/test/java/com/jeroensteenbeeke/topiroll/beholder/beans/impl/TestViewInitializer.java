@@ -12,7 +12,7 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IAccountInitializer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
@@ -166,7 +166,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			};
 
 			for (int squares = 1; squares <= 4; squares++) {
-				TypedActionResult<TokenDefinition> def = mapService.createToken(user,
+				TypedResult<TokenDefinition> def = mapService.createToken(user,
 						names[squares - 1],
 						squares,
 						imageData);
@@ -183,7 +183,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		final TokenDefinition monster = m;
 
 
-		mapService.createMap(user, "temple", 18, image, null).ifOk(map -> {
+		mapService.createMap(user, "temple", 18, image, null).map(map -> {
 
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
@@ -239,10 +239,12 @@ public class TestViewInitializer implements IAccountInitializer {
 					}
 				}
 			}
+
+			return map;
 		});
 
 		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 9, image, null).ifOk(map -> {
+		mapService.createMap(user, "crypt", 9, image, null).map(map -> {
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");
@@ -257,7 +259,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 
-
+			return map;
 		});
 
 

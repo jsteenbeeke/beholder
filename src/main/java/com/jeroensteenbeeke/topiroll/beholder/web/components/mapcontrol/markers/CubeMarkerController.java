@@ -18,8 +18,10 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers;
 
-import javax.inject.Inject;
-
+import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
+import com.jeroensteenbeeke.topiroll.beholder.entities.CubeMarker;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.NumberTextField;
@@ -28,10 +30,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.PatternValidator;
 
-import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.CubeMarker;
+import javax.inject.Inject;
 
 public class CubeMarkerController extends Panel {
 

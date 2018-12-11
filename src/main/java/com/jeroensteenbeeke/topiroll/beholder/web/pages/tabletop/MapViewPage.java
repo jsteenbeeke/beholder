@@ -17,8 +17,10 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop;
 
-import javax.inject.Inject;
-
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -31,10 +33,7 @@ import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.MapCanvas;
+import javax.inject.Inject;
 
 public class MapViewPage extends WebPage {
 	private static final long serialVersionUID = 1L;
@@ -58,7 +57,7 @@ public class MapViewPage extends WebPage {
 
 			@Override
 			protected MapView load() {
-				return viewDAO.getUniqueByFilter(filter);
+				return viewDAO.getUniqueByFilter(filter).getOrNull();
 			}
 		};
 

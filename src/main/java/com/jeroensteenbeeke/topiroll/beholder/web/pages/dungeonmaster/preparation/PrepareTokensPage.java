@@ -1,13 +1,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.GlyphIcon;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityFormPage;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BSEntityPageSettings;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityPageSettings;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
-import com.jeroensteenbeeke.hyperion.util.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.lux.ActionResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
@@ -31,7 +31,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 	private TokenDefinitionDAO tokenDAO;
 
 	@Inject
-	private AmazonS3Service amazon;
+	private RemoteImageService amazon;
 
 	public PrepareTokensPage() {
 		super("Prepare tokens");
@@ -56,7 +56,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 				item.add(new ContextImage("thumb",
 						definition.getImageUrl()));
 				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
-						GlyphIcon.edit) {
+						FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override

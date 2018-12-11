@@ -18,6 +18,8 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
+import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesomeInitializer;
 import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
 import com.jeroensteenbeeke.hyperion.social.Slack;
 import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
@@ -85,6 +87,8 @@ public class BeholderApplication extends WebApplication
 		Heinlein.init(this, "css/beholder-web.css");
 
 		Slack.integration.initialize(this, "");
+
+		FontAwesomeInitializer.get().initialize(this);
 
 		mountPage("views/${identifier}", MapViewPage.class);
 		mountPage("music/${identifier}", MusicPage.class);

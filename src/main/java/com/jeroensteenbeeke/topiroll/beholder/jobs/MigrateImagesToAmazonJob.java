@@ -3,9 +3,9 @@ package com.jeroensteenbeeke.topiroll.beholder.jobs;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.HyperionTask;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.ServiceProvider;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.TypedActionResult;
+import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.Jobs;
-import com.jeroensteenbeeke.topiroll.beholder.beans.AmazonS3Service;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
 public class MigrateImagesToAmazonJob extends HyperionTask {
 	private static final Logger log = LoggerFactory.getLogger(MigrateImagesToAmazonJob.class);
@@ -34,76 +33,80 @@ public class MigrateImagesToAmazonJob extends HyperionTask {
 
 	@Override
 	public void run(ServiceProvider provider) {
-		AmazonS3Service amazonS3Service = provider.getService(AmazonS3Service.class);
+		RemoteImageService remoteImageService = provider.getService(RemoteImageService.class);
 		PortraitDAO portraitDAO = provider.getService(PortraitDAO.class);
 		ScaledMapDAO mapDAO = provider.getService(ScaledMapDAO.class);
 		TokenDefinitionDAO tokenDefinitionDAO = provider.getService(TokenDefinitionDAO.class);
 
-		migrateMaps(mapDAO, amazonS3Service);
-		migrateTokens(tokenDefinitionDAO, amazonS3Service);
-		migratePortraits(portraitDAO, amazonS3Service);
+		migrateMaps(mapDAO, remoteImageService);
+		migrateTokens(tokenDefinitionDAO, remoteImageService);
+		migratePortraits(portraitDAO, remoteImageService);
 	}
 
-	private void migratePortraits(PortraitDAO portraitDAO, AmazonS3Service s3) {
+	private void migratePortraits(PortraitDAO portraitDAO, RemoteImageService s3) {
 		PortraitFilter filter = new PortraitFilter();
 		filter.amazonKey().isNull();
 
 		for (Portrait portrait: portraitDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, RemoteImageService.ImageType
 					.PORTRAIT, portrait.getData());
-			uploadResult.ifOk(key -> {
+			uploadResult.map(key -> {
 				portrait.setAmazonKey(key);
 				portraitDAO.update(portrait);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return portrait;
+			}).ifNotOk(log::error);
 		}
 	}
 
 
-	private void migrateTokens(TokenDefinitionDAO tokenDefinitionDAO, AmazonS3Service s3) {
+	private void migrateTokens(TokenDefinitionDAO tokenDefinitionDAO, RemoteImageService s3) {
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.amazonKey().isNull();
 
 		for (TokenDefinition def: tokenDefinitionDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult = uploadBlobAs(s3, AmazonS3Service.ImageType
+			TypedResult<String> uploadResult = uploadBlobAs(s3, RemoteImageService.ImageType
 					.TOKEN, def.getImageData());
-			uploadResult.ifOk(key -> {
+			uploadResult.map(key -> {
 				def.setAmazonKey(key);
 				tokenDefinitionDAO.update(def);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return def;
+			}).ifNotOk(log::error);
 		}
 	}
 
-	private void migrateMaps(ScaledMapDAO mapDAO, AmazonS3Service s3) {
+	private void migrateMaps(ScaledMapDAO mapDAO, RemoteImageService s3) {
 		ScaledMapFilter filter = new ScaledMapFilter();
 		filter.amazonKey().isNull();
 
 		for (ScaledMap map: mapDAO.findByFilter(filter)) {
-			TypedActionResult<String> uploadResult =
-					uploadBlobAs(s3, AmazonS3Service.ImageType.MAP, map.getData());
-			uploadResult.ifOk((String key) -> {
+			TypedResult<String> uploadResult =
+					uploadBlobAs(s3, RemoteImageService.ImageType.MAP, map.getData());
+			uploadResult.map((String key) -> {
 				map.setAmazonKey(key);
 				mapDAO.update(map);
-			});
-			uploadResult.ifNotOk((Consumer<String>) log::error);
+
+				return map;
+			}).ifNotOk(log::error);
 		}
 	}
 
-	private TypedActionResult<String> uploadBlobAs(AmazonS3Service s3, AmazonS3Service.ImageType
+	private TypedResult<String> uploadBlobAs(RemoteImageService s3, RemoteImageService.ImageType
 			imageType, Blob data) {
 		if (data == null) {
-			return TypedActionResult.fail("Image has no data");
+			return TypedResult.fail("Image has no data");
 		}
 
-		String mimeType = getMimeType(ImageUtil.getBlobType(data));
 
 		try {
+			String mimeType = ImageUtil.getMimeType(data.getBytes(0, 9));
+
 			InputStream stream = data.getBinaryStream();
 
 			return s3.uploadImage(imageType, mimeType, stream, data.length());
 		} catch (SQLException e) {
-			return TypedActionResult.fail(e.getMessage());
+			return TypedResult.fail(e.getMessage());
 		}
 	}
 
