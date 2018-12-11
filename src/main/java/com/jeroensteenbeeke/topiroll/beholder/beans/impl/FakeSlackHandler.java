@@ -17,126 +17,45 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
-import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
+import com.jeroensteenbeeke.hyperion.social.api.SlackAPI;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
-import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService.UserDescriptor;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackErrorPage;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.json.simple.JSONObject;
 
 import javax.annotation.Nonnull;
 
-public class FakeSlackHandler extends SlackHandler {
-	private final String clientId;
-	private final String clientSecret;
-	private String applicationBaseUrl;
+public class FakeSlackHandler extends BeholderSlackHandler {
+	public static final int PORT = 5050;
 
-	private IdentityService identityService;
-
-	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
-		this.applicationBaseUrl = applicationBaseUrl;
-		this.clientId = Randomizer.random(12);
-		this.clientSecret = Randomizer.random(44);
-		this.identityService = identityService;
-	}
-
-	@Nonnull
-	@Override
-	public String getClientId() {
-		return clientId;
-	}
-
-	@Nonnull
-	@Override
-	public String getClientSecret() {
-		return clientSecret;
-	}
-
-	@Nonnull
-	@Override
-	public String getApplicationBaseUrl() {
-		return applicationBaseUrl;
-	}
-
-	@Override
-	public void onError(@Nonnull String message) {
-		throw new RestartResponseAtInterceptPageException(
-				new SlackErrorPage(message));
-
-	}
-
-	@Nonnull
-	@Override
-	public String getScopes() {
-		return "identity.basic,identity.team,identity.avatar";
-	}
-
-	@Override
-	public void onAccessTokenReceived(@Nonnull OAuth20Service service,
-									  @Nonnull OAuth2AccessToken accessToken) {
-		String tokenString = accessToken.getAccessToken();
-
-		TypedResult<JSONObject> result = getUserInfo(service,
-				accessToken);
-
-		if (result.isOk()) {
-			JSONObject response = result.getObject();
-
-			Boolean ok = (Boolean) response.get("ok");
-
-			if (ok == null || !ok) {
-				onError("Slack returned non-OK response status: "
-						.concat(response.toJSONString()));
-			} else {
-				JSONObject user = (JSONObject) response.get("user");
-				JSONObject team = (JSONObject) response.get("team");
-
-				if (user == null || team == null) {
-					onError("Slack returned incomplete JSON response: "
-							.concat(response.toJSONString()));
-				} else {
-					String userId = (String) user.get("id");
-					String teamId = (String) team.get("id");
-
-					String userName = (String) user.get("name");
-					String teamName = (String) team.get("name");
-					String avatar = (String) user.get("image_48");
-
-					BeholderUser beholderUser = identityService.getOrCreateUser(
-							new UserDescriptor().setAccessToken(tokenString)
-									.setAvatar(avatar).setTeamId(teamId)
-									.setTeamName(teamName).setUserId(userId)
-									.setUserName(userName));
-
-					BeholderSession.get().setUser(beholderUser);
-
-					throw new RestartResponseAtInterceptPageException(
-							OverviewPage.class);
-				}
-			}
-
-		} else {
-			onError(result.getMessage());
+	private static final SlackAPI FAKE_SLACK_API = new SlackAPI() {
+		@Override
+		public String getAccessTokenEndpoint() {
+			return String.format("http://localhost:%d/oauth/access", PORT);
 		}
 
+		@Override
+		protected String getAuthorizationBaseUrl() {
+			return String.format("http://localhost:%d/oauth/authorize", PORT);
+		}
+	};
+
+	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
+		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), identityService);
+	}
+
+	@Nonnull
+	@Override
+	public OAuth20Service createService(String state) {
+		return super.createService(state);
 	}
 
 	@Override
-	public String getUserState() {
-		return BeholderSession.get().getState();
+	protected SlackAPI getSlackAPI() {
+		return FAKE_SLACK_API;
 	}
 
 	@Override
-	public void setUserState(@Nonnull String state) {
-		BeholderSession.get().setState(state);
-
+	protected String getIdentityUrl() {
+		return String.format("http://localhost:%d/oauth/identity", PORT);
 	}
-
 }

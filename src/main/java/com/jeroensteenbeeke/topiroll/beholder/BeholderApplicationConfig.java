@@ -26,6 +26,7 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
 import com.jeroensteenbeeke.hyperion.solstice.spring.db.EnableSolstice;
+import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
@@ -38,6 +39,8 @@ import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.jeroensteenbeeke.hyperion.solstice.spring.TestModeEntityPopulator;
+
+import java.util.Random;
 
 @Configuration
 @ComponentScan(

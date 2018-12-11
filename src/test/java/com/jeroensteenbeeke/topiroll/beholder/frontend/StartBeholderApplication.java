@@ -59,9 +59,9 @@ public class StartBeholderApplication {
 		options.addOption(null, Arguments.SLACK_CLIENT_ID, true, "Slack client ID");
 		options.addOption(null, Arguments.SLACK_CLIENT_SECRET, true, "Slack client secret");
 		options.addOption(null, Arguments.AMAZON_CLIENT_ID, true, "Amazon client ID");
-		options.addOption(null, Arguments.AMAZON_CLIENT_SECRET, true, "Amazon client ID");
+		options.addOption(null, Arguments.AMAZON_CLIENT_SECRET, true, "Amazon client secret");
 		options.addOption(null, Arguments.AMAZON_BUCKET, true, "Amazon bucket name");
-		options.addOption(null, Arguments.AMAZON_URL_PREFIX, true, "Amazon URL prefix");
+		options.addOption(null, Arguments.AMAZON_URL_PREFIX, true, "Cloudfront URL prefix, used to prefix image URLs");
 		options.addOption(null, Arguments.AMAZON_REGION, true, "Amazon region");
 		options.addOption(null, Arguments.ROLLBAR_CLIENT_ID, true, "Rollbar client ID");
 		options.addOption(null, Arguments.ROLLBAR_CLIENT_SECRET, true, "Rollbar client secret");
@@ -87,6 +87,12 @@ public class StartBeholderApplication {
 
 		if (!slackEnabled) {
 			System.out.printf("Slack login disabled, please specify arguments --%1$s and --%2$s to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET).println();
+
+			System.setProperty("slack.login.disabled", "true");
+
+			final FakeSlackServer localSlackServer = new FakeSlackServer();
+
+			finalizer.withStartListener(server -> localSlackServer.start()).withStopListener(server -> localSlackServer.stop());
 		} else {
 			finalizer.withProperty("slack.clientid", cmd.getOptionValue(Arguments.SLACK_CLIENT_ID))
 					.withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET));
@@ -129,11 +135,6 @@ public class StartBeholderApplication {
 			finalizer.withProperty("rollbar.server.apiKey", args[6])
 					.withProperty("rollbar.client.apiKey", args[7])
 					.withProperty("rollbar.environment", args[8]);
-		}
-
-		if (!slackEnabled) {
-			System.err.println("Startup without Slack not yet implemented, aborting launch");
-			System.exit(-1);
 		}
 
 		return finalizer.withProperty("application.baseurl",
