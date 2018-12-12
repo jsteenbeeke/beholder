@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+	<div wicket:id="preview" class="combat">
+		<div class="btn-group-vertical combat-navigator" role="group" wicket:id="combatNavigator">
+			<button class="btn btn-warning" wicket:id="back">Back to DM view</button>
+			<button class="btn btn-primary" wicket:id="compendium">Compendium</button>
+			<wicket:container wicket:id="pinnedEntries">
+				<button class="btn btn-default" wicket:id="entry">
+					<span wicket:id="label" class="smalltext">Entry</span>
+				</button>
+			</wicket:container>
+		</div>
+
+		<div wicket:id="reveal"></div>
+
+		<div wicket:id="tokenStatus"></div>
+
+		<wicket:container wicket:id="tokens">
+			<div wicket:id="token"></div>
+		</wicket:container>
+
+		<wicket:container wicket:id="participants">
+			<div wicket:id="participant"></div>
+		</wicket:container>
+
+	</div>
+
+	<div wicket:id="modal"></div>
+
+</wicket:extend>
+</body>
+</html>

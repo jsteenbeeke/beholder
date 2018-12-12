@@ -15,7 +15,7 @@ public abstract class AbstractMapPreview extends Border {
 
 	private final WebMarkupContainer dragdrop;
 
-	private WebMarkupContainer canvas;
+	protected WebMarkupContainer canvas;
 
 	private final double factor;
 
@@ -40,6 +40,11 @@ public abstract class AbstractMapPreview extends Border {
 		addToBorder(dragdrop);
 
 
+	}
+
+	protected void renderMap(StringBuilder js) {
+		js.append(String.format("renderMapToCanvas(document.multi%s, '%s', %d, function() {});\n\n", canvas.getMarkupId(),
+				getMap().getImageUrl(), desiredWidth));
 	}
 
 	public WebMarkupContainer getDragdrop() {
@@ -92,8 +97,8 @@ public abstract class AbstractMapPreview extends Border {
 
 		StringBuilder js = new StringBuilder();
 
-		js.append(String.format("var multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(height * 1.5)));
-		js.append(String.format("renderMapToCanvas(multi%s, '%s', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
+		js.append(String.format("document.multi%1$s = new MultiCanvas('%1$s', %2$d, %3$d);\n", canvas.getMarkupId(), desiredWidth, Math.round(height * 1.5)));
+		js.append(String.format("renderMapToCanvas(document.multi%s, '%s', %d, function() { __PLACEHOLDER__ });\n\n", canvas.getMarkupId(),
 				getMap().getImageUrl(), desiredWidth));
 
 		StringBuilder onImageDrawComplete = new StringBuilder();
@@ -126,7 +131,7 @@ public abstract class AbstractMapPreview extends Border {
 		onImageDrawComplete.append("\trenderListeners.push(callback);\n");
 	    onImageDrawComplete.append("}\n");
 
-		addOnDomReadyJavaScript("multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
+		addOnDomReadyJavaScript("document.multi"+ canvas.getMarkupId(), onImageDrawComplete, factor);
 
 		response.render(OnDomReadyHeaderItem
 				.forScript(js.toString().replace("__PLACEHOLDER__", onImageDrawComplete.toString())));

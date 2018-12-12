@@ -217,20 +217,6 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 
-			group = new FogOfWarGroup();
-			group.setMap(map);
-			group.setName("ALL");
-			groupDAO.save(group);
-
-			rect = new FogOfWarRect();
-			rect.setOffsetX(0);
-			rect.setOffsetY(0);
-			rect.setWidth(map.getBasicWidth());
-			rect.setHeight(map.getBasicHeight());
-			rect.setMap(map);
-			rect.setGroup(group);
-			shapeDAO.save(rect);
-
 			if (monster != null) {
 				for (int x = 40; x <= 120; x += 20) {
 					for (int y = 40; y <= 120; y += 20) {

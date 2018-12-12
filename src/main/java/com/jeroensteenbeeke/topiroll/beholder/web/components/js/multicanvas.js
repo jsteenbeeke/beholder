@@ -91,6 +91,10 @@ function MultiCanvasContext(canvases, contexts, canvas) {
     this.parentCanvas = canvas;
 }
 
+MultiCanvas.prototype.clearAll = function() {
+    this.getContext('2d').clearRect(0, 0, this.width, this.height);
+}
+
 MultiCanvas.prototype.recalculateOffset = function(offsetX, offsetY) {
     var numSegmentsX = this.width / SEGMENT_SIZE;
     var numSegmentsY = this.height / SEGMENT_SIZE;
