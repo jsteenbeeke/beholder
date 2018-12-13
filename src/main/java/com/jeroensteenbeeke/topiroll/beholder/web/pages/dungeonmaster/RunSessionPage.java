@@ -7,6 +7,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ExternalLink;
@@ -59,6 +61,28 @@ public class RunSessionPage extends AuthenticatedPage {
 						.add(AttributeModifier.replace("target", "_blank")));
 				item.add(new ExternalLink("music", musicUrl)
 						.add(AttributeModifier.replace("target", "_blank")));
+				item.add(new Link<MapView>("exploration", item.getModel()) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						setResponsePage(
+								new ExplorationControllerPage(item.getModelObject()));
+
+					}
+				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
+				item.add(new Link<MapView>("combat", item.getModel()) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick() {
+						setResponsePage(
+								new CombatControllerPage(item.getModelObject()));
+
+					}
+				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
 				item.add(new Link<MapView>("dm", item.getModel()) {
 
 					private static final long serialVersionUID = 1L;

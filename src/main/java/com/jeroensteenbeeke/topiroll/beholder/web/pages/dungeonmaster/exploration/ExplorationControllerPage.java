@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration;
 
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
@@ -7,20 +7,23 @@ import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.CompendiumPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.ExplorationModeCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.HideRevealPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.TokenStatusPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -48,16 +51,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
-	private static final Logger log = LoggerFactory.getLogger(CombatControllerPage.class);
+public class ExplorationControllerPage extends BootstrapBasePage implements ExplorationModeCallback {
 	private static final String MODAL_ID = "modal";
-	private static final String MARKER_ID = "marker";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
+	private final WebMarkupContainer explorationNavigator;
+	private final HideRevealPanel hideReveal;
 	private final TokenStatusPanel tokenStatusPanel;
-	private final MapOptionsPanel mapOptionsPanel;
-	private final MarkerStatusPanel markerStatusPanel;
-	private final WebMarkupContainer combatNavigator;
 
 	private Component modal;
 
@@ -82,12 +82,15 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	@Inject
 	private PinnedCompendiumEntryDAO compendiumEntryDAO;
 
+	@Inject
+	private FogOfWarShapeDAO shapeDAO;
+
 	private final AbstractMapPreview preview;
 
 	private boolean disableClickListener = false;
 
-	public CombatControllerPage(MapView view) {
-		super("Combat Mode");
+	public ExplorationControllerPage(MapView view) {
+		super("Exploration Mode");
 
 		if (BeholderSession.get().getUser() == null) {
 			BeholderSession.get().invalidate();
@@ -109,18 +112,39 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
 												   double factor) {
+				redrawShapes(canvasId, js);
 
 			}
 
+			private void redrawShapes(String canvasId, StringBuilder js) {
+				FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
+				shapeFilter.map(map);
+
+				shapeDAO.findByFilter(shapeFilter).forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel.getObject()))));
+
+
+			}
+
+			@Override
+			public void refresh(AjaxRequestTarget target) {
+				super.refresh(target);
+
+				String canvasId = canvas.getMarkupId();
+				String canvas = "document.multi" + canvasId;
+
+				StringBuilder js = new StringBuilder();
+				js.append(String.format("%s.clearAll();\n", canvas));
+				renderMap(js);
+				redrawShapes(canvas, js);
+				target.appendJavaScript(js);
+			}
 		};
 
-		preview.add(new InitiativePanel("initiative", view));
+		preview.add(hideReveal = new HideRevealPanel("reveal", view, this));
+		hideReveal.setVisible(false);
+
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
-		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this);
-		markerStatusPanel = new MarkerStatusPanel("markerStatus", this);
 		preview.add(tokenStatusPanel.setVisible(false));
-		preview.add(mapOptionsPanel.setVisible(false));
-		preview.add(markerStatusPanel.setVisible(false));
 
 		preview.add(new OnClickBehavior() {
 			@Override
@@ -134,10 +158,10 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 					selectedMarker = Model.of();
 					selectedToken = Model.of();
 
-					mapOptionsPanel.setVisible(true);
+					hideReveal.setVisible(true);
 					tokenStatusPanel.setVisible(false);
-					markerStatusPanel.setVisible(false);
-					target.add(mapOptionsPanel, tokenStatusPanel, markerStatusPanel);
+
+					target.add(hideReveal, tokenStatusPanel);
 				}
 			}
 		});
@@ -226,15 +250,15 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 				image.add(new DependentOnClickBehavior<TokenInstance>(item.getModel()) {
 					@Override
-					protected void onClick(AjaxRequestTarget target, OnClickBehavior.ClickEvent event, TokenInstance instance) {
+					protected void onClick(AjaxRequestTarget target, ClickEvent event, TokenInstance instance) {
 						selectedToken = ModelMaker.wrap(instance);
 						clickedLocation = null;
 						selectedMarker = Model.of();
 
-						mapOptionsPanel.setVisible(false);
+						hideReveal.setVisible(false);
 						tokenStatusPanel.setVisible(true);
-						markerStatusPanel.setVisible(false);
-						target.add(tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
+
+						refreshMenus(target);
 					}
 				}.withoutPropagation());
 
@@ -250,224 +274,6 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			}
 		};
 
-
-		preview.add(new ListView<AreaMarker>("markers", markerModel) {
-			@Inject
-			private MarkerService markerService;
-
-			@Override
-			protected void populateItem(ListItem<AreaMarker> item) {
-				AreaMarker areaMarker = item.getModelObject();
-
-				int squareSize = map.getSquareSize();
-
-				int wh = squareSize * areaMarker.getExtent() / 5;
-
-				MarkerStyleModel<?> markerStyleModel = areaMarker
-						.visit(new AreaMarkerVisitor<MarkerStyleModel<?>>() {
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											CircleMarker marker) {
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
-										.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
-										.setBackgroundColor((m, factor) -> marker.getColor())
-										.setWidth((m, factor) -> Math.round(wh * factor * 2))
-										.setHeight((m, factor) -> Math.round(wh * factor * 2))
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 100L)
-										.setTransform((m, factor) -> String.format
-												("translate(%1$dpx,%1$dpx)", -wh));
-							}
-
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											ConeMarker marker) {
-								// CSS offset is interpreted as the top-left of the
-								// element,
-								// whereas the cone origin is halfway along the left border
-								// This requires a translation based on the rotation of
-								// the element
-								double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
-								double ty = Math.sin(Math.toRadians(marker.getTheta()))
-										- 2;
-
-
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor))
-										.setWidth((m, factor) -> 0L)
-										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> String
-												.format("%fpx solid transparent", wh * factor)).setBorderRight((m, factor) -> String.format("%fpx solid #%s",
-												wh * factor, marker.getColor()))
-										.setBorderBottom((m, factor) -> String.format("%fpx solid transparent", wh * factor))
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 50L)
-										.setTransform((m, factor) -> String
-												.format("translate(%fpx, %fpx) rotate(%ddeg)",
-														factor * tx * wh / 2, factor * ty *
-																wh / 2, m.getTheta()))
-
-										;
-							}
-
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											CubeMarker marker) {
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
-										.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
-										.setWidth((m, factor) -> Math.round(wh * factor))
-										.setHeight((m, factor) -> Math.round(wh * factor))
-										.setBackgroundColor((m, factor) -> marker.getColor())
-										.setOpacity((m, factor) -> 0.5)
-										.setTransform((m, factor) -> String.format
-												("translate(%1$dpx,%1$dpx)", -wh / 2));
-							}
-
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											LineMarker marker) {
-								// CSS offset is interpreted as the top-left of the
-								// element,
-								// whereas the cone origin is halfway along the left border
-								// This requires a translation based on the rotation of
-								// the element
-								double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
-								double ty = Math.sin(Math.toRadians(marker.getTheta()));
-
-
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor)).setWidth((m, factor) -> 0L)
-										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "5px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
-												wh * factor, marker.getColor()))
-										.setBorderBottom((m, factor) -> "1px solid transparent")
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 50L)
-										.setTransform((m, factor) -> String
-												.format("translate(%fpx, %fpx) rotate(%ddeg)",
-														factor * tx * wh / 2, factor * ty *
-																(wh / 2 - 2), m.getTheta()))
-
-										;
-							}
-						});
-				WebMarkupContainer marker = new WebMarkupContainer(MARKER_ID);
-				marker.setOutputMarkupId(true);
-				marker.add(AttributeModifier.replace("style", markerStyleModel));
-
-
-				Options draggableOptions = new Options();
-				draggableOptions.set("opacity", "0.5");
-				draggableOptions.set("containment", Options.asString("parent"));
-
-				marker.add(new DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public boolean isStopEventEnabled() {
-
-								return true;
-							}
-
-							@Override
-							public void onDragStart(AjaxRequestTarget target, int top, int left) {
-								super.onDragStart(target, top, left);
-
-								target.appendJavaScript(String.format("$('#%s').css('width: 5px; height: 5px; transform: none;');", item.get("marker").getMarkupId()));
-							}
-
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-												   int top, int left) {
-								super.onDragStop(target, top, left);
-
-								final int newX = (int) (left / displayFactor);
-								final int newY = (int) (top / displayFactor);
-
-								item.detach();
-								AreaMarker areaMarker = item.getModelObject();
-								areaMarker.visit(new AreaMarkerVisitor<Void>() {
-									@Override
-									public Void visit(
-											@Nonnull
-													CircleMarker marker) {
-
-										markerService
-												.update(marker, marker.getColor(),
-														newX,
-														newY,
-														marker.getExtent());
-
-										return null;
-									}
-
-									@Override
-									public Void visit(
-											@Nonnull
-													ConeMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX - wh,
-														newY - wh,
-														marker.getExtent(),
-														marker.getTheta());
-
-										return null;
-									}
-
-									@Override
-									public Void visit(
-											@Nonnull
-													CubeMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX,
-														newY,
-														marker.getExtent());
-
-										return null;
-									}
-
-									@Override
-									public Void visit(
-											@Nonnull
-													LineMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX - wh,
-														newY - wh,
-														marker.getExtent(), marker
-																.getTheta());
-
-										return null;
-									}
-								});
-
-
-							}
-						}));
-				marker.add(new OnClickBehavior() {
-					@Override
-					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-						selectedToken = Model.of();
-						clickedLocation = null;
-						selectedMarker = ModelMaker.wrap(item.getModelObject());
-						;
-
-						mapOptionsPanel.setVisible(false);
-						tokenStatusPanel.setVisible(false);
-						markerStatusPanel.setVisible(true);
-						target.add(tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
-					}
-				}.withoutPropagation());
-
-				item.add(marker);
-			}
-		}.setReuseItems(true));
 
 		IModel<List<InitiativeParticipant>> participantModel = new LoadableDetachableModel<List<InitiativeParticipant>>() {
 			@Override
@@ -571,24 +377,24 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			}
 		}.setReuseItems(true));
 
-		combatNavigator = new WebMarkupContainer("combatNavigator");
-		combatNavigator.setOutputMarkupId(true);
+		explorationNavigator = new WebMarkupContainer("explorationNavigator");
+		explorationNavigator.setOutputMarkupId(true);
 
-		combatNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
 			}
 		});
 
-		combatNavigator.add(new Link<MapView>("exploration", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("combat", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick() {
-				setResponsePage(new ExplorationControllerPage(getModelObject()));
+				setResponsePage(new CombatControllerPage(getModelObject()));
 			}
 		});
 
-		combatNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -611,7 +417,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		};
 
 
-		combatNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
+		explorationNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
 
 			@Override
 			protected void populateItem(ListItem<CompendiumEntry> item) {
@@ -622,12 +428,12 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 					}
 				};
-				entryLink.add(new Label("label", Model.of("Compendium: "+ item.getModelObject().getTitle())));
+				entryLink.add(new Label("label", Model.of("Compendium: " + item.getModelObject().getTitle())));
 				item.add(entryLink);
 
 			}
 		});
-		preview.add(combatNavigator);
+		preview.add(explorationNavigator);
 
 
 		add(preview);
@@ -640,12 +446,13 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 	public void redrawMap(AjaxRequestTarget target) {
 		clickedLocation = null;
 		previousClickedLocation = null;
+
 		preview.refresh(target);
 	}
 
 	@Override
 	public void refreshMenus(AjaxRequestTarget target) {
-		target.add(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
+		target.add(explorationNavigator, tokenStatusPanel);
 	}
 
 	@Override

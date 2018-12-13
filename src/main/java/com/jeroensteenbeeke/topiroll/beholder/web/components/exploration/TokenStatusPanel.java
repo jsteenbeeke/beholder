@@ -1,11 +1,13 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.ExplorationModeCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.ApplyTokenDamagePanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModeCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModePanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,11 +16,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class TokenStatusPanel extends CombatModePanel<MapView> {
+public class TokenStatusPanel extends ExplorationModePanel<MapView> {
 	@Inject
 	private MapService mapService;
 
-	public TokenStatusPanel(String id, CombatModeCallback callback) {
+	public TokenStatusPanel(String id, ExplorationModeCallback callback) {
 		super(id);
 
 		add(new Label("name", new LoadableDetachableModel<String>() {
@@ -37,20 +39,6 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 						.orElse("-");
 			}
 		}));
-
-		add(new AjaxLink<TokenInstance>("damage") {
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, ApplyTokenDamagePanel::new, callback
-						.getSelectedToken());
-			}
-
-			@Override
-			public boolean isVisible() {
-				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
-						(TokenInstance::getMaxHitpoints).isPresent();
-			}
-		});
 
 		add(new AjaxLink<TokenInstance>("ally") {
 			@Override

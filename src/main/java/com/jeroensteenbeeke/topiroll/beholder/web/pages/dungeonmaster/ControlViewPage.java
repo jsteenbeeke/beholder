@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -53,6 +54,8 @@ public class ControlViewPage extends AuthenticatedPage {
 
     private static final long serialVersionUID = 1L;
 	private final AjaxLink<Void> combatMode;
+
+	private final AjaxLink<Void> explorationMode;
 
 	private IModel<MapView> viewModel;
 
@@ -389,6 +392,18 @@ public class ControlViewPage extends AuthenticatedPage {
 			}
 		});
 
+		addLink(explorationMode = new AjaxLink<Void>("explorationMode") {
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				MapView view = viewModel.getObject();
+
+				if (view.getSelectedMap() != null) {
+					ControlViewPage.this.setResponsePage(new ExplorationControllerPage(view));
+				}
+			}
+		});
+
         links().forEach(l -> l.setOutputMarkupPlaceholderTag(true));
 
         if (view.getSelectedMap() == null) {
@@ -437,6 +452,7 @@ public class ControlViewPage extends AuthenticatedPage {
                 initiativeLink,
                 mapSelectLink,
 				combatMode,
+                explorationMode,
                 forceUpdateLink, portraitLink, youtubeLink);
     }
 

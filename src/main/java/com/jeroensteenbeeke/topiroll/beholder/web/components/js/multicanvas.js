@@ -63,6 +63,7 @@ function MultiCanvas(containerId, requiredWidth, requiredHeight) {
                 contexts[y][x][z].id = 'x' + x + '/y' + y + '/' + z;
                 contexts[y][x][z].canvasOffsetX = x * SEGMENT_SIZE;
                 contexts[y][x][z].canvasOffsetY = y * SEGMENT_SIZE;
+                contexts[y][x][z].save();
 
                 canvases[y][x][z].width = Math.min(totalWidth, SEGMENT_SIZE);
                 canvases[y][x][z].height = Math.min(totalHeight, SEGMENT_SIZE);
@@ -89,6 +90,14 @@ function MultiCanvasContext(canvases, contexts, canvas) {
     this.canvases = canvases;
     this.drawContexts = contexts;
     this.parentCanvas = canvas;
+}
+
+MultiCanvas.prototype.clearAll = function() {
+    this.getContext('2d').clearRect(0,0,this.width, this.height);
+    this.getContext('2d').forEachContext('clearAll', function(ctx) {
+        ctx.restore();
+        ctx.save();
+    });
 }
 
 MultiCanvas.prototype.recalculateOffset = function(offsetX, offsetY) {
