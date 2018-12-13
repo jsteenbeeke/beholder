@@ -114,6 +114,10 @@ public class FogOfWarGroup extends BaseDomainObject
 		this.visibilities = visibilities;
 	}
 
+	/**
+	 * @deprecated Does not properly sync visibility statuses
+	 */
+	@Deprecated
 	@Override
 	public VisibilityStatus getStatus(MapView view) {
 

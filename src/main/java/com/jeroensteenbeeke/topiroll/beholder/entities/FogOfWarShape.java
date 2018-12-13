@@ -96,6 +96,10 @@ public abstract class FogOfWarShape extends BaseDomainObject
 
 	public abstract <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor);
 
+	/**
+	 * @deprecated Does not properly sync visibility statuses
+	 */
+	@Deprecated
 	public boolean shouldRender(MapView view, boolean previewMode) {
 		FogOfWarGroup _group = getGroup();
 
@@ -117,6 +121,10 @@ public abstract class FogOfWarShape extends BaseDomainObject
 		this.visibilities = visibilities;
 	}
 
+	/**
+	 * @deprecated Does not properly sync visibility statuses
+	 */
+	@Deprecated
 	@Override
 	public VisibilityStatus getStatus(MapView view) {
 		return getVisibilities().stream().filter(v -> v.getView().equals(view))

@@ -3,9 +3,13 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeVisibilityDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
 import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -23,6 +27,13 @@ import java.util.function.Predicate;
 public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
+
+	@Inject
+	private FogOfWarGroupVisibilityDAO groupVisibilityDAO;
+
+	@Inject
+	private FogOfWarShapeVisibilityDAO shapeVisibilityDAO;
+
 
 	@Inject
 	private MapService mapService;
@@ -107,8 +118,8 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 
 				Point clicked = callback.getClickedLocation();
 
-				if (clicked != null) {
-					return v && isShapeInCurrentLocation(clicked, s -> s == VisibilityStatus.DM_ONLY || s == VisibilityStatus.INVISIBLE) || !shapesInCurrentLocation(clicked, getModelObject()).isEmpty();
+				if (clicked != null && !shapesInCurrentLocation(clicked, getModelObject()).isEmpty()) {
+					return v && !isShapeInCurrentLocation(clicked, s -> s == VisibilityStatus.DM_ONLY || s == VisibilityStatus.VISIBLE);
 				} else {
 					return false;
 				}
@@ -133,18 +144,14 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 
 					Seq<VisibilityStatus> shapes = shapesInCurrentLocation(currentLocation, map).flatMap(
 							s -> {
-								Array<VisibilityStatus> statuses = Array.ofAll(s.getVisibilities()).filter(sv -> sv.getView().equals(getModelObject()))
-										.map(FogOfWarVisibility::getStatus);
-
 								FogOfWarGroup group = s.getGroup();
 								if (group != null) {
-									statuses = statuses.appendAll(Array.ofAll(group.getVisibilities()).filter(sv -> sv.getView().equals(getModelObject()))
-											.map(FogOfWarVisibility::getStatus));
+									return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group)).filter(v -> v.getView().equals(getModelObject()));
 								}
 
-								return statuses;
+								return shapeVisibilityDAO.findByFilter(new FogOfWarShapeVisibilityFilter().shape(s)).filter(v -> v.getView().equals(getModelObject()));
 							}
-					).filter(statusPredicate);
+					).map(FogOfWarVisibility::getStatus).filter(statusPredicate);
 
 					return !shapes.isEmpty();
 				}).orElse(false);

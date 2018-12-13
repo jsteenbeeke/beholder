@@ -38,6 +38,20 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 			}
 		}));
 
+		add(new AjaxLink<TokenInstance>("damage") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, ApplyTokenDamagePanel::new, callback
+						.getSelectedToken());
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
+						(TokenInstance::getMaxHitpoints).isPresent();
+			}
+		});
+
 		add(new AjaxLink<TokenInstance>("ally") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {

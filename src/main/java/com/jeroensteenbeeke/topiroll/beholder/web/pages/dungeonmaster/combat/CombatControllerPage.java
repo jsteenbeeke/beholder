@@ -20,6 +20,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -98,7 +99,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		ScaledMap map = view.getSelectedMap();
 
 		if (map == null) {
-			throw new RestartResponseAtInterceptPageException(ControlViewPage.class);
+			throw new RestartResponseAtInterceptPageException(new ControlViewPage(view));
 		}
 
 		final double displayFactor = map.getDisplayFactor(view);
@@ -577,6 +578,13 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
+			}
+		});
+
+		combatNavigator.add(new Link<MapView>("exploration", ModelMaker.wrap(view)) {
+			@Override
+			public void onClick() {
+				setResponsePage(new ExplorationControllerPage(getModelObject()));
 			}
 		});
 

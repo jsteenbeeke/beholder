@@ -634,8 +634,32 @@ class MapServiceImpl implements MapService {
 		renderable.setAreaMarkers(view.getMarkers().stream()
 				.map(a -> a.toJS(factor)).collect(Collectors.toList()));
 		renderable.setRevealed(map.getFogOfWarShapes().stream()
-				.filter(s -> s.shouldRender(view, previewMode))
+				.filter(s -> shouldRender(s, view, previewMode))
 				.map(s -> s.toJS(factor)).collect(Collectors.toList()));
 		return renderable;
+	}
+
+	private boolean shouldRender(FogOfWarShape shape, MapView view, boolean previewMode) {
+		FogOfWarGroup group = shape.getGroup();
+
+		if (group != null) {
+			return getStatus(group, view).isVisible(previewMode);
+		}
+
+		return getStatus(shape, view).isVisible(previewMode);
+	}
+
+	private VisibilityStatus getStatus(FogOfWarShape shape, MapView view) {
+		return shapeVisibilityDAO.findByFilter(new FogOfWarShapeVisibilityFilter().shape(shape))
+				.find(v -> v.getView().equals(view))
+				.map(FogOfWarVisibility::getStatus)
+				.getOrElse(VisibilityStatus.INVISIBLE);
+	}
+
+	private VisibilityStatus getStatus(FogOfWarGroup group, MapView view) {
+		return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group))
+				.find(v -> v.getView().equals(view))
+				.map(FogOfWarVisibility::getStatus)
+				.getOrElse(VisibilityStatus.INVISIBLE);
 	}
 }

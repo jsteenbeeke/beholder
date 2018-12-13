@@ -15,8 +15,6 @@ public class FakeSlackServer {
 	}
 
 	public FakeSlackServer start() {
-		// TODO: Implement me!
-
 		// http://localhost:5050/oauth/authorize?response_type=code&client_id=IQNePkalKBYV&redirect_uri=http://localhost:8081/beholder/slack/callback&scope=identity.basic,identity.team,identity.avatar&state=QZ1uKa6blA2csgWESyDe
 		service.get("/oauth/authorize", (request, response) -> {
 			String redirectUri = request.queryParams("redirect_uri");

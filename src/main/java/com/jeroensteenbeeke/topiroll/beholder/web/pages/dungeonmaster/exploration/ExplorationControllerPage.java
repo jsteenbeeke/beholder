@@ -5,7 +5,6 @@ import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
-import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
@@ -24,6 +23,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.TokenSt
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -52,12 +52,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ExplorationControllerPage extends BootstrapBasePage implements ExplorationModeCallback {
-	private static final Logger log = LoggerFactory.getLogger(ExplorationControllerPage.class);
 	private static final String MODAL_ID = "modal";
-	private static final String MARKER_ID = "marker";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
-	private final WebMarkupContainer combatNavigator;
+	private final WebMarkupContainer explorationNavigator;
 	private final HideRevealPanel hideReveal;
 	private final TokenStatusPanel tokenStatusPanel;
 
@@ -104,7 +102,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 		ScaledMap map = view.getSelectedMap();
 
 		if (map == null) {
-			throw new RestartResponseAtInterceptPageException(ControlViewPage.class);
+			throw new RestartResponseAtInterceptPageException(new ControlViewPage(view));
 		}
 
 		final double displayFactor = map.getDisplayFactor(view);
@@ -379,17 +377,24 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			}
 		}.setReuseItems(true));
 
-		combatNavigator = new WebMarkupContainer("combatNavigator");
-		combatNavigator.setOutputMarkupId(true);
+		explorationNavigator = new WebMarkupContainer("explorationNavigator");
+		explorationNavigator.setOutputMarkupId(true);
 
-		combatNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
 			}
 		});
 
-		combatNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("combat", ModelMaker.wrap(view)) {
+			@Override
+			public void onClick() {
+				setResponsePage(new CombatControllerPage(getModelObject()));
+			}
+		});
+
+		explorationNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -412,7 +417,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 		};
 
 
-		combatNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
+		explorationNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
 
 			@Override
 			protected void populateItem(ListItem<CompendiumEntry> item) {
@@ -428,7 +433,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 
 			}
 		});
-		preview.add(combatNavigator);
+		preview.add(explorationNavigator);
 
 
 		add(preview);
@@ -447,7 +452,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 
 	@Override
 	public void refreshMenus(AjaxRequestTarget target) {
-		target.add(combatNavigator, tokenStatusPanel);
+		target.add(explorationNavigator, tokenStatusPanel);
 	}
 
 	@Override

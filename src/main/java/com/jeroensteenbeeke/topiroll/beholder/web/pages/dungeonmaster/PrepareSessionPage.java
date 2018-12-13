@@ -23,14 +23,10 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 public class PrepareSessionPage extends AuthenticatedPage {
-
-
 	private static final long serialVersionUID = 1L;
-
 
 	@Inject
 	private MapViewDAO mapViewDAO;
-
 
 	public PrepareSessionPage() {
 		super("Prepare Session");

@@ -61,8 +61,13 @@ public class ExplorationShapeRenderer implements FogOfWarShapeVisitor<String> {
 	}
 
 	private String determineColor(FogOfWarShape shape) {
-		return shape.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny().map(this::determineColorOfVisibility).orElseGet(() -> Optional.ofNullable(shape.getGroup()).flatMap(group ->
-				group.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny()).map(this::determineColorOfVisibility).orElse(COLOR_INVISIBLE));
+		FogOfWarGroup group = shape.getGroup();
+
+		if (group != null) {
+			return group.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny().map(this::determineColorOfVisibility).orElse(COLOR_INVISIBLE);
+		}
+
+		return shape.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny().map(this::determineColorOfVisibility).orElse(COLOR_INVISIBLE);
 	}
 
 	private String determineColorOfVisibility(FogOfWarVisibility v) {
