@@ -9,6 +9,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
@@ -95,8 +96,9 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 		}
 
 		viewModel = ModelMaker.wrap(view);
+		viewModel.detach();
 
-		ScaledMap map = view.getSelectedMap();
+		ScaledMap map = viewModel.getObject().getSelectedMap();
 
 		if (map == null) {
 			throw new RestartResponseAtInterceptPageException(new ControlViewPage(view));

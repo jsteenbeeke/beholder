@@ -74,9 +74,6 @@ public class Compendium {
 						CompendiumArticle article = new CompendiumArticle(source, output.getText());
 
 						articles.put(index, article);
-
-						log.info("\t- {} @ {}", index.getTitle(), index.getPath());
-						log.info("\t\t{}", article.getHtmlText());
 					} catch (IOException ioe) {
 						log.error("\tCould not parse {}", ref);
 					}

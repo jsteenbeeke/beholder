@@ -33,6 +33,8 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
+import org.apache.wicket.model.IModel;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
@@ -50,6 +52,10 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
+	private List<MapLink> incomingLinks = new ArrayList<MapLink>();
+
+
  	@Column(nullable=true, name="amazon_key")
 	private String amazonKey;
 
@@ -77,7 +83,6 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
-
 	private BeholderUser owner;
 
 	@Column(nullable = false)
@@ -260,5 +265,20 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 		this.amazonKey = amazonKey;
 	}
 
+	@Nonnull
+	public List<MapLink> getIncomingLinks() {
+		return incomingLinks;
+	}
+	public void setIncomingLinks( @Nonnull List<MapLink> incomingLinks) {
+		this.incomingLinks = incomingLinks;
+	}
 
+
+	public String getNameWithFolders() {
+		if (folder != null) {
+			return String.format("%s \\ %s", folder.getNameWithParents(), getName());
+		}
+
+		return getName();
+	}
 }

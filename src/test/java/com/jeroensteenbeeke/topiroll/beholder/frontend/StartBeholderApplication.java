@@ -141,6 +141,7 @@ public class StartBeholderApplication {
 				"http://localhost:8081/beholder/")
 				.withProperty("application.sourceurl",
 						"file://" + System.getProperty("user.dir"))
+				.withoutShowingSql()
 				.atPort(8081);
 	}
 

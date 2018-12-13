@@ -45,6 +45,7 @@
 			<tr>
 				<th>Group</th>
 				<th>Thumbnail</th>
+				<th>Links</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -52,7 +53,12 @@
 			<tr wicket:id="groups">
 				<td wicket:id="name"></td>
 				<td wicket:id="thumb"></td>
-				<td><span wicket:id="edit"></span> <span wicket:id="delete"></span></td>
+				<td>
+					<wicket:container wicket:id="links">
+						<span wicket:id="map"></span> <span wicket:id="delete"></span><br />
+					</wicket:container>
+				</td>
+				<td><span wicket:id="edit"></span> <span wicket:id="link"></span> <span wicket:id="delete"></span></td>
 			</tr>
 		</tbody>
 		<tfoot>
@@ -69,6 +75,7 @@
 			<tr>
 				<th>Shape</th>
 				<th>Thumbnail</th>
+				<th>Links</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -76,7 +83,12 @@
 			<tr wicket:id="shapes">
 				<td wicket:id="shape"></td>
 				<td wicket:id="thumb"></td>
-				<td><span wicket:id="delete"></span></td>
+				<td>
+					<wicket:container wicket:id="links">
+						<span wicket:id="map"></span> <span wicket:id="delete"></span><br />
+					</wicket:container>
+				</td>
+				<td><span wicket:id="link"></span> <span wicket:id="delete"></span></td>
 			</tr>
 		</tbody>
 		<tfoot>

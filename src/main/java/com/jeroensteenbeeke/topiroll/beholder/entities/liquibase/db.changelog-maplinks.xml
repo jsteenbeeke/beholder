@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="codemonkey" failOnError="true" id="create-table-MapLink">
+		<createTable tableName="maplink">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"/>
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_maplink" startValue="1"/>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-property-MapLink-map">
+		<addColumn tableName="maplink">
+			<column name="map" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-foreign-key-map-to-id">
+		<addForeignKeyConstraint baseColumnNames="map" baseTableName="maplink" constraintName="fk_maplink_map"
+								 referencedColumnNames="id" referencedTableName="scaledmap"/>
+		<createIndex indexName="idx_maplink_map" tableName="maplink">
+			<column name="map"/>
+		</createIndex>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-property-MapLink-group">
+		<addColumn tableName="maplink">
+			<column name="group_id" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-foreign-key-group-to-id">
+		<addForeignKeyConstraint baseColumnNames="group_id" baseTableName="maplink" constraintName="fk_maplink_group"
+								 referencedColumnNames="id" referencedTableName="fogofwargroup"/>
+		<createIndex indexName="idx_maplink_group" tableName="maplink">
+			<column name="group_id"/>
+		</createIndex>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-property-MapLink-shape">
+		<addColumn tableName="maplink">
+			<column name="shape" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="codemonkey" id="add-foreign-key-shape-to-id">
+		<addForeignKeyConstraint baseColumnNames="shape" baseTableName="maplink" constraintName="fk_maplink_shape"
+								 referencedColumnNames="id" referencedTableName="fogofwarshape"/>
+		<createIndex indexName="idx_maplink_shape" tableName="maplink">
+			<column name="shape"/>
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

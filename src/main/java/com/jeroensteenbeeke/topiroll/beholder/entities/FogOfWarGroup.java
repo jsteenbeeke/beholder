@@ -49,6 +49,10 @@ public class FogOfWarGroup extends BaseDomainObject
 	@JoinColumn(name = "map")
 
 	private ScaledMap map;
+ 	@OneToMany(mappedBy="group", fetch=FetchType.LAZY)
+	private List<MapLink> links = new ArrayList<MapLink>();
+
+
 
 	@OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
 	private List<FogOfWarGroupVisibility> visibilities = new ArrayList<FogOfWarGroupVisibility>();
@@ -129,5 +133,15 @@ public class FogOfWarGroup extends BaseDomainObject
 	public boolean containsCoordinate(int x, int y) {
 		return getShapes().stream().anyMatch(shape -> shape.containsCoordinate(x, y));
 	}
+
+	@Nonnull
+	public List<MapLink> getLinks() {
+		return links;
+	}
+	public void setLinks( @Nonnull List<MapLink> links) {
+		this.links = links;
+	}
+
+
 
 }

@@ -56,6 +56,10 @@ public abstract class FogOfWarShape extends BaseDomainObject
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "group_id")
 	private FogOfWarGroup group;
+ 	@OneToMany(mappedBy="shape", fetch=FetchType.LAZY)
+	private List<MapLink> links = new ArrayList<MapLink>();
+
+
 
 	@OneToMany(mappedBy = "shape", fetch = FetchType.LAZY)
 	private List<FogOfWarShapeVisibility> visibilities = new ArrayList<FogOfWarShapeVisibility>();
@@ -137,4 +141,14 @@ public abstract class FogOfWarShape extends BaseDomainObject
 	public abstract boolean containsCoordinate(int x, int y);
 
 	public abstract JSShape toJS(double factor);
+
+	@Nonnull
+	public List<MapLink> getLinks() {
+		return links;
+	}
+	public void setLinks( @Nonnull List<MapLink> links) {
+		this.links = links;
+	}
+
+
 }

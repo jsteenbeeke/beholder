@@ -88,6 +88,8 @@ public class ControlViewPage extends AuthenticatedPage {
         super(String.format("Control View - %s", view.getIdentifier()));
 
         viewModel = ModelMaker.wrap(view);
+        viewModel.detach();
+
         MapCanvas mapCanvas = new MapCanvas("preview", viewModel, true);
 
         mapCanvas.add(new OnClickBehavior() {
