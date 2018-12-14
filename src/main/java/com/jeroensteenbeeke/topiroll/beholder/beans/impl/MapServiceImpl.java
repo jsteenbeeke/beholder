@@ -176,8 +176,9 @@ class MapServiceImpl implements MapService {
 	public void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map) {
 		view.setSelectedMap(map);
 		viewDAO.update(view);
+		viewDAO.flush();
 
-		refreshView(view);
+		refreshView(viewDAO.load(view.getId()).getOrElseThrow(IllegalStateException::new));
 	}
 
 	@Override
@@ -305,6 +306,7 @@ class MapServiceImpl implements MapService {
 			visibility.setStatus(status);
 			groupVisibilityDAO.update(visibility);
 		}
+		groupVisibilityDAO.flush();
 
 		refreshView(view);
 	}
@@ -331,6 +333,8 @@ class MapServiceImpl implements MapService {
 			visibility.setStatus(status);
 			shapeVisibilityDAO.update(visibility);
 		}
+		shapeVisibilityDAO.flush();
+
 
 		refreshView(view);
 	}

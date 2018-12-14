@@ -48,9 +48,6 @@ public class TestViewInitializer implements IAccountInitializer {
 	private FogOfWarShapeDAO shapeDAO;
 
 	@Autowired
-	private TokenDefinitionDAO tokenDAO;
-
-	@Autowired
 	private FogOfWarGroupDAO groupDAO;
 
 	@Autowired
@@ -61,6 +58,9 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Autowired
 	private InitiativeParticipantDAO participantDAO;
+
+	@Autowired
+	private MapLinkDAO mapLinkDAO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -182,6 +182,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		final TokenDefinition monster = m;
 
+		MapLink mapLink = new MapLink();
 
 		mapService.createMap(user, "temple", 18, image, null).map(map -> {
 
@@ -189,6 +190,8 @@ public class TestViewInitializer implements IAccountInitializer {
 			group.setMap(map);
 			group.setName("P3");
 			groupDAO.save(group);
+
+			mapLink.setGroup(group);
 
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
@@ -244,6 +247,9 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setMap(map);
 			rect.setGroup(group);
 			shapeDAO.save(rect);
+
+			mapLink.setMap(map);
+			mapLinkDAO.save(mapLink);
 
 			return map;
 		});

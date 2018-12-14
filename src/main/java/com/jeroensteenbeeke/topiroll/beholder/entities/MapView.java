@@ -85,7 +85,6 @@ public class MapView extends BaseDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "selectedMap")
-
 	private ScaledMap selectedMap;
 
 	@Column(nullable = false)

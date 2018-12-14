@@ -121,8 +121,6 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 				shapeFilter.map(map);
 
 				shapeDAO.findByFilter(shapeFilter).forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel.getObject()))));
-
-
 			}
 
 			@Override
@@ -140,7 +138,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			}
 		};
 
-		preview.add(hideReveal = new HideRevealPanel("reveal", view, this));
+		preview.add(hideReveal = new HideRevealPanel("reveal", viewModel.getObject(), this));
 		hideReveal.setVisible(false);
 
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
@@ -267,13 +265,6 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			}
 		}.setReuseItems(true));
 
-		IModel<List<AreaMarker>> markerModel = new LoadableDetachableModel<List<AreaMarker>>() {
-			@Override
-			protected List<AreaMarker> load() {
-				return viewModel.getObject().getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId)).collect(Collectors.toList());
-			}
-		};
-
 
 		IModel<List<InitiativeParticipant>> participantModel = new LoadableDetachableModel<List<InitiativeParticipant>>() {
 			@Override
@@ -380,21 +371,21 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 		explorationNavigator = new WebMarkupContainer("explorationNavigator");
 		explorationNavigator.setOutputMarkupId(true);
 
-		explorationNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("back") {
 			@Override
 			public void onClick() {
-				setResponsePage(new ControlViewPage(getModelObject()));
+				setResponsePage(new ControlViewPage(viewModel.getObject()));
 			}
 		});
 
-		explorationNavigator.add(new Link<MapView>("combat", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new Link<MapView>("combat") {
 			@Override
 			public void onClick() {
-				setResponsePage(new CombatControllerPage(getModelObject()));
+				setResponsePage(new CombatControllerPage(viewModel.getObject()));
 			}
 		});
 
-		explorationNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+		explorationNavigator.add(new AjaxLink<MapView>("compendium") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 

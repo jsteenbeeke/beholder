@@ -122,7 +122,7 @@ public abstract class AbstractMapPreview extends Border {
 				"=== \"object\") {\n");
 		onImageDrawComplete.append("\t\t\tvar canvasContainerOffset = canvasContainer" +
 				".getBoundingClientRect();\n");
-		onImageDrawComplete.append(String.format("\t\t\tmulti%s.recalculateOffset" +
+		onImageDrawComplete.append(String.format("\t\t\tdocument.multi%s.recalculateOffset" +
 						"(canvasContainerOffset" +
 				".left + window.pageXOffset, canvasContainerOffset.top + window.pageYOffset);\n",
 				canvas.getMarkupId()));

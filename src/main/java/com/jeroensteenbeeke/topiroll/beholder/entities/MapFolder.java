@@ -103,4 +103,11 @@ public class MapFolder extends BaseDomainObject {
 	}
 
 
+	public String getNameWithParents() {
+		if (parent != null) {
+			return String.format("%s \\ %s", parent.getNameWithParents(), getName());
+		}
+
+		return getName();
+	}
 }

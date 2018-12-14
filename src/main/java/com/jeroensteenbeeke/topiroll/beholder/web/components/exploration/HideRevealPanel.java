@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
 
+import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -10,19 +11,29 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.awt.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	@Inject
@@ -38,7 +49,7 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	@Inject
 	private MapService mapService;
 
-	public HideRevealPanel(String id, MapView view, ExplorationModeCallback callback) {
+	public HideRevealPanel(String id, MapView view, @Nonnull ExplorationModeCallback callback) {
 		super(id);
 
 		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
@@ -134,8 +145,45 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 			}
 		});
 
+		add(new ListView<MapLink>("links", loadLinks(callback)) {
+			@Override
+			protected void populateItem(ListItem<MapLink> item) {
+				PageParameters params = new PageParameters();
+				params.set("map", item.getModelObject().getMap().getId());
+				params.set("view", viewModel.getObject().getId());
 
+				BookmarkablePageLink<MapLink> link = new BookmarkablePageLink<>("map",
+						ExplorationModeMapSwitchHandlerPage.class, params);
+
+				link.setBody(item.getModel().map(MapLink::getMap).map(ScaledMap::getNameWithFolders).map(n -> "Transition to " + n));
+
+				item.add(link);
+			}
+		});
 	}
+
+	@Nonnull
+	private IModel<List<MapLink>> loadLinks(ExplorationModeCallback callback) {
+		return () -> {
+			Point location = callback.getClickedLocation();
+
+			ScaledMap map = getModelObject().getSelectedMap();
+
+			if (map != null && location != null) {
+				return shapesInCurrentLocation(location, map).flatMap(s -> {
+					if (s.getGroup() != null) {
+						return s.getGroup().getLinks();
+					}
+
+					return s.getLinks();
+				}).sorted(Comparator.comparing(mapLink -> mapLink.getMap().getNameWithFolders())).distinctBy(MapLink::getId)
+						.toJavaList();
+			}
+
+			return ImmutableList.of();
+		};
+	}
+
 
 	private boolean isShapeInCurrentLocation(Point currentLocation, Predicate<VisibilityStatus> statusPredicate) {
 		return Optional.ofNullable(getModelObject()).map(MapView::getSelectedMap).map(
