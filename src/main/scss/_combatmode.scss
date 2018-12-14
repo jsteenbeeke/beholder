@@ -33,6 +33,13 @@
   left: 5px;
 }
 
+#exploration-mapoptions {
+  z-index: 3;
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+}
+
 #combat-modal {
   width: 100%;
   position: fixed;
