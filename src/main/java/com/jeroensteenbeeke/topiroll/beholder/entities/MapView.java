@@ -62,8 +62,6 @@ public class MapView extends BaseDomainObject {
  	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
 	private List<PortraitVisibility> portraitVisibilities = new ArrayList<PortraitVisibility>();
 
-
-
 	@Column(nullable = true)
 	private Integer initiativeMargin;
 

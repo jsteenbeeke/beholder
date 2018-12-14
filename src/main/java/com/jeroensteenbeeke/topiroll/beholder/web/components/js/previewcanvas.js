@@ -29,6 +29,17 @@ function previewRectangle(canvas, color, alpha, rect) {
     ctx.restore();
 
     canvas.switchBuffer();
+
+    ctx = canvas.getContext('2d');
+
+    ctx.save();
+    ctx.beginPath();
+    applyRectangle(ctx, rect);
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
 }
 
 function previewCircle(canvas, color, alpha, circle) {
@@ -44,6 +55,17 @@ function previewCircle(canvas, color, alpha, circle) {
     ctx.restore();
 
     canvas.switchBuffer();
+
+    ctx = canvas.getContext('2d');
+
+    ctx.save();
+    ctx.beginPath();
+    applyCircle(ctx, circle);
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
 }
 
 function previewPolygon(canvas, color, alpha, poly) {
@@ -59,6 +81,17 @@ function previewPolygon(canvas, color, alpha, poly) {
     ctx.restore();
 
     canvas.switchBuffer();
+
+    ctx = canvas.getContext('2d');
+
+    ctx.save();
+    ctx.beginPath();
+    applyPoly(ctx, poly);
+    ctx.setGlobalAlpha(alpha);
+    ctx.setFillStyle(color);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
 }
 
 function determineBorderColor(type) {
@@ -110,6 +143,27 @@ function previewToken(canvas, token) {
         context.restore();
 
         canvas.switchBuffer();
+
+        context = canvas.getContext('2d');
+
+        // Step 3: Draw image (with circle clip path)
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.clip();
+        context.drawImage(img, x, y, width, height);
+        context.restore();
+
+        // Step 4: Draw border
+        context.save();
+        context.beginPath();
+        context.arc(ox, oy, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.setLineWidth(radius / 7);
+        context.setStrokeStyle(color);
+        context.stroke();
+        context.restore();
     });
 
 }
