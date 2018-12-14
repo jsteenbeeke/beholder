@@ -92,7 +92,22 @@ public class StartBeholderApplication {
 
 			final FakeSlackServer localSlackServer = new FakeSlackServer();
 
-			finalizer.withStartListener(server -> localSlackServer.start()).withStopListener(server -> localSlackServer.stop());
+			finalizer.withStartListener(server -> {
+				localSlackServer.start();
+				System.out.println("===================================================");
+				System.out.println("===================================================");
+				System.out.println("===          FAKE SLACK SERVER ACTIVE           ===");
+				System.out.println("===                                             ===");
+				System.out.println("=== If you want to log in using the real Slack, ===");
+				System.out.println("=== please start the application with the       ===");
+				System.out.println("=== following options:                          ===");
+				System.out.println("===                                             ===");
+				System.out.println("===    --slack-client-id                        ===");
+				System.out.println("===    --slack-client-secret                    ===");
+				System.out.println("===                                             ===");
+				System.out.println("===================================================");
+				System.out.println("===================================================");
+			}).withStopListener(server -> localSlackServer.stop());
 		} else {
 			finalizer.withProperty("slack.clientid", cmd.getOptionValue(Arguments.SLACK_CLIENT_ID))
 					.withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET));
@@ -110,6 +125,23 @@ public class StartBeholderApplication {
 			finalizer.withStartListener(server -> {
 				try {
 					localImageServer.start();
+
+					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+					System.out.println("%%%          MOCK IMAGE SERVER ACTIVE           %%%");
+					System.out.println("%%%                                             %%%");
+					System.out.println("%%% If you want use Amazon S3 for images,       %%%");
+					System.out.println("%%% please start the application with the       %%%");
+					System.out.println("%%% following options:                          %%%");
+					System.out.println("%%%                                             %%%");
+					System.out.println("%%%    --amazon-client-id                       %%%");
+					System.out.println("%%%    --amazon-client-secret                   %%%");
+					System.out.println("%%%    --amazon-region                          %%%");
+					System.out.println("%%%    --amazon-bucket                          %%%");
+					System.out.println("%%%    --amazon-url-prefix                      %%%");
+					System.out.println("%%%                                             %%%");
+					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 				} catch (IOException ioe) {
 					throw new RuntimeException(ioe);
 				}
