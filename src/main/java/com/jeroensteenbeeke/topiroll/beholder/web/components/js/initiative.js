@@ -26,7 +26,7 @@ function renderInitiative(initiative) {
 
 	if (element) {
 		if (show) {
-			var style = 'display: block; z-index: 1; position: fixed; ';
+			var style = 'display: block; z-index: 1; position: fixed; max-width: 10%; ';
 			var html = '';
 
 			if (position.indexOf('top') !== -1) {
