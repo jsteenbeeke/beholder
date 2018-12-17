@@ -22,7 +22,7 @@ public class InitiativePanel extends CombatModePanel<MapView> {
 	@Inject
 	private InitiativeService initiativeService;
 
-	public InitiativePanel(String id, MapView view) {
+	public InitiativePanel(String id, MapView view, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		setOutputMarkupId(true);
@@ -47,6 +47,14 @@ public class InitiativePanel extends CombatModePanel<MapView> {
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && !UNKNOWN.equals(getDefaultModelObject());
+			}
+		});
+
+		add(new AjaxLink<MapView>("initiative", ModelMaker.wrap(view)) {
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, InitiativeOrderWindow::new, getModelObject());
 			}
 		});
 

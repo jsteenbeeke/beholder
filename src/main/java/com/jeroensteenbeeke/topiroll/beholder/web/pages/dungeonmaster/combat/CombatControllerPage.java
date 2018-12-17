@@ -116,7 +116,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 
 		};
 
-		preview.add(new InitiativePanel("initiative", view));
+		preview.add(new InitiativePanel("initiative", view, this));
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
 		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this);
 		markerStatusPanel = new MarkerStatusPanel("markerStatus", this);
