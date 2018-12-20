@@ -16,7 +16,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticip
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
@@ -46,7 +47,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ExplorationControllerPage extends BootstrapBasePage implements ExplorationModeCallback {
+public class ExplorationControllerPage extends BootstrapBasePage implements DMViewCallback {
 	private static final String MODAL_ID = "modal";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
@@ -390,7 +391,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
-				createModalWindow(target, ExplorationCompendiumWindow::new, null);
+				createModalWindow(target, CompendiumWindow::new, null);
 			}
 
 		});
@@ -416,7 +417,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						createModalWindow(target, ExplorationCompendiumWindow::new, getModelObject());
+						createModalWindow(target, CompendiumWindow::new, getModelObject());
 
 					}
 				};

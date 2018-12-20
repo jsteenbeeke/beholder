@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview;
 
 import com.google.common.collect.Lists;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -12,6 +12,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -25,7 +27,7 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class ExplorationCreateTokenWindow extends ExplorationModePanel<ScaledMap> {
+public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
 	@Inject
 	private MapService mapService;
 
@@ -35,7 +37,7 @@ public class ExplorationCreateTokenWindow extends ExplorationModePanel<ScaledMap
 	@Inject
 	private TokenInstanceDAO instanceDAO;
 
-	public ExplorationCreateTokenWindow(String id, ScaledMap map, ExplorationModeCallback callback) {
+	public CreateTokenWindow(String id, ScaledMap map, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(map));
 
 		final Point point = callback.getClickedLocation();
@@ -65,7 +67,7 @@ public class ExplorationCreateTokenWindow extends ExplorationModePanel<ScaledMap
 
 					TokenInstanceFilter filter = new TokenInstanceFilter();
 					filter.definition(def);
-					filter.map(ExplorationCreateTokenWindow.this.getModelObject());
+					filter.map(CreateTokenWindow.this.getModelObject());
 
 					labelField.setModelObject(def.getName() + " "+ (1+instanceDAO.countByFilter(filter)));
 
@@ -115,7 +117,7 @@ public class ExplorationCreateTokenWindow extends ExplorationModePanel<ScaledMap
 
 				setVisible(false);
 
-				target.add(ExplorationCreateTokenWindow.this);
+				target.add(CreateTokenWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

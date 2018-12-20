@@ -1,8 +1,10 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
@@ -12,11 +14,11 @@ import org.apache.wicket.model.Model;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class ApplyTokenDamageWindow extends CombatModePanel<TokenInstance> {
+public class ApplyTokenDamageWindow extends DMViewPanel<TokenInstance> {
 	@Inject
 	private MapService mapService;
 
-	public ApplyTokenDamageWindow(String id, TokenInstance instance, CombatModeCallback callback) {
+	public ApplyTokenDamageWindow(String id, TokenInstance instance, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(instance));
 
 		NumberTextField<Integer> damageField = new NumberTextField<>("damage", Model.of(0));

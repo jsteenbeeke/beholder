@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -6,6 +6,9 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -15,8 +18,8 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.util.Optional;
 
-public class MapOptionsPanel extends CombatModePanel<MapView> {
-	public MapOptionsPanel(String id, MapView view, CombatModeCallback callback) {
+public class MapOptionsPanel extends DMViewPanel<MapView> {
+	public MapOptionsPanel(String id, MapView view, DMViewCallback callback) {
 		super(id);
 
 		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
@@ -91,7 +94,7 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CombatCreateTokenWindow::new, getModelObject());
+				callback.createModalWindow(target, CreateTokenWindow::new, getModelObject());
 			}
 		});
 

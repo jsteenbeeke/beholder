@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration;
 
 import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
@@ -11,6 +11,9 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -31,7 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class HideRevealPanel extends ExplorationModePanel<MapView> {
+public class HideRevealPanel extends DMViewPanel<MapView> {
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
 
@@ -45,7 +48,7 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	@Inject
 	private MapService mapService;
 
-	public HideRevealPanel(String id, MapView view, @Nonnull ExplorationModeCallback callback) {
+	public HideRevealPanel(String id, MapView view, @Nonnull DMViewCallback callback) {
 		super(id);
 
 		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
@@ -137,7 +140,7 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, ExplorationCreateTokenWindow::new, getModelObject());
+				callback.createModalWindow(target, CreateTokenWindow::new, getModelObject());
 			}
 		});
 
@@ -159,7 +162,7 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	}
 
 	@Nonnull
-	private IModel<List<MapLink>> loadLinks(ExplorationModeCallback callback) {
+	private IModel<List<MapLink>> loadLinks(DMViewCallback callback) {
 		return () -> {
 			Point location = callback.getClickedLocation();
 

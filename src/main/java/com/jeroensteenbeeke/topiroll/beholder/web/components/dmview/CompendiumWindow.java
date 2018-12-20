@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
@@ -9,6 +9,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -25,7 +27,7 @@ import org.apache.wicket.model.util.ListModel;
 import javax.inject.Inject;
 import java.util.List;
 
-public class CombatCompendiumWindow extends CombatModePanel<CompendiumEntry> {
+public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 	private final AjaxLink<CompendiumEntry> unpinLink;
 
 	private final AjaxLink<CompendiumEntry> pinLink;
@@ -39,7 +41,7 @@ public class CombatCompendiumWindow extends CombatModePanel<CompendiumEntry> {
 
 	private Label article;
 
-	public CombatCompendiumWindow(String id, CompendiumEntry entry, CombatModeCallback callback) {
+	public CompendiumWindow(String id, CompendiumEntry entry, DMViewCallback callback) {
 		super(id, entry != null ? ModelMaker.wrap(entry, true) : ModelMaker.wrap(CompendiumEntry.class));
 		setOutputMarkupId(true);
 
@@ -129,8 +131,8 @@ public class CombatCompendiumWindow extends CombatModePanel<CompendiumEntry> {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();
-						CombatCompendiumWindow.this.setModelObject(entry);
-						CombatCompendiumWindow.this.detach();
+						CompendiumWindow.this.setModelObject(entry);
+						CompendiumWindow.this.detach();
 
 						article.setDefaultModel(new ArticleModel());
 
@@ -152,7 +154,7 @@ public class CombatCompendiumWindow extends CombatModePanel<CompendiumEntry> {
 	private class ArticleModel extends LoadableDetachableModel<String> {
 		@Override
 		protected String load() {
-			CompendiumEntry compendiumEntry = CombatCompendiumWindow.this.getModelObject();
+			CompendiumEntry compendiumEntry = CompendiumWindow.this.getModelObject();
 
 			if (compendiumEntry == null) {
 				return "";

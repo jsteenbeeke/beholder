@@ -16,7 +16,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEn
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
@@ -48,7 +49,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CombatControllerPage extends BootstrapBasePage implements CombatModeCallback {
+public class CombatControllerPage extends BootstrapBasePage implements DMViewCallback {
 	private static final Logger log = LoggerFactory.getLogger(CombatControllerPage.class);
 	private static final String MODAL_ID = "modal";
 	private static final String MARKER_ID = "marker";
@@ -593,7 +594,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
-				createModalWindow(target, CombatCompendiumWindow::new, null);
+				createModalWindow(target, CompendiumWindow::new, null);
 			}
 
 		});
@@ -619,7 +620,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						createModalWindow(target, CombatCompendiumWindow::new, getModelObject());
+						createModalWindow(target, CompendiumWindow::new, getModelObject());
 
 					}
 				};

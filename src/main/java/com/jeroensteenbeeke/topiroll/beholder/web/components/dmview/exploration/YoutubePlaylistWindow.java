@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
@@ -9,6 +9,8 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.YouTubePlaylistDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSPlaylist;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -18,11 +20,11 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import javax.inject.Inject;
 import java.util.Random;
 
-public class YoutubePlaylistWindow extends ExplorationModePanel<MapView> {
+public class YoutubePlaylistWindow extends DMViewPanel<MapView> {
 	@Inject
 	private YouTubePlaylistDAO playlistDAO;
 
-	public YoutubePlaylistWindow(String id, MapView view, ExplorationModeCallback callback) {
+	public YoutubePlaylistWindow(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();

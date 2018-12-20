@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
 import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
@@ -13,6 +13,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -32,14 +34,14 @@ import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
 
-public class InitiativeOrderWindow extends CombatModePanel<MapView> {
+public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 	@Inject
 	private InitiativeService initiativeService;
 
 	@Inject
 	private InitiativeParticipantDAO participationDAO;
 
-	public InitiativeOrderWindow(String id, MapView view, CombatModeCallback callback) {
+	public InitiativeOrderWindow(String id, MapView view, DMViewCallback callback) {
 		super(id);
 
 		setModel(ModelMaker.wrap(view));

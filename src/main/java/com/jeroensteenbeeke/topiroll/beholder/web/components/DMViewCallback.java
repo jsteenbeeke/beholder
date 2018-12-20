@@ -1,16 +1,15 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModePanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-public interface ExplorationModeCallback {
+public interface DMViewCallback {
 	<T extends DomainObject> void createModalWindow(
 			@Nonnull
 					AjaxRequestTarget target,
@@ -36,6 +35,6 @@ public interface ExplorationModeCallback {
 
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {
-		ExplorationModePanel<D> apply(String id, D object, ExplorationModeCallback callback);
+		DMViewPanel<D> apply(String id, D object, DMViewCallback callback);
 	}
 }

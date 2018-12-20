@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
@@ -6,6 +6,8 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -14,7 +16,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 
 import javax.inject.Inject;
 
-public class InitiativePanel extends CombatModePanel<MapView> {
+public class InitiativePanel extends DMViewPanel<MapView> {
 	private static final String UNKNOWN = "-";
 	@Inject
 	private InitiativeParticipantDAO initiativeDAO;
@@ -22,7 +24,7 @@ public class InitiativePanel extends CombatModePanel<MapView> {
 	@Inject
 	private InitiativeService initiativeService;
 
-	public InitiativePanel(String id, MapView view, CombatModeCallback callback) {
+	public InitiativePanel(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		setOutputMarkupId(true);
