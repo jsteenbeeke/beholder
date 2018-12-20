@@ -3,6 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -15,11 +16,10 @@ import org.apache.wicket.validation.validator.PatternValidator;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.util.Optional;
 
-public class CreateLineMarkerPanel extends CombatModePanel<MapView> {
+public class CreateConeMarkerWindow extends CombatModePanel<MapView> {
 
-	public CreateLineMarkerPanel(String id, MapView view, CombatModeCallback callback) {
+	public CreateConeMarkerWindow(String id, MapView view, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		Point location = callback.getPreviousClickedLocation();
@@ -32,17 +32,9 @@ public class CreateLineMarkerPanel extends CombatModePanel<MapView> {
 
 		int theta = Calculations.getTheta(x, y, tx, ty);
 
-		int dx = tx - x;
-		int dy = ty - y;
-
-		double factor = Optional.ofNullable(view.getSelectedMap()).map(m -> m.getDisplayFactor(view))
-				.orElse(1.0);
-
-		int ext = Math.max(1, (int) (Math.sqrt(dx*dx + dy * dy) / factor));
-
-		NumberTextField<Integer> extentField = new NumberTextField<>("extent", Model.of(ext));
-		extentField.setMinimum(1);
-		extentField.setRequired(true);
+		NumberTextField<Integer> radiusField = new NumberTextField<>("radius", Model.of(5));
+		radiusField.setMinimum(1);
+		radiusField.setRequired(true);
 
 		NumberTextField<Integer> angleField = new NumberTextField<>("angle", Model.of(theta));
 		angleField.setMinimum(0);
@@ -59,13 +51,21 @@ public class CreateLineMarkerPanel extends CombatModePanel<MapView> {
 
 			@Override
 			protected void onSubmit() {
-				MapView view = CreateLineMarkerPanel.this.getModelObject();
+				MapView view = CreateConeMarkerWindow.this.getModelObject();
 
-				markerService.createLine(view, colorField.getModelObject(), x, y, extentField.getModelObject(), angleField.getModelObject());
+				ScaledMap map = view.getSelectedMap();
+				Integer radius = radiusField.getModelObject();
+				if (map != null) {
+					double adjust = (radius * map.getSquareSize()) / 5.0;
+
+					markerService.createCone(view, colorField.getModelObject(), (int) (x - adjust), (int) (y - adjust), radius, angleField.getModelObject());
+				} else {
+					markerService.createCone(view, colorField.getModelObject(), x, y, radius, angleField.getModelObject());
+				}
 			}
 		};
 
-		damageForm.add(extentField);
+		damageForm.add(radiusField);
 		damageForm.add(angleField);
 		damageForm.add(colorField);
 
@@ -78,7 +78,7 @@ public class CreateLineMarkerPanel extends CombatModePanel<MapView> {
 
 				setVisible(false);
 
-				target.add(CreateLineMarkerPanel.this);
+				target.add(CreateConeMarkerWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

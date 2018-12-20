@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
@@ -25,7 +25,7 @@ import org.apache.wicket.model.util.ListModel;
 import javax.inject.Inject;
 import java.util.List;
 
-public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
+public class ExplorationCompendiumWindow extends ExplorationModePanel<CompendiumEntry> {
 	private final AjaxLink<CompendiumEntry> unpinLink;
 
 	private final AjaxLink<CompendiumEntry> pinLink;
@@ -39,7 +39,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 
 	private Label article;
 
-	public CompendiumPanel(String id, CompendiumEntry entry, CombatModeCallback callback) {
+	public ExplorationCompendiumWindow(String id, CompendiumEntry entry, ExplorationModeCallback callback) {
 		super(id, entry != null ? ModelMaker.wrap(entry, true) : ModelMaker.wrap(CompendiumEntry.class));
 		setOutputMarkupId(true);
 
@@ -129,8 +129,8 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();
-						CompendiumPanel.this.setModelObject(entry);
-						CompendiumPanel.this.detach();
+						ExplorationCompendiumWindow.this.setModelObject(entry);
+						ExplorationCompendiumWindow.this.detach();
 
 						article.setDefaultModel(new ArticleModel());
 
@@ -152,7 +152,7 @@ public class CompendiumPanel extends CombatModePanel<CompendiumEntry> {
 	private class ArticleModel extends LoadableDetachableModel<String> {
 		@Override
 		protected String load() {
-			CompendiumEntry compendiumEntry = CompendiumPanel.this.getModelObject();
+			CompendiumEntry compendiumEntry = ExplorationCompendiumWindow.this.getModelObject();
 
 			if (compendiumEntry == null) {
 				return "";

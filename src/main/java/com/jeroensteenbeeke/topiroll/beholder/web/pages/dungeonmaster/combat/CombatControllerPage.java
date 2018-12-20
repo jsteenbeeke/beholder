@@ -9,7 +9,6 @@ import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
@@ -594,7 +593,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
-				createModalWindow(target, CompendiumPanel::new, null);
+				createModalWindow(target, CombatCompendiumWindow::new, null);
 			}
 
 		});
@@ -620,7 +619,7 @@ public class CombatControllerPage extends BootstrapBasePage implements CombatMod
 				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						createModalWindow(target, CompendiumPanel::new, getModelObject());
+						createModalWindow(target, CombatCompendiumWindow::new, getModelObject());
 
 					}
 				};

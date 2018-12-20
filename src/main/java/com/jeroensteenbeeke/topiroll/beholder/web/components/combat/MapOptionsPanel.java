@@ -49,14 +49,14 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<MapView>("newcirclemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateCircleMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+				callback.createModalWindow(target, CreateCircleMarkerWindow::new, MapOptionsPanel.this.getModelObject());
 			}
 		});
 
 		add(new AjaxLink<InitiativeParticipant>("newcubemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateCubeMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+				callback.createModalWindow(target, CreateCubeMarkerWindow::new, MapOptionsPanel.this.getModelObject());
 
 			}
 
@@ -65,7 +65,7 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<InitiativeParticipant>("newraymarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateLineMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+				callback.createModalWindow(target, CreateLineMarkerWindow::new, MapOptionsPanel.this.getModelObject());
 
 			}
 
@@ -78,7 +78,7 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<InitiativeParticipant>("newconemarker") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateConeMarkerPanel::new, MapOptionsPanel.this.getModelObject());
+				callback.createModalWindow(target, CreateConeMarkerWindow::new, MapOptionsPanel.this.getModelObject());
 			}
 
 			@Override
@@ -91,7 +91,7 @@ public class MapOptionsPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateTokenPanel::new, getModelObject());
+				callback.createModalWindow(target, CombatCreateTokenWindow::new, getModelObject());
 			}
 		});
 

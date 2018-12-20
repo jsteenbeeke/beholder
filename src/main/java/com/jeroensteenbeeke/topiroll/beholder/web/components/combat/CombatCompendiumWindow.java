@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.web.components.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.components.combat;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
@@ -9,8 +9,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModeCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModePanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -27,7 +25,7 @@ import org.apache.wicket.model.util.ListModel;
 import javax.inject.Inject;
 import java.util.List;
 
-public class CompendiumPanel extends ExplorationModePanel<CompendiumEntry> {
+public class CombatCompendiumWindow extends CombatModePanel<CompendiumEntry> {
 	private final AjaxLink<CompendiumEntry> unpinLink;
 
 	private final AjaxLink<CompendiumEntry> pinLink;
@@ -41,7 +39,7 @@ public class CompendiumPanel extends ExplorationModePanel<CompendiumEntry> {
 
 	private Label article;
 
-	public CompendiumPanel(String id, CompendiumEntry entry, ExplorationModeCallback callback) {
+	public CombatCompendiumWindow(String id, CompendiumEntry entry, CombatModeCallback callback) {
 		super(id, entry != null ? ModelMaker.wrap(entry, true) : ModelMaker.wrap(CompendiumEntry.class));
 		setOutputMarkupId(true);
 
@@ -131,8 +129,8 @@ public class CompendiumPanel extends ExplorationModePanel<CompendiumEntry> {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();
-						CompendiumPanel.this.setModelObject(entry);
-						CompendiumPanel.this.detach();
+						CombatCompendiumWindow.this.setModelObject(entry);
+						CombatCompendiumWindow.this.detach();
 
 						article.setDefaultModel(new ArticleModel());
 
@@ -154,7 +152,7 @@ public class CompendiumPanel extends ExplorationModePanel<CompendiumEntry> {
 	private class ArticleModel extends LoadableDetachableModel<String> {
 		@Override
 		protected String load() {
-			CompendiumEntry compendiumEntry = CompendiumPanel.this.getModelObject();
+			CompendiumEntry compendiumEntry = CombatCompendiumWindow.this.getModelObject();
 
 			if (compendiumEntry == null) {
 				return "";

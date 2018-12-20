@@ -12,11 +12,11 @@ import org.apache.wicket.model.Model;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
+public class ApplyTokenDamageWindow extends CombatModePanel<TokenInstance> {
 	@Inject
 	private MapService mapService;
 
-	public ApplyTokenDamagePanel(String id, TokenInstance instance, CombatModeCallback callback) {
+	public ApplyTokenDamageWindow(String id, TokenInstance instance, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(instance));
 
 		NumberTextField<Integer> damageField = new NumberTextField<>("damage", Model.of(0));
@@ -24,7 +24,7 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 		Form<TokenInstance> damageForm = new Form<TokenInstance>("form") {
 			@Override
 			protected void onSubmit() {
-				TokenInstance token = ApplyTokenDamagePanel.this.getModelObject();
+				TokenInstance token = ApplyTokenDamageWindow.this.getModelObject();
 
 				Integer newHP = Optional.ofNullable(token.getCurrentHitpoints()).map(h -> Math
 						.max(0, h - damageField.getModelObject())).orElse(null);
@@ -48,7 +48,7 @@ public class ApplyTokenDamagePanel extends CombatModePanel<TokenInstance> {
 
 				setVisible(false);
 
-				target.add(ApplyTokenDamagePanel.this);
+				target.add(ApplyTokenDamageWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

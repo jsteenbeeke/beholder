@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
+public class CombatCreateTokenWindow extends CombatModePanel<ScaledMap> {
 	@Inject
 	private MapService mapService;
 
@@ -35,7 +35,7 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 	@Inject
 	private TokenInstanceDAO instanceDAO;
 
-	public CreateTokenPanel(String id, ScaledMap map, CombatModeCallback callback) {
+	public CombatCreateTokenWindow(String id, ScaledMap map, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(map));
 
 		final Point point = callback.getClickedLocation();
@@ -65,7 +65,7 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 
 					TokenInstanceFilter filter = new TokenInstanceFilter();
 					filter.definition(def);
-					filter.map(CreateTokenPanel.this.getModelObject());
+					filter.map(CombatCreateTokenWindow.this.getModelObject());
 
 					labelField.setModelObject(def.getName() + " "+ (1+instanceDAO.countByFilter(filter)));
 
@@ -115,7 +115,7 @@ public class CreateTokenPanel extends CombatModePanel<ScaledMap> {
 
 				setVisible(false);
 
-				target.add(CreateTokenPanel.this);
+				target.add(CombatCreateTokenWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

@@ -36,8 +36,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -392,7 +390,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
-				createModalWindow(target, CompendiumPanel::new, null);
+				createModalWindow(target, ExplorationCompendiumWindow::new, null);
 			}
 
 		});
@@ -418,7 +416,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						createModalWindow(target, CompendiumPanel::new, getModelObject());
+						createModalWindow(target, ExplorationCompendiumWindow::new, getModelObject());
 
 					}
 				};

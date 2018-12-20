@@ -5,7 +5,6 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.ExplorationModeCallback;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,7 +40,7 @@ public class TokenStatusPanel extends CombatModePanel<MapView> {
 		add(new AjaxLink<TokenInstance>("damage") {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, ApplyTokenDamagePanel::new, callback
+				callback.createModalWindow(target, ApplyTokenDamageWindow::new, callback
 						.getSelectedToken());
 			}
 

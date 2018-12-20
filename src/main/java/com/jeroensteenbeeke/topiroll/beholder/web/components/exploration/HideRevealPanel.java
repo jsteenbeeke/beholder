@@ -11,14 +11,11 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
-import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class HideRevealPanel extends ExplorationModePanel<MapView> {
 	@Inject
@@ -141,7 +137,7 @@ public class HideRevealPanel extends ExplorationModePanel<MapView> {
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateTokenPanel::new, getModelObject());
+				callback.createModalWindow(target, ExplorationCreateTokenWindow::new, getModelObject());
 			}
 		});
 

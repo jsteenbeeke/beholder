@@ -11,16 +11,14 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.PatternValidator;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.util.Optional;
 
-public class CreateCircleMarkerPanel extends CombatModePanel<MapView> {
+public class CreateCircleMarkerWindow extends CombatModePanel<MapView> {
 
-	public CreateCircleMarkerPanel(String id, MapView view, CombatModeCallback callback) {
+	public CreateCircleMarkerWindow(String id, MapView view, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		Point location = callback.getClickedLocation();
@@ -41,7 +39,7 @@ public class CreateCircleMarkerPanel extends CombatModePanel<MapView> {
 
 			@Override
 			protected void onSubmit() {
-				MapView view = CreateCircleMarkerPanel.this.getModelObject();
+				MapView view = CreateCircleMarkerWindow.this.getModelObject();
 
 				ScaledMap map = view.getSelectedMap();
 				Integer radius = radiusField.getModelObject();
@@ -67,7 +65,7 @@ public class CreateCircleMarkerPanel extends CombatModePanel<MapView> {
 
 				setVisible(false);
 
-				target.add(CreateCircleMarkerPanel.this);
+				target.add(CreateCircleMarkerWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

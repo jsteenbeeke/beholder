@@ -11,16 +11,15 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.PatternValidator;
 
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateCubeMarkerPanel extends CombatModePanel<MapView> {
+public class CreateCubeMarkerWindow extends CombatModePanel<MapView> {
 
 
-	public CreateCubeMarkerPanel(String id, MapView view, CombatModeCallback callback) {
+	public CreateCubeMarkerWindow(String id, MapView view, CombatModeCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		Point location = callback.getClickedLocation();
@@ -41,7 +40,7 @@ public class CreateCubeMarkerPanel extends CombatModePanel<MapView> {
 
 			@Override
 			protected void onSubmit() {
-				MapView view = CreateCubeMarkerPanel.this.getModelObject();
+				MapView view = CreateCubeMarkerWindow.this.getModelObject();
 
 				ScaledMap map = view.getSelectedMap();
 				Integer radius = extentField.getModelObject();
@@ -67,7 +66,7 @@ public class CreateCubeMarkerPanel extends CombatModePanel<MapView> {
 
 				setVisible(false);
 
-				target.add(CreateCubeMarkerPanel.this);
+				target.add(CreateCubeMarkerWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);

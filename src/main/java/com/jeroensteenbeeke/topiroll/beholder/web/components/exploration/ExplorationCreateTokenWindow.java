@@ -12,8 +12,6 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModeCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.combat.CombatModePanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -27,7 +25,7 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateTokenPanel extends ExplorationModePanel<ScaledMap> {
+public class ExplorationCreateTokenWindow extends ExplorationModePanel<ScaledMap> {
 	@Inject
 	private MapService mapService;
 
@@ -37,7 +35,7 @@ public class CreateTokenPanel extends ExplorationModePanel<ScaledMap> {
 	@Inject
 	private TokenInstanceDAO instanceDAO;
 
-	public CreateTokenPanel(String id, ScaledMap map, ExplorationModeCallback callback) {
+	public ExplorationCreateTokenWindow(String id, ScaledMap map, ExplorationModeCallback callback) {
 		super(id, ModelMaker.wrap(map));
 
 		final Point point = callback.getClickedLocation();
@@ -67,7 +65,7 @@ public class CreateTokenPanel extends ExplorationModePanel<ScaledMap> {
 
 					TokenInstanceFilter filter = new TokenInstanceFilter();
 					filter.definition(def);
-					filter.map(CreateTokenPanel.this.getModelObject());
+					filter.map(ExplorationCreateTokenWindow.this.getModelObject());
 
 					labelField.setModelObject(def.getName() + " "+ (1+instanceDAO.countByFilter(filter)));
 
@@ -117,7 +115,7 @@ public class CreateTokenPanel extends ExplorationModePanel<ScaledMap> {
 
 				setVisible(false);
 
-				target.add(CreateTokenPanel.this);
+				target.add(ExplorationCreateTokenWindow.this);
 				target.appendJavaScript("$('#combat-modal').modal('hide');");
 
 				callback.redrawMap(target);
