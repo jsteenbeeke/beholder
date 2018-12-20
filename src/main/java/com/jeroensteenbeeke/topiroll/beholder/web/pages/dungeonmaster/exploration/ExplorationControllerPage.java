@@ -16,10 +16,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticip
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.CompendiumPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.ExplorationModeCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.HideRevealPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.TokenStatusPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.exploration.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
@@ -382,6 +379,12 @@ public class ExplorationControllerPage extends BootstrapBasePage implements Expl
 			@Override
 			public void onClick() {
 				setResponsePage(new CombatControllerPage(viewModel.getObject()));
+			}
+		});
+		explorationNavigator.add(new AjaxLink<MapView>("playlists") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				createModalWindow(target, YoutubePlaylistWindow::new, viewModel.getObject());
 			}
 		});
 
