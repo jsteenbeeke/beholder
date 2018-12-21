@@ -50,15 +50,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CombatControllerPage extends BootstrapBasePage implements DMViewCallback {
-	private static final Logger log = LoggerFactory.getLogger(CombatControllerPage.class);
 	private static final String MODAL_ID = "modal";
 	private static final String MARKER_ID = "marker";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
+	private static final long serialVersionUID = 8480811839688444273L;
 	private final TokenStatusPanel tokenStatusPanel;
 	private final MapOptionsPanel mapOptionsPanel;
 	private final MarkerStatusPanel markerStatusPanel;
 	private final WebMarkupContainer combatNavigator;
+	private final InitiativePanel initiativePanel;
 
 	private Component modal;
 
@@ -108,6 +109,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		int desiredWidth = (int) (displayFactor * map.getBasicWidth());
 
 		preview = new AbstractMapPreview("preview", map, desiredWidth) {
+			private static final long serialVersionUID = 8613385670220290868L;
+
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
 												   double factor) {
@@ -116,7 +119,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 		};
 
-		preview.add(new InitiativePanel("initiative", view, this));
+		preview.add(initiativePanel = new InitiativePanel("initiative", view, this));
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
 		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this);
 		markerStatusPanel = new MarkerStatusPanel("markerStatus", this);
@@ -125,6 +128,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		preview.add(markerStatusPanel.setVisible(false));
 
 		preview.add(new OnClickBehavior() {
+			private static final long serialVersionUID = 9004992789363069534L;
+
 			@Override
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
@@ -147,6 +152,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		mapModel = ModelMaker.wrap(map);
 
 		IModel<List<TokenInstance>> tokenModel = new LoadableDetachableModel<List<TokenInstance>>() {
+			private static final long serialVersionUID = -8597299178957964301L;
+
 			@Override
 			protected List<TokenInstance> load() {
 				return mapModel.getObject().getTokens().stream()
@@ -157,6 +164,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		};
 
 		preview.add(new ListView<TokenInstance>("tokens", tokenModel) {
+			private static final long serialVersionUID = -8008864217633653948L;
+
 			@Override
 			protected void populateItem(ListItem<TokenInstance> item) {
 				TokenInstance instance = item.getModelObject();
@@ -167,6 +176,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 						* instance.getDefinition().getDiameterInSquares();
 
 				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance, String>(item.getModel()) {
+					private static final long serialVersionUID = 7184052381548459602L;
+
 					@Override
 					protected String load(TokenInstance object) {
 						return object.getLabel();
@@ -204,6 +215,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 						}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
+					private static final long serialVersionUID = 5933238244997270769L;
+
 					@Override
 					protected String load(TokenInstance instance) {
 						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
@@ -216,6 +229,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new DependentStopEnabledDraggableBehavior<TokenInstance>(item.getModel(), draggableOptions) {
+					private static final long serialVersionUID = -8573977590378308749L;
+
 					@Override
 					protected void onStop(AjaxRequestTarget target, TokenInstance instance, int left, int top) {
 						mapService.updateTokenLocation(
@@ -227,6 +242,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				});
 
 				image.add(new DependentOnClickBehavior<TokenInstance>(item.getModel()) {
+					private static final long serialVersionUID = -6351045505325057830L;
+
 					@Override
 					protected void onClick(AjaxRequestTarget target, OnClickBehavior.ClickEvent event, TokenInstance instance) {
 						selectedToken = ModelMaker.wrap(instance);
@@ -246,6 +263,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		}.setReuseItems(true));
 
 		IModel<List<AreaMarker>> markerModel = new LoadableDetachableModel<List<AreaMarker>>() {
+			private static final long serialVersionUID = 4934755224881469803L;
+
 			@Override
 			protected List<AreaMarker> load() {
 				return viewModel.getObject().getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId)).collect(Collectors.toList());
@@ -254,6 +273,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 
 		preview.add(new ListView<AreaMarker>("markers", markerModel) {
+			private static final long serialVersionUID = 6225252705125595548L;
 			@Inject
 			private MarkerService markerService;
 
@@ -267,6 +287,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 				MarkerStyleModel<?> markerStyleModel = areaMarker
 						.visit(new AreaMarkerVisitor<MarkerStyleModel<?>>() {
+							private static final long serialVersionUID = -7713349603953871476L;
+
 							@Override
 							public MarkerStyleModel<?> visit(
 									@Nonnull
@@ -396,6 +418,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 								item.detach();
 								AreaMarker areaMarker = item.getModelObject();
 								areaMarker.visit(new AreaMarkerVisitor<Void>() {
+									private static final long serialVersionUID = -8666575204421319185L;
+
 									@Override
 									public Void visit(
 											@Nonnull
@@ -453,12 +477,13 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 							}
 						}));
 				marker.add(new OnClickBehavior() {
+					private static final long serialVersionUID = 6159702123104745379L;
+
 					@Override
 					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 						selectedToken = Model.of();
 						clickedLocation = null;
 						selectedMarker = ModelMaker.wrap(item.getModelObject());
-						;
 
 						mapOptionsPanel.setVisible(false);
 						tokenStatusPanel.setVisible(false);
@@ -472,6 +497,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		}.setReuseItems(true));
 
 		IModel<List<InitiativeParticipant>> participantModel = new LoadableDetachableModel<List<InitiativeParticipant>>() {
+			private static final long serialVersionUID = -5936466884520702271L;
+
 			@Override
 			protected List<InitiativeParticipant> load() {
 				InitiativeParticipantFilter initFilter = new InitiativeParticipantFilter();
@@ -484,6 +511,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 		preview.add(new ListView<InitiativeParticipant>("participants",
 				participantModel) {
+
+			private static final long serialVersionUID = 7380087785300362119L;
 
 			@Override
 			protected void populateItem(ListItem<InitiativeParticipant> item) {
@@ -562,6 +591,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 							}
 						})).add(new OnClickBehavior() {
+					private static final long serialVersionUID = -3342358052152683138L;
+
 					@Override
 					protected void onClick(AjaxRequestTarget target,
 										   ClickEvent event) {
@@ -577,6 +608,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		combatNavigator.setOutputMarkupId(true);
 
 		combatNavigator.add(new Link<MapView>("back", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = -575729727460058566L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new ControlViewPage(getModelObject()));
@@ -584,6 +617,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		});
 
 		combatNavigator.add(new Link<MapView>("exploration", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = 4519537256150506040L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new ExplorationControllerPage(getModelObject()));
@@ -591,6 +626,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		});
 
 		combatNavigator.add(new AjaxLink<MapView>("compendium", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = -5342617572033020429L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -603,6 +640,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		filter.pinnedBy().set(BeholderSession.get().getUser());
 
 		IModel<List<CompendiumEntry>> pinnedEntryModel = new LoadableDetachableModel<List<CompendiumEntry>>() {
+			private static final long serialVersionUID = 827576365560927640L;
+
 			@Override
 			protected List<CompendiumEntry> load() {
 				return compendiumEntryDAO.findByFilter(filter)
@@ -615,9 +654,13 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 		combatNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
 
+			private static final long serialVersionUID = 5963453746408369930L;
+
 			@Override
 			protected void populateItem(ListItem<CompendiumEntry> item) {
 				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
+					private static final long serialVersionUID = 1531487112400990426L;
+
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						createModalWindow(target, CompendiumWindow::new, getModelObject());
@@ -647,7 +690,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 	@Override
 	public void refreshMenus(AjaxRequestTarget target) {
-		target.add(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
+		target.add(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel, initiativePanel);
 	}
 
 	@Override

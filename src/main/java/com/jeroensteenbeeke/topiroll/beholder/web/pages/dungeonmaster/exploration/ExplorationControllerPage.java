@@ -426,6 +426,16 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 			}
 		});
+
+		explorationNavigator.add(new AjaxLink<MapView>("portraits") {
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				createModalWindow(target, PortraitsWindow::new, viewModel.getObject());
+			}
+
+		});
+
 		preview.add(explorationNavigator);
 
 

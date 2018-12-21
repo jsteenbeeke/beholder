@@ -35,6 +35,7 @@ import org.apache.wicket.model.util.ListModel;
 import javax.inject.Inject;
 
 public class InitiativeOrderWindow extends DMViewPanel<MapView> {
+	private static final long serialVersionUID = -7751191205271421987L;
 	@Inject
 	private InitiativeService initiativeService;
 
@@ -70,6 +71,7 @@ public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				initiativeService.hideInitiative(
 						InitiativeOrderWindow.this.getModelObject());
+				callback.refreshMenus(target);
 			}
 		});
 
@@ -152,6 +154,8 @@ public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 				form.add(initiativeField);
 
 				form.add(new AjaxSubmitLink("update") {
+					private static final long serialVersionUID = -4319809501288623816L;
+
 					@Override
 					protected void onSubmit(AjaxRequestTarget target) {
 						super.onSubmit(target);
@@ -330,6 +334,8 @@ public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 				initiativeService.setViewInitiativeMargin(view, margin);
 
 				target.add(container, nameField, scoreField, typeField);
+
+				callback.refreshMenus(target);
 			}
 		});
 		add(settingsForm);

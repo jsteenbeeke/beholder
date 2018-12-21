@@ -211,10 +211,13 @@ public enum BeholderRegistry {
 		}
 
 		public void forView(long viewId) {
-			RegistryEntry entry = new RegistryEntry(key, sessionId, markupId, viewId,
-					previewMode);
+			synchronized (registry.entries) {
 
-			registry.entries.put(sessionId, entry);
+				RegistryEntry entry = new RegistryEntry(key, sessionId, markupId, viewId,
+						previewMode);
+
+				registry.entries.put(sessionId, entry);
+			}
 		}
 	}
 }
