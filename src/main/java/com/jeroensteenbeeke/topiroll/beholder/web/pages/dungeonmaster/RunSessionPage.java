@@ -71,7 +71,7 @@ public class RunSessionPage extends AuthenticatedPage {
 								new ExplorationControllerPage(item.getModelObject()));
 
 					}
-				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
+				});
 				item.add(new Link<MapView>("combat", item.getModel()) {
 
 					private static final long serialVersionUID = 1L;
@@ -82,19 +82,7 @@ public class RunSessionPage extends AuthenticatedPage {
 								new CombatControllerPage(item.getModelObject()));
 
 					}
-				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
-				item.add(new Link<MapView>("dm", item.getModel()) {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						setResponsePage(
-								new ControlViewPage(item.getModelObject()));
-
-					}
 				});
-
 			}
 
 		};

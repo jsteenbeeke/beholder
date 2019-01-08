@@ -10,7 +10,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
-public abstract class AbstractMapPreview extends Border {
+public abstract class AbstractMapPreview extends Border implements ICoordinateTranslator {
 	private final int desiredWidth;
 
 	private final WebMarkupContainer dragdrop;
@@ -61,10 +61,12 @@ public abstract class AbstractMapPreview extends Border {
 		return factor;
 	}
 
+	@Override
 	public int translateToRealImageSize(int number) {
 		return (int) (number / factor);
 	}
 
+	@Override
 	public int translateToScaledImageSize(int number) {
 		return (int) (number * factor);
 	}

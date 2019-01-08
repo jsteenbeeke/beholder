@@ -174,6 +174,8 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map) {
+
+
 		view.setSelectedMap(map);
 		viewDAO.update(view);
 		viewDAO.flush();

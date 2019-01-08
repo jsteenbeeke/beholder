@@ -14,6 +14,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisib
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
+import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -26,6 +27,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
@@ -55,6 +57,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 		setModel(viewModel);
 
 		add(new Label("location", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 6824004765739149545L;
+
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getClickedLocation()).map(p -> String.format
@@ -63,6 +67,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 		}));
 
 		add(new AjaxLink<InitiativeParticipant>("gather") {
+			private static final long serialVersionUID = -9126220235414475907L;
 			@Inject
 			private MapService mapService;
 
@@ -79,6 +84,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<ScaledMap>("hide", viewModel.getProperty(MapView::getSelectedMap)) {
+
+			private static final long serialVersionUID = -5581748300658008081L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
@@ -108,6 +115,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<ScaledMap>("reveal", viewModel.getProperty(MapView::getSelectedMap)) {
+			private static final long serialVersionUID = -5439519905348329569L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				Point clicked = callback.getClickedLocation();
@@ -138,13 +147,17 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+			private static final long serialVersionUID = -542296264646923581L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateTokenWindow::new, getModelObject());
 			}
 		});
 
-		add(new ListView<MapLink>("links", loadLinks(callback)) {
+		add(new ListView <MapLink>("links", loadLinks(callback)) {
+			private static final long serialVersionUID = 3285783029914710847L;
+
 			@Override
 			protected void populateItem(ListItem<MapLink> item) {
 				PageParameters params = new PageParameters();
@@ -205,7 +218,11 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 	}
 
-	private Seq<FogOfWarShape> shapesInCurrentLocation(@Nonnull Point currentLocation, ScaledMap map) {
+	private Seq<FogOfWarShape> shapesInCurrentLocation(@Nonnull Point currentLocation, @Nullable ScaledMap map) {
+		if (map == null) {
+			return Array.empty();
+		}
+
 		FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
 		shapeFilter.map(map);
 
