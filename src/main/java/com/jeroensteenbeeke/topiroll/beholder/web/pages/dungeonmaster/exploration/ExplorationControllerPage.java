@@ -21,7 +21,6 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWi
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import io.vavr.control.Option;
@@ -51,6 +50,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ExplorationControllerPage extends BootstrapBasePage implements DMViewCallback {
+	private static final long serialVersionUID = 383172566857420866L;
+
 	private static final String MODAL_ID = "modal";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";

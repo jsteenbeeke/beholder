@@ -18,14 +18,11 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import javax.persistence.Entity;
-
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.CubeMarkerController;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+
+import javax.persistence.Entity;
 
 @Entity
 public class CubeMarker extends AreaMarker {
@@ -33,26 +30,8 @@ public class CubeMarker extends AreaMarker {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Panel createPanel(String id) {
-		return new CubeMarkerController(id, this);
-	}
-
-	@Override
 	public <R> R visit(AreaMarkerVisitor<R> visitor) {
 		return visitor.visit(this);
 	}
 
-	@Override
-	public JSShape getShape(double factor, int squareSize) {
-		JSRect rect = new JSRect();
-		final int hw = (int) (getExtent() * factor * squareSize / 5);
-		rect.setHeight(hw);
-		rect.setWidth(hw);
-
-		// Note: while this property is called offset, we treat it as the center of the cube
-		rect.setX((int) (getOffsetX() * factor));
-		rect.setY((int) (getOffsetY() * factor));
-
-		return rect;
-	}
 }

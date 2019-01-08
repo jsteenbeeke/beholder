@@ -1,4 +1,4 @@
-package com.jeroensteenbeeke.topiroll.beholder.entities.visitors;
+package com.jeroensteenbeeke.topiroll.beholder.entities.visitor;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarCircle;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarRect;

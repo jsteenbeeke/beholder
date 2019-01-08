@@ -14,6 +14,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisib
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeContainsVisitor;
 import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -230,7 +231,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			int x = currentLocation.x;
 			int y = currentLocation.y;
 
-			return s.containsCoordinate(x, y);
+			return s.visit(new FogOfWarShapeContainsVisitor(x, y));
 		});
 	}
 }

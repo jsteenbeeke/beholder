@@ -17,23 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.Graphics2D;
+import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+
+import javax.annotation.Nonnull;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.persistence.*;
-
-import org.apache.wicket.model.IModel;
-
-import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-
 @Entity
-public class FogOfWarGroup extends BaseDomainObject
-		implements ICanHazVisibilityStatus {
+public class FogOfWarGroup extends BaseDomainObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -103,7 +96,6 @@ public class FogOfWarGroup extends BaseDomainObject
 		this.name = name;
 	}
 
-	@Override
 	public String getDescription() {
 		return getName();
 	}
@@ -116,22 +108,6 @@ public class FogOfWarGroup extends BaseDomainObject
 	public void setVisibilities(
 			@Nonnull List<FogOfWarGroupVisibility> visibilities) {
 		this.visibilities = visibilities;
-	}
-
-	/**
-	 * @deprecated Does not properly sync visibility statuses
-	 */
-	@Deprecated
-	@Override
-	public VisibilityStatus getStatus(MapView view) {
-
-		return getVisibilities().stream().filter(v -> v.getView().equals(view))
-				.findAny().map(FogOfWarGroupVisibility::getStatus)
-				.orElse(VisibilityStatus.INVISIBLE);
-	}
-
-	public boolean containsCoordinate(int x, int y) {
-		return getShapes().stream().anyMatch(shape -> shape.containsCoordinate(x, y));
 	}
 
 	@Nonnull

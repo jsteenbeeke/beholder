@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat;
 
+import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
@@ -17,10 +18,13 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.InitiativePanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.MapOptionsPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.MarkerStatusPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.TokenStatusPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -37,8 +41,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -84,7 +86,9 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 	@Inject
 	private PinnedCompendiumEntryDAO compendiumEntryDAO;
 
-	private final AbstractMapPreview preview;
+	private final WebMarkupContainer preview;
+
+	private final ICoordinateTranslator coordinateTranslator;
 
 	private boolean disableClickListener = false;
 
@@ -99,25 +103,41 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		viewModel = ModelMaker.wrap(view);
 		viewModel.detach();
 
-		ScaledMap map = viewModel.getObject().getSelectedMap();
+		Optional<ScaledMap> map = Optional.ofNullable(viewModel.getObject().getSelectedMap());
 
-		if (map == null) {
-			throw new RestartResponseAtInterceptPageException(new ControlViewPage(view));
+		final double displayFactor = map.map(m -> m.getDisplayFactor(view)).orElse(1.0);
+		int desiredWidth = map.map(ScaledMap::getBasicWidth).map(w -> (int) displayFactor * w).orElse(0);
+
+				// (int) (displayFactor * map.getBasicWidth());
+
+		if (map.isPresent()) {
+			preview = new AbstractMapPreview("preview", map.get(), desiredWidth) {
+				private static final long serialVersionUID = 8613385670220290868L;
+
+				@Override
+				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
+													   double factor) {
+
+				}
+
+			};
+			coordinateTranslator = (ICoordinateTranslator) preview;
+		} else {
+			preview = new WebMarkupContainer("preview");
+			coordinateTranslator = new ICoordinateTranslator() {
+				private static final long serialVersionUID = -5907393995407695874L;
+
+				@Override
+				public int translateToRealImageSize(int number) {
+					return number;
+				}
+
+				@Override
+				public int translateToScaledImageSize(int number) {
+					return number;
+				}
+			};
 		}
-
-		final double displayFactor = map.getDisplayFactor(view);
-		int desiredWidth = (int) (displayFactor * map.getBasicWidth());
-
-		preview = new AbstractMapPreview("preview", map, desiredWidth) {
-			private static final long serialVersionUID = 8613385670220290868L;
-
-			@Override
-			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
-												   double factor) {
-
-			}
-
-		};
 
 		preview.add(initiativePanel = new InitiativePanel("initiative", view, this));
 		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
@@ -149,17 +169,17 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			}
 		});
 
-		mapModel = ModelMaker.wrap(map);
+		mapModel = map.<IModel<ScaledMap>> map(ModelMaker::wrap).orElseGet(Model::of);
 
 		IModel<List<TokenInstance>> tokenModel = new LoadableDetachableModel<List<TokenInstance>>() {
 			private static final long serialVersionUID = -8597299178957964301L;
 
 			@Override
 			protected List<TokenInstance> load() {
-				return mapModel.getObject().getTokens().stream()
+				return getCurrentMap().map(m -> m.getTokens().stream()
 						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
 						.sorted(Comparator.comparing(TokenInstance::getId))
-						.collect(Collectors.toList());
+						.collect(Collectors.toList())).orElseGet(ImmutableList::of);
 			}
 		};
 
@@ -170,7 +190,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			protected void populateItem(ListItem<TokenInstance> item) {
 				TokenInstance instance = item.getModelObject();
 
-				int squareSize = map.getSquareSize();
+				int squareSize = getCurrentMap().map(ScaledMap::getSquareSize).orElse(0);
 
 				int wh = squareSize
 						* instance.getDefinition().getDiameterInSquares();
@@ -192,10 +212,10 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 								int left = i.getOffsetX();
 								int top = i.getOffsetY();
 
-								left = preview.translateToScaledImageSize(left);
-								top = preview.translateToScaledImageSize(top);
+								left = coordinateTranslator.translateToScaledImageSize(left);
+								top = coordinateTranslator.translateToScaledImageSize(top);
 
-								int actualWH = preview.translateToScaledImageSize(wh);
+								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
 								return String.format(
 										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
@@ -281,7 +301,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			protected void populateItem(ListItem<AreaMarker> item) {
 				AreaMarker areaMarker = item.getModelObject();
 
-				int squareSize = map.getSquareSize();
+				int squareSize = getCurrentMap().map(ScaledMap::getSquareSize).orElse(0);
 
 				int wh = squareSize * areaMarker.getExtent() / 5;
 
@@ -517,7 +537,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			@Override
 			protected void populateItem(ListItem<InitiativeParticipant> item) {
 				InitiativeParticipant participant = item.getModelObject();
-				int wh = map.getSquareSize();
+				int wh = getCurrentMap().map(ScaledMap::getSquareSize).orElse(0);
 
 				Label image = new Label(PARTICIPANT_ID, participant.getName());
 				image.add(AttributeModifier.replace("style",
@@ -530,15 +550,15 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 								int left = Optional.ofNullable(participant.getOffsetX())
 										.map(Math::abs)
-										.orElse((int) (map.getBasicWidth() * displayFactor / 2));
+										.orElseGet(() -> getCurrentMap().map(ScaledMap::getBasicWidth).map(w -> (int) (w * displayFactor / 2)).orElse(0));
 								int top = Optional.ofNullable(participant.getOffsetY())
 										.map(Math::abs)
-										.orElse((int) (map.getBasicHeight() * displayFactor / 2)) - 1;
+										.orElseGet(() -> getCurrentMap().map(ScaledMap::getBasicHeight).map(w -> (int) (w * displayFactor / 2)).orElse(0));
 
-								left = preview.translateToScaledImageSize(left);
-								top = preview.translateToScaledImageSize(top);
+								left = coordinateTranslator.translateToScaledImageSize(left);
+								top = coordinateTranslator.translateToScaledImageSize(top);
 
-								int actualWH = preview.translateToScaledImageSize(wh);
+								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
 
 								return String.format(
@@ -612,7 +632,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 			@Override
 			public void onClick() {
-				setResponsePage(new ControlViewPage(getModelObject()));
+				setResponsePage(new RunSessionPage());
 			}
 		});
 
@@ -681,11 +701,17 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		modal.setOutputMarkupPlaceholderTag(true);
 	}
 
+	private Optional<ScaledMap> getCurrentMap() {
+		return Optional.ofNullable(mapModel.getObject());
+	}
+
 	@Override
 	public void redrawMap(AjaxRequestTarget target) {
 		clickedLocation = null;
 		previousClickedLocation = null;
-		preview.refresh(target);
+		if (preview instanceof AbstractMapPreview) {
+			((AbstractMapPreview) preview).refresh(target);
+		}
 	}
 
 	@Override

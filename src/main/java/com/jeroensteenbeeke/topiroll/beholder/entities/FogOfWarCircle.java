@@ -17,9 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -72,34 +70,10 @@ public class FogOfWarCircle extends FogOfWarShape {
 				getOffsetY(), getRadius());
 	}
 
-	@Override
-	public boolean containsCoordinate(int x, int y) {
-		int cx = getOffsetX()+getRadius();
-		int cy = getOffsetY()+getRadius();
-		
-		int x_cx = x - cx;
-		int y_cy = y - cy;
-		int r2 = getRadius() * getRadius();
-		
-		return (x_cx * x_cx) + (y_cy * y_cy) < r2;
-	}
-
 
 	@Override
 	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 
-	@Override
-	public JSShape toJS(double factor) {
-		JSCircle circle = new JSCircle();
-		circle.setRadius((int) (getRadius()*factor));
-		circle.setX((int) (getOffsetX()*factor));
-		circle.setY((int) (getOffsetY()*factor));
-		circle.setThetaOffset(0.0);
-		circle.setThetaExtent(Math.PI*2);
-
-
-		return circle;
-	}
 }

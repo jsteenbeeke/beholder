@@ -18,44 +18,19 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import javax.persistence.Entity;
-
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.CircleMarkerController;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+
+import javax.persistence.Entity;
 
 @Entity
 public class CircleMarker extends AreaMarker {
 
 	private static final long serialVersionUID = 1L;
 
-	
-	@Override
-	public Panel createPanel(String id) {
-
-		return new CircleMarkerController(id, this);
-	}
-
 	@Override
 	public <R> R visit(AreaMarkerVisitor<R> visitor) {
 		return visitor.visit(this);
-	}
-
-	@Override
-	public JSShape getShape(double factor, int squareSize) {
-		JSCircle circle = new JSCircle();
-		int radius = (int) (getExtent() * factor * squareSize / 5);
-
-		circle.setRadius(radius);
-		// Treat offset as center instead
-		circle.setX((int) (getOffsetX()*factor));
-		circle.setY((int) (getOffsetY()*factor));
-		circle.setThetaOffset(0.0);
-		circle.setThetaExtent(Math.PI*2);
-
-		return circle;
 	}
 }

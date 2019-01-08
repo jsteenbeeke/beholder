@@ -2,7 +2,6 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.MoveMarkerController;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.danekja.java.util.function.serializable.SerializableBiFunction;
@@ -14,7 +13,8 @@ import java.io.Serializable;
 public class MarkerStyleModel<T extends AreaMarker> extends
 		LoadableDetachableModel<String> {
 
-    private final IModel<T> markerModel;
+	private static final long serialVersionUID = 8242970985335144489L;
+	private final IModel<T> markerModel;
 
     private final double factor;
 
