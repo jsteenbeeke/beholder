@@ -33,18 +33,12 @@ public class MapLink extends BaseDomainObject {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "map")
-	@EntityFormField(label = "Map", required = true, type = DefaultFieldType.DropDownChoice.class)
-	private ScaledMap map;
+	@JoinColumn(name = "source_group_id")
+	private FogOfWarGroup sourceGroup;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "group_id")
-	private FogOfWarGroup group;
-
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "shape")
-	private FogOfWarShape shape;
-
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "target_group_id")
+	private FogOfWarGroup targetGroup;
 
 	public Long getId() {
 		return id;
@@ -60,31 +54,20 @@ public class MapLink extends BaseDomainObject {
 	}
 
 	@Nonnull
-	public ScaledMap getMap() {
-		return map;
+	public FogOfWarGroup getSourceGroup() {
+		return sourceGroup;
 	}
 
-	public void setMap(@Nonnull ScaledMap map) {
-		this.map = map;
+	public void setSourceGroup(@Nonnull FogOfWarGroup sourceGroup) {
+		this.sourceGroup = sourceGroup;
 	}
 
-	@CheckForNull
-	public FogOfWarGroup getGroup() {
-		return group;
+	@Nonnull
+	public FogOfWarGroup getTargetGroup() {
+		return targetGroup;
 	}
 
-	public void setGroup(@Nullable FogOfWarGroup group) {
-		this.group = group;
+	public void setTargetGroup(@Nonnull FogOfWarGroup targetGroup) {
+		this.targetGroup = targetGroup;
 	}
-
-	@CheckForNull
-	public FogOfWarShape getShape() {
-		return shape;
-	}
-
-	public void setShape(@Nullable FogOfWarShape shape) {
-		this.shape = shape;
-	}
-
-
 }

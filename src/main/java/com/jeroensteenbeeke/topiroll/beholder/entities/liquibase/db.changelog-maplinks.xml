@@ -53,4 +53,45 @@
 			<column name="shape"/>
 		</createIndex>
 	</changeSet>
+
+	<!-- Rewrite maplinks to go from group to group -->
+	<changeSet author="jeroen" id="drop-existing-links">
+		<delete tableName="maplink" />
+	</changeSet>
+
+	<changeSet author="jeroen" id="remove-shape-reference">
+		<dropForeignKeyConstraint baseTableName="maplink" constraintName="fk_maplink_shape" />
+		<dropIndex tableName="maplink" indexName="idx_maplink_shape" />
+		<dropColumn tableName="maplink" columnName="shape" />
+	</changeSet>
+
+	<changeSet author="jeroen" id="rename-sourceGroup-reference">
+		<dropForeignKeyConstraint baseTableName="maplink" constraintName="fk_maplink_group" />
+		<dropIndex tableName="maplink" indexName="idx_maplink_group" />
+		<renameColumn tableName="maplink" oldColumnName="group_id" newColumnName="source_group_id" />
+		<addForeignKeyConstraint baseColumnNames="source_group_id" baseTableName="maplink" constraintName="fk_maplink_source_group"
+								 referencedColumnNames="id" referencedTableName="fogofwargroup"/>
+		<createIndex indexName="idx_maplink_source_group" tableName="maplink">
+			<column name="source_group_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="jeroen" id="drop-map-reference">
+		<dropForeignKeyConstraint baseTableName="maplink" constraintName="fk_maplink_map" />
+		<dropIndex tableName="maplink" indexName="idx_maplink_map" />
+		<dropColumn tableName="maplink" columnName="map" />
+	</changeSet>
+
+	<changeSet author="jeroen" id="add-target-group">
+		<addColumn tableName="maplink">
+			<column name="group_id" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="target_group_id" baseTableName="maplink" constraintName="fk_maplink_target_group"
+								 referencedColumnNames="id" referencedTableName="fogofwargroup"/>
+		<createIndex indexName="idx_maplink_target_group" tableName="maplink">
+			<column name="target_group_id"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
