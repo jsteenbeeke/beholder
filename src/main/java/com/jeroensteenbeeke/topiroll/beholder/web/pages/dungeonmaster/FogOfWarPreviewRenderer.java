@@ -3,7 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarCircle;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarRect;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarTriangle;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 
 import java.util.List;

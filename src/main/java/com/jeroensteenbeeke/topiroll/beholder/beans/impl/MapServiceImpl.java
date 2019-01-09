@@ -21,17 +21,17 @@ import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry.RegistryEntry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.ClearMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.MapRenderable;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.UpdatePortraits;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.AreaMarkerShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeToJSShapeVisitor;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import org.slf4j.Logger;
@@ -174,6 +174,8 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map) {
+
+
 		view.setSelectedMap(map);
 		viewDAO.update(view);
 		viewDAO.flush();
@@ -631,17 +633,18 @@ class MapServiceImpl implements MapService {
 		renderable.setTokens(map.getTokens().stream()
 				.filter(TokenInstance::isShow)
 				.filter(t -> t.isVisible(view, previewMode))
-				.map(t -> t.toJS(factor)).collect(Collectors.toList()));
+				.map(t -> tokenToJS(t, factor)).collect(Collectors.toList()));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}
 		renderable.setAreaMarkers(view.getMarkers().stream()
-				.map(a -> a.toJS(factor)).collect(Collectors.toList()));
+				.map(a -> markerToJS(a, factor)).collect(Collectors.toList()));
 		renderable.setRevealed(map.getFogOfWarShapes().stream()
 				.filter(s -> shouldRender(s, view, previewMode))
-				.map(s -> s.toJS(factor)).collect(Collectors.toList()));
+				.map(s -> s.visit(new FogOfWarShapeToJSShapeVisitor(factor))).collect(Collectors.toList()));
 		return renderable;
 	}
+
 
 	private boolean shouldRender(FogOfWarShape shape, MapView view, boolean previewMode) {
 		FogOfWarGroup group = shape.getGroup();
@@ -666,4 +669,32 @@ class MapServiceImpl implements MapService {
 				.map(FogOfWarVisibility::getStatus)
 				.getOrElse(VisibilityStatus.INVISIBLE);
 	}
+
+	private static JSAreaMarker markerToJS(AreaMarker marker, double factor) {
+		ScaledMap map = marker.getView().getSelectedMap();
+		int squareSizeInPixels = Optional.ofNullable(map).map(ScaledMap::getSquareSize).orElse(0);
+
+		JSAreaMarker jsMarker = new JSAreaMarker();
+		jsMarker.setColor("#".concat(marker.getColor()));
+		jsMarker.setShape(marker.visit(new AreaMarkerShapeVisitor(squareSizeInPixels, factor)));
+
+		return jsMarker;
+	}
+
+	private static JSToken tokenToJS(TokenInstance instance, double factor) {
+		JSToken token = new JSToken();
+		token.setBorderType(instance.getBorderType().name());
+		token.setBorderIntensity(instance.getBorderIntensity().name());
+		token.setHeight((int) (instance.getMap().getSquareSize() * factor * instance.getDefinition().getDiameterInSquares()));
+		token.setWidth((int) (instance.getMap().getSquareSize() * factor * instance.getDefinition().getDiameterInSquares()));
+		token.setDiameterInSquares(instance.getDefinition().getDiameterInSquares());
+		token.setLabel(instance.getLabel());
+		// Workaround, will be transformed to URL
+		token.setSrc(instance.getDefinition().getImageUrl());
+		token.setX((int) (instance.getOffsetX() * factor));
+		token.setY((int) (instance.getOffsetY() * factor));
+
+		return token;
+	}
+
 }

@@ -18,7 +18,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +28,14 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class FogOfWarShape extends BaseDomainObject
-		implements ICanHazVisibilityStatus {
+public abstract class FogOfWarShape extends BaseDomainObject {
 
 	private static final long serialVersionUID = 1L;
-
-	protected static final Color TRANSPARENT_BLUE = new Color(0f, 0f, 1f, 0.5f);
 
 	@Id
 	@SequenceGenerator(sequenceName = "SEQ_ID_FogOfWarShape",
@@ -100,21 +96,6 @@ public abstract class FogOfWarShape extends BaseDomainObject
 
 	public abstract <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor);
 
-	/**
-	 * @deprecated Does not properly sync visibility statuses
-	 */
-	@Deprecated
-	public boolean shouldRender(MapView view, boolean previewMode) {
-		FogOfWarGroup _group = getGroup();
-
-		return getStatus(view).isVisible(previewMode) || (_group != null
-				&& _group.getStatus(view).isVisible(previewMode));
-	}
-
-	protected final int rel(int input, double multiplier) {
-		return (int) (input * multiplier);
-	}
-
 	@Nonnull
 	public List<FogOfWarShapeVisibility> getVisibilities() {
 		return visibilities;
@@ -124,23 +105,6 @@ public abstract class FogOfWarShape extends BaseDomainObject
 			@Nonnull List<FogOfWarShapeVisibility> visibilities) {
 		this.visibilities = visibilities;
 	}
-
-	/**
-	 * @deprecated Does not properly sync visibility statuses
-	 */
-	@Deprecated
-	@Override
-	public VisibilityStatus getStatus(MapView view) {
-		return getVisibilities().stream().filter(v -> v.getView().equals(view))
-				.findAny().map(FogOfWarShapeVisibility::getStatus)
-				.orElse(VisibilityStatus.INVISIBLE);
-	}
-
-	
-
-	public abstract boolean containsCoordinate(int x, int y);
-
-	public abstract JSShape toJS(double factor);
 
 	@Nonnull
 	public List<MapLink> getLinks() {

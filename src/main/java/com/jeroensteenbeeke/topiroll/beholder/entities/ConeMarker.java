@@ -18,16 +18,13 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
+
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.jeroensteenbeeke.topiroll.beholder.web.components.mapcontrol.markers.ConeMarkerController;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 @Entity
 public class ConeMarker extends AreaMarker {
@@ -47,26 +44,7 @@ public class ConeMarker extends AreaMarker {
 	}
 
 	@Override
-	public Panel createPanel(String id) {
-
-		return new ConeMarkerController(id, this);
-	}
-
-	@Override
 	public <R> R visit(AreaMarkerVisitor<R> visitor) {
 		return visitor.visit(this);
 	}
-
-	@Override
-	public JSShape getShape(double factor, int squareSize) {
-		JSCircle circle = new JSCircle();
-		circle.setRadius((int) (getExtent()*factor*squareSize/5));
-		circle.setX((int) (getOffsetX()*factor));
-		circle.setY((int) (getOffsetY()*factor));
-		circle.setThetaOffset(Math.toRadians((double) getTheta()) - Math.PI/4);
-		circle.setThetaExtent(Math.PI/2);
-
-		return circle;
-	}
-
 }

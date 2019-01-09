@@ -5,8 +5,6 @@ import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ControlViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.AttributeModifier;
@@ -71,7 +69,7 @@ public class RunSessionPage extends AuthenticatedPage {
 								new ExplorationControllerPage(item.getModelObject()));
 
 					}
-				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
+				});
 				item.add(new Link<MapView>("combat", item.getModel()) {
 
 					private static final long serialVersionUID = 1L;
@@ -82,19 +80,7 @@ public class RunSessionPage extends AuthenticatedPage {
 								new CombatControllerPage(item.getModelObject()));
 
 					}
-				}.setVisibilityAllowed(mapView.getSelectedMap() != null));
-				item.add(new Link<MapView>("dm", item.getModel()) {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick() {
-						setResponsePage(
-								new ControlViewPage(item.getModelObject()));
-
-					}
 				});
-
 			}
 
 		};

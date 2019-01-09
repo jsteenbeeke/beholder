@@ -121,21 +121,4 @@ public abstract class AreaMarker extends BaseDomainObject {
 	}
 
 	public abstract <R> R visit(AreaMarkerVisitor<R> visitor);
-
-	public abstract Panel createPanel(String id);
-
-	public JSAreaMarker toJS(double factor) {
-		ScaledMap map = getView().getSelectedMap();
-		int squareSizeInPixels = map != null ? map.getSquareSize() : null;
-
-		JSAreaMarker marker = new JSAreaMarker();
-		marker.setColor("#".concat(getColor()));
-
-		marker.setShape(getShape(factor, squareSizeInPixels));
-
-		return marker;
-	}
-
-	public abstract JSShape getShape(double factor, int squareSize);
-
 }

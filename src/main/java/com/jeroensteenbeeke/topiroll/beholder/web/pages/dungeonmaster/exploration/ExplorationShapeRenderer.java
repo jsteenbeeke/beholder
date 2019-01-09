@@ -1,11 +1,10 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ExplorationShapeRenderer implements FogOfWarShapeVisitor<String> {
