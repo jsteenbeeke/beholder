@@ -17,6 +17,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSPlaylist;
@@ -36,7 +37,7 @@ import org.apache.wicket.model.Model;
 import javax.inject.Inject;
 import java.util.Random;
 
-public class PortraitsWindow extends DMViewPanel<MapView> {
+public class PortraitsWindow extends DMModalWindow<MapView> {
 	private static final long serialVersionUID = -2255734962780199594L;
 	@Inject
 	private PortraitDAO portraitDAO;
@@ -45,7 +46,7 @@ public class PortraitsWindow extends DMViewPanel<MapView> {
 	private MapService mapService;
 
 	public PortraitsWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Portraits");
 
 		PortraitFilter portraitFilter = new PortraitFilter();
 		portraitFilter.owner(view.getOwner()).name().orderBy(true);
@@ -55,6 +56,8 @@ public class PortraitsWindow extends DMViewPanel<MapView> {
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
 				FilterDataProvider.of(portraitFilter, portraitDAO)) {
+			private static final long serialVersionUID = 3427970936660497988L;
+
 			@Override
 			protected void populateItem(Item<Portrait> item) {
 				Portrait portrait = item.getModelObject();
@@ -119,5 +122,7 @@ public class PortraitsWindow extends DMViewPanel<MapView> {
 		portraitView.setOutputMarkupId(true);
 		container.add(portraitView);
 		add(container);
+
+		getBody().add(AttributeModifier.replace("style", "height: 300px; overflow: auto;"));
 	}
 }

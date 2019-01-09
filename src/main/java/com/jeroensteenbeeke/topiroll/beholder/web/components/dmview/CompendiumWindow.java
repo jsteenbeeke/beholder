@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import java.util.List;
 
 public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
+	private static final long serialVersionUID = -8850815391817528946L;
+
 	private final AjaxLink<CompendiumEntry> unpinLink;
 
 	private final AjaxLink<CompendiumEntry> pinLink;
@@ -49,6 +51,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		queryField.setOutputMarkupId(true);
 
 		Form<TokenInstance> form = new Form<TokenInstance>("form") {
+			private static final long serialVersionUID = -3259438171822347137L;
+
 			@Override
 			protected void onSubmit() {
 				String query = queryField.getModelObject();
@@ -65,6 +69,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 
 		queryField.add(new AjaxFormSubmitBehavior(form, "keyup") {
 
+
+			private static final long serialVersionUID = -5642292261275099960L;
 
 			@Override
 			protected void onAfterSubmit(AjaxRequestTarget target) {
@@ -83,6 +89,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		article.setOutputMarkupId(true);
 
 		add(pinLink = new AjaxLink<CompendiumEntry>("pin", getModel()) {
+			private static final long serialVersionUID = -2109978219691009998L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				compendiumService.pinEntry(BeholderSession.get().getUser(), getModelObject());
@@ -100,6 +108,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		pinLink.setOutputMarkupPlaceholderTag(true);
 
 		add(unpinLink = new AjaxLink<CompendiumEntry>("unpin", getModel()) {
+			private static final long serialVersionUID = -7792768458461434418L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				compendiumService.unpinEntry(BeholderSession.get().getUser(), getModelObject());
@@ -121,6 +131,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		searchResultsContainer.setOutputMarkupPlaceholderTag(true);
 		searchResultsContainer.setVisible(entry == null);
 		searchResultsContainer.add(searchResults = new ListView<CompendiumEntry>("options", new ListModel<>()) {
+			private static final long serialVersionUID = 4606249780770838168L;
+
 			@Override
 			protected void populateItem(ListItem<CompendiumEntry> item) {
 				CompendiumEntry entry = item.getModelObject();
@@ -128,6 +140,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 				item.add(new Label("title", entry.getTitle()));
 				item.add(new Label("path", entry.getOriginalPath() != null ? entry.getOriginalPath() : "-"));
 				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), FontAwesome.check) {
+					private static final long serialVersionUID = 9153225937487202796L;
+
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						CompendiumEntry entry = item.getModelObject();
@@ -152,6 +166,8 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 	}
 
 	private class ArticleModel extends LoadableDetachableModel<String> {
+		private static final long serialVersionUID = -4502747446370774883L;
+
 		@Override
 		protected String load() {
 			CompendiumEntry compendiumEntry = CompendiumWindow.this.getModelObject();

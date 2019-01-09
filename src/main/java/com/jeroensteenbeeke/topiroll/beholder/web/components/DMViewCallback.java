@@ -19,6 +19,15 @@ public interface DMViewCallback {
 			@Nullable
 					T object);
 
+	<T extends DomainObject> void createModalWindow(
+			@Nonnull
+					AjaxRequestTarget target,
+			@Nonnull
+					WindowConstructor<T>
+					constructor,
+			@Nullable
+					T object);
+
 	void redrawMap(AjaxRequestTarget target);
 
 	void refreshMenus(AjaxRequestTarget target);
@@ -36,5 +45,10 @@ public interface DMViewCallback {
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {
 		DMViewPanel<D> apply(String id, D object, DMViewCallback callback);
+	}
+
+	@FunctionalInterface
+	public interface WindowConstructor<D extends DomainObject> {
+		DMModalWindow<D> apply(String id, D object, DMViewCallback callback);
 	}
 }

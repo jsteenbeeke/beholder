@@ -1,89 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
 <body>
-<wicket:panel>
+<wicket:extend>
 
-	<div tabindex="-1" role="dialog" id="combat-modal" data-backdrop="false">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Initiative Order</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				</div>
-				<div class="modal-body" style="height: 300px; overflow: auto;">
-					<table class="table">
-						<thead>
-						<tr>
-							<th>Participant</th>
-							<th>Type</th>
-							<th>Score</th>
-							<th>Initiative</th>
-							<th>Actions</th>
-						</tr>
-						</thead>
-						<tbody wicket:id="container">
-						<tr wicket:id="participants">
-							<td wicket:id="name"></td>
-							<td wicket:id="type"></td>
-							<td wicket:id="score"></td>
-							<td>
-								<form wicket:id="total"><input type="number" wicket:id="initiativeField">
-									<button type="submit" wicket:id="update" class="btn btn-default">Update</button>
-								</form>
-							</td>
-							<td><span wicket:id="select"></span> <span wicket:id="up"></span> <span wicket:id="down"></span>
-								<span wicket:id="player"></span>
-								<span wicket:id="nonplayer"></span>
-								<span wicket:id="delete"></span></td>
-						</tr>
-						</tbody>
-						<tfoot>
-						<tr>
-							<td colspan="5">
-								<form class="form-inline" wicket:id="participantForm">
-									<div class="form-group">
-										<input type="text" class="form-control" wicket:id="name"
-											   placeholder="Name">
-									</div>
-									<div class="form-group">
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Participant</th>
+			<th>Type</th>
+			<th>Score</th>
+			<th>Initiative</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody wicket:id="container">
+		<tr wicket:id="participants">
+			<td wicket:id="name"></td>
+			<td wicket:id="type"></td>
+			<td wicket:id="score"></td>
+			<td>
+				<form wicket:id="total"><input type="number" wicket:id="initiativeField">
+					<button type="submit" wicket:id="update" class="btn btn-default">Update</button>
+				</form>
+			</td>
+			<td><span wicket:id="select"></span> <span wicket:id="up"></span> <span wicket:id="down"></span>
+				<span wicket:id="player"></span>
+				<span wicket:id="nonplayer"></span>
+				<span wicket:id="delete"></span></td>
+		</tr>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="5">
+				<form class="form-inline" wicket:id="participantForm">
+					<div class="form-group">
+						<input type="text" class="form-control" wicket:id="name"
+							   placeholder="Name">
+					</div>
+					<div class="form-group">
 
-										<input type="number" class="form-control" wicket:id="score"
-											   placeholder="Score">
-									</div>
-									<div class="form-group">
-										<select class="form-control" wicket:id="type"></select>
-									</div>
-									<button type="submit" wicket:id="submit" class="btn btn-default">Add</button>
-								</form>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="4">
-								<form class="form-inline" wicket:id="settingsForm">
-									<div class="form-group">
-										<input type="number" class="form-control" wicket:id="margin"
-											   placeholder="Margin in pixels">
-									</div>
+						<input type="number" class="form-control" wicket:id="score"
+							   placeholder="Score">
+					</div>
+					<div class="form-group">
+						<select class="form-control" wicket:id="type"></select>
+					</div>
+					<button type="submit" wicket:id="submit" class="btn btn-default">Add</button>
+				</form>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<form class="form-inline" wicket:id="settingsForm">
+					<div class="form-group">
+						<input type="number" class="form-control" wicket:id="margin"
+							   placeholder="Margin in pixels">
+					</div>
 
-									<button type="submit" wicket:id="submit" class="btn btn-default">Update</button>
-								</form>
-							</td>
-						</tr>
-						</tfoot>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-danger" type="button" wicket:id="clear">Clear non-players</button>
-					<button class="btn btn-danger" type="button" wicket:id="recalculate">Reroll</button>
-					<button class="btn btn-warning" type="button" wicket:id="hide">Hide</button>
-					<wicket:container wicket:id="positions">
-						<button class="btn btn-success" type="button" wicket:id="show"></button>
-					</wicket:container>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-</wicket:panel>
+					<button type="submit" wicket:id="submit" class="btn btn-default">Update</button>
+				</form>
+			</td>
+		</tr>
+		</tfoot>
+	</table>
+
+</wicket:extend>
 </body>
 </html>

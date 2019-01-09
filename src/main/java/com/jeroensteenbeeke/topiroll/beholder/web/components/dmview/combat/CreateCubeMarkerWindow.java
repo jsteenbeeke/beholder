@@ -1,10 +1,12 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -18,11 +20,11 @@ import org.apache.wicket.validation.validator.PatternValidator;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateCubeMarkerWindow extends DMViewPanel<MapView> {
-
+public class CreateCubeMarkerWindow extends DMModalWindow<MapView> {
+	private static final long serialVersionUID = -3030894520335324792L;
 
 	public CreateCubeMarkerWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Create Cube Marker");
 
 		Point location = callback.getClickedLocation();
 		final int x = location.x;
@@ -37,6 +39,7 @@ public class CreateCubeMarkerWindow extends DMViewPanel<MapView> {
 		colorField.add(new PatternValidator("^[0-9a-fA-F]{6}$"));
 
 		Form<TokenInstance> damageForm = new Form<TokenInstance>("form") {
+			private static final long serialVersionUID = -5783981070891861232L;
 			@Inject
 			private MarkerService markerService;
 
@@ -61,19 +64,14 @@ public class CreateCubeMarkerWindow extends DMViewPanel<MapView> {
 
 		add(damageForm);
 
-		add(new AjaxSubmitLink("submit", damageForm) {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
-				super.onSubmit(target);
+		addAjaxSubmitButton(target -> {
+			setVisible(false);
 
-				setVisible(false);
+			target.add(CreateCubeMarkerWindow.this);
+			target.appendJavaScript("$('#combat-modal').modal('hide');");
 
-				target.add(CreateCubeMarkerWindow.this);
-				target.appendJavaScript("$('#combat-modal').modal('hide');");
-
-				callback.redrawMap(target);
-				callback.removeModal(target);
-			}
-		});
+			callback.redrawMap(target);
+			callback.removeModal(target);
+		}).forForm(damageForm).ofType(ButtonType.Primary).withLabel("Save changes");
 	}
 }

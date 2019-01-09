@@ -1,43 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
 <body>
-<wicket:panel>
-
-	<div tabindex="-1" role="dialog" id="combat-modal" data-backdrop="false">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Select Map</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				</div>
-				<div class="modal-body" style="height: 300px; overflow: auto;">
-					<table class="table">
-						<thead>
-						<tr>
-							<th>Map</th>
- 						</tr>
-						</thead>
-						<tbody>
-						<tr wicket:id="rootmaps">
-							<td><a wicket:id="select"></a></td>
-						</tr>
-						<wicket:container wicket:id="folders">
-							<tr>
-								<th wicket:id="foldername"></th>
-							</tr>
-							<tr wicket:id="maps">
-								<td><a wicket:id="select"></a></td>
-							</tr>
-						</wicket:container>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-</wicket:panel>
+<wicket:extend>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Map</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr wicket:id="rootmaps">
+			<td><a wicket:id="select"></a></td>
+		</tr>
+		<wicket:container wicket:id="folders">
+			<tr>
+				<th wicket:id="foldername"></th>
+			</tr>
+			<tr wicket:id="maps">
+				<td><a wicket:id="select"></a></td>
+			</tr>
+		</wicket:container>
+		</tbody>
+	</table>
+</wicket:extend>
 </body>
 </html>
