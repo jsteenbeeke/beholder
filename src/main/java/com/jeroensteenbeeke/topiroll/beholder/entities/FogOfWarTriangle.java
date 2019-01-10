@@ -17,20 +17,13 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSPolygon;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class FogOfWarTriangle extends FogOfWarShape {
@@ -111,28 +104,4 @@ public class FogOfWarTriangle extends FogOfWarShape {
 				getHorizontalSide(), getVerticalSide());
 	}
 
-	@Override
-	public boolean containsCoordinate(int x, int y) {
-		List<XY> xyList = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide());
-
-		Polygon poly = new Polygon();
-		xyList.forEach(xy -> poly.addPoint(xy.getX(), xy.getY()));
-
-		return poly.contains(x, y);
-	}
-
-	@Override
-	public JSShape toJS(double factor) {
-		List<XY> points = getOrientation().toPolygon(getOffsetX(), getOffsetY(),
-				getHorizontalSide(), getVerticalSide()).stream().map(p -> p.adjustByFactor(factor))
-				.collect(
-						Collectors.toList());
-
-
-		JSPolygon polygon = new JSPolygon();
-		polygon.setPoints(points);
-
-		return polygon;
-	}
 }

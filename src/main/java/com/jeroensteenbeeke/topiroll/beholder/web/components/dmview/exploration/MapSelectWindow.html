@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Map</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr wicket:id="rootmaps">
+			<td><a wicket:id="select"></a></td>
+		</tr>
+		<wicket:container wicket:id="folders">
+			<tr>
+				<th wicket:id="foldername"></th>
+			</tr>
+			<tr wicket:id="maps">
+				<td><a wicket:id="select"></a></td>
+			</tr>
+		</wicket:container>
+		</tbody>
+	</table>
+</wicket:extend>
+</body>
+</html>

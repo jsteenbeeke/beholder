@@ -17,6 +17,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeContainsVisitor;
+
 import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,6 +45,6 @@ public class FogOfWarShapeVisibility extends FogOfWarVisibility {
 
 	@Override
 	public boolean containsCoordinate(int x, int y) {
-		return getShape().containsCoordinate(x, y);
+		return getShape().visit(new FogOfWarShapeContainsVisitor(x, y));
 	}
 }

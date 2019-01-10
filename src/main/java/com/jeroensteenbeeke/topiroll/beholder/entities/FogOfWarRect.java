@@ -17,7 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitors.FogOfWarShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
@@ -90,22 +90,4 @@ public class FogOfWarRect extends FogOfWarShape {
 		return visitor.visit(this);
 	}
 
-	@Override
-	public boolean containsCoordinate(int x, int y) {
-		int x2 = getOffsetX() + getWidth();
-		int y2 = getOffsetY() + getHeight();
-		
-		return x >= getOffsetX() && x <= x2 && y >= getOffsetY() && y <= y2;
-	}
-	
-	@Override
-	public JSShape toJS(double factor) {
-		JSRect rect = new JSRect();
-		rect.setHeight((int) (getHeight() * factor));
-		rect.setWidth((int) (getWidth() * factor));
-		rect.setX((int) (getOffsetX() * factor));
-		rect.setY((int) (getOffsetY() * factor));
-
-		return rect;
-	}
 }

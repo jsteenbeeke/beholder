@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+	<table class="table" wicket:id="container">
+		<thead>
+		<tr>
+			<th>Portrait</th>
+			<th>Thumbnail</th>
+			<th>Show</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr wicket:id="portraits">
+			<td wicket:id="name"></td>
+			<td><img wicket:id="thumb" class="img-responsive"/></td>
+			<td>
+				<div class="btn-group" role="group">
+					<wicket:container wicket:id="locations">
+						<button type="button" wicket:id="button"></button>
+					</wicket:container>
+				</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</wicket:extend>
+</body>
+</html>

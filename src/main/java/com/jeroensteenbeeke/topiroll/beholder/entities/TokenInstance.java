@@ -245,22 +245,6 @@ public class TokenInstance extends BaseDomainObject {
 		this.note = note;
 	}
 
-	public JSToken toJS(double factor) {
-		JSToken token = new JSToken();
-		token.setBorderType(getBorderType().name());
-		token.setBorderIntensity(getBorderIntensity().name());
-		token.setHeight((int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));
-		token.setWidth((int) (getMap().getSquareSize() * factor * getDefinition().getDiameterInSquares()));
-		token.setDiameterInSquares(getDefinition().getDiameterInSquares());
-		token.setLabel(getLabel());
-		// Workaround, will be transformed to URL
-		token.setSrc(getDefinition().getImageUrl());
-		token.setX((int) (getOffsetX() * factor));
-		token.setY((int) (getOffsetY() * factor));
-
-		return token;
-	}
-
 	public String toPreview(double factor) {
 		return String.format("{\n" +
 						"\t'src': '%s',\n" +
