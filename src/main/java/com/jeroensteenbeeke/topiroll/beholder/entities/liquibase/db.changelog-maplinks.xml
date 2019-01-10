@@ -84,7 +84,7 @@
 
 	<changeSet author="jeroen" id="add-target-group">
 		<addColumn tableName="maplink">
-			<column name="group_id" type="BIGINT">
+			<column name="target_group_id" type="BIGINT">
 				<constraints nullable="true"/>
 			</column>
 		</addColumn>

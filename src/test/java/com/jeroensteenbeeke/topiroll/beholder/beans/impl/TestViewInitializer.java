@@ -191,7 +191,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			group.setName("P3");
 			groupDAO.save(group);
 
-			mapLink.setGroup(group);
+			mapLink.setSourceGroup(group);
 
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
@@ -239,6 +239,8 @@ public class TestViewInitializer implements IAccountInitializer {
 			group.setName("ALL");
 			groupDAO.save(group);
 
+			mapLink.setTargetGroup(group);
+
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(0);
 			rect.setOffsetY(0);
@@ -248,7 +250,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 
-			mapLink.setMap(map);
+
 			mapLinkDAO.save(mapLink);
 
 			return map;
@@ -291,7 +293,7 @@ public class TestViewInitializer implements IAccountInitializer {
 	private byte[] readImage(InputStream stream) throws IOException {
 		try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
-			int in = -1;
+			int in;
 			while ((in = stream.read()) != -1) {
 				bos.write(in);
 			}

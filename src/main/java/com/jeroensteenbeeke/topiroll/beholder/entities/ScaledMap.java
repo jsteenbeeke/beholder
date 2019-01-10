@@ -52,9 +52,6 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
- 	@OneToMany(mappedBy="map", fetch=FetchType.LAZY)
-	private List<MapLink> incomingLinks = new ArrayList<MapLink>();
-
 
  	@Column(nullable=true, name="amazon_key")
 	private String amazonKey;
@@ -265,15 +262,7 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 		this.amazonKey = amazonKey;
 	}
 
-	@Nonnull
-	public List<MapLink> getIncomingLinks() {
-		return incomingLinks;
-	}
-	public void setIncomingLinks( @Nonnull List<MapLink> incomingLinks) {
-		this.incomingLinks = incomingLinks;
-	}
-
-
+	
 	public String getNameWithFolders() {
 		if (folder != null) {
 			return String.format("%s \\ %s", folder.getNameWithParents(), getName());

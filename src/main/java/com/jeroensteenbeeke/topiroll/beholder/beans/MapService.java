@@ -101,7 +101,10 @@ public interface MapService {
 
 	void gatherPlayerTokens(@Nonnull MapView view, int x, int y);
 
+
 	//endregion
 
+	@Nonnull
+	MapLink createLink(@Nonnull FogOfWarGroup source, @Nonnull FogOfWarGroup target);
 
 }

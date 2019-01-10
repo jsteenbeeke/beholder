@@ -34,6 +34,7 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.CreateLinkPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import io.vavr.collection.Array;
@@ -122,8 +123,7 @@ public class ViewMapPage extends AuthenticatedPage {
 
 				item.add(new Label("name", group.getName()));
 
-				item.add(new MapLinkView("links", new MapLinkFilter().group(group),
-						new MapLinkFilter().shape().byFilter(new FogOfWarShapeFilter().group().id(group.getId()))));
+				item.add(new MapLinkView("links", new MapLinkFilter().sourceGroup(group)));
 
 				item.add(new AbstractMapPreview("thumb", map, 128) {
 					@Override
@@ -149,29 +149,9 @@ public class ViewMapPage extends AuthenticatedPage {
 
 					@Override
 					public void onClick() {
-						BSEntityFormPage<MapLink> editPage = new BSEntityFormPage<MapLink>(create(new MapLink()).onPage("Link group to map").using(mapLinkDAO)) {
 
-							@Override
-							protected void onBeforeSave(MapLink entity) {
-								super.onBeforeSave(entity);
 
-								entity.setGroup(item.getModelObject());
-							}
-
-							@Override
-							protected void onSaved(MapLink entity) {
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-
-							@Override
-							protected void onCancel(MapLink entity) {
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-						};
-
-						configureEditPage(editPage);
-
-						setResponsePage(editPage);
+						setResponsePage(new CreateLinkPage(getModelObject()));
 					}
 				});
 				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
@@ -204,47 +184,14 @@ public class ViewMapPage extends AuthenticatedPage {
 
 				item.add(new Label("shape", shape.getDescription()));
 				item.add(new AbstractMapPreview("thumb", map, 128) {
+					private static final long serialVersionUID = 6581347254974917175L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
 					}
 				});
-				item.add(new MapLinkView("links", new MapLinkFilter().shape(shape)));
-				item.add(new IconLink<FogOfWarShape>("link", item.getModel(),
-						FontAwesome.link) {
-					private static final long serialVersionUID = 1L;
 
-
-					@Override
-					public void onClick() {
-
-						BSEntityFormPage<MapLink> editPage = new BSEntityFormPage<MapLink>(create(new MapLink()).onPage("Link group to map").using(mapLinkDAO)) {
-
-							@Override
-							protected void onBeforeSave(MapLink entity) {
-								super.onBeforeSave(entity);
-
-								entity.setShape(item.getModelObject());
-							}
-
-							@Override
-							protected void onSaved(MapLink entity) {
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-
-							@Override
-							protected void onCancel(MapLink entity) {
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-						};
-
-						configureEditPage(editPage);
-
-						setResponsePage(editPage);
-					}
-
-
-				});
 				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(),
 						FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
@@ -254,7 +201,7 @@ public class ViewMapPage extends AuthenticatedPage {
 						mapService.deleteShape(getModelObject());
 						setResponsePage(new ViewMapPage(mapModel.getObject()));
 					}
-				}.setVisibilityAllowed(item.getModelObject().getLinks().isEmpty()));
+				});
 			}
 
 		};
@@ -400,30 +347,22 @@ public class ViewMapPage extends AuthenticatedPage {
 		mapModel.detach();
 	}
 
-	private void configureEditPage(BSEntityFormPage<MapLink> editPage) {
-		ScaledMapFilter filter = new ScaledMapFilter();
-		filter.owner(getUser());
-		filter.folder().orderBy(true);
-		filter.name().orderBy(true);
-
-		editPage.setChoicesModel(MapLink_.map, ModelMaker.wrapList(
-				scaledMapDAO.findByFilter(filter).toJavaList()
-		));
-		editPage.setRenderer(MapLink_.map, LambdaRenderer.of(ScaledMap::getNameWithFolders));
-	}
 
 	private class MapLinkView extends DataView<MapLink> {
-		private MapLinkView(String id, MapLinkFilter... filter) {
-			super(id, createDataProvider(filter));
+		private static final long serialVersionUID = 28203555029721446L;
+
+		private MapLinkView(String id, MapLinkFilter filter) {
+			super(id, FilterDataProvider.of(filter, mapLinkDAO));
 		}
 
 		@Override
 		protected void populateItem(Item<MapLink> item) {
 			MapLink link = item.getModelObject();
-			ScaledMap map = link.getMap();
 
-			item.add(new Label("map", map.getNameWithFolders()));
+			item.add(new Label("map", String.format("%s in %s", link.getTargetGroup().getName(), link.getTargetGroup().getMap().getNameWithFolders())));
 			item.add(new IconLink<MapLink>("delete", item.getModel(), FontAwesome.trash) {
+				private static final long serialVersionUID = -3453872306526472488L;
+
 				@Override
 				public void onClick() {
 					mapLinkDAO.delete(getModelObject());
@@ -431,94 +370,6 @@ public class ViewMapPage extends AuthenticatedPage {
 					this.setResponsePage(new ViewMapPage(mapModel.getObject()));
 				}
 			});
-		}
-	}
-
-	private IDataProvider<MapLink> createDataProvider(MapLinkFilter[] filter) {
-		return new ConcatDataProvider<>(Array.of(filter).map(f -> FilterDataProvider.of(f, mapLinkDAO)));
-	}
-
-	private static final class ConcatDataProvider<T extends DomainObject> implements IDataProvider<T> {
-		private final Seq<IDataProviderData<T>> providers;
-
-		private final long size;
-
-		private ConcatDataProvider(Seq<IDataProvider<T>> providers) {
-			Seq<IDataProviderData<T>> data = Array.empty();
-
-			long i = 0, t = 0;
-
-			for (IDataProvider<T> provider: providers) {
-				t = i + provider.size() - 1;
-				data = data.append(new IDataProviderData<>(i, provider));
-				i = t + 1;
-			}
-
-
-			this.size = t + 1;
-			this.providers = data;
-		}
-
-		@Override
-		public Iterator<? extends T> iterator(long first, long count) {
-			Iterator<? extends T> result = Array.<T> empty().iterator();
-			long remaining = count;
-
-
-			for (IDataProviderData<T> provider : providers) {
-				if (provider.start >= first && remaining > 0) {
-					if (provider.count <= remaining) {
-						result = Iterators.concat(provider.dataProvider.iterator(0, provider.count));
-					} else {
-						result = Iterators.concat(provider.dataProvider.iterator(0, remaining));
-					}
-
-					remaining = remaining - provider.count;
-				}
-			}
-
-			return result;
-		}
-
-		@Override
-		public long size() {
-			return size;
-		}
-
-		@Override
-		public IModel<T> model(T object) {
-			return ModelMaker.wrap(object);
-		}
-
-		@Override
-		public void detach() {
-			providers.map(IDataProviderData::getDataProvider).forEach(IDataProvider::detach);
-		}
-
-		private static class IDataProviderData<T> implements Serializable {
-			private final long start;
-
-			private final long count;
-
-			private final IDataProvider<T> dataProvider;
-
-			IDataProviderData(long start, IDataProvider<T> dataProvider) {
-				this.start = start;
-				this.count = dataProvider.size();
-				this.dataProvider = dataProvider;
-			}
-
-			public long getStart() {
-				return start;
-			}
-
-			public long getCount() {
-				return count;
-			}
-
-			public IDataProvider<T> getDataProvider() {
-				return dataProvider;
-			}
 		}
 	}
 }

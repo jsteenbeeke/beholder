@@ -162,13 +162,13 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			@Override
 			protected void populateItem(ListItem<MapLink> item) {
 				PageParameters params = new PageParameters();
-				params.set("map", item.getModelObject().getMap().getId());
+				params.set("group", item.getModelObject().getTargetGroup().getId());
 				params.set("view", viewModel.getObject().getId());
 
 				BookmarkablePageLink<MapLink> link = new BookmarkablePageLink<>("map",
 						ExplorationModeMapSwitchHandlerPage.class, params);
 
-				link.setBody(item.getModel().map(MapLink::getMap).map(ScaledMap::getNameWithFolders).map(n -> "Transition to " + n));
+				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(group -> String.format("Transition to %s in %s", group, group.getMap().getName())));
 
 				item.add(link);
 			}
@@ -188,8 +188,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 						return s.getGroup().getLinks();
 					}
 
-					return s.getLinks();
-				}).sorted(Comparator.comparing(mapLink -> mapLink.getMap().getNameWithFolders())).distinctBy(MapLink::getId)
+					return Array.empty();
+				}).sorted(Comparator.comparing(mapLink -> mapLink.getTargetGroup().getMap().getNameWithFolders())).distinctBy(MapLink::getId)
 						.toJavaList();
 			}
 

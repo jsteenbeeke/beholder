@@ -29,6 +29,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapLinkFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.AreaMarkerShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeToJSShapeVisitor;
@@ -101,6 +102,9 @@ class MapServiceImpl implements MapService {
 
 	@Autowired
 	private RemoteImageService remoteImageService;
+
+	@Autowired
+	private MapLinkDAO mapLinkDAO;
 
 	@Nonnull
 	@Override
@@ -697,4 +701,23 @@ class MapServiceImpl implements MapService {
 		return token;
 	}
 
+	@Nonnull
+	@Override
+	public MapLink createLink(@Nonnull FogOfWarGroup source, @Nonnull FogOfWarGroup target) {
+		MapLinkFilter filter = new MapLinkFilter();
+		filter.sourceGroup(source);
+		filter.targetGroup(target);
+
+		if (mapLinkDAO.countByFilter(filter) == 0) {
+			MapLink link = new MapLink();
+			link.setSourceGroup(source);
+			link.setTargetGroup(target);
+
+			mapLinkDAO.save(link);
+
+			return link;
+		}
+
+		return mapLinkDAO.getUniqueByFilter(filter).getOrNull();
+	}
 }
