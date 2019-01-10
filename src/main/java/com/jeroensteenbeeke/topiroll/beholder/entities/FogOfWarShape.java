@@ -52,9 +52,6 @@ public abstract class FogOfWarShape extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "group_id")
 	private FogOfWarGroup group;
- 	@OneToMany(mappedBy="shape", fetch=FetchType.LAZY)
-	private List<MapLink> links = new ArrayList<MapLink>();
-
 
 
 	@OneToMany(mappedBy = "shape", fetch = FetchType.LAZY)
@@ -104,14 +101,6 @@ public abstract class FogOfWarShape extends BaseDomainObject {
 	public void setVisibilities(
 			@Nonnull List<FogOfWarShapeVisibility> visibilities) {
 		this.visibilities = visibilities;
-	}
-
-	@Nonnull
-	public List<MapLink> getLinks() {
-		return links;
-	}
-	public void setLinks( @Nonnull List<MapLink> links) {
-		this.links = links;
 	}
 
 

@@ -41,6 +41,8 @@ public interface MapService {
 
 	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 
+	void selectMapAndSetFocus(@Nonnull MapView view, @Nonnull FogOfWarGroup group);
+
 	//region Tokens
 
 	TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,
@@ -101,7 +103,10 @@ public interface MapService {
 
 	void gatherPlayerTokens(@Nonnull MapView view, int x, int y);
 
+
 	//endregion
 
+	@Nonnull
+	MapLink createLink(@Nonnull FogOfWarGroup source, @Nonnull FogOfWarGroup target);
 
 }

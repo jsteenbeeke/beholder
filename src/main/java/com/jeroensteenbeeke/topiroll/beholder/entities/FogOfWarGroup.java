@@ -42,8 +42,8 @@ public class FogOfWarGroup extends BaseDomainObject {
 	@JoinColumn(name = "map")
 
 	private ScaledMap map;
- 	@OneToMany(mappedBy="group", fetch=FetchType.LAZY)
-	private List<MapLink> links = new ArrayList<MapLink>();
+ 	@OneToMany(mappedBy="sourceGroup", fetch=FetchType.LAZY)
+	private List<MapLink> links = new ArrayList<>();
 
 
 
@@ -111,7 +111,7 @@ public class FogOfWarGroup extends BaseDomainObject {
 	}
 
 	@Nonnull
-	public List<MapLink> getLinks() {
+	public List<MapLink>  getLinks() {
 		return links;
 	}
 	public void setLinks( @Nonnull List<MapLink> links) {

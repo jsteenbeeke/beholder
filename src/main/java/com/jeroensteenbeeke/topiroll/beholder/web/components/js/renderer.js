@@ -43,21 +43,33 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 
 	if (payload && payload.data) {
 		var containerId = payload.canvas_id;
-		var data = payload.data;
 
-		if (data.type) {
-			if ("map" === data.type) {
-				renderMap(containerId, data);
-			} else if ("initiative" === data.type) {
-				renderInitiative(data);
-			} else if ("clear" === data.type) {
-				clearMap(containerId);
-			} else if ("portraits" === data.type) {
-				updatePortraits(data);
-			} else if ("youtube" === data.type) {
-				document.getElementById('youtube').src = data.url;
-			}
-		}
+        function handleData(data) {
+            if (data.type) {
+                if ("map" === data.type) {
+                    renderMap(containerId, data);
+                } else if ("initiative" === data.type) {
+                    renderInitiative(data);
+                } else if ("clear" === data.type) {
+                    clearMap(containerId);
+                } else if ("portraits" === data.type) {
+                    updatePortraits(data);
+                } else if ("youtube" === data.type) {
+                    document.getElementById('youtube').src = data.url;
+                } else if ("scroll" === data.type) {
+                    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+                    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
+                    window.scrollTo(data.x - w / 4, data.y - h / 4);
+                } else if ("compound" === data.type) {
+                	data.renderables.forEach(function(d) {
+                		handleData(d);
+                    });
+				}
+            }
+        }
+
+
+        handleData(payload.data);
 	}
 });

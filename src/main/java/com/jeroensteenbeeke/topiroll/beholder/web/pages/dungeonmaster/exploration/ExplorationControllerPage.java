@@ -15,10 +15,13 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeXCoordinateVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeYCoordinateVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
@@ -29,6 +32,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -58,6 +63,10 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	private final WebMarkupContainer explorationNavigator;
 	private final HideRevealPanel hideReveal;
 	private final TokenStatusPanel tokenStatusPanel;
+
+	private Integer scrollToX;
+
+	private Integer scrollToY;
 
 	private Component modal;
 
@@ -92,6 +101,10 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	private boolean disableClickListener = false;
 
 	public ExplorationControllerPage(MapView view) {
+		this(view, null);
+	}
+
+	public ExplorationControllerPage(MapView view, FogOfWarGroup focusGroup) {
 		super("Exploration Mode");
 
 		if (BeholderSession.get().getUser() == null) {
@@ -104,6 +117,22 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 		ScaledMap map = view == null ? null : view.getSelectedMap();
 
 		final double displayFactor = map == null ? 1.0 : map.getDisplayFactor(view);
+
+		if (focusGroup != null) {
+			scrollToX = focusGroup.getShapes().stream()
+					.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+					.min(Comparator.naturalOrder())
+					.map(i -> (int) (i * displayFactor))
+					.orElse(null);
+
+			scrollToY = focusGroup.getShapes().stream()
+					.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+					.min(Comparator.naturalOrder())
+					.map(i -> (int) (i * displayFactor))
+					.orElse(null);
+
+
+		}
 
 		int desiredWidth = map != null ? (int) (displayFactor * map.getBasicWidth()) : 1080;
 
@@ -331,7 +360,6 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 							@Override
 							protected String load() {
 								InitiativeParticipant participant = item.getModelObject();
-
 
 
 								int left = Option.of(participant.getOffsetX())
@@ -598,5 +626,21 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 		selectedToken.detach();
 
 		disableClickListener = false;
+	}
+
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+
+		if (scrollToX != null && scrollToY != null) {
+			StringBuilder script = new StringBuilder();
+			script.append("var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
+			script.append("var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);\n");
+			script.append(String.format("window.scrollTo(%d - (w / 4), %d - (h / 4));", scrollToX,
+					scrollToY));
+
+			response.render(
+					OnDomReadyHeaderItem.forScript(script));
+		}
 	}
 }
