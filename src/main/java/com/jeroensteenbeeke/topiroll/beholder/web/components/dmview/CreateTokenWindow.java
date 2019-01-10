@@ -1,6 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview;
 
 import com.google.common.collect.Lists;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -12,6 +13,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,7 +29,8 @@ import org.springframework.util.StringUtils;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
+public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
+	private static final long serialVersionUID = 2854668991094369943L;
 	@Inject
 	private MapService mapService;
 
@@ -38,7 +41,7 @@ public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
 	private TokenInstanceDAO instanceDAO;
 
 	public CreateTokenWindow(String id, ScaledMap map, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(map));
+		super(id, ModelMaker.wrap(map), "Add token");
 
 		final Point point = callback.getClickedLocation();
 
@@ -60,6 +63,8 @@ public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
 				);
 		definitions.setRequired(true);
 		definitions.add(new AjaxFormComponentUpdatingBehavior("change") {
+			private static final long serialVersionUID = 31162114424383849L;
+
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				if (StringUtils.isEmpty(labelField.getModelObject())) {
@@ -86,6 +91,8 @@ public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
 				Integer.class);
 
 		Form<ScaledMap> tokenForm = new Form<ScaledMap>("form", ModelMaker.wrap(map)) {
+			private static final long serialVersionUID = 5345121083973575122L;
+
 			@Override
 			protected void onSubmit() {
 				String label = labelField.getModelObject();
@@ -110,19 +117,15 @@ public class CreateTokenWindow extends DMViewPanel<ScaledMap> {
 		tokenForm.add(hpField);
 
 		add(tokenForm);
-		add(new AjaxSubmitLink("submit", tokenForm) {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
-				super.onSubmit(target);
 
-				setVisible(false);
+		addAjaxSubmitButton(target -> {
+			setVisible(false);
 
-				target.add(CreateTokenWindow.this);
-				target.appendJavaScript("$('#combat-modal').modal('hide');");
+			target.add(CreateTokenWindow.this);
+			target.appendJavaScript("$('#combat-modal').modal('hide');");
 
-				callback.redrawMap(target);
-				callback.removeModal(target);
-			}
-		});
+			callback.redrawMap(target);
+			callback.removeModal(target);
+		}).forForm(tokenForm).ofType(ButtonType.Primary).withLabel("Add token");
 	}
 }

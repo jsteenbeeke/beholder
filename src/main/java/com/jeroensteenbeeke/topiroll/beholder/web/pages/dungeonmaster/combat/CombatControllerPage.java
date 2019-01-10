@@ -755,6 +755,15 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 	}
 
 	@Override
+	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
+		disableClickListener = true;
+		Component oldModal = modal;
+		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
+		target.add(modal);
+		target.appendJavaScript("$('#combat-modal').modal('show');");
+	}
+
+	@Override
 	public void removeModal(AjaxRequestTarget target) {
 		Component oldModal = modal;
 		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID).setOutputMarkupPlaceholderTag(true).setVisible(false));

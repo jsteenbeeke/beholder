@@ -1,10 +1,12 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -19,10 +21,12 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.util.Optional;
 
-public class CreateLineMarkerWindow extends DMViewPanel<MapView> {
+public class CreateLineMarkerWindow extends DMModalWindow<MapView> {
+
+	private static final long serialVersionUID = 3458840318488583468L;
 
 	public CreateLineMarkerWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Create Line Marker");
 
 		Point location = callback.getPreviousClickedLocation();
 		final int x = location.x;
@@ -56,6 +60,7 @@ public class CreateLineMarkerWindow extends DMViewPanel<MapView> {
 		colorField.add(new PatternValidator("^[0-9a-fA-F]{6}$"));
 
 		Form<TokenInstance> damageForm = new Form<TokenInstance>("form") {
+			private static final long serialVersionUID = 8331302186400541988L;
 			@Inject
 			private MarkerService markerService;
 
@@ -73,19 +78,14 @@ public class CreateLineMarkerWindow extends DMViewPanel<MapView> {
 
 		add(damageForm);
 
-		add(new AjaxSubmitLink("submit", damageForm) {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
-				super.onSubmit(target);
+		addAjaxSubmitButton(target -> {
+			setVisible(false);
 
-				setVisible(false);
+			target.add(CreateLineMarkerWindow.this);
+			target.appendJavaScript("$('#combat-modal').modal('hide');");
 
-				target.add(CreateLineMarkerWindow.this);
-				target.appendJavaScript("$('#combat-modal').modal('hide');");
-
-				callback.redrawMap(target);
-				callback.removeModal(target);
-			}
-		});
+			callback.redrawMap(target);
+			callback.removeModal(target);
+		}).forForm(damageForm).ofType(ButtonType.Primary).withLabel("Save changes");
 	}
 }

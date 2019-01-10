@@ -1,11 +1,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.util.Calculations;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -19,10 +21,10 @@ import org.apache.wicket.validation.validator.PatternValidator;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class CreateConeMarkerWindow extends DMViewPanel<MapView> {
+public class CreateConeMarkerWindow extends DMModalWindow<MapView> {
 
 	public CreateConeMarkerWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Create Cone Marker");
 
 		Point location = callback.getPreviousClickedLocation();
 		final int x = location.x;
@@ -47,7 +49,8 @@ public class CreateConeMarkerWindow extends DMViewPanel<MapView> {
 		colorField.setRequired(true);
 		colorField.add(new PatternValidator("^[0-9a-fA-F]{6}$"));
 
-		Form<TokenInstance> damageForm = new Form<TokenInstance>("form") {
+		Form<TokenInstance> markerForm = new Form<TokenInstance>("form") {
+			private static final long serialVersionUID = 841367108470725073L;
 			@Inject
 			private MarkerService markerService;
 
@@ -67,25 +70,20 @@ public class CreateConeMarkerWindow extends DMViewPanel<MapView> {
 			}
 		};
 
-		damageForm.add(radiusField);
-		damageForm.add(angleField);
-		damageForm.add(colorField);
+		markerForm.add(radiusField);
+		markerForm.add(angleField);
+		markerForm.add(colorField);
 
-		add(damageForm);
+		add(markerForm);
 
-		add(new AjaxSubmitLink("submit", damageForm) {
-			@Override
-			protected void onSubmit(AjaxRequestTarget target) {
-				super.onSubmit(target);
+		addAjaxSubmitButton(target -> {
+			setVisible(false);
 
-				setVisible(false);
+			target.add(CreateConeMarkerWindow.this);
+			target.appendJavaScript("$('#combat-modal').modal('hide');");
 
-				target.add(CreateConeMarkerWindow.this);
-				target.appendJavaScript("$('#combat-modal').modal('hide');");
-
-				callback.redrawMap(target);
-				callback.removeModal(target);
-			}
-		});
+			callback.redrawMap(target);
+			callback.removeModal(target);
+		}).forForm(markerForm).ofType(ButtonType.Primary).withLabel("Save changes");
 	}
 }

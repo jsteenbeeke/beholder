@@ -9,9 +9,11 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.YouTubePlaylistDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.JSPlaylist;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
@@ -20,12 +22,13 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import javax.inject.Inject;
 import java.util.Random;
 
-public class YoutubePlaylistWindow extends DMViewPanel<MapView> {
+public class YoutubePlaylistWindow extends DMModalWindow<MapView> {
+	private static final long serialVersionUID = 6828418250046776290L;
 	@Inject
 	private YouTubePlaylistDAO playlistDAO;
 
 	public YoutubePlaylistWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Playlists");
 
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
 		playlistFilter.owner(view.getOwner()).name().orderBy(true);
@@ -39,6 +42,8 @@ public class YoutubePlaylistWindow extends DMViewPanel<MapView> {
 
 				item.add(new Label("name", playlist.getName()));
 				item.add(new AjaxIconLink<YouTubePlaylist>("play", item.getModel(), FontAwesome.play) {
+					private static final long serialVersionUID = -5537769023779195576L;
+
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						YouTubePlaylist playlist = getModelObject();
@@ -66,5 +71,8 @@ public class YoutubePlaylistWindow extends DMViewPanel<MapView> {
 			}
 		};
 		add(playlistView);
+
+
+		getBody().add(AttributeModifier.replace("style", "height: 300px; overflow: auto;"));
 	}
 }

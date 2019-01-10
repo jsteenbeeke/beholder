@@ -1,45 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
 <body>
-<wicket:panel>
-
-	<div tabindex="-1" role="dialog" id="combat-modal" data-backdrop="false">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Portraits</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<wicket:extend>
+	<table class="table" wicket:id="container">
+		<thead>
+		<tr>
+			<th>Portrait</th>
+			<th>Thumbnail</th>
+			<th>Show</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr wicket:id="portraits">
+			<td wicket:id="name"></td>
+			<td><img wicket:id="thumb" class="img-responsive"/></td>
+			<td>
+				<div class="btn-group" role="group">
+					<wicket:container wicket:id="locations">
+						<button type="button" wicket:id="button"></button>
+					</wicket:container>
 				</div>
-				<div class="modal-body" style="height: 300px; overflow: auto;">
-					<table class="table" wicket:id="container">
-						<thead>
-						<tr>
-							<th>Portrait</th>
-							<th>Thumbnail</th>
-							<th>Show</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr wicket:id="portraits">
-							<td wicket:id="name"></td>
-							<td><img wicket:id="thumb" class="img-responsive" /></td>
-							<td>
-								<div class="btn-group" role="group">
-									<wicket:container wicket:id="locations">
-										<button type="button" wicket:id="button"></button>
-									</wicket:container>
-								</div>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-</wicket:panel>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</wicket:extend>
 </body>
 </html>

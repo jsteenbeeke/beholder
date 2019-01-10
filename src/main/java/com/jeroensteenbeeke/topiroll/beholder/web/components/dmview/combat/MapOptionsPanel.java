@@ -19,6 +19,8 @@ import java.awt.*;
 import java.util.Optional;
 
 public class MapOptionsPanel extends DMViewPanel<MapView> {
+	private static final long serialVersionUID = 8357448484143991994L;
+
 	public MapOptionsPanel(String id, MapView view, DMViewCallback callback) {
 		super(id);
 
@@ -26,6 +28,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		setModel(viewModel);
 
 		add(new Label("location", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 997699127776378442L;
+
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getClickedLocation()).map(p -> String.format
@@ -34,6 +38,7 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		}));
 
 		add(new AjaxLink<InitiativeParticipant>("gather") {
+			private static final long serialVersionUID = 1272429848206149308L;
 			@Inject
 			private MapService mapService;
 
@@ -50,6 +55,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<MapView>("newcirclemarker") {
+			private static final long serialVersionUID = -1424328546866932837L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateCircleMarkerWindow::new, MapOptionsPanel.this.getModelObject());
@@ -57,6 +64,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<InitiativeParticipant>("newcubemarker") {
+			private static final long serialVersionUID = -5454136713960217622L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateCubeMarkerWindow::new, MapOptionsPanel.this.getModelObject());
@@ -66,6 +75,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<InitiativeParticipant>("newraymarker") {
+			private static final long serialVersionUID = 4114140288206643781L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateLineMarkerWindow::new, MapOptionsPanel.this.getModelObject());
@@ -79,6 +90,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<InitiativeParticipant>("newconemarker") {
+			private static final long serialVersionUID = -4624559515716244012L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateConeMarkerWindow::new, MapOptionsPanel.this.getModelObject());
@@ -92,9 +105,14 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+			private static final long serialVersionUID = 2836526275140755418L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateTokenWindow::new, getModelObject());
+				ScaledMap map = getModelObject();
+				if (map != null) {
+					callback.createModalWindow(target, CreateTokenWindow::new, map);
+				}
 			}
 		});
 

@@ -7,8 +7,10 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -25,7 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MapSelectWindow extends DMViewPanel<MapView> {
+public class MapSelectWindow extends DMModalWindow<MapView> {
+	private static final long serialVersionUID = -4375530900574500868L;
 	@Inject
 	private MapFolderDAO mapFolderDAO;
 
@@ -33,7 +36,7 @@ public class MapSelectWindow extends DMViewPanel<MapView> {
 	private ScaledMapDAO mapDAO;
 
 	public MapSelectWindow(String id, MapView view, DMViewCallback callback) {
-		super(id, ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Select Map");
 
 		ScaledMapFilter rootFilter = new ScaledMapFilter();
 		rootFilter.owner(view.getOwner());
@@ -62,6 +65,8 @@ public class MapSelectWindow extends DMViewPanel<MapView> {
 			}
 		});
 
+
+		getBody().add(AttributeModifier.replace("style", "height: 300px; overflow: auto;"));
 	}
 
 	private List<MapFolder> determineFolders(BeholderUser owner) {

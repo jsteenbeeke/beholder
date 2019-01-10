@@ -3,6 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
@@ -13,8 +14,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -34,7 +35,7 @@ import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
 
-public class InitiativeOrderWindow extends DMViewPanel<MapView> {
+public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 	private static final long serialVersionUID = -7751191205271421987L;
 	@Inject
 	private InitiativeService initiativeService;
@@ -43,74 +44,37 @@ public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 	private InitiativeParticipantDAO participationDAO;
 
 	public InitiativeOrderWindow(String id, MapView view, DMViewCallback callback) {
-		super(id);
-
-		setModel(ModelMaker.wrap(view));
+		super(id, ModelMaker.wrap(view), "Initiative Order");
 
 		WebMarkupContainer container = new WebMarkupContainer("container");
 		container.setOutputMarkupId(true);
 
-		add(new AjaxLink<InitiativeLocation>("recalculate") {
+		addAjaxButton(target -> {
+			initiativeService.clearNonPlayers(InitiativeOrderWindow.this.getModelObject());
+			target.add(container);
+			callback.refreshMenus(target);
+		}).ofType(ButtonType.Danger).withLabel("Clear non-players");
 
-			private static final long serialVersionUID = 1L;
+		addAjaxButton(target -> {
+			initiativeService.reroll(InitiativeOrderWindow.this.getModelObject());
+			target.add(container);
+			callback.refreshMenus(target);
+		}).ofType(ButtonType.Danger).withLabel("Reroll");
+		addAjaxButton(target -> {
+			initiativeService.hideInitiative(InitiativeOrderWindow.this.getModelObject());
+			callback.refreshMenus(target);
+		}).ofType(ButtonType.Warning).withLabel("Hide");
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				initiativeService.reroll(
-						InitiativeOrderWindow.this.getModelObject());
-				target.add(container);
+		for (InitiativeLocation location : InitiativeLocation.values()) {
+			addAjaxButton(target -> {
+				initiativeService.showInitiative(
+						InitiativeOrderWindow.this.getModelObject(),
+						location);
 				callback.refreshMenus(target);
-			}
-		});
+			}).ofType(ButtonType.Success).withLabel(location.getPrettyName());
+		}
 
-		add(new AjaxLink<InitiativeLocation>("hide") {
 
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				initiativeService.hideInitiative(
-						InitiativeOrderWindow.this.getModelObject());
-				callback.refreshMenus(target);
-			}
-		});
-
-		add(new AjaxLink<InitiativeLocation>("clear") {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				initiativeService.clearNonPlayers(
-						InitiativeOrderWindow.this.getModelObject());
-				target.add(container);
-				callback.refreshMenus(target);
-			}
-		});
-
-		add(new ListView<InitiativeLocation>("positions",
-				Lists.newArrayList(InitiativeLocation.values())) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void populateItem(ListItem<InitiativeLocation> item) {
-				item.add(new AjaxLink<InitiativeLocation>("show") {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						initiativeService.showInitiative(
-								InitiativeOrderWindow.this.getModelObject(),
-								item.getModelObject());
-						callback.refreshMenus(target);
-
-					}
-				}.setBody(Model.of(item.getModelObject().getPrettyName())));
-			}
-
-		});
 		add(container);
 
 		InitiativeParticipantFilter filter = new InitiativeParticipantFilter();
@@ -339,5 +303,7 @@ public class InitiativeOrderWindow extends DMViewPanel<MapView> {
 			}
 		});
 		add(settingsForm);
+
+		getBody().add(AttributeModifier.replace("style", "height: 300px; overflow: auto;"));
 	}
 }
