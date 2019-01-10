@@ -94,4 +94,8 @@
 			<column name="target_group_id"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet author="jeroen" id="maplink_unique_constraint">
+		<addUniqueConstraint tableName="maplink" columnNames="source_group_id,target_group_id" />
+	</changeSet>
 </databaseChangeLog>

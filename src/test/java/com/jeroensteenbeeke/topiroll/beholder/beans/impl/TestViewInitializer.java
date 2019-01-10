@@ -183,6 +183,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		final TokenDefinition monster = m;
 
 		MapLink mapLink = new MapLink();
+		MapLink mapLink2 = new MapLink();
 
 		mapService.createMap(user, "temple", 18, image, null).map(map -> {
 
@@ -192,6 +193,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			groupDAO.save(group);
 
 			mapLink.setSourceGroup(group);
+			mapLink2.setTargetGroup(group);
 
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
@@ -240,6 +242,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			groupDAO.save(group);
 
 			mapLink.setTargetGroup(group);
+			mapLink2.setSourceGroup(group);
 
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(0);
@@ -252,6 +255,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 
 			mapLinkDAO.save(mapLink);
+			mapLinkDAO.save(mapLink2);
 
 			return map;
 		});

@@ -33,6 +33,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapLinkFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.AreaMarkerShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeToJSShapeVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeXCoordinateVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeYCoordinateVisitor;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import org.slf4j.Logger;
@@ -49,10 +51,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -294,6 +294,12 @@ class MapServiceImpl implements MapService {
 	@Transactional
 	public void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
 								   @Nonnull VisibilityStatus status) {
+		internalSetGroupVisibility(view, group, status);
+
+		refreshView(view);
+	}
+
+	private void internalSetGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group, @Nonnull VisibilityStatus status) {
 		FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();
 		filter.view().set(view);
 		filter.group().set(group);
@@ -313,8 +319,6 @@ class MapServiceImpl implements MapService {
 			groupVisibilityDAO.update(visibility);
 		}
 		groupVisibilityDAO.flush();
-
-		refreshView(view);
 	}
 
 	@Override
@@ -625,6 +629,36 @@ class MapServiceImpl implements MapService {
 
 		BeholderRegistry.instance.sendToView(view.getId(), selector,
 				renderable);
+	}
+
+	@Override
+	public void selectMapAndSetFocus(@Nonnull MapView view, @Nonnull FogOfWarGroup group) {
+		view.setSelectedMap(group.getMap());
+		viewDAO.update(view);
+		viewDAO.flush();
+
+		internalSetGroupVisibility(view, group, VisibilityStatus.VISIBLE);
+
+		double displayFactor = group.getMap().getDisplayFactor(view);
+
+		Integer x = group.getShapes().stream()
+				.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+				.min(Comparator.naturalOrder())
+				.map(i -> (int) (i * displayFactor))
+				.orElse(null);
+
+		Integer y = group.getShapes().stream()
+				.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+				.min(Comparator.naturalOrder())
+				.map(i -> (int) (i * displayFactor))
+				.orElse(null);
+
+		if (x != null && y != null) {
+			BeholderRegistry.instance.sendToView(view.getId(),
+					new CompoundRenderable(
+							mapToJS(group.getMap().getDisplayDimension(view), false, view, group.getMap(), displayFactor),
+							new JSScrollCommand(x, y)));
+		}
 	}
 
 	private MapRenderable mapToJS(Dimension dimensions, boolean previewMode,

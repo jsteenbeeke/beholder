@@ -4,10 +4,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
@@ -26,6 +23,9 @@ public class ExplorationModeMapSwitchHandlerPage extends AuthenticatedPage {
 	private MapViewDAO viewDAO;
 
 	@Inject
+	private ScaledMapDAO mapDAO;
+
+	@Inject
 	private MapService mapService;
 
 	public ExplorationModeMapSwitchHandlerPage(PageParameters parameters) {
@@ -33,21 +33,37 @@ public class ExplorationModeMapSwitchHandlerPage extends AuthenticatedPage {
 
 		BeholderUser user = getUser();
 
-		long groupId = parameters.get("group").toLong();
+		Long groupId = parameters.get("group").toOptionalLong();
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.owner(user);
 
-		FogOfWarGroupFilter filter = new FogOfWarGroupFilter();
-		filter.id().equalTo(groupId);
-		filter.map().byFilter(mapFilter);
+		if (groupId != null) {
+			FogOfWarGroupFilter filter = new FogOfWarGroupFilter();
+			filter.id().equalTo(groupId);
+			filter.map().byFilter(mapFilter);
 
-		groupDAO.findByFilter(filter).forEach(group -> {
-			MapView view = viewDAO.load(parameters.get("view").toLong()).getOrElseThrow(IllegalArgumentException::new);
+			groupDAO.findByFilter(filter).forEach(group -> {
+				MapView view = viewDAO.load(parameters.get("view").toLong()).getOrElseThrow(IllegalArgumentException::new);
 
-			mapService.selectMap(view, group.getMap());
+				mapService.selectMapAndSetFocus(view, group);
 
-			throw new RestartResponseAtInterceptPageException(new ExplorationControllerPage(view));
-		});
+				throw new RestartResponseAtInterceptPageException(new ExplorationControllerPage(view, group));
+			});
+		} else {
+			Long mapId = parameters.get("map").toLong();
+
+			mapFilter.id(mapId);
+
+			mapDAO.getUniqueByFilter(mapFilter).forEach(map -> {
+				MapView view = viewDAO.load(parameters.get("view").toLong()).getOrElseThrow(IllegalArgumentException::new);
+
+				mapService.selectMap(view, map);
+
+				throw new RestartResponseAtInterceptPageException(new ExplorationControllerPage(view));
+
+			});
+
+		}
 	}
 }

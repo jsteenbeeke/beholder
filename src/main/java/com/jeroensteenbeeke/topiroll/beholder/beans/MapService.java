@@ -41,6 +41,8 @@ public interface MapService {
 
 	void initializeView(long viewId, @Nonnull String sessionId, boolean previewMode);
 
+	void selectMapAndSetFocus(@Nonnull MapView view, @Nonnull FogOfWarGroup group);
+
 	//region Tokens
 
 	TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,

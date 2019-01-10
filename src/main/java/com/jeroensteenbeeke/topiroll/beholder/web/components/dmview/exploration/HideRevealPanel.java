@@ -168,7 +168,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 				BookmarkablePageLink<MapLink> link = new BookmarkablePageLink<>("map",
 						ExplorationModeMapSwitchHandlerPage.class, params);
 
-				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(group -> String.format("Transition to %s in %s", group, group.getMap().getName())));
+				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(group -> String.format("Transition to %s in %s", group.getName(), group.getMap().getName())));
 
 				item.add(link);
 			}
