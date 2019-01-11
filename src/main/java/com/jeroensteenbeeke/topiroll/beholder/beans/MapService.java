@@ -109,4 +109,5 @@ public interface MapService {
 	@Nonnull
 	MapLink createLink(@Nonnull FogOfWarGroup source, @Nonnull FogOfWarGroup target);
 
+	void focusOnGroup(@Nonnull MapView view, @Nonnull FogOfWarGroup target);
 }

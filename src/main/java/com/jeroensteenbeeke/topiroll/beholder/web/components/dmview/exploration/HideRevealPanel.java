@@ -15,11 +15,14 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeContainsVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeXCoordinateVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeYCoordinateVisitor;
 import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -156,17 +159,61 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
-		add(new ListView <MapLink>("links", loadLinks(callback)) {
+		add(new ListView<MapLink>("links", loadLinks(callback)) {
 			private static final long serialVersionUID = 3285783029914710847L;
 
 			@Override
 			protected void populateItem(ListItem<MapLink> item) {
 				PageParameters params = new PageParameters();
-				params.set("group", item.getModelObject().getTargetGroup().getId());
-				params.set("view", viewModel.getObject().getId());
+				MapLink mapLink = item.getModelObject();
 
-				BookmarkablePageLink<MapLink> link = new BookmarkablePageLink<>("map",
-						ExplorationModeMapSwitchHandlerPage.class, params);
+				AbstractLink link;
+
+				if (mapLink.getSourceGroup().getMap().equals(mapLink.getTargetGroup().getMap())) {
+					link = new AjaxLink<MapLink>("map", item.getModel()) {
+
+						private static final long serialVersionUID = 2468854582739384695L;
+
+						@Override
+						public void onClick(AjaxRequestTarget target) {
+							FogOfWarGroup group = getModelObject().getTargetGroup();
+							mapService.focusOnGroup(viewModel.getObject(), group);
+
+							double displayFactor = group.getMap().getDisplayFactor(view);
+
+							Integer x = group.getShapes().stream()
+									.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+									.min(Comparator.naturalOrder())
+									.map(i -> (int) (i * displayFactor))
+									.orElse(null);
+
+							Integer y = group.getShapes().stream()
+									.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+									.min(Comparator.naturalOrder())
+									.map(i -> (int) (i * displayFactor))
+									.orElse(null);
+
+							StringBuilder script = new StringBuilder();
+							script.append("var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
+							script.append("var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);\n");
+							script.append(String.format("window.scrollTo(%d - (w / 4), %d - (h / 4));", x, y));
+
+							target.appendJavaScript(script);
+
+							callback.refreshMenus(target);
+							callback.redrawMap(target);
+						}
+					};
+
+
+				} else {
+
+					params.set("group", mapLink.getTargetGroup().getId());
+					params.set("view", viewModel.getObject().getId());
+
+					link = new BookmarkablePageLink<>("map",
+							ExplorationModeMapSwitchHandlerPage.class, params);
+				}
 
 				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(group -> String.format("Transition to %s in %s", group.getName(), group.getMap().getName())));
 

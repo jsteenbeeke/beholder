@@ -632,11 +632,20 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
+	public void focusOnGroup(@Nonnull MapView view, FogOfWarGroup group) {
+		internalFocusOnGroup(view, group);
+	}
+
+	@Override
 	public void selectMapAndSetFocus(@Nonnull MapView view, @Nonnull FogOfWarGroup group) {
 		view.setSelectedMap(group.getMap());
 		viewDAO.update(view);
 		viewDAO.flush();
 
+		internalFocusOnGroup(view, group);
+	}
+
+	private void internalFocusOnGroup(@Nonnull MapView view, @Nonnull FogOfWarGroup group) {
 		internalSetGroupVisibility(view, group, VisibilityStatus.VISIBLE);
 
 		double displayFactor = group.getMap().getDisplayFactor(view);
