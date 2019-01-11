@@ -24,6 +24,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.Marke
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.TokenStatusPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCoordinateTranslator;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
 import org.apache.wicket.AttributeModifier;
@@ -124,19 +125,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			coordinateTranslator = (ICoordinateTranslator) preview;
 		} else {
 			preview = new WebMarkupContainer("preview");
-			coordinateTranslator = new ICoordinateTranslator() {
-				private static final long serialVersionUID = -5907393995407695874L;
-
-				@Override
-				public int translateToRealImageSize(int number) {
-					return number;
-				}
-
-				@Override
-				public int translateToScaledImageSize(int number) {
-					return number;
-				}
-			};
+			coordinateTranslator = new IdentityCoordinateTranslator();
 		}
 
 		preview.add(initiativePanel = new InitiativePanel("initiative", view, this));
@@ -253,9 +242,10 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 					@Override
 					protected void onStop(AjaxRequestTarget target, TokenInstance instance, int left, int top) {
-						mapService.updateTokenLocation(
-								instance, (int) (left / displayFactor), (int) (top /
-										displayFactor));
+						left = coordinateTranslator.translateToRealImageSize(left);
+						top = coordinateTranslator.translateToRealImageSize(top);
+
+						mapService.updateTokenLocation(instance, left, top);
 
 						redrawMap(target);
 					}
@@ -780,4 +770,5 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 		disableClickListener = false;
 	}
+
 }

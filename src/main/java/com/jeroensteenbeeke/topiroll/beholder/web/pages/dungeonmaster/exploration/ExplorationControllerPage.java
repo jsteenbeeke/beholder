@@ -24,6 +24,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeXCo
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeYCoordinateVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCoordinateTranslator;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
 import io.vavr.control.Option;
@@ -138,19 +139,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 		if (map == null) {
 			preview = new WebMarkupContainer("preview");
-			coordinateTranslator = new ICoordinateTranslator() {
-				private static final long serialVersionUID = 4302665861491195637L;
-
-				@Override
-				public int translateToRealImageSize(int number) {
-					return number;
-				}
-
-				@Override
-				public int translateToScaledImageSize(int number) {
-					return number;
-				}
-			};
+			coordinateTranslator = new IdentityCoordinateTranslator();
 		} else {
 
 			preview = new AbstractMapPreview("preview", map, desiredWidth) {
@@ -299,9 +288,10 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 					@Override
 					protected void onStop(AjaxRequestTarget target, TokenInstance instance, int left, int top) {
-						mapService.updateTokenLocation(
-								instance, (int) (left / displayFactor), (int) (top /
-										displayFactor));
+						left = coordinateTranslator.translateToRealImageSize(left);
+						top = coordinateTranslator.translateToRealImageSize(top);
+
+						mapService.updateTokenLocation(instance, left, top);
 
 						redrawMap(target);
 					}
