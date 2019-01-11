@@ -111,7 +111,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 		targetSelect.setRequired(true);
 		targetSelect.setNullValid(false);
 
-		Seq<ScaledMap> mapOptions = mapDAO.findByFilter(mapFilter).remove(source.getMap());
+		Seq<ScaledMap> mapOptions = mapDAO.findByFilter(mapFilter);
 		mapSelect = new AjaxDropDownChoice<ScaledMap>("map", ModelMaker.wrap(ScaledMap.class),
 				ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
 
@@ -131,8 +131,6 @@ public class CreateLinkPage extends AuthenticatedPage {
 				preview.replaceWith(newPreview);
 
 				if (selectedMap == null) {
-
-
 					targetSelect.setModel(Model.of());
 					targetSelect.setChoices(ModelMaker.wrapList(ImmutableList.of(sourceModel.getObject())));
 					targetSelect.setEnabled(false);
