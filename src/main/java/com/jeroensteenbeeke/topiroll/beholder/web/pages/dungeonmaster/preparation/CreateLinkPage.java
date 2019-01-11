@@ -22,10 +22,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -73,6 +70,8 @@ public class CreateLinkPage extends AuthenticatedPage {
 				group.getName(), group.getMap().getName()
 		)));
 		sourceField.setEnabled(false);
+
+		CheckBox bidirectionalCheckbox = new CheckBox("bidirectional", Model.of(true));
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.owner(getUser());
@@ -175,7 +174,11 @@ public class CreateLinkPage extends AuthenticatedPage {
 					error("Invalid selection");
 					return;
 				}
+				
 				mapService.createLink(source, target);
+				if (bidirectionalCheckbox.getModelObject()) {
+					mapService.createLink(target, source);
+				}
 
 				setResponsePage(new ViewMapPage(source.getMap()));
 
@@ -185,6 +188,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 		form.add(sourceField);
 		form.add(mapSelect);
 		form.add(targetSelect);
+		form.add(bidirectionalCheckbox);
 
 		add(new SubmitLink("submit", form));
 
