@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class TestViewInitializer implements IAccountInitializer {
@@ -182,8 +183,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		final TokenDefinition monster = m;
 
-		MapLink mapLink = new MapLink();
-		MapLink mapLink2 = new MapLink();
+		AtomicReference<FogOfWarGroup> e = new AtomicReference<>();
 
 		mapService.createMap(user, "temple", 18, image, null).map(map -> {
 
@@ -191,9 +191,6 @@ public class TestViewInitializer implements IAccountInitializer {
 			group.setMap(map);
 			group.setName("P3");
 			groupDAO.save(group);
-
-			mapLink.setSourceGroup(group);
-			mapLink2.setTargetGroup(group);
 
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
@@ -232,6 +229,55 @@ public class TestViewInitializer implements IAccountInitializer {
 				}
 			}
 
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("A");
+			groupDAO.save(group);
+
+			FogOfWarGroup a = group;
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(44);
+			rect.setOffsetY(125);
+			rect.setWidth(32);
+			rect.setHeight(47);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("B");
+			groupDAO.save(group);
+			FogOfWarGroup b = group;
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(334);
+			rect.setOffsetY(371);
+			rect.setWidth(62);
+			rect.setHeight(33);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
+			mapService.createLink(a, b);
+			mapService.createLink(b, a);
+
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("E");
+			groupDAO.save(group);
+			e.set(group);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(470);
+			rect.setOffsetY(125);
+			rect.setWidth(62);
+			rect.setHeight(33);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
+
 			return map;
 		});
 
@@ -242,9 +288,6 @@ public class TestViewInitializer implements IAccountInitializer {
 			group.setName("ALL");
 			groupDAO.save(group);
 
-			mapLink.setTargetGroup(group);
-			mapLink2.setSourceGroup(group);
-
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(0);
 			rect.setOffsetY(0);
@@ -254,9 +297,22 @@ public class TestViewInitializer implements IAccountInitializer {
 			rect.setGroup(group);
 			shapeDAO.save(rect);
 
+			group = new FogOfWarGroup();
+			group.setMap(map);
+			group.setName("N");
+			groupDAO.save(group);
 
-			mapLinkDAO.save(mapLink);
-			mapLinkDAO.save(mapLink2);
+			mapService.createLink(group, e.get());
+			mapService.createLink(e.get(), group);
+
+			rect = new FogOfWarRect();
+			rect.setOffsetX(0);
+			rect.setOffsetY(570);
+			rect.setWidth(30);
+			rect.setHeight(60);
+			rect.setMap(map);
+			rect.setGroup(group);
+			shapeDAO.save(rect);
 
 			return map;
 		});
