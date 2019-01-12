@@ -24,8 +24,8 @@ function previewRectangle(canvas, color, alpha, rect) {
     applyRectangle(ctx, rect);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 
     canvas.switchBuffer();
@@ -37,8 +37,8 @@ function previewRectangle(canvas, color, alpha, rect) {
     applyRectangle(ctx, rect);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 }
 
@@ -50,8 +50,8 @@ function previewCircle(canvas, color, alpha, circle) {
     applyCircle(ctx, circle);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 
     canvas.switchBuffer();
@@ -63,8 +63,8 @@ function previewCircle(canvas, color, alpha, circle) {
     applyCircle(ctx, circle);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 }
 
@@ -76,8 +76,8 @@ function previewPolygon(canvas, color, alpha, poly) {
     applyPoly(ctx, poly);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 
     canvas.switchBuffer();
@@ -89,8 +89,8 @@ function previewPolygon(canvas, color, alpha, poly) {
     applyPoly(ctx, poly);
     ctx.setGlobalAlpha(alpha);
     ctx.setFillStyle(color);
-    ctx.closePath();
     ctx.fill();
+    ctx.closePath();
     ctx.restore();
 }
 

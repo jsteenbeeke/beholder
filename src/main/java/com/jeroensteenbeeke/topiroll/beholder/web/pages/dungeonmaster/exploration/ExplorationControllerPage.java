@@ -8,6 +8,7 @@ import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
@@ -145,6 +146,9 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			preview = new AbstractMapPreview("preview", map, desiredWidth) {
 				private static final long serialVersionUID = -5400399261540169818L;
 
+				@Inject
+				private FogOfWarGroupVisibilityDAO visibilityDAO;
+
 				@Override
 				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
 													   double factor) {
@@ -156,7 +160,8 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
 					shapeFilter.map(map);
 
-					shapeDAO.findByFilter(shapeFilter).forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel.getObject()))));
+					shapeDAO.findByFilter(shapeFilter).forEach(shapeDAO::evict);
+					shapeDAO.findByFilter(shapeFilter).forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel.getObject(), visibilityDAO))));
 				}
 
 				@Override

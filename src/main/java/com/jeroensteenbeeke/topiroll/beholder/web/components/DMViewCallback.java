@@ -8,8 +8,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.io.Serializable;
 
-public interface DMViewCallback {
+public interface DMViewCallback extends Serializable {
 	<T extends DomainObject> void createModalWindow(
 			@Nonnull
 					AjaxRequestTarget target,

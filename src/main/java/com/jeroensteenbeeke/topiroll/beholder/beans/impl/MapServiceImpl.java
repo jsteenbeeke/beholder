@@ -711,8 +711,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private VisibilityStatus getStatus(FogOfWarGroup group, MapView view) {
-		return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group))
-				.find(v -> v.getView().equals(view))
+		return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group).view(view))
 				.map(FogOfWarVisibility::getStatus)
 				.getOrElse(VisibilityStatus.INVISIBLE);
 	}

@@ -26,8 +26,10 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import javax.annotation.Nonnull;
@@ -87,68 +89,39 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
-		add(new AjaxLink<ScaledMap>("hide", viewModel.getProperty(MapView::getSelectedMap)) {
-
-			private static final long serialVersionUID = -5581748300658008081L;
-
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				Point clicked = callback.getClickedLocation();
-
-				if (clicked != null) {
-					shapesInCurrentLocation(clicked, getModelObject()).filter(s -> s.getGroup() == null).forEach(shape -> mapService.setShapeVisibility(viewModel.getObject(), shape, VisibilityStatus.INVISIBLE));
-					shapesInCurrentLocation(clicked, getModelObject()).map(FogOfWarShape::getGroup).filter(Objects::nonNull)
-							.forEach(group -> mapService.setGroupVisibility(viewModel.getObject(), group, VisibilityStatus.INVISIBLE));
-
-					callback.redrawMap(target);
-				}
-			}
+		add(new ListView<HideRevealOption>("hidereveal", new HideRevealOptions(viewModel, callback)) {
+			private static final long serialVersionUID = -75420374360776148L;
 
 			@Override
-			public boolean isVisible() {
-				boolean v = super.isVisible();
+			protected void populateItem(ListItem<HideRevealOption> item) {
+				HideRevealOption hideRevealOption = item.getModelObject();
 
-				Point clicked = callback.getClickedLocation();
+				FogOfWarGroup group = hideRevealOption.getGroup();
+				boolean visible = hideRevealOption.isVisible();
 
-				if (clicked != null) {
-					return v && isShapeInCurrentLocation(clicked, s -> s == VisibilityStatus.DM_ONLY || s == VisibilityStatus.VISIBLE);
-				} else {
-					return false;
-				}
-			}
-		});
+				AjaxLink<HideRevealOption> link = new AjaxLink<HideRevealOption>("link", item.getModel()) {
+					private static final long serialVersionUID = 8396322701647571238L;
 
-		add(new AjaxLink<ScaledMap>("reveal", viewModel.getProperty(MapView::getSelectedMap)) {
-			private static final long serialVersionUID = -5439519905348329569L;
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						if (visible) {
+							mapService.setGroupVisibility(viewModel.getObject(), getModelObject().getGroup(), VisibilityStatus.INVISIBLE);
+						} else {
+							mapService.setGroupVisibility(viewModel.getObject(), getModelObject().getGroup(), VisibilityStatus.VISIBLE);
+						}
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				Point clicked = callback.getClickedLocation();
+						callback.refreshMenus(target);
+						callback.redrawMap(target);
+					}
+				};
 
-				if (clicked != null) {
-					shapesInCurrentLocation(clicked, getModelObject()).filter(s -> s.getGroup() == null).forEach(shape -> mapService.setShapeVisibility(viewModel.getObject(), shape, VisibilityStatus.VISIBLE));
-					shapesInCurrentLocation(clicked, getModelObject()).map(FogOfWarShape::getGroup).filter(Objects::nonNull)
-							.forEach(group -> mapService.setGroupVisibility(viewModel.getObject(), group, VisibilityStatus.VISIBLE));
+				String hideReveal = visible ? "Hide" : "Reveal";
 
-					callback.redrawMap(target);
-				}
-			}
+				link.setBody(Model.of(String.format("%s %s", hideReveal, group.getName())));
 
-
-			@Override
-			public boolean isVisible() {
-				boolean v = super.isVisible();
-
-				Point clicked = callback.getClickedLocation();
-
-				if (clicked != null && !shapesInCurrentLocation(clicked, getModelObject()).isEmpty()) {
-					return v && !isShapeInCurrentLocation(clicked, s -> s == VisibilityStatus.DM_ONLY || s == VisibilityStatus.VISIBLE);
-				} else {
-					return false;
-				}
+				item.add(link);
 			}
 		});
-
 
 		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			private static final long serialVersionUID = -542296264646923581L;
@@ -280,5 +253,83 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 			return s.visit(new FogOfWarShapeContainsVisitor(x, y));
 		});
+	}
+
+	private class HideRevealOptions extends LoadableDetachableModel<List<HideRevealOption>> {
+		private final IModel<MapView> viewModel;
+
+		private final DMViewCallback callback;
+
+		private HideRevealOptions(IModel<MapView> viewModel, DMViewCallback callback) {
+			this.viewModel = viewModel;
+			this.callback = callback;
+		}
+
+		@Override
+		protected List<HideRevealOption> load() {
+			Point location = callback.getClickedLocation();
+
+			if (location == null) {
+				return ImmutableList.of();
+			}
+
+			ScaledMap map = viewModel.getObject().getSelectedMap();
+
+			if (map == null) {
+				return ImmutableList.of();
+			}
+
+			FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
+			shapeFilter.map(map);
+
+			return shapeDAO.findByFilter(shapeFilter).filter(shape -> shape.visit(new FogOfWarShapeContainsVisitor(location.x, location.y)))
+					.map(FogOfWarShape::getGroup)
+					.distinct()
+					.map(group -> {
+						FogOfWarGroupVisibilityFilter visFilter = new FogOfWarGroupVisibilityFilter();
+						visFilter.group(group);
+						visFilter.view(viewModel.getObject());
+
+						if (groupVisibilityDAO.countByFilter(visFilter) == 0) {
+							return new HideRevealOption(group, false);
+						} else {
+							return new HideRevealOption(group, groupVisibilityDAO.getUniqueByFilter(visFilter).map(vis -> vis.getStatus() != VisibilityStatus.INVISIBLE).getOrElse(false));
+						}
+					})
+					.toJavaList();
+		}
+
+		@Override
+		protected void onDetach() {
+			super.onDetach();
+			viewModel.detach();
+		}
+	}
+
+	private static class HideRevealOption implements IDetachable {
+		private static final long serialVersionUID = 1924134348867864526L;
+
+		private final IModel<FogOfWarGroup> groupModel;
+
+		private final boolean visible;
+
+		public HideRevealOption(@Nonnull FogOfWarGroup group, boolean visible) {
+			this.groupModel = ModelMaker.wrap(group);
+			this.visible = visible;
+		}
+
+		@Nonnull
+		public FogOfWarGroup getGroup() {
+			return groupModel.getObject();
+		}
+
+		public boolean isVisible() {
+			return visible;
+		}
+
+		@Override
+		public void detach() {
+			groupModel.detach();
+		}
 	}
 }
