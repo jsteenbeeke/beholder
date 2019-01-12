@@ -236,6 +236,7 @@ MultiCanvasContext.prototype.clearRect = function (x, y, width, height) {
         var adjustedX = x - ctx.canvasOffsetX;
         var adjustedY = y - ctx.canvasOffsetY;
         ctx.clearRect(adjustedX, adjustedY, width, height);
+        console.log("clearRect "+ x +","+ y  +","+  width +","+ height);
     });
 };
 

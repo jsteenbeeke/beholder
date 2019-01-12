@@ -1,6 +1,8 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration;
 
+import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.XY;
 
@@ -13,6 +15,7 @@ public class ExplorationShapeRenderer implements FogOfWarShapeVisitor<String> {
 	private static final String COLOR_DM_ONLY = "#0000ff";
 
 	private static final String COLOR_VISIBLE = "#00ff00";
+	private static final long serialVersionUID = 7202249315005854476L;
 
 	private final String canvasId;
 
@@ -20,10 +23,13 @@ public class ExplorationShapeRenderer implements FogOfWarShapeVisitor<String> {
 
 	private final MapView view;
 
-	public ExplorationShapeRenderer(String canvasId, double factor, MapView view) {
+	private final FogOfWarGroupVisibilityDAO visibilityDAO;
+
+	public ExplorationShapeRenderer(String canvasId, double factor, MapView view, FogOfWarGroupVisibilityDAO visibilityDAO) {
 		this.canvasId = canvasId;
 		this.factor = factor;
 		this.view = view;
+		this.visibilityDAO = visibilityDAO;
 	}
 
 	@Override
@@ -63,10 +69,14 @@ public class ExplorationShapeRenderer implements FogOfWarShapeVisitor<String> {
 		FogOfWarGroup group = shape.getGroup();
 
 		if (group != null) {
-			return group.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny().map(this::determineColorOfVisibility).orElse(COLOR_INVISIBLE);
+			FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();
+			filter.group(group);
+			filter.view(view);
+
+			return visibilityDAO.getUniqueByFilter(filter).map(this::determineColorOfVisibility).getOrElse(() -> COLOR_INVISIBLE);
 		}
 
-		return shape.getVisibilities().stream().filter(v -> v.getView().equals(view)).findAny().map(this::determineColorOfVisibility).orElse(COLOR_INVISIBLE);
+		return COLOR_INVISIBLE;
 	}
 
 	private String determineColorOfVisibility(FogOfWarVisibility v) {

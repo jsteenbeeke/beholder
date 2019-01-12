@@ -5,8 +5,9 @@
 	<div id="exploration-mapoptions" class="btn-group-vertical" role="group">
 		<button class="btn btn-info" wicket:id="location" disabled="disabled"></button>
 		<button class="btn btn-info" wicket:id="newtoken">Create Token</button>
-		<button class="btn btn-warning" wicket:id="reveal">Reveal</button>
-		<button class="btn btn-warning" wicket:id="hide">Hide</button>
+		<wicket:container wicket:id="hidereveal">
+			<button class="btn btn-warning" wicket:id="link">Reveal</button>
+		</wicket:container>
 		<button class="btn btn-success" wicket:id="gather">Gather player tokens</button>
 		<wicket:container wicket:id="links">
 			<button class="btn btn-info" wicket:id="map">Transition to</button>

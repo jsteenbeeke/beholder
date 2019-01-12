@@ -11,9 +11,11 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
@@ -86,6 +88,9 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 	@Inject
 	private PinnedCompendiumEntryDAO compendiumEntryDAO;
+
+	@Inject
+	private TokenInstanceDAO tokenInstanceDAO;
 
 	private final WebMarkupContainer preview;
 
@@ -165,10 +170,16 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 			@Override
 			protected List<TokenInstance> load() {
-				return getCurrentMap().map(m -> m.getTokens().stream()
-						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
-						.sorted(Comparator.comparing(TokenInstance::getId))
-						.collect(Collectors.toList())).orElseGet(ImmutableList::of);
+				return getCurrentMap().map(m -> {
+					TokenInstanceFilter filter = new TokenInstanceFilter();
+					filter.map(m);
+					filter.currentHitpoints().greaterThanOrNull(0);
+					filter.id().orderBy(true);
+
+					return tokenInstanceDAO.findByFilter(filter).toJavaList();
+
+
+				}).orElseGet(ImmutableList::of);
 			}
 		};
 

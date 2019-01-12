@@ -225,8 +225,9 @@ public class TestViewInitializer implements IAccountInitializer {
 			if (monster != null) {
 				for (int x = 40; x <= 120; x += 20) {
 					for (int y = 40; y <= 120; y += 20) {
-						mapService.createTokenInstance(monster, map, TokenBorderType.Enemy, x, y,
+						TokenInstance instance = mapService.createTokenInstance(monster, map, TokenBorderType.Enemy, x, y,
 								String.format("Monster (%d,%d)", x, y));
+						mapService.setTokenHP(instance, 50, 50);
 					}
 				}
 			}
