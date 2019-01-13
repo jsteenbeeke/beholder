@@ -10,6 +10,7 @@
 			<th>Type</th>
 			<th>Score</th>
 			<th>Initiative</th>
+			<th>Conditions</th>
 			<th>Actions</th>
 		</tr>
 		</thead>
@@ -23,15 +24,24 @@
 					<button type="submit" wicket:id="update" class="btn btn-default">Update</button>
 				</form>
 			</td>
+			<td>
+				<ul>
+				<li wicket:id="conditions">
+					<span wicket:id="description"></span> <wicket:enclosure child="turns">(<span wicket:id="turns"></span> turns remaining)</wicket:enclosure>
+					<span wicket:id="edit"></span> <span wicket:id="delete"></span>
+				</li>
+				</ul>
+			</td>
 			<td><span wicket:id="select"></span> <span wicket:id="up"></span> <span wicket:id="down"></span>
 				<span wicket:id="player"></span>
 				<span wicket:id="nonplayer"></span>
+				<span wicket:id="condition"></span>
 				<span wicket:id="delete"></span></td>
 		</tr>
 		</tbody>
 		<tfoot>
 		<tr>
-			<td colspan="5">
+			<td colspan="6">
 				<form class="form-inline" wicket:id="participantForm">
 					<div class="form-group">
 						<input type="text" class="form-control" wicket:id="name"
