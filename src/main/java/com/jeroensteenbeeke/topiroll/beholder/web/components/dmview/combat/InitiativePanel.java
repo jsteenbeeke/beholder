@@ -37,21 +37,23 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 	@Inject
 	private InitiativeService initiativeService;
 
+	private IModel<InitiativeParticipant> currentParticipantModel;
+
 	public InitiativePanel(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view));
 
 		setOutputMarkupId(true);
 
-		add(current = new Label("current", new LoadableDetachableModel<String>() {
+		currentParticipantModel = new LoadableDetachableModel<InitiativeParticipant>() {
 			@Override
-			protected String load() {
+			protected InitiativeParticipant load() {
 				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
 						.view(getModelObject())
-						.selected(true))
-						.map(InitiativeParticipant::getName)
-						.getOrElse(UNKNOWN);
+						.selected(true)).getOrNull();
 			}
-		}) {
+		};
+
+		add(current = new Label("current", currentParticipantModel.map(InitiativeParticipant::getName).orElse(UNKNOWN)) {
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && !UNKNOWN.equals(getDefaultModelObject());
@@ -105,7 +107,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 		add(new AjaxLink<InitiativeParticipant>("condition", conditionModel) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, InitiativeParticipantConditionCreateWindow::new, getModelObject());
+				callback.createModalWindow(target, InitiativeParticipantConditionCreateWindow::new, currentParticipantModel.getObject());
 			}
 
 			@Override
@@ -131,20 +133,18 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 
 
 	private IModel<? extends List<InitiativeParticipantCondition>> createConditionsModel() {
-		return new LoadableDetachableModel<List<InitiativeParticipantCondition>>() {
-			@Override
-			protected List<InitiativeParticipantCondition> load() {
-				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
-						.view(getModelObject())
-						.selected(true))
-						.map(p -> {
-							InitiativeParticipantConditionFilter filter = new InitiativeParticipantConditionFilter();
-							filter.participant(p);
-							filter.description().orderBy(true);
+		return currentParticipantModel.map(p -> {
+			InitiativeParticipantConditionFilter filter = new InitiativeParticipantConditionFilter();
+			filter.participant(p);
+			filter.description().orderBy(true);
 
-							return conditionDAO.findByFilter(filter).toJavaList();
-						}).getOrElse(ImmutableList::of);
-			}
-		};
+			return conditionDAO.findByFilter(filter).toJavaList();
+		}).orElseGet(ImmutableList::of);
+	}
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		currentParticipantModel.detach();
 	}
 }
