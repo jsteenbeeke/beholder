@@ -3,9 +3,13 @@
 <body>
 <wicket:panel>
 	<div id="combat-initiative" class="btn-group-vertical" role="group">
-		<button class="btn btn-info" wicket:id="header" disabled="disabled">Initiative</button>
-		<button class="btn btn-light" wicket:id="initiative">Initiative order</button>
+		<button class="btn btn-primary" disabled="disabled">Initiative</button>
 		<button class="btn btn-info" disabled="disabled" wicket:enclosure="current">Current turn: <span class="badge" wicket:id="current"></span></button>
+		<wicket:container wicket:id="conditions">
+			<button class="btn btn-light" wicket:id="condition"><span wicket:id="description">Condition</span> <span class="badge" wicket:id="count"></span></button>
+		</wicket:container>
+		<button class="btn btn-dark" wicket:id="condition">Add condition</button>
+		<button class="btn btn-info" wicket:id="initiative">Initiative order</button>
 		<button class="btn btn-default" wicket:id="next">Next</button>
 	</div>
 </wicket:panel>

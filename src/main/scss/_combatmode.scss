@@ -40,6 +40,11 @@
   right: 5px;
 }
 
+.modal-dialog {
+  max-width: 80%;
+  max-height: 80%;
+}
+
 #combat-modal {
   width: 100%;
   position: fixed;
