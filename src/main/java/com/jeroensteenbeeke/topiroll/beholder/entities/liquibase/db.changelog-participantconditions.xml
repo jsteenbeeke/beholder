@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="jeroen" failOnError="true" id="create-table-InitiativeParticipantCondition">
+    <createTable tableName="initiativeparticipantcondition">
+      <column name="id" type="bigint">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  <createSequence incrementBy="1" sequenceName="seq_id_initiativeparticipantcondition" startValue="1"/>
+  </changeSet>
+<changeSet author="jeroen" id="add-property-InitiativeParticipantCondition-participant">
+    <addColumn tableName="initiativeparticipantcondition">
+      <column name="participant" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="add-foreign-key-participant-to-id">
+    <addForeignKeyConstraint baseColumnNames="participant" baseTableName="initiativeparticipantcondition" constraintName="fk_initiativeparticipantcondition_participant" referencedColumnNames="id" referencedTableName="initiativeparticipant"/>
+  <createIndex indexName="idx_initiativeparticipantcondition_participant" tableName="initiativeparticipantcondition">
+      <column name="participant"/>
+    </createIndex>
+  </changeSet>
+<changeSet author="jeroen" id="add-property-InitiativeParticipantCondition-description">
+    <addColumn tableName="initiativeparticipantcondition">
+      <column name="description" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+<changeSet author="jeroen" id="add-property-InitiativeParticipantCondition-turnsRemaining">
+    <addColumn tableName="initiativeparticipantcondition">
+      <column name="turnsremaining" type="java.sql.Types.INTEGER">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

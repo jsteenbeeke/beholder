@@ -22,6 +22,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +34,6 @@ import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeLocation;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 
 import javax.annotation.Nonnull;
@@ -48,6 +47,9 @@ public class InitiativeServiceImpl implements InitiativeService {
 
 	@Autowired
 	private InitiativeParticipantDAO participantDAO;
+
+	@Autowired
+	private InitiativeParticipantConditionDAO conditionDAO;
 
 	@Override
 	public void hideInitiative(@Nonnull MapView view) {
@@ -142,6 +144,9 @@ public class InitiativeServiceImpl implements InitiativeService {
 
 	@Override
 	public void removeParticipant(@Nonnull InitiativeParticipant participant) {
+
+		removeConditionsFromParticipant(participant);
+
 		MapView view = participant.getView();
 		participantDAO.delete(participant);
 
@@ -245,6 +250,30 @@ public class InitiativeServiceImpl implements InitiativeService {
 		participant.setSelected(true);
 		participantDAO.update(participant);
 
+		InitiativeParticipantConditionFilter filter = new InitiativeParticipantConditionFilter();
+		filter.participant(participant);
+
+		Set<InitiativeParticipantCondition> toDelete = new HashSet<>();
+		Set<InitiativeParticipantCondition> toUpdate = new HashSet<>();
+
+		for (InitiativeParticipantCondition condition : conditionDAO.findByFilter(filter)) {
+			Integer turnsRemaining = condition.getTurnsRemaining();
+
+			if (turnsRemaining != null) {
+				turnsRemaining--;
+
+				if (turnsRemaining <= 0) {
+					toDelete.add(condition);
+				} else {
+					condition.setTurnsRemaining(turnsRemaining);
+					toUpdate.add(condition);
+				}
+			}
+		}
+
+		toUpdate.forEach(conditionDAO::update);
+		toDelete.forEach(conditionDAO::delete);
+
 		BeholderRegistry.instance.sendToView(view.getId(),
 				view.getInitiativeJS());
 	}
@@ -290,7 +319,42 @@ public class InitiativeServiceImpl implements InitiativeService {
 	@Override
 	public void clearNonPlayers(@Nonnull MapView view) {
 		Set<InitiativeParticipant> toDelete = view.getInitiativeParticipants().stream().filter(i -> !i.isPlayer()).collect(Collectors.toSet());
+
+		toDelete.forEach(this::removeConditionsFromParticipant);
 		toDelete.forEach(participantDAO::delete);
 		toDelete.forEach(view.getInitiativeParticipants()::remove);
+	}
+
+	private void removeConditionsFromParticipant(InitiativeParticipant participant) {
+		InitiativeParticipantConditionFilter filter = new InitiativeParticipantConditionFilter();
+		filter.participant(participant);
+
+		Set<InitiativeParticipantCondition> conditionsToDelete = new HashSet<>();
+
+		for (InitiativeParticipantCondition condition : conditionDAO.findByFilter(filter)) {
+			conditionsToDelete.add(condition);
+		}
+
+		conditionsToDelete.forEach(conditionDAO::delete);
+	}
+
+	@Override
+	public void createCondition(InitiativeParticipant participant, String description, Integer turnsRemaining) {
+		InitiativeParticipantCondition condition = new InitiativeParticipantCondition();
+		condition.setParticipant(participant);
+		condition.setDescription(description);
+		condition.setTurnsRemaining(turnsRemaining);
+
+		conditionDAO.save(condition);
+		conditionDAO.flush();
+	}
+
+	@Override
+	public void updateCondition(InitiativeParticipantCondition condition, String description, Integer turnsRemaining) {
+		condition.setDescription(description);
+		condition.setTurnsRemaining(turnsRemaining);
+
+		conditionDAO.update(condition);
+		conditionDAO.flush();
 	}
 }

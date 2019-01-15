@@ -114,8 +114,6 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		final double displayFactor = map.map(m -> m.getDisplayFactor(view)).orElse(1.0);
 		int desiredWidth = map.map(ScaledMap::getBasicWidth).map(w -> (int) displayFactor * w).orElse(0);
 
-				// (int) (displayFactor * map.getBasicWidth());
-
 		if (map.isPresent()) {
 			preview = new AbstractMapPreview("preview", map.get(), desiredWidth) {
 				private static final long serialVersionUID = 8613385670220290868L;

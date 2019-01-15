@@ -17,10 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeLocation;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 import javax.annotation.Nonnull;
 
@@ -56,4 +53,8 @@ public interface InitiativeService {
 	void markAsNonPlayer(@Nonnull InitiativeParticipant participant);
 
 	void clearNonPlayers(@Nonnull MapView view);
+
+	void createCondition(InitiativeParticipant participant, String description, Integer turnsRemaining);
+
+	void updateCondition(InitiativeParticipantCondition condition, String description, Integer turnsRemaining);
 }

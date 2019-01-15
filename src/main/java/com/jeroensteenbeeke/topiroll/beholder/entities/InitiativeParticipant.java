@@ -26,6 +26,8 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRenderable;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class InitiativeParticipant extends BaseDomainObject {
@@ -50,6 +52,10 @@ public class InitiativeParticipant extends BaseDomainObject {
 
  	@Column(nullable=false)
 	private boolean player;
+ 	@OneToMany(mappedBy="participant", fetch=FetchType.LAZY)
+	private List<InitiativeParticipantCondition> conditions = new ArrayList<InitiativeParticipantCondition>();
+
+
  	@Column(nullable=true)
 	private Integer offsetY;
 
@@ -188,6 +194,16 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public void setOffsetY( @Nullable Integer offsetY) {
 		this.offsetY = offsetY;
 	}
+
+	@Nonnull
+	public List<InitiativeParticipantCondition> getConditions() {
+		return conditions;
+	}
+	public void setConditions( @Nonnull List<InitiativeParticipantCondition> conditions) {
+		this.conditions = conditions;
+	}
+
+
 
 
 

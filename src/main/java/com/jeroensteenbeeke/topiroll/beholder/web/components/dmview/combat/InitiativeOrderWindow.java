@@ -8,11 +8,10 @@ import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeLocation;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeType;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
@@ -89,6 +88,9 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 			private static final long serialVersionUID = 1L;
 
+			@Inject
+			private InitiativeParticipantConditionDAO conditionDAO;
+
 			@Override
 			protected void populateItem(Item<InitiativeParticipant> item) {
 				InitiativeParticipant participant = item.getModelObject();
@@ -135,6 +137,43 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 					}
 				});
 				item.add(form);
+
+				InitiativeParticipantConditionFilter conditionFilter = new InitiativeParticipantConditionFilter();
+				conditionFilter.participant(participant);
+				conditionFilter.description().orderBy(true);
+
+				item.add(new DataView<InitiativeParticipantCondition>("conditions", FilterDataProvider.of(conditionFilter, conditionDAO)) {
+
+					private static final long serialVersionUID = 3893052636937876681L;
+
+					@Override
+					protected void populateItem(Item<InitiativeParticipantCondition> conditionItem) {
+						InitiativeParticipantCondition condition = conditionItem.getModelObject();
+
+						conditionItem.add(new Label("description", condition.getDescription()));
+						conditionItem.add(new Label("turns", condition.getTurnsRemaining()).setVisible(condition.getTurnsRemaining() != null));
+						conditionItem.add(new AjaxIconLink<InitiativeParticipantCondition>("edit", conditionItem.getModel(), FontAwesome.edit) {
+							private static final long serialVersionUID = -7034858499613853766L;
+
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								callback.removeModal(target);
+
+								callback.createModalWindow(target, InitiativeParticipantConditionEditWindow::new, getModelObject());
+							}
+						});
+						conditionItem.add(new AjaxIconLink<InitiativeParticipantCondition>("delete", conditionItem.getModel(), FontAwesome.trash) {
+							private static final long serialVersionUID = -4100298936998032360L;
+
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								conditionDAO.delete(getModelObject());
+								callback.removeModal(target);
+							}
+						});
+					}
+				});
+
 				item.add(new AjaxIconLink<InitiativeParticipant>("select",
 						item.getModel(), FontAwesome.location_arrow) {
 
@@ -218,6 +257,21 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 						return super.isVisible() && item.getModelObject().isPlayer();
 
 					}
+				});
+				item.add(new AjaxIconLink<InitiativeParticipant>("condition",
+						item.getModel(), FontAwesome.paperclip) {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						InitiativeOrderWindow.this.setVisible(false);
+						target.add(InitiativeOrderWindow.this);
+
+						callback.createModalWindow(target, InitiativeParticipantConditionCreateWindow::new, getModelObject());
+						callback.refreshMenus(target);
+					}
+
 				});
 				item.add(new AjaxIconLink<InitiativeParticipant>("delete",
 						item.getModel(), FontAwesome.trash) {
