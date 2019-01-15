@@ -4,9 +4,11 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.CompendiumService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.util.compendium.Compendium;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
@@ -36,6 +38,9 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 
 	@Inject
 	private CompendiumService compendiumService;
+
+	@Inject
+	private PinnedCompendiumEntryDAO pinnedCompendiumEntryDAO;
 
 	private ListView<CompendiumEntry> searchResults;
 
@@ -102,9 +107,24 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 
 				callback.refreshMenus(target);
 			}
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				CompendiumEntry e = CompendiumWindow.this.getModelObject();
+
+				if (e != null) {
+					PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
+					filter.entry(e);
+					filter.pinnedBy(BeholderSession.get().getUser());
+
+					setVisible(pinnedCompendiumEntryDAO.countByFilter(filter) == 0);
+				} else {
+					setVisible(false);
+				}
+			}
 		});
-		pinLink.setVisible(entry != null &&
-				entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(pb -> pb.equals(BeholderSession.get().getUser())));
 		pinLink.setOutputMarkupPlaceholderTag(true);
 
 		add(unpinLink = new AjaxLink<CompendiumEntry>("unpin", getModel()) {
@@ -121,11 +141,25 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 
 				callback.refreshMenus(target);
 			}
-		});
-		unpinLink.setVisible(entry != null &&
-				entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(pb -> pb.equals(BeholderSession.get().getUser())));
-		unpinLink.setOutputMarkupPlaceholderTag(true);
 
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				CompendiumEntry e = CompendiumWindow.this.getModelObject();
+
+				if (e != null) {
+					PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
+					filter.entry(e);
+					filter.pinnedBy(BeholderSession.get().getUser());
+
+					setVisible(pinnedCompendiumEntryDAO.countByFilter(filter) > 0);
+				} else {
+					setVisible(false);
+				}
+			}
+		});
+		unpinLink.setOutputMarkupPlaceholderTag(true);
 
 		add(searchResultsContainer = new WebMarkupContainer("results"));
 		searchResultsContainer.setOutputMarkupPlaceholderTag(true);
