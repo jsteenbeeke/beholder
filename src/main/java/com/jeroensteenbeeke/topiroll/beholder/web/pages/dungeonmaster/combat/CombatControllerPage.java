@@ -313,8 +313,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 									@Nonnull
 											CircleMarker marker) {
 								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
-										.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
+										.setX((m, factor) -> Math.round(factor * (m.getOffsetX())))
+										.setY((m, factor) -> Math.round(factor * (m.getOffsetY())))
 										.setBackgroundColor((m, factor) -> marker.getColor())
 										.setWidth((m, factor) -> Math.round(wh * factor * 2))
 										.setHeight((m, factor) -> Math.round(wh * factor * 2))
