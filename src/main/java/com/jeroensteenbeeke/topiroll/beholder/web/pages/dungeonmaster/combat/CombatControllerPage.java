@@ -146,10 +146,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
 					previousClickedLocation = clickedLocation;
-					clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
-
-							(event
-									.getOffsetTop() / displayFactor));
+					clickedLocation = new Point(coordinateTranslator.translateToRealImageSize(event.getOffsetLeft()), coordinateTranslator.translateToRealImageSize(event.getOffsetTop()));
 					selectedMarker = Model.of();
 					selectedToken = Model.of();
 
@@ -161,7 +158,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			}
 		});
 
-		mapModel = map.<IModel<ScaledMap>> map(ModelMaker::wrap).orElseGet(Model::of);
+		mapModel = map.<IModel<ScaledMap>>map(ModelMaker::wrap).orElseGet(Model::of);
 
 		IModel<List<TokenInstance>> tokenModel = new LoadableDetachableModel<List<TokenInstance>>() {
 			private static final long serialVersionUID = -8597299178957964301L;
@@ -300,7 +297,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			protected void populateItem(ListItem<AreaMarker> item) {
 				AreaMarker areaMarker = item.getModelObject();
 
-				int squareSize = getCurrentMap().map(ScaledMap::getSquareSize).orElse(0);
+				int squareSize = getCurrentMap().map(ScaledMap::getSquareSize).orElse(1);
 
 				int wh = squareSize * areaMarker.getExtent() / 5;
 
@@ -319,9 +316,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 										.setWidth((m, factor) -> Math.round(wh * factor * 2))
 										.setHeight((m, factor) -> Math.round(wh * factor * 2))
 										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 100L)
-										.setTransform((m, factor) -> String.format
-												("translate(%1$dpx,%1$dpx)", -wh));
+										.setBorderRadiusPercent((m, factor) -> 100L);
 							}
 
 							@Override
@@ -686,7 +681,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 					}
 				};
-				entryLink.add(new Label("label", Model.of("Compendium: "+ item.getModelObject().getTitle())));
+				entryLink.add(new Label("label", Model.of("Compendium: " + item.getModelObject().getTitle())));
 				item.add(entryLink);
 
 			}
