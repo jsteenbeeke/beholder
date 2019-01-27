@@ -25,17 +25,17 @@ pipeline {
 			    sh 'git submodule update --init --recursive'
 			    sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
 			    sh 'mvn clean package -U'
-			    stash name: 'war', includes: '**/*.war'
+			    stash name: 'beholder-war', includes: '**/*.war'
 			}
 		}
 		stage('Dockerize & Publish') {
-            agent {
-                        label 'docker'
-            }
+			agent {
+				label 'docker'
+			}
 
 			steps {
 				sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:latest'
-				unstash 'war'
+				unstash 'beholder-war'
 				sh 'docker build -t registry.jeroensteenbeeke.nl/beholder:latest .'
 				sh 'docker push registry.jeroensteenbeeke.nl/beholder:latest'
 
