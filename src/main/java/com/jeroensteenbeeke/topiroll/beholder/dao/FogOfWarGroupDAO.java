@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 
-public interface FogOfWarGroupDAO extends DAO<FogOfWarGroup> {
+public interface FogOfWarGroupDAO extends DAO<FogOfWarGroup, FogOfWarGroupFilter> {
 
 }

@@ -18,14 +18,15 @@
 package com.jeroensteenbeeke.topiroll.beholder.dao.hibernate;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
-import org.springframework.stereotype.Component;
+import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupFilter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "request")
-class FogOfWarGroupDAOImpl extends HibernateDAO<FogOfWarGroup>
+class FogOfWarGroupDAOImpl extends HibernateDAO<FogOfWarGroup, FogOfWarGroupFilter>
 		implements FogOfWarGroupDAO {
 
 }

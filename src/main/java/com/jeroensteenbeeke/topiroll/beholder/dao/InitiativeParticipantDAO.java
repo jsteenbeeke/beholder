@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 
-public interface InitiativeParticipantDAO extends DAO<InitiativeParticipant> {
+public interface InitiativeParticipantDAO extends DAO<InitiativeParticipant, InitiativeParticipantFilter> {
 
 }

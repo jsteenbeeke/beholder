@@ -1,13 +1,14 @@
 package com.jeroensteenbeeke.topiroll.beholder.dao.hibernate;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipantCondition;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
-import org.springframework.stereotype.Repository;
+import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipantCondition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
-	@Repository
-	@Scope(value="request")  
-class InitiativeParticipantConditionDAOImpl extends HibernateDAO<InitiativeParticipantCondition> implements InitiativeParticipantConditionDAO {
+@Repository
+@Scope(value = "request")
+class InitiativeParticipantConditionDAOImpl extends HibernateDAO<InitiativeParticipantCondition, InitiativeParticipantConditionFilter> implements InitiativeParticipantConditionDAO {
 
 }

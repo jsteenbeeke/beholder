@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter;
 
-public interface BeholderUserDAO extends DAO<BeholderUser> {
+public interface BeholderUserDAO extends DAO<BeholderUser, BeholderUserFilter> {
 
 }

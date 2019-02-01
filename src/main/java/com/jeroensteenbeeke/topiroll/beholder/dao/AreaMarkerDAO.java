@@ -20,7 +20,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.AreaMarkerFilter;
 
-public interface AreaMarkerDAO extends DAO<AreaMarker> {
+public interface AreaMarkerDAO extends DAO<AreaMarker, AreaMarkerFilter> {
 
 }

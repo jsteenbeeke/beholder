@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarTriangle;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarTriangleFilter;
 
-public interface FogOfWarTriangleDAO extends DAO<FogOfWarTriangle> {
+public interface FogOfWarTriangleDAO extends DAO<FogOfWarTriangle, FogOfWarTriangleFilter> {
 
 }

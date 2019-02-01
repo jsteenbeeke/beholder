@@ -19,8 +19,9 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroupVisibility;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarGroupVisibilityFilter;
 
 public interface FogOfWarGroupVisibilityDAO
-		extends DAO<FogOfWarGroupVisibility> {
+		extends DAO<FogOfWarGroupVisibility, FogOfWarGroupVisibilityFilter> {
 
 }

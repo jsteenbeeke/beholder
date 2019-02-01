@@ -18,15 +18,16 @@
 package com.jeroensteenbeeke.topiroll.beholder.dao.hibernate;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShapeVisibility;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeVisibilityDAO;
-import org.springframework.stereotype.Component;
+import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShapeVisibility;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeVisibilityFilter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "request")
 class FogOfWarShapeVisibilityDAOImpl
-		extends HibernateDAO<FogOfWarShapeVisibility>
+		extends HibernateDAO<FogOfWarShapeVisibility, FogOfWarShapeVisibilityFilter>
 		implements FogOfWarShapeVisibilityDAO {
 
 }
