@@ -19,13 +19,14 @@
 package com.jeroensteenbeeke.topiroll.beholder.dao.hibernate;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ConeMarker;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ConeMarkerDAO;
-import org.springframework.stereotype.Component;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ConeMarker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ConeMarkerFilter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 	@Component
 	@Scope(value="request")  
-class ConeMarkerDAOImpl extends HibernateDAO<ConeMarker> implements ConeMarkerDAO {
+class ConeMarkerDAOImpl extends HibernateDAO<ConeMarker, ConeMarkerFilter> implements ConeMarkerDAO {
 
 }

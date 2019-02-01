@@ -17,16 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao.hibernate;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.BeholderUserDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "request")
-class BeholderUserDAOImpl extends HibernateDAO<BeholderUser>
+class BeholderUserDAOImpl extends HibernateDAO<BeholderUser, BeholderUserFilter>
 		implements BeholderUserDAO {
 
 }

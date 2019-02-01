@@ -20,7 +20,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.LineMarker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.LineMarkerFilter;
 
-public interface LineMarkerDAO extends DAO<LineMarker> {
+public interface LineMarkerDAO extends DAO<LineMarker, LineMarkerFilter> {
 
 }

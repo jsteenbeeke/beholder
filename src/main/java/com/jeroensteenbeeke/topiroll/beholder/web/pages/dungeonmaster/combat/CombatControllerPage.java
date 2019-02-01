@@ -168,7 +168,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				return getCurrentMap().map(m -> {
 					TokenInstanceFilter filter = new TokenInstanceFilter();
 					filter.map(m);
-					filter.currentHitpoints().greaterThanOrNull(0);
+					filter.currentHitpoints().greaterThan(0).orCurrentHitpoints().isNull();
 					filter.id().orderBy(true);
 
 					return tokenInstanceDAO.findByFilter(filter).toJavaList();

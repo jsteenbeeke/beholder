@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 
-public interface TokenInstanceDAO extends DAO<TokenInstance> {
+public interface TokenInstanceDAO extends DAO<TokenInstance, TokenInstanceFilter> {
 
 }

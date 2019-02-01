@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 
-public interface FogOfWarShapeDAO extends DAO<FogOfWarShape> {
+public interface FogOfWarShapeDAO extends DAO<FogOfWarShape, FogOfWarShapeFilter> {
 
 }

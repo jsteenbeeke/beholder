@@ -19,7 +19,8 @@ package com.jeroensteenbeeke.topiroll.beholder.dao;
 
 import com.jeroensteenbeeke.hyperion.meld.DAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.Effect;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.EffectFilter;
 
-public interface EffectDAO extends DAO<Effect> {
+public interface EffectDAO extends DAO<Effect, EffectFilter> {
 
 }
