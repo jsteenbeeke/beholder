@@ -274,6 +274,8 @@ public class InitiativeServiceImpl implements InitiativeService {
 		toUpdate.forEach(conditionDAO::update);
 		toDelete.forEach(conditionDAO::delete);
 
+		participantDAO.flush();
+
 		BeholderRegistry.instance.sendToView(view.getId(),
 				view.getInitiativeJS());
 	}

@@ -28,6 +28,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 	private static final String UNKNOWN = "-";
 
 	private final Label current;
+
 	@Inject
 	private InitiativeParticipantDAO initiativeDAO;
 
@@ -47,18 +48,31 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 		currentParticipantModel = new LoadableDetachableModel<InitiativeParticipant>() {
 			@Override
 			protected InitiativeParticipant load() {
-				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
-						.view(getModelObject())
+				MapView view = getModelObject();
+				InitiativeParticipant initiativeParticipant = initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
+						.view(view)
 						.selected(true)).getOrNull();
+				return initiativeParticipant;
 			}
 		};
 
-		add(current = new Label("current", currentParticipantModel.map(InitiativeParticipant::getName).orElse(UNKNOWN)) {
+		IModel<String> currentParticipantNameModel = new LoadableDetachableModel<String>() {
+			@Override
+			protected String load() {
+				MapView view = getModelObject();
+				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
+						.view(view)
+						.selected(true)).map(InitiativeParticipant::getName).getOrElse(UNKNOWN);
+			}
+		};
+
+		add(current = new Label("current", currentParticipantNameModel) {
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && !UNKNOWN.equals(getDefaultModelObject());
 			}
 		});
+		current.setOutputMarkupId(true);
 
 		add(new AjaxLink<MapView>("initiative", ModelMaker.wrap(view)) {
 
@@ -73,6 +87,8 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				initiativeService.selectNext(getModelObject());
 				callback.refreshMenus(target);
+				current.detach();
+				target.add(current);
 			}
 
 			public boolean isVisible() {
