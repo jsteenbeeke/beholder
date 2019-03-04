@@ -1,17 +1,14 @@
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
+import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
+import com.rollbar.notifier.Rollbar;
+import com.rollbar.notifier.config.ConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
-import com.rollbar.Rollbar;
 
 @Component
 public class RollBarInitializer implements InitializingBean {
@@ -25,7 +22,6 @@ public class RollBarInitializer implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		String apiKey = data.getServerKey();
 		String environment = data.getEnvironment();
-		String clientKey = data.getClientKey();
 
 		log.info("Rollbar API key: {}", apiKey != null && !apiKey.isEmpty());
 		log.info("Rollbar Environment: {}", environment);
@@ -33,7 +29,7 @@ public class RollBarInitializer implements InitializingBean {
 		if (apiKey != null && !apiKey.isEmpty() && environment != null
 				&& !environment.isEmpty()) {
 			RollBarReference.instance
-					.setRollbar(new Rollbar(apiKey, environment));
+					.setRollbar(Rollbar.init(ConfigBuilder.withAccessToken(apiKey).environment(environment).build()));
 
 
 		} else {
