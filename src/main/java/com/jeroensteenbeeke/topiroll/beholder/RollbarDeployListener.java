@@ -24,7 +24,11 @@ public class RollbarDeployListener implements IApplicationListener {
 			RollBarDeployNotifier.createNotifier().withApiKey(data.getServerKey())
 								 .withEnvironment(data.getEnvironment())
 								 .andDeployingUser(data.getLocalUsername())
-								 .notifyDeploy(String.format("beholder-%s-hyperion-%s", getRevision(), Hyperion.getRevision().getOrElse("unknown")));
+								 .notifyDeploy(getRevision(), Hyperion
+										 .getRevision()
+										 .map(rev -> "Hyperion version: " + rev)
+										 .getOrElse("Hyperion version: unknown")
+								 );
 		}
 	}
 
