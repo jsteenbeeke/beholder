@@ -1,19 +1,17 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import com.jeroensteenbeeke.hyperion.Hyperion;
+import com.jeroensteenbeeke.hyperion.rollbar.RollBarDeployNotifier;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
-import okhttp3.*;
 import org.apache.wicket.Application;
 import org.apache.wicket.IApplicationListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class RollbarDeployListener implements IApplicationListener {
-	private static final Logger log = LoggerFactory.getLogger(RollbarDeployListener.class);
-
 	private final RollBarData data;
 
 	RollbarDeployListener(RollBarData data) {
@@ -23,27 +21,10 @@ public class RollbarDeployListener implements IApplicationListener {
 	@Override
 	public void onAfterInitialized(Application application) {
 		if (data.getEnvironment() != null) {
-			OkHttpClient client = new OkHttpClient();
-			MultipartBody body = new MultipartBody.Builder()
-					.addFormDataPart("access_token", data.getServerKey())
-					.addFormDataPart("environment", data.getEnvironment())
-					.addFormDataPart("revision", getRevision())
-					.addFormDataPart("local_username", data.getLocalUsername())
-					.setType(MultipartBody.FORM)
-					.build();
-			Request request = new Request.Builder().url("https://api.rollbar.com/api/1/deploy/")
-												   .post(body
-
-												   ).build();
-			try (Response response = client.newCall(request).execute()) {
-				if (response.isSuccessful()) {
-					log.info("Rollbar deploy notification done");
-				} else {
-					log.info("Rollbar deploy notification failed: {} {}", response.code(), response.body().string());
-				}
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
+			RollBarDeployNotifier.createNotifier().withApiKey(data.getServerKey())
+								 .withEnvironment(data.getEnvironment())
+								 .andDeployingUser(data.getLocalUsername())
+								 .notifyDeploy(String.format("beholder-%s-hyperion-%s", getRevision(), Hyperion.getRevision()));
 		}
 	}
 
@@ -59,7 +40,7 @@ public class RollbarDeployListener implements IApplicationListener {
 				bos.write(i);
 			}
 
-			return new String(bos.toByteArray(), "UTF-8");
+			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
 		} catch (IOException ioe) {
 			return "Unknown";
 		}
