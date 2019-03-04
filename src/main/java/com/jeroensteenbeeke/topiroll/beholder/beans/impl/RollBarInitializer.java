@@ -28,6 +28,7 @@ public class RollBarInitializer implements InitializingBean {
 
 		if (apiKey != null && !apiKey.isEmpty() && environment != null
 				&& !environment.isEmpty()) {
+			RollBarReference.instance.excludeException("org.eclipse.jetty.io.EofException");
 			RollBarReference.instance
 					.setRollbar(Rollbar.init(ConfigBuilder.withAccessToken(apiKey).environment(environment).build()));
 

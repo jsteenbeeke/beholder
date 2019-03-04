@@ -134,8 +134,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 		add(new BootstrapPagingNavigator("viewnav", viewView));
 
 
-
-		add(new Link<MapView>("addview") {
+		Link<MapView> l;
+		add(l = new Link<MapView>("addview") {
 			private static final long serialVersionUID = 1L;
 
 			@Override

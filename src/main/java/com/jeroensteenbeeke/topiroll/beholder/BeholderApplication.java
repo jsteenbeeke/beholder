@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesomeInitializer;
 import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
+import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
 import com.jeroensteenbeeke.hyperion.social.Slack;
 import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
@@ -31,6 +32,8 @@ import com.jeroensteenbeeke.topiroll.beholder.jobs.InitializeCompendiumJob;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.MigrateImagesToAmazonJob;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.InternalErrorPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.PageExpiredPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MusicPage;
 import org.apache.wicket.Page;
@@ -38,8 +41,11 @@ import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
+import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.IRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -103,6 +109,16 @@ public class BeholderApplication extends WebApplication
 		}
 
 		getApplicationListeners().add(new RollbarDeployListener(data));
+		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
+		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
+		getRequestCycleListeners().add(new IRequestCycleListener() {
+			@Override
+			public IRequestHandler onException(RequestCycle cycle, Exception ex) {
+				RollBarReference.instance.errorCaught(ex);
+
+				return cycle.getActiveRequestHandler();
+			}
+		});
 	}
 
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {
