@@ -40,7 +40,7 @@ public class RollbarDeployListener implements IApplicationListener {
 				bos.write(i);
 			}
 
-			return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+			return new String(bos.toByteArray(), StandardCharsets.UTF_8).trim();
 		} catch (IOException ioe) {
 			return "Unknown";
 		}
