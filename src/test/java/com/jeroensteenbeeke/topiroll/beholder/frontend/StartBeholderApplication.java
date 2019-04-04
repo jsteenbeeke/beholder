@@ -20,7 +20,6 @@ package com.jeroensteenbeeke.topiroll.beholder.frontend;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
 import com.jeroensteenbeeke.imagesrv.ImageServer;
-import com.sun.org.apache.xpath.internal.Arg;
 import org.apache.commons.cli.*;
 import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
 import org.danekja.java.util.function.serializable.SerializableConsumer;
