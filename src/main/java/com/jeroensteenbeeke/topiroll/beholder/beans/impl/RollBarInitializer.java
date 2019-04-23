@@ -4,6 +4,8 @@ import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.rollbar.notifier.Rollbar;
 import com.rollbar.notifier.config.ConfigBuilder;
+import org.apache.wicket.IWicketInternalException;
+import org.apache.wicket.protocol.http.PageExpiredException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,6 +31,8 @@ public class RollBarInitializer implements InitializingBean {
 		if (apiKey != null && !apiKey.isEmpty() && environment != null
 				&& !environment.isEmpty()) {
 			RollBarReference.instance.excludeException("org.eclipse.jetty.io.EofException");
+			RollBarReference.instance.excludeException("org.apache.wicket.IWicketInternalException");
+			RollBarReference.instance.excludeException(PageExpiredException.class);
 			RollBarReference.instance
 					.setRollbar(Rollbar.init(ConfigBuilder.withAccessToken(apiKey).environment(environment).build()));
 
