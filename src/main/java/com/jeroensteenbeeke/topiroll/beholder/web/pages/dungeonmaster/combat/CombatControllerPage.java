@@ -146,7 +146,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
 					previousClickedLocation = clickedLocation;
-					clickedLocation = new Point(coordinateTranslator.translateToRealImageSize(event.getOffsetLeft()), coordinateTranslator.translateToRealImageSize(event.getOffsetTop()));
+					clickedLocation = new Point(coordinateTranslator.translateToRealImageSize(event.getOffsetLeft()), coordinateTranslator
+						.translateToRealImageSize(event.getOffsetTop()));
 					selectedMarker = Model.of();
 					selectedToken = Model.of();
 
@@ -188,7 +189,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				int squareSize = getCurrentMap().map(ScaledMap::getSquareSize).orElse(0);
 
 				int wh = squareSize
-						* instance.getDefinition().getDiameterInSquares();
+					* instance.getDefinition().getDiameterInSquares();
 
 				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = 7184052381548459602L;
@@ -199,44 +200,49 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 					}
 				});
 				image.add(AttributeModifier.replace("style",
-						new DependentModel<TokenInstance, String>(item.getModel()) {
-							private static final long serialVersionUID = 1L;
+													new DependentModel<TokenInstance, String>(item.getModel()) {
+														private static final long serialVersionUID = 1L;
 
-							@Override
-							protected String load(TokenInstance i) {
-								int left = i.getOffsetX();
-								int top = i.getOffsetY();
+														@Override
+														protected String load(TokenInstance i) {
+															int left = i.getOffsetX();
+															int top = i.getOffsetY();
 
-								left = coordinateTranslator.translateToScaledImageSize(left);
-								top = coordinateTranslator.translateToScaledImageSize(top);
+															left = coordinateTranslator.translateToScaledImageSize(left);
+															top = coordinateTranslator.translateToScaledImageSize(top);
 
-								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
-								return String.format(
-										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
-												"%3$dpx !important; " +
-												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-												"!important; background-size: %3$dpx %3$dpx; " +
-												"border-radius: 100%%; border: 3px " +
-												"%6$s #%4$s; background-image: url('%5$s'); " +
-												"display: table-cell; vertical-align: bottom; " +
-												"color: #cccccc; text-align: center; margin: 0; padding: 0;",
-										left, top, actualWH, i
-												.getBorderType().toHexColor(),
-										i.getDefinition().getImageUrl(),
-										i.isShow() ? "solid" : "dashed"
-								);
-							}
+															return String.format(
+																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
+																	"%3$dpx !important; " +
+																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+																	"!important; background-size: %3$dpx %3$dpx; " +
+																	"border-radius: 100%%; border: 3px " +
+																	"%6$s #%4$s; background-image: url('%5$s'); " +
+																	"display: table-cell; vertical-align: bottom; " +
+																	"color: #cccccc; text-align: center; margin: 0; padding: 0;",
+																left, top, actualWH, i
+																	.getBorderType().toHexColor(),
+																i.getDefinition().getImageUrl(),
+																i.isShow() ? "solid" : "dashed"
+															);
+														}
 
-						}));
+													}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = 5933238244997270769L;
 
 					@Override
 					protected String load(TokenInstance instance) {
-						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
+						return Optional
+							.ofNullable(instance)
+							.filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
+							.map(
 								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()
-						).map(p -> String.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
+							)
+							.map(p -> String.format("%s (%d%% health)", instance.getBadge(), p))
+							.orElse(instance.getBadge());
 					}
 				}));
 
@@ -283,7 +289,12 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 			@Override
 			protected List<AreaMarker> load() {
-				return viewModel.getObject().getMarkers().stream().sorted(Comparator.comparing(AreaMarker::getId)).collect(Collectors.toList());
+				return viewModel
+					.getObject()
+					.getMarkers()
+					.stream()
+					.sorted(Comparator.comparing(AreaMarker::getId))
+					.collect(Collectors.toList());
 			}
 		};
 
@@ -302,99 +313,104 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				int wh = squareSize * areaMarker.getExtent() / 5;
 
 				MarkerStyleModel<?> markerStyleModel = areaMarker
-						.visit(new AreaMarkerVisitor<MarkerStyleModel<?>>() {
-							private static final long serialVersionUID = -7713349603953871476L;
+					.visit(new AreaMarkerVisitor<MarkerStyleModel<?>>() {
+						private static final long serialVersionUID = -7713349603953871476L;
 
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											CircleMarker marker) {
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round(factor * (m.getOffsetX())))
-										.setY((m, factor) -> Math.round(factor * (m.getOffsetY())))
-										.setBackgroundColor((m, factor) -> marker.getColor())
-										.setWidth((m, factor) -> Math.round(wh * factor * 2))
-										.setHeight((m, factor) -> Math.round(wh * factor * 2))
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 100L);
-							}
+						@Override
+						public MarkerStyleModel<?> visit(
+							@Nonnull
+								CircleMarker marker) {
+							return new MarkerStyleModel<>(marker, displayFactor)
+								.setX((m, factor) -> Math.round(factor * (m.getOffsetX())))
+								.setY((m, factor) -> Math.round(factor * (m.getOffsetY())))
+								.setBackgroundColor((m, factor) -> marker.getColor())
+								.setWidth((m, factor) -> Math.round(wh * factor * 2))
+								.setHeight((m, factor) -> Math.round(wh * factor * 2))
+								.setOpacity((m, factor) -> 0.5)
+								.setBorderRadiusPercent((m, factor) -> 100L);
+						}
 
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											ConeMarker marker) {
-								// CSS offset is interpreted as the top-left of the
-								// element,
-								// whereas the cone origin is halfway along the left border
-								// This requires a translation based on the rotation of
-								// the element
-								double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
-								double ty = Math.sin(Math.toRadians(marker.getTheta()))
-										- 2;
-
-
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor))
-										.setWidth((m, factor) -> 0L)
-										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> String
-												.format("%fpx solid transparent", wh * factor)).setBorderRight((m, factor) -> String.format("%fpx solid #%s",
-												wh * factor, marker.getColor()))
-										.setBorderBottom((m, factor) -> String.format("%fpx solid transparent", wh * factor))
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 50L)
-										.setTransform((m, factor) -> String
-												.format("translate(%fpx, %fpx) rotate(%ddeg)",
-														factor * tx * wh / 2, factor * ty *
-																wh / 2, m.getTheta()))
-
-										;
-							}
-
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											CubeMarker marker) {
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
-										.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
-										.setWidth((m, factor) -> Math.round(wh * factor))
-										.setHeight((m, factor) -> Math.round(wh * factor))
-										.setBackgroundColor((m, factor) -> marker.getColor())
-										.setOpacity((m, factor) -> 0.5)
-										.setTransform((m, factor) -> String.format
-												("translate(%1$dpx,%1$dpx)", -wh / 2));
-							}
-
-							@Override
-							public MarkerStyleModel<?> visit(
-									@Nonnull
-											LineMarker marker) {
-								// CSS offset is interpreted as the top-left of the
-								// element,
-								// whereas the cone origin is halfway along the left border
-								// This requires a translation based on the rotation of
-								// the element
-								double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
-								double ty = Math.sin(Math.toRadians(marker.getTheta()));
+						@Override
+						public MarkerStyleModel<?> visit(
+							@Nonnull
+								ConeMarker marker) {
+							// CSS offset is interpreted as the top-left of the
+							// element,
+							// whereas the cone origin is halfway along the left border
+							// This requires a translation based on the rotation of
+							// the element
+							double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
+							double ty = Math.sin(Math.toRadians(marker.getTheta()))
+								- 2;
 
 
-								return new MarkerStyleModel<>(marker, displayFactor)
-										.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
-										.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor)).setWidth((m, factor) -> 0L)
-										.setHeight((m, factor) -> 0L).setBorderTop((m, factor) -> "5px solid transparent").setBorderRight((m, factor) -> String.format("%fpx solid #%s",
-												wh * factor, marker.getColor()))
-										.setBorderBottom((m, factor) -> "1px solid transparent")
-										.setOpacity((m, factor) -> 0.5)
-										.setBorderRadiusPercent((m, factor) -> 50L)
-										.setTransform((m, factor) -> String
-												.format("translate(%fpx, %fpx) rotate(%ddeg)",
-														factor * tx * wh / 2, factor * ty *
-																(wh / 2 - 2), m.getTheta()))
+							return new MarkerStyleModel<>(marker, displayFactor)
+								.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
+								.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor))
+								.setWidth((m, factor) -> 0L)
+								.setHeight((m, factor) -> 0L)
+								.setBorderTop((m, factor) -> String
+									.format("%fpx solid transparent", wh * factor))
+								.setBorderRight((m, factor) -> String.format("%fpx solid #%s",
+																			 wh * factor, marker.getColor()))
+								.setBorderBottom((m, factor) -> String.format("%fpx solid transparent", wh * factor))
+								.setOpacity((m, factor) -> 0.5)
+								.setBorderRadiusPercent((m, factor) -> 50L)
+								.setTransform((m, factor) -> String
+									.format("translate(%fpx, %fpx) rotate(%ddeg)",
+											factor * tx * wh / 2, factor * ty *
+												wh / 2, m.getTheta()))
 
-										;
-							}
-						});
+								;
+						}
+
+						@Override
+						public MarkerStyleModel<?> visit(
+							@Nonnull
+								CubeMarker marker) {
+							return new MarkerStyleModel<>(marker, displayFactor)
+								.setX((m, factor) -> Math.round(factor * m.getOffsetX()))
+								.setY((m, factor) -> Math.round(factor * m.getOffsetY()))
+								.setWidth((m, factor) -> Math.round(wh * factor))
+								.setHeight((m, factor) -> Math.round(wh * factor))
+								.setBackgroundColor((m, factor) -> marker.getColor())
+								.setOpacity((m, factor) -> 0.5)
+								.setTransform((m, factor) -> String.format
+									("translate(%1$dpx,%1$dpx)", -wh / 2));
+						}
+
+						@Override
+						public MarkerStyleModel<?> visit(
+							@Nonnull
+								LineMarker marker) {
+							// CSS offset is interpreted as the top-left of the
+							// element,
+							// whereas the cone origin is halfway along the left border
+							// This requires a translation based on the rotation of
+							// the element
+							double tx = Math.cos(Math.toRadians(marker.getTheta())) - 1;
+							double ty = Math.sin(Math.toRadians(marker.getTheta()));
+
+
+							return new MarkerStyleModel<>(marker, displayFactor)
+								.setX((m, factor) -> Math.round((m.getOffsetX() + wh) * factor))
+								.setY((m, factor) -> Math.round((m.getOffsetY() + wh) * factor))
+								.setWidth((m, factor) -> 0L)
+								.setHeight((m, factor) -> 0L)
+								.setBorderTop((m, factor) -> "5px solid transparent")
+								.setBorderRight((m, factor) -> String.format("%fpx solid #%s",
+																			 wh * factor, marker.getColor()))
+								.setBorderBottom((m, factor) -> "1px solid transparent")
+								.setOpacity((m, factor) -> 0.5)
+								.setBorderRadiusPercent((m, factor) -> 50L)
+								.setTransform((m, factor) -> String
+									.format("translate(%fpx, %fpx) rotate(%ddeg)",
+											factor * tx * wh / 2, factor * ty *
+												(wh / 2 - 2), m.getTheta()))
+
+								;
+						}
+					});
 				WebMarkupContainer marker = new WebMarkupContainer(MARKER_ID);
 				marker.setOutputMarkupId(true);
 				marker.add(AttributeModifier.replace("style", markerStyleModel));
@@ -405,91 +421,93 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				draggableOptions.set("containment", Options.asString("parent"));
 
 				marker.add(new DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
+												 new DraggableAdapter() {
+													 private static final long serialVersionUID = 1L;
 
-							@Override
-							public boolean isStopEventEnabled() {
+													 @Override
+													 public boolean isStopEventEnabled() {
 
-								return true;
-							}
+														 return true;
+													 }
 
-							@Override
-							public void onDragStart(AjaxRequestTarget target, int top, int left) {
-								super.onDragStart(target, top, left);
+													 @Override
+													 public void onDragStart(AjaxRequestTarget target, int top, int left) {
+														 super.onDragStart(target, top, left);
 
-								target.appendJavaScript(String.format("$('#%s').css('width: 5px; height: 5px; transform: none;');", item.get("marker").getMarkupId()));
-							}
+														 target.appendJavaScript(String.format("$('#%s').css('width: 5px; height: 5px; transform: none;');", item
+															 .get("marker")
+															 .getMarkupId()));
+													 }
 
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-												   int top, int left) {
-								super.onDragStop(target, top, left);
+													 @Override
+													 public void onDragStop(AjaxRequestTarget target,
+																			int top, int left) {
+														 super.onDragStop(target, top, left);
 
-								final int newX = (int) (left / displayFactor);
-								final int newY = (int) (top / displayFactor);
+														 final int newX = (int) (left / displayFactor);
+														 final int newY = (int) (top / displayFactor);
 
-								item.detach();
-								AreaMarker areaMarker = item.getModelObject();
-								areaMarker.visit(new AreaMarkerVisitor<Void>() {
-									private static final long serialVersionUID = -8666575204421319185L;
+														 item.detach();
+														 AreaMarker areaMarker = item.getModelObject();
+														 areaMarker.visit(new AreaMarkerVisitor<Void>() {
+															 private static final long serialVersionUID = -8666575204421319185L;
 
-									@Override
-									public Void visit(
-											@Nonnull
-													CircleMarker marker) {
+															 @Override
+															 public Void visit(
+																 @Nonnull
+																	 CircleMarker marker) {
 
-										markerService
-												.update(marker, marker.getColor(),
-														newX,
-														newY,
-														marker.getExtent());
+																 markerService
+																	 .update(marker, marker.getColor(),
+																			 newX,
+																			 newY,
+																			 marker.getExtent());
 
-										return null;
-									}
+																 return null;
+															 }
 
-									@Override
-									public Void visit(
-											@Nonnull
-													ConeMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX - wh,
-														newY - wh,
-														marker.getExtent(),
-														marker.getTheta());
+															 @Override
+															 public Void visit(
+																 @Nonnull
+																	 ConeMarker marker) {
+																 markerService
+																	 .update(marker, marker.getColor(), newX - wh,
+																			 newY - wh,
+																			 marker.getExtent(),
+																			 marker.getTheta());
 
-										return null;
-									}
+																 return null;
+															 }
 
-									@Override
-									public Void visit(
-											@Nonnull
-													CubeMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX,
-														newY,
-														marker.getExtent());
+															 @Override
+															 public Void visit(
+																 @Nonnull
+																	 CubeMarker marker) {
+																 markerService
+																	 .update(marker, marker.getColor(), newX,
+																			 newY,
+																			 marker.getExtent());
 
-										return null;
-									}
+																 return null;
+															 }
 
-									@Override
-									public Void visit(
-											@Nonnull
-													LineMarker marker) {
-										markerService
-												.update(marker, marker.getColor(), newX - wh,
-														newY - wh,
-														marker.getExtent(), marker
-																.getTheta());
+															 @Override
+															 public Void visit(
+																 @Nonnull
+																	 LineMarker marker) {
+																 markerService
+																	 .update(marker, marker.getColor(), newX - wh,
+																			 newY - wh,
+																			 marker.getExtent(), marker
+																				 .getTheta());
 
-										return null;
-									}
-								});
+																 return null;
+															 }
+														 });
 
 
-							}
-						}));
+													 }
+												 }));
 				marker.add(new OnClickBehavior() {
 					private static final long serialVersionUID = 6159702123104745379L;
 
@@ -524,7 +542,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		};
 
 		preview.add(new ListView<InitiativeParticipant>("participants",
-				participantModel) {
+														participantModel) {
 
 			private static final long serialVersionUID = 7380087785300362119L;
 
@@ -535,44 +553,50 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 				Label image = new Label(PARTICIPANT_ID, participant.getName());
 				image.add(AttributeModifier.replace("style",
-						new LoadableDetachableModel<String>() {
-							private static final long serialVersionUID = 1L;
+													new LoadableDetachableModel<String>() {
+														private static final long serialVersionUID = 1L;
 
-							@Override
-							protected String load() {
-								InitiativeParticipant participant = item.getModelObject();
+														@Override
+														protected String load() {
+															InitiativeParticipant participant = item.getModelObject();
 
-								int left = Optional.ofNullable(participant.getOffsetX())
-										.map(Math::abs)
-										.orElseGet(() -> getCurrentMap().map(ScaledMap::getBasicWidth).map(w -> (int) (w * displayFactor / 2)).orElse(0));
-								int top = Optional.ofNullable(participant.getOffsetY())
-										.map(Math::abs)
-										.orElseGet(() -> getCurrentMap().map(ScaledMap::getBasicHeight).map(w -> (int) (w * displayFactor / 2)).orElse(0));
+															int left = Optional.ofNullable(participant.getOffsetX())
+																			   .map(Math::abs)
+																			   .orElseGet(() -> getCurrentMap()
+																				   .map(ScaledMap::getBasicWidth)
+																				   .map(w -> (int) (w * displayFactor / 2))
+																				   .orElse(0));
+															int top = Optional.ofNullable(participant.getOffsetY())
+																			  .map(Math::abs)
+																			  .orElseGet(() -> getCurrentMap()
+																				  .map(ScaledMap::getBasicHeight)
+																				  .map(w -> (int) (w * displayFactor / 2))
+																				  .orElse(0));
 
-								left = coordinateTranslator.translateToScaledImageSize(left);
-								top = coordinateTranslator.translateToScaledImageSize(top);
+															left = coordinateTranslator.translateToScaledImageSize(left);
+															top = coordinateTranslator.translateToScaledImageSize(top);
 
-								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
 
-								return String.format(
-										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
-												" " +
-												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-												"!important; border-radius: 100%%; border: 1px " +
-												"solid" +
-												" " +
-												"#00ff00; text-align: center; word-break: " +
-												"break-all; vertical-align: middle; display: " +
-												"table-cell; color: #cccccc; " +
-												"background-image: url('%4$s'); background-size: " +
-												"%3$dpx %3$dpx;",
-										left, top, actualWH,
-										UrlUtils.rewriteToContextRelative("img/player.png",
-												RequestCycle.get()));
-							}
+															return String.format(
+																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
+																	" " +
+																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+																	"!important; border-radius: 100%%; border: 1px " +
+																	"solid" +
+																	" " +
+																	"#00ff00; text-align: center; word-break: " +
+																	"break-all; vertical-align: middle; display: " +
+																	"table-cell; color: #cccccc; " +
+																	"background-image: url('%4$s'); background-size: " +
+																	"%3$dpx %3$dpx;",
+																left, top, actualWH,
+																UrlUtils.rewriteToContextRelative("img/player.png",
+																								  RequestCycle.get()));
+														}
 
-						}));
+													}));
 				image.add(AttributeModifier.replace("title", participant.getName()));
 
 
@@ -581,30 +605,30 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new
 
-						DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
+							  DraggableBehavior(draggableOptions,
+												new DraggableAdapter() {
+													private static final long serialVersionUID = 1L;
 
-							@Override
-							public boolean isStopEventEnabled() {
+													@Override
+													public boolean isStopEventEnabled() {
 
-								return true;
-							}
+														return true;
+													}
 
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-												   int top, int left) {
-								super.onDragStop(target, top, left);
+													@Override
+													public void onDragStop(AjaxRequestTarget target,
+																		   int top, int left) {
+														super.onDragStop(target, top, left);
 
 
-								// TODO: Service method?
-								InitiativeParticipant participant = item.getModelObject();
-								participant.setOffsetX((int) (left / displayFactor));
-								participant.setOffsetY((int) (top / displayFactor));
-								participantDAO.update(participant);
+														// TODO: Service method?
+														InitiativeParticipant participant = item.getModelObject();
+														participant.setOffsetX((int) (left / displayFactor));
+														participant.setOffsetY((int) (top / displayFactor));
+														participantDAO.update(participant);
 
-							}
-						})).add(new OnClickBehavior() {
+													}
+												})).add(new OnClickBehavior() {
 					private static final long serialVersionUID = -3342358052152683138L;
 
 					@Override
@@ -659,9 +683,9 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			@Override
 			protected List<CompendiumEntry> load() {
 				return compendiumEntryDAO.findByFilter(filter)
-						.map(PinnedCompendiumEntry::getEntry)
-						.sorted(Comparator.comparing(CompendiumEntry::getTitle))
-						.toJavaList();
+										 .map(PinnedCompendiumEntry::getEntry)
+										 .sorted(Comparator.comparing(CompendiumEntry::getTitle))
+										 .toJavaList();
 			}
 		};
 
@@ -724,43 +748,58 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 	}
 
 	@Override
-	public Point getClickedLocation() {
-		return clickedLocation;
+	public Optional<Point> getClickedLocation() {
+		return Optional.ofNullable(clickedLocation);
 	}
 
 	@Override
-	public Point getPreviousClickedLocation() {
-		return previousClickedLocation;
+	public Optional<Point> getPreviousClickedLocation() {
+		return Optional.ofNullable(previousClickedLocation);
 	}
 
 	@Override
 	public <T extends DomainObject> void createModalWindow(
-			@Nonnull
-					AjaxRequestTarget target,
-			@Nonnull
-					PanelConstructor<T> constructor,
-			@Nullable
-					T object) {
+		@Nonnull
+			AjaxRequestTarget target,
+		@Nonnull
+			PanelConstructor<T> constructor,
+		@Nullable
+			T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-		target.add(modal);
-		target.appendJavaScript("$('#combat-modal').modal('show');");
+		try {
+			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
+			target.add(modal);
+			target.appendJavaScript("$('#combat-modal').modal('show');");
+		} catch (DMModalWindow.CannotCreateModalWindowException e) {
+			// Silent ignore. This exception is a way to abort creating the window when encountering
+			// inconsistent state
+		}
+
+
 	}
 
 	@Override
 	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-		target.add(modal);
-		target.appendJavaScript("$('#combat-modal').modal('show');");
+		try {
+			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
+			target.add(modal);
+			target.appendJavaScript("$('#combat-modal').modal('show');");
+		} catch (DMModalWindow.CannotCreateModalWindowException e) {
+			// Silent ignore. This exception is a way to abort creating the window when encountering
+			// inconsistent state
+		}
+
 	}
 
 	@Override
 	public void removeModal(AjaxRequestTarget target) {
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID).setOutputMarkupPlaceholderTag(true).setVisible(false));
+		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID)
+			.setOutputMarkupPlaceholderTag(true)
+			.setVisible(false));
 		target.add(modal);
 	}
 

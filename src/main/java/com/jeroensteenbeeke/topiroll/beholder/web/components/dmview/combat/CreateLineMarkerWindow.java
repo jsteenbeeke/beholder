@@ -28,11 +28,11 @@ public class CreateLineMarkerWindow extends DMModalWindow<MapView> {
 	public CreateLineMarkerWindow(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view), "Create Line Marker");
 
-		Point location = callback.getPreviousClickedLocation();
+		Point location = callback.getPreviousClickedLocation().orElseThrow(CannotCreateModalWindowException::new);;
 		final int x = location.x;
 		final int y = location.y;
 
-		Point directionalLocation = callback.getClickedLocation();
+		Point directionalLocation = callback.getClickedLocation().orElseThrow(CannotCreateModalWindowException::new);;
 		final int tx = directionalLocation.x;
 		final int ty = directionalLocation.y;
 

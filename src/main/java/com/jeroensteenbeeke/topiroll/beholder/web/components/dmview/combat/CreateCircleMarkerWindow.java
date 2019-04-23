@@ -27,7 +27,7 @@ public class CreateCircleMarkerWindow extends DMModalWindow<MapView> {
 	public CreateCircleMarkerWindow(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view), "Create Circle Marker");
 
-		Point location = callback.getClickedLocation();
+		Point location = callback.getClickedLocation().orElseThrow(CannotCreateModalWindowException::new);
 		final int x = location.x;
 		final int y = location.y;
 

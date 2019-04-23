@@ -43,7 +43,7 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 	public CreateTokenWindow(String id, ScaledMap map, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(map), "Add token");
 
-		final Point point = callback.getClickedLocation();
+		final Point point = callback.getClickedLocation().orElseThrow(CannotCreateModalWindowException::new);
 
 		final int x = point.x;
 		final int y = point.y;

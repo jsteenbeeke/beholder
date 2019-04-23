@@ -122,16 +122,16 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 		if (focusGroup != null) {
 			scrollToX = focusGroup.getShapes().stream()
-					.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
-					.min(Comparator.naturalOrder())
-					.map(i -> (int) (i * displayFactor))
-					.orElse(null);
+								  .map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+								  .min(Comparator.naturalOrder())
+								  .map(i -> (int) (i * displayFactor))
+								  .orElse(null);
 
 			scrollToY = focusGroup.getShapes().stream()
-					.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
-					.min(Comparator.naturalOrder())
-					.map(i -> (int) (i * displayFactor))
-					.orElse(null);
+								  .map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+								  .min(Comparator.naturalOrder())
+								  .map(i -> (int) (i * displayFactor))
+								  .orElse(null);
 
 
 		}
@@ -161,7 +161,10 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					shapeFilter.map(map);
 
 					shapeDAO.findByFilter(shapeFilter).forEach(shapeDAO::evict);
-					shapeDAO.findByFilter(shapeFilter).forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel.getObject(), visibilityDAO))));
+					shapeDAO
+						.findByFilter(shapeFilter)
+						.forEach(shape -> js.append(shape.visit(new ExplorationShapeRenderer(canvasId, displayFactor, viewModel
+							.getObject(), visibilityDAO))));
 				}
 
 				@Override
@@ -196,8 +199,8 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					previousClickedLocation = clickedLocation;
 					clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
 
-							(event
-									.getOffsetTop() / displayFactor));
+						(event
+							.getOffsetTop() / displayFactor));
 					selectedMarker = Model.of();
 					selectedToken = Model.of();
 
@@ -216,10 +219,13 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 			@Override
 			protected List<TokenInstance> load() {
-				return Optional.ofNullable(mapModel.getObject()).map(map -> map.getTokens().stream()
-						.filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
-						.sorted(Comparator.comparing(TokenInstance::getId))
-						.collect(Collectors.toList())).orElseGet(ImmutableList::of);
+				return Optional
+					.ofNullable(mapModel.getObject())
+					.map(map -> map.getTokens().stream()
+								   .filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
+								   .sorted(Comparator.comparing(TokenInstance::getId))
+								   .collect(Collectors.toList()))
+					.orElseGet(ImmutableList::of);
 			}
 		};
 
@@ -233,7 +239,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				int squareSize = Optional.ofNullable(map).map(ScaledMap::getSquareSize).orElse(0);
 
 				int wh = squareSize
-						* instance.getDefinition().getDiameterInSquares();
+					* instance.getDefinition().getDiameterInSquares();
 
 				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = -9052475381415005280L;
@@ -244,44 +250,49 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					}
 				});
 				image.add(AttributeModifier.replace("style",
-						new DependentModel<TokenInstance, String>(item.getModel()) {
-							private static final long serialVersionUID = 1L;
+													new DependentModel<TokenInstance, String>(item.getModel()) {
+														private static final long serialVersionUID = 1L;
 
-							@Override
-							protected String load(TokenInstance i) {
-								int left = i.getOffsetX();
-								int top = i.getOffsetY();
+														@Override
+														protected String load(TokenInstance i) {
+															int left = i.getOffsetX();
+															int top = i.getOffsetY();
 
-								left = coordinateTranslator.translateToScaledImageSize(left);
-								top = coordinateTranslator.translateToScaledImageSize(top);
+															left = coordinateTranslator.translateToScaledImageSize(left);
+															top = coordinateTranslator.translateToScaledImageSize(top);
 
-								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
-								return String.format(
-										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
-												"%3$dpx !important; " +
-												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-												"!important; background-size: %3$dpx %3$dpx; " +
-												"border-radius: 100%%; border: 3px " +
-												"%6$s #%4$s; background-image: url('%5$s'); " +
-												"display: table-cell; vertical-align: bottom; " +
-												"color: #cccccc; text-align: center; margin: 0; padding: 0;",
-										left, top, actualWH, i
-												.getBorderType().toHexColor(),
-										i.getDefinition().getImageUrl(),
-										i.isShow() ? "solid" : "dashed"
-								);
-							}
+															return String.format(
+																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
+																	"%3$dpx !important; " +
+																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+																	"!important; background-size: %3$dpx %3$dpx; " +
+																	"border-radius: 100%%; border: 3px " +
+																	"%6$s #%4$s; background-image: url('%5$s'); " +
+																	"display: table-cell; vertical-align: bottom; " +
+																	"color: #cccccc; text-align: center; margin: 0; padding: 0;",
+																left, top, actualWH, i
+																	.getBorderType().toHexColor(),
+																i.getDefinition().getImageUrl(),
+																i.isShow() ? "solid" : "dashed"
+															);
+														}
 
-						}));
+													}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = -1407024057458015547L;
 
 					@Override
 					protected String load(TokenInstance instance) {
-						return Optional.ofNullable(instance).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null).map(
+						return Optional
+							.ofNullable(instance)
+							.filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
+							.map(
 								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()
-						).map(p -> String.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
+							)
+							.map(p -> String.format("%s (%d%% health)", instance.getBadge(), p))
+							.orElse(instance.getBadge());
 					}
 				}));
 
@@ -338,7 +349,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 		};
 
 		preview.add(new ListView<InitiativeParticipant>("participants",
-				participantModel) {
+														participantModel) {
 
 			private static final long serialVersionUID = -1880525125397252346L;
 
@@ -349,49 +360,55 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 				Label image = new Label(PARTICIPANT_ID, participant.getName());
 				image.add(AttributeModifier.replace("style",
-						new LoadableDetachableModel<String>() {
-							private static final long serialVersionUID = 1L;
+													new LoadableDetachableModel<String>() {
+														private static final long serialVersionUID = 1L;
 
-							@Override
-							protected String load() {
-								InitiativeParticipant participant = item.getModelObject();
-
-
-								int left = Option.of(participant.getOffsetX())
-										.map(Math::abs)
-										.orElse(() -> Option.of(map).map(ScaledMap::getBasicWidth).map(
-												width -> (int) (width * displayFactor / 2)
-										)).getOrElse(0);
-								int top = Option.of(participant.getOffsetY())
-										.map(Math::abs)
-										.orElse(() -> Option.of(map).map(ScaledMap::getBasicHeight).map(
-												width -> (int) (width * displayFactor / 2)
-										)).getOrElse(0);
-
-								left = coordinateTranslator.translateToScaledImageSize(left);
-								top = coordinateTranslator.translateToScaledImageSize(top);
-
-								int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+														@Override
+														protected String load() {
+															InitiativeParticipant participant = item.getModelObject();
 
 
-								return String.format(
-										"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
-												" " +
-												"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-												"!important; border-radius: 100%%; border: 1px " +
-												"solid" +
-												" " +
-												"#00ff00; text-align: center; word-break: " +
-												"break-all; vertical-align: middle; display: " +
-												"table-cell; color: #cccccc; " +
-												"background-image: url('%4$s'); background-size: " +
-												"%3$dpx %3$dpx;",
-										left, top, actualWH,
-										UrlUtils.rewriteToContextRelative("img/player.png",
-												RequestCycle.get()));
-							}
+															int left = Option.of(participant.getOffsetX())
+																			 .map(Math::abs)
+																			 .orElse(() -> Option
+																				 .of(map)
+																				 .map(ScaledMap::getBasicWidth)
+																				 .map(
+																					 width -> (int) (width * displayFactor / 2)
+																				 )).getOrElse(0);
+															int top = Option.of(participant.getOffsetY())
+																			.map(Math::abs)
+																			.orElse(() -> Option
+																				.of(map)
+																				.map(ScaledMap::getBasicHeight)
+																				.map(
+																					width -> (int) (width * displayFactor / 2)
+																				)).getOrElse(0);
 
-						}));
+															left = coordinateTranslator.translateToScaledImageSize(left);
+															top = coordinateTranslator.translateToScaledImageSize(top);
+
+															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+
+
+															return String.format(
+																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
+																	" " +
+																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+																	"!important; border-radius: 100%%; border: 1px " +
+																	"solid" +
+																	" " +
+																	"#00ff00; text-align: center; word-break: " +
+																	"break-all; vertical-align: middle; display: " +
+																	"table-cell; color: #cccccc; " +
+																	"background-image: url('%4$s'); background-size: " +
+																	"%3$dpx %3$dpx;",
+																left, top, actualWH,
+																UrlUtils.rewriteToContextRelative("img/player.png",
+																								  RequestCycle.get()));
+														}
+
+													}));
 				image.add(AttributeModifier.replace("title", participant.getName()));
 
 
@@ -400,30 +417,30 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new
 
-						DraggableBehavior(draggableOptions,
-						new DraggableAdapter() {
-							private static final long serialVersionUID = 1L;
+							  DraggableBehavior(draggableOptions,
+												new DraggableAdapter() {
+													private static final long serialVersionUID = 1L;
 
-							@Override
-							public boolean isStopEventEnabled() {
+													@Override
+													public boolean isStopEventEnabled() {
 
-								return true;
-							}
+														return true;
+													}
 
-							@Override
-							public void onDragStop(AjaxRequestTarget target,
-												   int top, int left) {
-								super.onDragStop(target, top, left);
+													@Override
+													public void onDragStop(AjaxRequestTarget target,
+																		   int top, int left) {
+														super.onDragStop(target, top, left);
 
 
-								// TODO: Service method?
-								InitiativeParticipant participant = item.getModelObject();
-								participant.setOffsetX((int) (left / displayFactor));
-								participant.setOffsetY((int) (top / displayFactor));
-								participantDAO.update(participant);
+														// TODO: Service method?
+														InitiativeParticipant participant = item.getModelObject();
+														participant.setOffsetX((int) (left / displayFactor));
+														participant.setOffsetY((int) (top / displayFactor));
+														participantDAO.update(participant);
 
-							}
-						})).add(new OnClickBehavior() {
+													}
+												})).add(new OnClickBehavior() {
 					private static final long serialVersionUID = 5502865667110141675L;
 
 					@Override
@@ -486,9 +503,9 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			@Override
 			protected List<CompendiumEntry> load() {
 				return compendiumEntryDAO.findByFilter(filter)
-						.map(PinnedCompendiumEntry::getEntry)
-						.sorted(Comparator.comparing(CompendiumEntry::getTitle))
-						.toJavaList();
+										 .map(PinnedCompendiumEntry::getEntry)
+										 .sorted(Comparator.comparing(CompendiumEntry::getTitle))
+										 .toJavaList();
 			}
 		};
 
@@ -572,43 +589,56 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	}
 
 	@Override
-	public Point getClickedLocation() {
-		return clickedLocation;
+	public Optional<Point> getClickedLocation() {
+		return Optional.ofNullable(clickedLocation);
 	}
 
 	@Override
-	public Point getPreviousClickedLocation() {
-		return previousClickedLocation;
+	public Optional<Point> getPreviousClickedLocation() {
+		return Optional.ofNullable(previousClickedLocation);
 	}
+
 
 	@Override
 	public <T extends DomainObject> void createModalWindow(
-			@Nonnull
-					AjaxRequestTarget target,
-			@Nonnull
-					PanelConstructor<T> constructor,
-			@Nullable
-					T object) {
+		@Nonnull
+			AjaxRequestTarget target,
+		@Nonnull
+			PanelConstructor<T> constructor,
+		@Nullable
+			T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-		target.add(modal);
-		target.appendJavaScript("$('#combat-modal').modal('show');");
+		try {
+			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
+			target.add(modal);
+			target.appendJavaScript("$('#combat-modal').modal('show');");
+		} catch (DMModalWindow.CannotCreateModalWindowException e) {
+			// Silent ignore. This exception is a way to abort creating the window when encountering
+			// inconsistent state
+		}
 	}
 
 	@Override
 	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-		target.add(modal);
-		target.appendJavaScript("$('#combat-modal').modal('show');");
+		try {
+			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
+			target.add(modal);
+			target.appendJavaScript("$('#combat-modal').modal('show');");
+		} catch (DMModalWindow.CannotCreateModalWindowException e) {
+			// Silent ignore. This exception is a way to abort creating the window when encountering
+			// inconsistent state
+		}
 	}
 
 	@Override
 	public void removeModal(AjaxRequestTarget target) {
 		Component oldModal = modal;
-		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID).setOutputMarkupPlaceholderTag(true).setVisible(false));
+		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID)
+			.setOutputMarkupPlaceholderTag(true)
+			.setVisible(false));
 		target.add(modal);
 	}
 
@@ -632,10 +662,10 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			script.append("var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
 			script.append("var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);\n");
 			script.append(String.format("window.scrollTo(%d - (w / 4), %d - (h / 4));", scrollToX,
-					scrollToY));
+										scrollToY));
 
 			response.render(
-					OnDomReadyHeaderItem.forScript(script));
+				OnDomReadyHeaderItem.forScript(script));
 		}
 	}
 }

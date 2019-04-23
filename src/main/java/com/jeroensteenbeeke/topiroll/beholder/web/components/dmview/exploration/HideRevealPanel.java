@@ -67,8 +67,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 			@Override
 			protected String load() {
-				return Optional.ofNullable(callback.getClickedLocation()).map(p -> String.format
-						("(%d, %d)", p.x, p.y)).orElse("-");
+				return callback.getClickedLocation().map(p -> String.format
+					("(%d, %d)", p.x, p.y)).orElse("-");
 			}
 		}));
 
@@ -81,11 +81,11 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				MapView view = HideRevealPanel.this.getModelObject();
 
-				Point p = callback.getClickedLocation();
+				callback.getClickedLocation().ifPresent(p -> {
+					mapService.gatherPlayerTokens(view, p.x, p.y);
 
-				mapService.gatherPlayerTokens(view, p.x, p.y);
-
-				callback.redrawMap(target);
+					callback.redrawMap(target);
+				});
 			}
 		});
 
@@ -143,7 +143,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 				AbstractLink link;
 
 				if (mapLink.getSourceGroup().getMap().equals(mapLink.getTargetGroup().getMap())) {
-					link = new AjaxLink<MapLink>("map", item.getModel()) {
+					link = new AjaxLink<>("map", item.getModel()) {
 
 						private static final long serialVersionUID = 2468854582739384695L;
 
@@ -155,16 +155,16 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 							double displayFactor = group.getMap().getDisplayFactor(view);
 
 							Integer x = group.getShapes().stream()
-									.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
-									.min(Comparator.naturalOrder())
-									.map(i -> (int) (i * displayFactor))
-									.orElse(null);
+											 .map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+											 .min(Comparator.naturalOrder())
+											 .map(i -> (int) (i * displayFactor))
+											 .orElse(null);
 
 							Integer y = group.getShapes().stream()
-									.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
-									.min(Comparator.naturalOrder())
-									.map(i -> (int) (i * displayFactor))
-									.orElse(null);
+											 .map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+											 .min(Comparator.naturalOrder())
+											 .map(i -> (int) (i * displayFactor))
+											 .orElse(null);
 
 							StringBuilder script = new StringBuilder();
 							script.append("var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
@@ -185,10 +185,15 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 					params.set("view", viewModel.getObject().getId());
 
 					link = new BookmarkablePageLink<>("map",
-							ExplorationModeMapSwitchHandlerPage.class, params);
+													  ExplorationModeMapSwitchHandlerPage.class, params);
 				}
 
-				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(group -> String.format("Transition to %s in %s", group.getName(), group.getMap().getName())));
+				link.setBody(item
+								 .getModel()
+								 .map(MapLink::getTargetGroup)
+								 .map(group -> String.format("Transition to %s in %s", group.getName(), group
+									 .getMap()
+									 .getName())));
 
 				item.add(link);
 			}
@@ -197,45 +202,51 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 	@Nonnull
 	private IModel<List<MapLink>> loadLinks(DMViewCallback callback) {
-		return () -> {
-			Point location = callback.getClickedLocation();
+		return () -> callback.getClickedLocation().map(location -> {
 
 			ScaledMap map = getModelObject().getSelectedMap();
 
-			if (map != null && location != null) {
-				return shapesInCurrentLocation(location, map).flatMap(s -> {
-					if (s.getGroup() != null) {
-						return s.getGroup().getLinks();
-					}
+			if (map != null) {
+				return shapesInCurrentLocation(location, map)
+					.flatMap(s -> {
+						if (s.getGroup() != null) {
+							return s.getGroup().getLinks();
+						}
 
-					return Array.empty();
-				}).sorted(Comparator.comparing(mapLink -> mapLink.getTargetGroup().getMap().getNameWithFolders())).distinctBy(MapLink::getId)
-						.toJavaList();
+						return Array.empty();
+					})
+					.sorted(Comparator.comparing(mapLink -> mapLink.getTargetGroup().getMap().getNameWithFolders()))
+					.distinctBy(MapLink::getId)
+					.toJavaList();
 			}
 
-			return ImmutableList.of();
-		};
+			return ImmutableList.<MapLink>of();
+		}).orElseGet(ImmutableList::of);
 	}
 
 
 	private boolean isShapeInCurrentLocation(Point currentLocation, Predicate<VisibilityStatus> statusPredicate) {
 		return Optional.ofNullable(getModelObject()).map(MapView::getSelectedMap).map(
-				map -> {
+			map -> {
 
 
-					Seq<VisibilityStatus> shapes = shapesInCurrentLocation(currentLocation, map).flatMap(
-							s -> {
-								FogOfWarGroup group = s.getGroup();
-								if (group != null) {
-									return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group)).filter(v -> v.getView().equals(getModelObject()));
-								}
+				Seq<VisibilityStatus> shapes = shapesInCurrentLocation(currentLocation, map).flatMap(
+					s -> {
+						FogOfWarGroup group = s.getGroup();
+						if (group != null) {
+							return groupVisibilityDAO
+								.findByFilter(new FogOfWarGroupVisibilityFilter().group(group))
+								.filter(v -> v.getView().equals(getModelObject()));
+						}
 
-								return shapeVisibilityDAO.findByFilter(new FogOfWarShapeVisibilityFilter().shape(s)).filter(v -> v.getView().equals(getModelObject()));
-							}
-					).map(FogOfWarVisibility::getStatus).filter(statusPredicate);
+						return shapeVisibilityDAO
+							.findByFilter(new FogOfWarShapeVisibilityFilter().shape(s))
+							.filter(v -> v.getView().equals(getModelObject()));
+					}
+				).map(FogOfWarVisibility::getStatus).filter(statusPredicate);
 
-					return !shapes.isEmpty();
-				}).orElse(false);
+				return !shapes.isEmpty();
+			}).orElse(false);
 
 	}
 
@@ -256,6 +267,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 	}
 
 	private class HideRevealOptions extends LoadableDetachableModel<List<HideRevealOption>> {
+		private static final long serialVersionUID = -2820150093807809428L;
+
 		private final IModel<MapView> viewModel;
 
 		private final DMViewCallback callback;
@@ -267,22 +280,19 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 		@Override
 		protected List<HideRevealOption> load() {
-			Point location = callback.getClickedLocation();
+			return callback.getClickedLocation().map(location -> {
+				ScaledMap map = viewModel.getObject().getSelectedMap();
 
-			if (location == null) {
-				return ImmutableList.of();
-			}
+				if (map == null) {
+					return ImmutableList.<HideRevealOption>of();
+				}
 
-			ScaledMap map = viewModel.getObject().getSelectedMap();
+				FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
+				shapeFilter.map(map);
 
-			if (map == null) {
-				return ImmutableList.of();
-			}
-
-			FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
-			shapeFilter.map(map);
-
-			return shapeDAO.findByFilter(shapeFilter).filter(shape -> shape.visit(new FogOfWarShapeContainsVisitor(location.x, location.y)))
+				return shapeDAO
+					.findByFilter(shapeFilter)
+					.filter(shape -> shape.visit(new FogOfWarShapeContainsVisitor(location.x, location.y)))
 					.map(FogOfWarShape::getGroup)
 					.distinct()
 					.map(group -> {
@@ -293,10 +303,14 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 						if (groupVisibilityDAO.countByFilter(visFilter) == 0) {
 							return new HideRevealOption(group, false);
 						} else {
-							return new HideRevealOption(group, groupVisibilityDAO.getUniqueByFilter(visFilter).map(vis -> vis.getStatus() != VisibilityStatus.INVISIBLE).getOrElse(false));
+							return new HideRevealOption(group, groupVisibilityDAO
+								.getUniqueByFilter(visFilter)
+								.map(vis -> vis.getStatus() != VisibilityStatus.INVISIBLE)
+								.getOrElse(false));
 						}
 					})
 					.toJavaList();
+			}).orElseGet(ImmutableList::of);
 		}
 
 		@Override

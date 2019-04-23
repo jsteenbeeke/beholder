@@ -38,4 +38,11 @@ public class DMModalWindow<T> extends BootstrapModalWindow {
 	public void setModel(IModel<T> model) {
 		setDefaultModel(model);
 	}
+
+	public static class CannotCreateModalWindowException extends RuntimeException {
+
+		private static final long serialVersionUID = 4852500151933563519L;
+
+
+	}
 }

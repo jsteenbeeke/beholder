@@ -32,8 +32,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 
 			@Override
 			protected String load() {
-				return Optional.ofNullable(callback.getClickedLocation()).map(p -> String.format
-						("(%d, %d)", p.x, p.y)).orElse("-");
+				return callback.getClickedLocation().map(p -> String.format
+					("(%d, %d)", p.x, p.y)).orElse("-");
 			}
 		}));
 
@@ -46,11 +46,12 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 			public void onClick(AjaxRequestTarget target) {
 				MapView view = MapOptionsPanel.this.getModelObject();
 
-				Point p = callback.getClickedLocation();
+				callback.getClickedLocation().ifPresent(p -> {
 
-				mapService.gatherPlayerTokens(view, p.x, p.y);
+					mapService.gatherPlayerTokens(view, p.x, p.y);
 
-				callback.redrawMap(target);
+					callback.redrawMap(target);
+				});
 			}
 		});
 

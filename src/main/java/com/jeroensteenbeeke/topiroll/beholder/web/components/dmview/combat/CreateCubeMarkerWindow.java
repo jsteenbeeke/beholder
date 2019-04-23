@@ -26,7 +26,7 @@ public class CreateCubeMarkerWindow extends DMModalWindow<MapView> {
 	public CreateCubeMarkerWindow(String id, MapView view, DMViewCallback callback) {
 		super(id, ModelMaker.wrap(view), "Create Cube Marker");
 
-		Point location = callback.getClickedLocation();
+		Point location = callback.getClickedLocation().orElseThrow(CannotCreateModalWindowException::new);;
 		final int x = location.x;
 		final int y = location.y;
 

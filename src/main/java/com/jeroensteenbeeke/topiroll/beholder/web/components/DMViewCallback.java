@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Optional;
 
 public interface DMViewCallback extends Serializable {
 	<T extends DomainObject> void createModalWindow(
@@ -39,9 +40,9 @@ public interface DMViewCallback extends Serializable {
 
 	void removeModal(AjaxRequestTarget target);
 
-	Point getClickedLocation();
+	Optional<Point> getClickedLocation();
 
-	Point getPreviousClickedLocation();
+	Optional<Point> getPreviousClickedLocation();
 
 	@FunctionalInterface
 	public interface PanelConstructor<D extends DomainObject> {
