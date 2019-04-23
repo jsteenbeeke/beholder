@@ -76,6 +76,8 @@ public class EditGroupPage extends AuthenticatedPage {
 
 				item.add(new CheckBox("check", Model.of(shape.getGroup() != null)));
 				item.add(new AbstractMapPreview("thumb", shape.getMap(), 200) {
+					private static final long serialVersionUID = -4705313092728699291L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
