@@ -27,6 +27,11 @@ public class CompendiumEntry extends BaseDomainObject {
 	@Column(nullable = false)
 	@Lob
 	private String body;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
+
+	private Campaign campaign;
+
+
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "author")
 
@@ -98,6 +103,16 @@ public class CompendiumEntry extends BaseDomainObject {
 	public void setAuthor(@Nullable BeholderUser author) {
 		this.author = author;
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 
 
 }

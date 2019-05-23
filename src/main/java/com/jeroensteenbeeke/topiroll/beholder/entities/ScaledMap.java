@@ -52,6 +52,11 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
+
+	private Campaign campaign;
+
+
 
  	@Column(nullable=true, name="amazon_key")
 	private String amazonKey;
@@ -270,4 +275,14 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 
 		return getName();
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 }

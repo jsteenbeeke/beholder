@@ -24,6 +24,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.BeholderNavBar;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 
 import javax.annotation.CheckForNull;
@@ -48,5 +49,9 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 	@CheckForNull
 	public BeholderUser getUser() {
 		return BeholderSession.get().getUser();
+	}
+
+	public Option<BeholderUser> user() {
+		return Option.of(getUser());
 	}
 }

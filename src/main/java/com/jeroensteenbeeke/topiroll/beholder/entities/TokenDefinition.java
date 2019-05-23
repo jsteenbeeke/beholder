@@ -46,6 +46,11 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
+
+	private Campaign campaign;
+
+
  	@Column(nullable=true, name = "amazon_key")
 	private String amazonKey;
 
@@ -137,6 +142,16 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 	public void setAmazonKey( @Nullable String amazonKey) {
 		this.amazonKey = amazonKey;
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 
 
 

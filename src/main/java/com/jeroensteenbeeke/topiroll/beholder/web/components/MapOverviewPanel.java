@@ -48,19 +48,27 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 		MapFolderFilter folderFilter = new MapFolderFilter();
 		decorateFolderFilter(folderFilter);
+		folderFilter.campaign().isNull();
+		getUser().activeCampaign().peek(folderFilter::orCampaign);
 		folderFilter.name().orderBy(true);
 
 		DataView<MapFolder> folderView = new DataView<MapFolder>("folders", FilterDataProvider.of(folderFilter, folderDAO)) {
+			private static final long serialVersionUID = 2005574402388931363L;
+
 			@Override
 			protected void populateItem(Item<MapFolder> item) {
 				final MapFolder folder = item.getModelObject();
 				item.add(new Link<MapFolder>("name") {
+					private static final long serialVersionUID = 5072272511983481785L;
+
 					@Override
 					public void onClick() {
 						setResponsePage(new ViewFolderPage(item.getModelObject()));
 					}
 				}.setBody(Model.of(folder.getName())));
 				item.add(new IconLink<MapFolder>("delete", item.getModel(), FontAwesome.trash) {
+					private static final long serialVersionUID = 5167833998763041541L;
+
 					@Override
 					public void onClick() {
 						MapFolder folder = item.getModelObject();
@@ -82,6 +90,9 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.owner().set(getUser());
 		mapFilter.name().orderBy(true);
+		mapFilter.campaign().isNull();
+		getUser().activeCampaign().peek(mapFilter::orCampaign);
+
 		decorateMapFilter(mapFilter);
 
 		DataView<ScaledMap> mapView = new DataView<ScaledMap>("maps",
@@ -95,6 +106,8 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 				item.add(new Label("name", map.getName()));
 				item.add(new AbstractMapPreview("thumb", map, 128) {
+					private static final long serialVersionUID = -4194303736524179282L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 

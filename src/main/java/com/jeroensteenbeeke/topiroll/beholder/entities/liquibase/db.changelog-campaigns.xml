@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-Campaign">
+		<createTable tableName="campaign">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="dungeonmaster" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="dungeonmaster" baseTableName="campaign"
+								 constraintName="fk_campaign_dungeonmaster" referencedColumnNames="id"
+								 referencedTableName="beholderuser"/>
+		<createIndex indexName="idx_campaign_dungeonmaster" tableName="campaign">
+			<column name="dungeonmaster"/>
+		</createIndex>
+		<createSequence incrementBy="1" sequenceName="seq_id_campaign" startValue="1"/>
+	</changeSet>
+	<changeSet author="Jeroen Steenbeeke" id="add-property-BeholderUser-activeCampaign">
+		<addColumn tableName="beholderuser">
+			<column name="activecampaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="activecampaign" baseTableName="beholderuser"
+								 constraintName="fk_beholderuser_activecampaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_beholderuser_activecampaign" tableName="beholderuser">
+			<column name="activecampaign"/>
+		</createIndex>
+	</changeSet>
+	<changeSet author="Jeroen Steenbeeke" id="add-property-TokenDefinition-campaign">
+		<addColumn tableName="tokendefinition">
+			<column name="campaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="campaign" baseTableName="tokendefinition"
+								 constraintName="fk_tokendefinition_campaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_tokendefinition_campaign" tableName="tokendefinition">
+			<column name="campaign"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" id="add-property-MapFolder-campaign">
+		<addColumn tableName="mapfolder">
+			<column name="campaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="campaign" baseTableName="mapfolder"
+								 constraintName="fk_mapfolder_campaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_mapfolder_campaign" tableName="mapfolder">
+			<column name="campaign"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" id="add-property-ScaledMap-campaign">
+		<addColumn tableName="scaledmap">
+			<column name="campaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="campaign" baseTableName="scaledmap"
+								 constraintName="fk_scaledmap_campaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_scaledmap_campaign" tableName="scaledmap">
+			<column name="campaign"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" id="add-property-CompendiumEntry-campaign">
+		<addColumn tableName="compendiumentry">
+			<column name="campaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="campaign" baseTableName="compendiumentry"
+								 constraintName="fk_compendiumentry_campaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_compendiumentry_campaign" tableName="compendiumentry">
+			<column name="campaign"/>
+		</createIndex>
+	</changeSet>
+	<changeSet author="Jeroen Steenbeeke" id="add-property-YouTubePlaylist-campaign">
+		<addColumn tableName="youtubeplaylist">
+			<column name="campaign" type="BIGINT">
+				<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="campaign" baseTableName="youtubeplaylist"
+								 constraintName="fk_youtubeplaylist_campaign" referencedColumnNames="id"
+								 referencedTableName="campaign"/>
+		<createIndex indexName="idx_youtubeplaylist_campaign" tableName="youtubeplaylist">
+			<column name="campaign"/>
+		</createIndex>
+
+	</changeSet>
+</databaseChangeLog>

@@ -40,6 +40,11 @@ public class YouTubePlaylist extends BaseDomainObject {
 	@Column(nullable = false)
 	@EntityFormField(label = "URL", required = true)
 	private String url;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
+
+	private Campaign campaign;
+
+
 
  	@Column(nullable=true)
 	@EntityFormField(label = "Number of entries", required = false)
@@ -100,6 +105,16 @@ public class YouTubePlaylist extends BaseDomainObject {
 	public void setNumberOfEntries( @Nullable Integer numberOfEntries) {
 		this.numberOfEntries = numberOfEntries;
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 
 
 

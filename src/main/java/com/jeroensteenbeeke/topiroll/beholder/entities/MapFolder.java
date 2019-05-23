@@ -34,6 +34,11 @@ public class MapFolder extends BaseDomainObject {
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
+
+	private Campaign campaign;
+
+
 	@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
 	private List<ScaledMap> maps = new ArrayList<ScaledMap>();
 
@@ -110,4 +115,14 @@ public class MapFolder extends BaseDomainObject {
 
 		return getName();
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 }
