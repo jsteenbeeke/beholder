@@ -19,6 +19,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import javax.inject.Inject;
 
 public class CompendiumEditorPage extends AuthenticatedPage {
+	private static final long serialVersionUID = 7287344433060871122L;
 	@Inject
 	private CompendiumEntryDAO entryDAO;
 
@@ -26,6 +27,8 @@ public class CompendiumEditorPage extends AuthenticatedPage {
 		super(entry.isSaved() ? entry.getTitle() : "New compendium entry");
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 8110920677336998708L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareCompendiumPage());
@@ -35,6 +38,8 @@ public class CompendiumEditorPage extends AuthenticatedPage {
 		final TextField<String> title = new TextField<>("title");
 		final TextArea<String> editor = new TextArea<>("body");
 		final Label preview = new Label("preview", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 7181063826075933047L;
+
 			@Override
 			protected String load() {
 				String input = editor.getModelObject();
@@ -43,6 +48,8 @@ public class CompendiumEditorPage extends AuthenticatedPage {
 		});
 		preview.setEscapeModelStrings(false);
 		editor.add(new AjaxFormComponentUpdatingBehavior("keydown") {
+			private static final long serialVersionUID = 5215260020943053881L;
+
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				target.add(preview);
@@ -50,6 +57,8 @@ public class CompendiumEditorPage extends AuthenticatedPage {
 		});
 
 		Form<CompendiumEntry> editorForm = new Form<CompendiumEntry>("editorForm", new CompoundPropertyModel<>(ModelMaker.wrap(entry))) {
+			private static final long serialVersionUID = -6269752739914161681L;
+
 			@Override
 			protected void onSubmit() {
 				CompendiumEntry e = getModelObject();

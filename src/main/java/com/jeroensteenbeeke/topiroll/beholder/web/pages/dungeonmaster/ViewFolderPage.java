@@ -30,6 +30,8 @@ public class ViewFolderPage extends AuthenticatedPage {
 		this.folderModel = ModelMaker.wrap(folder);
 
 		add(new MapOverviewPanel("maps", getUser()) {
+			private static final long serialVersionUID = -1554085305843937316L;
+
 			@Override
 			protected void decorateFolderFilter(@Nonnull MapFolderFilter folderFilter) {
 				folderFilter.parent(folderModel.getObject());
@@ -71,8 +73,10 @@ public class ViewFolderPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<MapFolder>(create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+				setResponsePage(new BSEntityFormPage<>(
+					create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
 
+					private static final long serialVersionUID = 7947554551014544459L;
 
 					@Override
 					protected void onBeforeSave(MapFolder entity) {

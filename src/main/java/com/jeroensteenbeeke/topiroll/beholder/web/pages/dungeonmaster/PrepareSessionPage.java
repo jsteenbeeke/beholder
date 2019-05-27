@@ -52,8 +52,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",
 						mapView.getScreenDiagonalInInches()));
-				item.add(new IconLink<MapView>("edit", item.getModel(),
-						FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -62,19 +61,16 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						MapView view = getModelObject();
 						final String oldIdentifier = view.getIdentifier();
 
-						setResponsePage(new BSEntityFormPage<MapView>(
-								edit(view).onPage("Edit View")
-										  .using(mapViewDAO)) {
+						setResponsePage(new BSEntityFormPage<>(
+							edit(view).onPage("Edit View").using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
 
 							@Nonnull
 							@Override
-							protected ActionResult validateEntity(
-									@Nonnull MapView entity) {
+							protected ActionResult validateEntity(@Nonnull MapView entity) {
 
-								ActionResult result =
-										validateMapView(entity,
-												!oldIdentifier.equals(entity.getIdentifier()));
+								ActionResult result = validateMapView(entity,
+									!oldIdentifier.equals(entity.getIdentifier()));
 
 								if (!result.isOk()) {
 									return result;
@@ -97,8 +93,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 					}
 				});
-				item.add(new IconLink<MapView>("delete", item.getModel(),
-						FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -110,13 +105,11 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						MapView mapView = item.getModelObject();
 
 						setResponsePage(new ConfirmationPage("Confirm Deletion",
-								String.format(
-										"Are you sure you wish to delete view \"%s\"",
-										mapView.getIdentifier()),
-								ConfirmationPage.ColorScheme.INVERTED, answer -> {
+							String.format(
+								"Are you sure you wish to delete view \"%s\"",
+								mapView.getIdentifier()), ConfirmationPage.ColorScheme.INVERTED, answer -> {
 							if (answer) {
-								mapService
-										.delete(item.getModelObject());
+								mapService.delete(item.getModelObject());
 							}
 
 							setResponsePage(new PrepareSessionPage());
@@ -135,7 +128,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 
 		Link<MapView> l;
-		add(l = new Link<MapView>("addview") {
+		add(l = new Link<>("addview") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -144,8 +137,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				view.setWidth(1920);
 				view.setHeight(1080);
 
-				setResponsePage(new BSEntityFormPage<MapView>(create(view)
-						.onPage("Create Map View").using(mapViewDAO)) {
+				setResponsePage(new BSEntityFormPage<>(
+					create(view).onPage("Create Map View").using(mapViewDAO)) {
 					private static final long serialVersionUID = 1L;
 
 					@Nonnull

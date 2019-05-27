@@ -52,13 +52,13 @@ public class CreateGroupPage extends AuthenticatedPage {
 	public CreateGroupPage(ScaledMap map) {
 		super("Create Group");
 		
-		add(new Link<ScaledMap>("back", ModelMaker.wrap(map)) {
+		add(new Link<>("back", ModelMaker.wrap(map)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
 				setResponsePage(new ViewMapPage(getModelObject()));
-				
+
 			}
 		});
 
@@ -76,6 +76,8 @@ public class CreateGroupPage extends AuthenticatedPage {
 
 				item.add(new CheckBox("check", Model.of(false)));
 				item.add(new AbstractMapPreview("thumb", shape.getMap(), 200) {
+					private static final long serialVersionUID = 6355406078071376558L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						js.append(item.getModelObject().visit(new FogOfWarPreviewRenderer(canvasId, factor)));
@@ -106,7 +108,7 @@ public class CreateGroupPage extends AuthenticatedPage {
 					CheckBox box = (CheckBox) i.get("check");
 					Boolean checked = box.getModelObject();
 
-					if (checked != null && checked.booleanValue()) {
+					if (checked != null && checked) {
 						FogOfWarShape shape = i.getModelObject();
 
 						shapes.add(shape);

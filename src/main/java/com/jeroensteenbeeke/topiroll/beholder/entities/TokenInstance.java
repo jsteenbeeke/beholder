@@ -17,30 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
 import javax.persistence.*;
-
-import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
-import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
-import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.JSToken;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
+import java.io.Serializable;
 
 @Entity
 public class TokenInstance extends BaseDomainObject {

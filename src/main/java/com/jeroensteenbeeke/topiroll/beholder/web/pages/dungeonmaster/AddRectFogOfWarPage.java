@@ -105,6 +105,8 @@ public class AddRectFogOfWarPage extends AuthenticatedPage {
 		offsetYField.setEnabled(false);
 
 		final AbstractMapPreview previewImage = new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+			private static final long serialVersionUID = -8437448029888853776L;
+
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 				getMap().getAllShapes().stream()

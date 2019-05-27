@@ -17,16 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import javax.inject.Inject;
-
+import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.*;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import javax.inject.Inject;
 
 public class MapEditSubmitPanel extends Panel {
 	private static final long serialVersionUID = 1L;

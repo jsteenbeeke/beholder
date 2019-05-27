@@ -115,6 +115,8 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 		final AbstractMapPreview previewImage =
 				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+					private static final long serialVersionUID = -5380324928425988146L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						getMap().getTokens().stream()
@@ -206,10 +208,9 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		if (current == total) {
 			add(new MapEditSubmitPanel("submit", configureForm));
 		} else {
-			add(new SubmitPanel<ScaledMap>("submit", configureForm, m -> {
-				setResponsePage(new AddTokenInstance2Page(m,
-						tokenModel.getObject(), borderSelect.getModelObject(), current + 1,
-						total, hpField.getModelObject()));
+			add(new SubmitPanel<>("submit", configureForm, m -> {
+				setResponsePage(new AddTokenInstance2Page(m, tokenModel.getObject(),
+					borderSelect.getModelObject(), current + 1, total, hpField.getModelObject()));
 			}) {
 				private static final long serialVersionUID = 1L;
 

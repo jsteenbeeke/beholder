@@ -26,22 +26,7 @@ public class PrepareMusicPage extends AuthenticatedPage {
 
 
 	@Inject
-	private MapViewDAO mapViewDAO;
-
-	@Inject
-	private TokenDefinitionDAO tokenDAO;
-
-	@Inject
-	private MapFolderDAO mapFolderDAO;
-
-	@Inject
-	private PortraitDAO portraitDAO;
-
-	@Inject
 	private YouTubePlaylistDAO playlistDAO;
-
-	@Inject
-	private RemoteImageService amazon;
 
 	public PrepareMusicPage() {
 		super("Prepare music");
@@ -51,6 +36,8 @@ public class PrepareMusicPage extends AuthenticatedPage {
 
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
 				FilterDataProvider.of(playlistFilter, playlistDAO)) {
+			private static final long serialVersionUID = 2688306082997628230L;
+
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {
 				YouTubePlaylist playlist = item.getModelObject();
@@ -58,12 +45,15 @@ public class PrepareMusicPage extends AuthenticatedPage {
 				item.add(new Label("name", playlist.getName()));
 				item.add(new ExternalLink("url", playlist.getUrl())
 						.setBody(Model.of(playlist.getUrl())));
-				item.add(new IconLink<YouTubePlaylist>("edit", item.getModel(), FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
+					private static final long serialVersionUID = -2793136258714671274L;
+
 					@Override
 					public void onClick() {
-						setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
-								edit(getModelObject()).onPage("Edit Playlist").using
-										(playlistDAO)) {
+						setResponsePage(new BSEntityFormPage<>(
+							edit(getModelObject()).onPage("Edit Playlist").using(playlistDAO)) {
+
+							private static final long serialVersionUID = 8710021909444986625L;
 
 							@Override
 							protected void onSaved(YouTubePlaylist entity) {
@@ -95,8 +85,10 @@ public class PrepareMusicPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<YouTubePlaylist>(
-						create(new YouTubePlaylist()).onPage("Add Playlist").using(playlistDAO)) {
+				setResponsePage(new BSEntityFormPage<>(
+					create(new YouTubePlaylist()).onPage("Add Playlist").using(playlistDAO)) {
+
+					private static final long serialVersionUID = 3409766013597313156L;
 
 					@Override
 					protected void onBeforeSave(YouTubePlaylist entity) {
@@ -119,6 +111,8 @@ public class PrepareMusicPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 6576205835523219034L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());

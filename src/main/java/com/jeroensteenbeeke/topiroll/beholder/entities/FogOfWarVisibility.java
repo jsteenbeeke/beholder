@@ -17,12 +17,11 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.io.Serializable;
+import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
-
-import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -31,12 +30,9 @@ public abstract class FogOfWarVisibility extends BaseDomainObject {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SEQ_ID_FogOfWarVisibility",
-			name = "FogOfWarVisibility", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(generator = "FogOfWarVisibility",
-			strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(sequenceName = "SEQ_ID_FogOfWarVisibility", name = "FogOfWarVisibility", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(generator = "FogOfWarVisibility", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
-
 	private Long id;
 
 	@Column(nullable = false)
@@ -45,7 +41,6 @@ public abstract class FogOfWarVisibility extends BaseDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "view")
-
 	private MapView view;
 
 	public Long getId() {

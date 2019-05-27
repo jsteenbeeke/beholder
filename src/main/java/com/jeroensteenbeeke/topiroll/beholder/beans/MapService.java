@@ -33,8 +33,6 @@ public interface MapService {
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 
-	void unselectMap(@Nonnull MapView view);
-	
 	void delete(@Nonnull MapView view);
 
 	void refreshView(@Nonnull MapView view);

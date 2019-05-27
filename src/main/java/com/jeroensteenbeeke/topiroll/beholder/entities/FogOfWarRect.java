@@ -18,8 +18,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -42,48 +40,44 @@ public class FogOfWarRect extends FogOfWarShape {
 	@Column(nullable = false)
 	private int offsetX;
 
-	@Nonnull
 	public int getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(@Nonnull int offsetX) {
+	public void setOffsetX(int offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	@Nonnull
 	public int getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(@Nonnull int offsetY) {
+	public void setOffsetY(int offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	@Nonnull
 	public int getWidth() {
 		return width;
 	}
 
-	public void setWidth(@Nonnull int width) {
+	public void setWidth(int width) {
 		this.width = width;
 	}
 
-	@Nonnull
 	public int getHeight() {
 		return height;
 	}
 
-	public void setHeight(@Nonnull int height) {
+	public void setHeight(int height) {
 		this.height = height;
 	}
 
 	@Override
 	public String getDescription() {
-		return String.format("Rectangle (x: %d, y: %d, w: %d, h: %d)",
-				getOffsetX(), getOffsetY(), getWidth(), getHeight());
+		return String
+			.format("Rectangle (x: %d, y: %d, w: %d, h: %d)", getOffsetX(),
+				getOffsetY(), getWidth(), getHeight());
 	}
-
 
 	@Override
 	public <T> T visit(@Nonnull FogOfWarShapeVisitor<T> visitor) {

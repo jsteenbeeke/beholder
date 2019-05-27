@@ -19,8 +19,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import javax.persistence.Entity;
 

@@ -59,25 +59,23 @@ public class RunSessionPage extends AuthenticatedPage {
 						.add(AttributeModifier.replace("target", "_blank")));
 				item.add(new ExternalLink("music", musicUrl)
 						.add(AttributeModifier.replace("target", "_blank")));
-				item.add(new Link<MapView>("exploration", item.getModel()) {
+				item.add(new Link<>("exploration", item.getModel()) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
-						setResponsePage(
-								new ExplorationControllerPage(item.getModelObject()));
+						setResponsePage(new ExplorationControllerPage(item.getModelObject()));
 
 					}
 				});
-				item.add(new Link<MapView>("combat", item.getModel()) {
+				item.add(new Link<>("combat", item.getModel()) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
-						setResponsePage(
-								new CombatControllerPage(item.getModelObject()));
+						setResponsePage(new CombatControllerPage(item.getModelObject()));
 
 					}
 				});

@@ -30,6 +30,8 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 
 		add(new MapOverviewPanel("maps", getUser()) {
+			private static final long serialVersionUID = 4157905527663457139L;
+
 			@Override
 			protected void decorateFolderFilter(
 					@Nonnull
@@ -62,8 +64,10 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<MapFolder>(
-						create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+				setResponsePage(new BSEntityFormPage<>(
+					create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+
+					private static final long serialVersionUID = -6729242615987686357L;
 
 					@Override
 					protected void onSaved(MapFolder entity) {
@@ -79,6 +83,8 @@ public class PrepareMapsPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 6407103598598058000L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());

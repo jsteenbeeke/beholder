@@ -17,17 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.io.Serializable;
+import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRenderable;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
-
-import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRenderable;
-import java.util.List;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class InitiativeParticipant extends BaseDomainObject {
@@ -35,45 +34,31 @@ public class InitiativeParticipant extends BaseDomainObject {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SEQ_ID_InitiativeParticipant",
-			name = "InitiativeParticipant", initialValue = 1,
-			allocationSize = 1)
-	@GeneratedValue(generator = "InitiativeParticipant",
-			strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(sequenceName = "SEQ_ID_InitiativeParticipant", name = "InitiativeParticipant", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(generator = "InitiativeParticipant", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 
 	private Long id;
-	
- 	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private InitiativeType initiativeType;
- 	
- 	@Column(nullable=true)
+
+	@Column(nullable = true)
 	private Integer orderOverride;
 
- 	@Column(nullable=false)
+	@Column(nullable = false)
 	private boolean player;
- 	@OneToMany(mappedBy="participant", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)
 	private List<InitiativeParticipantCondition> conditions = new ArrayList<InitiativeParticipantCondition>();
 
-
- 	@Column(nullable=true)
+	@Column(nullable = true)
 	private Integer offsetY;
 
-
- 	@Column(nullable=true)
+	@Column(nullable = true)
 	private Integer offsetX;
 
-
-
-
- 	@Column(nullable=false)
+	@Column(nullable = false)
 	private boolean selected;
-
-
-
-
-
-
 
 	@Column(nullable = true)
 	private Integer total;
@@ -139,11 +124,11 @@ public class InitiativeParticipant extends BaseDomainObject {
 
 	public InitiativeParticipantRenderable toJS() {
 		InitiativeParticipantRenderable js = new InitiativeParticipantRenderable();
-		
+
 		js.setName(getName());
 		js.setScore(getTotal());
 		js.setSelected(isSelected());
-		
+
 		return js;
 	}
 
@@ -151,7 +136,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public InitiativeType getInitiativeType() {
 		return initiativeType;
 	}
-	public void setInitiativeType( @Nonnull InitiativeType initiativeType) {
+
+	public void setInitiativeType(@Nonnull InitiativeType initiativeType) {
 		this.initiativeType = initiativeType;
 	}
 
@@ -159,7 +145,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public Integer getOrderOverride() {
 		return orderOverride;
 	}
-	public void setOrderOverride( @Nullable Integer orderOverride) {
+
+	public void setOrderOverride(@Nullable Integer orderOverride) {
 		this.orderOverride = orderOverride;
 	}
 
@@ -167,7 +154,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public boolean isSelected() {
 		return selected;
 	}
-	public void setSelected( @Nonnull boolean selected) {
+
+	public void setSelected(@Nonnull boolean selected) {
 		this.selected = selected;
 	}
 
@@ -175,7 +163,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public boolean isPlayer() {
 		return player;
 	}
-	public void setPlayer( @Nonnull boolean player) {
+
+	public void setPlayer(@Nonnull boolean player) {
 		this.player = player;
 	}
 
@@ -183,7 +172,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public Integer getOffsetX() {
 		return offsetX;
 	}
-	public void setOffsetX( @Nullable Integer offsetX) {
+
+	public void setOffsetX(@Nullable Integer offsetX) {
 		this.offsetX = offsetX;
 	}
 
@@ -191,7 +181,8 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public Integer getOffsetY() {
 		return offsetY;
 	}
-	public void setOffsetY( @Nullable Integer offsetY) {
+
+	public void setOffsetY(@Nullable Integer offsetY) {
 		this.offsetY = offsetY;
 	}
 
@@ -199,22 +190,10 @@ public class InitiativeParticipant extends BaseDomainObject {
 	public List<InitiativeParticipantCondition> getConditions() {
 		return conditions;
 	}
-	public void setConditions( @Nonnull List<InitiativeParticipantCondition> conditions) {
+
+	public void setConditions(
+		@Nonnull List<InitiativeParticipantCondition> conditions) {
 		this.conditions = conditions;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

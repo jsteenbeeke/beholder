@@ -1,31 +1,18 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import java.io.Serializable;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
-
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.Nonnull;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.FetchType;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
-import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class MapFolder extends BaseDomainObject {
-
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -37,21 +24,16 @@ public class MapFolder extends BaseDomainObject {
 	@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
 	private List<ScaledMap> maps = new ArrayList<ScaledMap>();
 
-
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	private List<MapFolder> children = new ArrayList<MapFolder>();
 
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "parent")
-
 	private MapFolder parent;
-
 
 	@Column(nullable = false)
 	@EntityFormField(label = "Name", required = true)
 	private String name;
-
 
 	public Long getId() {
 		return id;
@@ -102,10 +84,10 @@ public class MapFolder extends BaseDomainObject {
 		this.maps = maps;
 	}
 
-
 	public String getNameWithParents() {
 		if (parent != null) {
-			return String.format("%s \\ %s", parent.getNameWithParents(), getName());
+			return String
+				.format("%s \\ %s", parent.getNameWithParents(), getName());
 		}
 
 		return getName();

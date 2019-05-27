@@ -16,6 +16,8 @@ import org.apache.wicket.model.Model;
 import javax.inject.Inject;
 
 public class InitiativeParticipantConditionCreateWindow extends DMModalWindow<InitiativeParticipant> {
+	private static final long serialVersionUID = 6002209695034331901L;
+
 	@Inject
 	private InitiativeParticipantConditionDAO conditionDAO;
 
@@ -28,6 +30,7 @@ public class InitiativeParticipantConditionCreateWindow extends DMModalWindow<In
 		TextField<Integer> turnsRemainingField = new TextField<>("turns", Model.of(), Integer.class);
 
 		Form<InitiativeParticipantCondition> conditionForm = new Form<InitiativeParticipantCondition>("conditionForm") {
+			private static final long serialVersionUID = -1627463188051664546L;
 			@Inject
 			private InitiativeService initiativeService;
 

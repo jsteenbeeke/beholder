@@ -45,12 +45,12 @@ public interface DMViewCallback extends Serializable {
 	Optional<Point> getPreviousClickedLocation();
 
 	@FunctionalInterface
-	public interface PanelConstructor<D extends DomainObject> {
+	interface PanelConstructor<D extends DomainObject> {
 		DMViewPanel<D> apply(String id, D object, DMViewCallback callback);
 	}
 
 	@FunctionalInterface
-	public interface WindowConstructor<D extends DomainObject> {
+	interface WindowConstructor<D extends DomainObject> {
 		DMModalWindow<D> apply(String id, D object, DMViewCallback callback);
 	}
 }

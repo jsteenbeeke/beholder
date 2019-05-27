@@ -17,18 +17,21 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import java.awt.Dimension;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
-import javax.inject.Inject;
-
+import com.googlecode.wicket.jquery.core.Options;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
+import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
+import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.util.ImageUtil;
+import com.jeroensteenbeeke.hyperion.util.Randomizer;
+import com.jeroensteenbeeke.lux.TypedResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
+import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -45,27 +48,17 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
-
-import com.googlecode.wicket.jquery.core.Options;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
-import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
-import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
-import com.jeroensteenbeeke.hyperion.util.ImageUtil;
-import com.jeroensteenbeeke.hyperion.util.Randomizer;
-import com.jeroensteenbeeke.lux.TypedResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import java.awt.*;
+import java.io.File;
+import java.util.stream.Stream;
 
 public class UploadMapStep2Page extends AuthenticatedPage {
 
@@ -151,6 +144,8 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 					@Override
 					public IResource getResource() {
 						return new ResourceStreamResource() {
+							private static final long serialVersionUID = 5485499577981315590L;
+
 							@Override
 							protected IResourceStream getResourceStream(Attributes attributes) {
 								return new FileResourceStream(image);

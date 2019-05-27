@@ -50,9 +50,6 @@ public class MapCanvas extends WebComponent {
 
 	private final long viewId;
 
-	@Inject
-	private RollBarData rollbarData;
-
 	public MapCanvas(String id, IModel<MapView> viewModel,
 			boolean previewMode) {
 		super(id);
@@ -166,6 +163,8 @@ public class MapCanvas extends WebComponent {
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/renderer.js") {
+					private static final long serialVersionUID = 3687970485732264795L;
+
 					@Override
 					public List<HeaderItem> getDependencies() {
 						return ImmutableList.of(wicketWebsocket);

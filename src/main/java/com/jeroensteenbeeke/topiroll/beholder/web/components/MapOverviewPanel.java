@@ -51,16 +51,22 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 		folderFilter.name().orderBy(true);
 
 		DataView<MapFolder> folderView = new DataView<MapFolder>("folders", FilterDataProvider.of(folderFilter, folderDAO)) {
+			private static final long serialVersionUID = 2005574402388931363L;
+
 			@Override
 			protected void populateItem(Item<MapFolder> item) {
 				final MapFolder folder = item.getModelObject();
 				item.add(new Link<MapFolder>("name") {
+					private static final long serialVersionUID = 5072272511983481785L;
+
 					@Override
 					public void onClick() {
 						setResponsePage(new ViewFolderPage(item.getModelObject()));
 					}
 				}.setBody(Model.of(folder.getName())));
-				item.add(new IconLink<MapFolder>("delete", item.getModel(), FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
+					private static final long serialVersionUID = 5167833998763041541L;
+
 					@Override
 					public void onClick() {
 						MapFolder folder = item.getModelObject();
@@ -70,7 +76,6 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 						goToFolderParentPage(parent);
 
 					}
-
 
 				}.setVisible(folder.getChildren().isEmpty()));
 			}
@@ -95,13 +100,14 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 				item.add(new Label("name", map.getName()));
 				item.add(new AbstractMapPreview("thumb", map, 128) {
+					private static final long serialVersionUID = -4194303736524179282L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 
 					}
 				});
-				item.add(new IconLink<ScaledMap>("view", item.getModel(),
-						FontAwesome.eye) {
+				item.add(new IconLink<>("view", item.getModel(), FontAwesome.eye) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -113,8 +119,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 					}
 				});
-				item.add(new IconLink<ScaledMap>("delete", item.getModel(),
-						FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 

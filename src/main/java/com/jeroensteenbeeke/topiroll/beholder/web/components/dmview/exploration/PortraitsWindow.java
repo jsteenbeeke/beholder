@@ -64,8 +64,7 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 				item.add(new Label("name", portrait.getName()));
 				item.add(new ExternalImage("thumb",
 						portrait.getImageUrl()));
-				item.add(new ListView<PortraitVisibilityLocation>("locations",
-						Lists.newArrayList(PortraitVisibilityLocation.values())) {
+				item.add(new ListView<>("locations", Lists.newArrayList(PortraitVisibilityLocation.values())) {
 
 					private static final long serialVersionUID = 152264260845309393L;
 					@Inject
@@ -76,29 +75,28 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 						PortraitVisibilityLocation location = innerItem.getModelObject();
 
 						final boolean selected = visibilityDAO.findByFilter(
-								new PortraitVisibilityFilter().view(PortraitsWindow.this.getModelObject())
-										.portrait(item.getModelObject()))
-								.find(v -> v.getLocation().equals(location)).isDefined();
+							new PortraitVisibilityFilter().view(PortraitsWindow.this.getModelObject())
+								.portrait(item.getModelObject()))
+							.find(v -> v.getLocation().equals(location)).isDefined();
 
-						AjaxLink<PortraitVisibilityLocation> link = new AjaxLink<PortraitVisibilityLocation>
-								("button") {
+						AjaxLink<PortraitVisibilityLocation> link = new AjaxLink<PortraitVisibilityLocation>(
+							"button") {
 
 							private static final long serialVersionUID = -7633978000647082838L;
 
 							@Override
 							public void onClick(AjaxRequestTarget target) {
 								if (selected) {
-									mapService.unselectPortrait(PortraitsWindow.this.getModelObject(), item.getModelObject(),
-											location);
+									mapService.unselectPortrait(PortraitsWindow.this.getModelObject(),
+										item.getModelObject(), location);
 								} else {
-									mapService.selectPortrait(PortraitsWindow.this.getModelObject(), item.getModelObject(),
-											location);
+									mapService.selectPortrait(PortraitsWindow.this.getModelObject(),
+										item.getModelObject(), location);
 								}
 
 								target.add(container);
 							}
 						};
-
 
 						link.add(AttributeModifier.replace("class", new LoadableDetachableModel<String>() {
 							private static final long serialVersionUID = -317551053297479895L;

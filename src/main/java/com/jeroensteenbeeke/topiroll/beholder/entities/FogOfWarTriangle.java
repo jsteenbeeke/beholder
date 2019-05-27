@@ -46,39 +46,35 @@ public class FogOfWarTriangle extends FogOfWarShape {
 	@Column(nullable = false)
 	private int offsetX;
 
-	@Nonnull
 	public int getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(@Nonnull int offsetX) {
+	public void setOffsetX(int offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	@Nonnull
 	public int getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(@Nonnull int offsetY) {
+	public void setOffsetY(int offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	@Nonnull
 	public int getHorizontalSide() {
 		return horizontalSide;
 	}
 
-	public void setHorizontalSide(@Nonnull int horizontalSide) {
+	public void setHorizontalSide(int horizontalSide) {
 		this.horizontalSide = horizontalSide;
 	}
 
-	@Nonnull
 	public int getVerticalSide() {
 		return verticalSide;
 	}
 
-	public void setVerticalSide(@Nonnull int verticalSide) {
+	public void setVerticalSide(int verticalSide) {
 		this.verticalSide = verticalSide;
 	}
 

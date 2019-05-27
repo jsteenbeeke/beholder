@@ -5,6 +5,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 
 public abstract class DependentOnClickBehavior<T> extends OnClickBehavior {
+	private static final long serialVersionUID = 6481092014135303291L;
+
 	private final IModel<T> model;
 
 	public DependentOnClickBehavior(IModel<T> model) {

@@ -12,6 +12,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import javax.inject.Inject;
 
 public class MarkerStatusPanel extends DMViewPanel<MapView> {
+	private static final long serialVersionUID = 2812527034678281465L;
+
 	@Inject
 	private MapService mapService;
 
@@ -19,6 +21,8 @@ public class MarkerStatusPanel extends DMViewPanel<MapView> {
 		super(id);
 
 		add(new AjaxLink<TokenInstance>("remove") {
+			private static final long serialVersionUID = 7679288508672302142L;
+
 			@Inject
 			private AreaMarkerDAO markerDAO;
 

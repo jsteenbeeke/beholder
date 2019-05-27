@@ -28,6 +28,8 @@ public class OverviewPage extends AuthenticatedPage {
 		super("Overview");
 
 		add(new Link<Void>("prepare") {
+			private static final long serialVersionUID = 8114233117435162078L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());
@@ -35,6 +37,8 @@ public class OverviewPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("run") {
+			private static final long serialVersionUID = -2497972640867242254L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new RunSessionPage());

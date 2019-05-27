@@ -17,7 +17,7 @@ public class InternalErrorPage extends BootstrapBasePage {
 		super("Internal error");
 
 		add(new Link<Void>("continue") {
-			private static final long serialVersionUID1 = -153459368902727914L;
+			private static final long serialVersionUID = -153459368902727914L;
 
 			@Override
 			public void onClick() {

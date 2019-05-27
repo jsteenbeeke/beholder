@@ -27,10 +27,9 @@ import java.util.List;
 
 public class MusicPage extends BootstrapBasePage {
 
+	private static final long serialVersionUID = -6582805616160586051L;
 	@Inject
 	private MapViewDAO viewDAO;
-
-	private MapViewFilter filter;
 
 	private long viewId;
 
@@ -42,7 +41,7 @@ public class MusicPage extends BootstrapBasePage {
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
 
-		this.filter = new MapViewFilter();
+		MapViewFilter filter = new MapViewFilter();
 		filter.identifier().set(identifier.toOptionalString());
 
 		Option<MapView> currentView = viewDAO.getUniqueByFilter(filter);
@@ -94,6 +93,8 @@ public class MusicPage extends BootstrapBasePage {
 		response.render(JavaScriptHeaderItem
 				.forReference(new JavaScriptResourceReference(MapCanvas.class,
 						"js/musicplayer.js") {
+					private static final long serialVersionUID = 9156599767555964681L;
+
 					@Override
 					public List<HeaderItem> getDependencies() {
 						return ImmutableList.of(wicketWebsocket);

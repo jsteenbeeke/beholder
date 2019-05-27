@@ -19,8 +19,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -34,12 +32,12 @@ public class ConeMarker extends AreaMarker {
 	@Column(nullable = false)
 	private int theta;
 
-	@Nonnull
+
 	public int getTheta() {
 		return theta;
 	}
 
-	public void setTheta(@Nonnull int theta) {
+	public void setTheta( int theta) {
 		this.theta = theta;
 	}
 

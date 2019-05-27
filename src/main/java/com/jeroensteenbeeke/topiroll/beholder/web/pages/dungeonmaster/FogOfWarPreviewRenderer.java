@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FogOfWarPreviewRenderer implements FogOfWarShapeVisitor<String> {
+	private static final long serialVersionUID = 6116200149680201826L;
 	private final String canvasId;
 
 	private final double factor;

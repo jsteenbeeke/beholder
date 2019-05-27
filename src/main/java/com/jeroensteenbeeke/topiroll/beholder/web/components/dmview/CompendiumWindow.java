@@ -93,12 +93,13 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		article.setEscapeModelStrings(false);
 		article.setOutputMarkupId(true);
 
-		add(pinLink = new AjaxLink<CompendiumEntry>("pin", getModel()) {
+		add(pinLink = new AjaxLink<>("pin", getModel()) {
 			private static final long serialVersionUID = -2109978219691009998L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				compendiumService.pinEntry(BeholderSession.get().getUser(), getModelObject());
+				compendiumService.pinEntry(BeholderSession.get().getUser(),
+					getModelObject());
 
 				unpinLink.setVisible(true);
 				pinLink.setVisible(false);
@@ -127,12 +128,13 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		});
 		pinLink.setOutputMarkupPlaceholderTag(true);
 
-		add(unpinLink = new AjaxLink<CompendiumEntry>("unpin", getModel()) {
+		add(unpinLink = new AjaxLink<>("unpin", getModel()) {
 			private static final long serialVersionUID = -7792768458461434418L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				compendiumService.unpinEntry(BeholderSession.get().getUser(), getModelObject());
+				compendiumService.unpinEntry(BeholderSession.get().getUser(),
+					getModelObject());
 
 				unpinLink.setVisible(false);
 				pinLink.setVisible(true);
@@ -164,7 +166,7 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 		add(searchResultsContainer = new WebMarkupContainer("results"));
 		searchResultsContainer.setOutputMarkupPlaceholderTag(true);
 		searchResultsContainer.setVisible(entry == null);
-		searchResultsContainer.add(searchResults = new ListView<CompendiumEntry>("options", new ListModel<>()) {
+		searchResultsContainer.add(searchResults = new ListView<>("options", new ListModel<>()) {
 			private static final long serialVersionUID = 4606249780770838168L;
 
 			@Override
@@ -172,8 +174,11 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 				CompendiumEntry entry = item.getModelObject();
 
 				item.add(new Label("title", entry.getTitle()));
-				item.add(new Label("path", entry.getOriginalPath() != null ? entry.getOriginalPath() : "-"));
-				item.add(new AjaxIconLink<CompendiumEntry>("view", item.getModel(), FontAwesome.check) {
+				item.add(new Label("path", entry.getOriginalPath() != null ?
+					entry.getOriginalPath() :
+					"-"));
+				item.add(new AjaxIconLink<>("view", item.getModel(),
+					FontAwesome.check) {
 					private static final long serialVersionUID = 9153225937487202796L;
 
 					@Override
@@ -187,10 +192,13 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 						searchResultsContainer.setVisible(false);
 						queryField.setVisible(false);
 
-						pinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(pb -> pb.equals(BeholderSession.get().getUser())));
-						unpinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(pb -> pb.equals(BeholderSession.get().getUser())));
+						pinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(
+							pb -> pb.equals(BeholderSession.get().getUser())));
+						unpinLink.setVisible(entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).anyMatch(
+							pb -> pb.equals(BeholderSession.get().getUser())));
 
-						target.add(article, searchResultsContainer, queryField, pinLink, unpinLink);
+						target.add(article, searchResultsContainer, queryField,
+							pinLink, unpinLink);
 
 					}
 				});
