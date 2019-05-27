@@ -11,6 +11,8 @@ import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public abstract class AbstractMapPreview extends Border implements ICoordinateTranslator {
+	private static final long serialVersionUID = -5061786563617489387L;
+
 	private final int desiredWidth;
 
 	private final WebMarkupContainer dragdrop;

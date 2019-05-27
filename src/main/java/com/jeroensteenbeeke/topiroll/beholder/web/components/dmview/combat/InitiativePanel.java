@@ -27,6 +27,8 @@ import java.util.List;
 public class InitiativePanel extends DMViewPanel<MapView> {
 	private static final String UNKNOWN = "-";
 
+	private static final long serialVersionUID = 7041791285729658904L;
+
 	private final Label current;
 
 	@Inject
@@ -45,28 +47,33 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 
 		setOutputMarkupId(true);
 
-		currentParticipantModel = new LoadableDetachableModel<InitiativeParticipant>() {
+		currentParticipantModel = new LoadableDetachableModel<>() {
+			private static final long serialVersionUID = 903788535948273973L;
+
 			@Override
 			protected InitiativeParticipant load() {
 				MapView view = getModelObject();
-				InitiativeParticipant initiativeParticipant = initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
-						.view(view)
-						.selected(true)).getOrNull();
-				return initiativeParticipant;
+				return initiativeDAO.getUniqueByFilter(
+					new InitiativeParticipantFilter().view(view).selected(true))
+					.getOrNull();
 			}
 		};
 
-		IModel<String> currentParticipantNameModel = new LoadableDetachableModel<String>() {
+		IModel<String> currentParticipantNameModel = new LoadableDetachableModel<>() {
+			private static final long serialVersionUID = 5876679397431324467L;
+
 			@Override
 			protected String load() {
 				MapView view = getModelObject();
-				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
-						.view(view)
-						.selected(true)).map(InitiativeParticipant::getName).getOrElse(UNKNOWN);
+				return initiativeDAO.getUniqueByFilter(
+					new InitiativeParticipantFilter().view(view).selected(true))
+					.map(InitiativeParticipant::getName).getOrElse(UNKNOWN);
 			}
 		};
 
 		add(current = new Label("current", currentParticipantNameModel) {
+			private static final long serialVersionUID = -4939018390661246323L;
+
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && !UNKNOWN.equals(getDefaultModelObject());
@@ -74,15 +81,20 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 		});
 		current.setOutputMarkupId(true);
 
-		add(new AjaxLink<MapView>("initiative", ModelMaker.wrap(view)) {
+		add(new AjaxLink<>("initiative", ModelMaker.wrap(view)) {
+
+			private static final long serialVersionUID = -2919912669513267746L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, InitiativeOrderWindow::new, getModelObject());
+				callback.createModalWindow(target, InitiativeOrderWindow::new,
+					getModelObject());
 			}
 		});
 
-		add(new AjaxLink<MapView>("next", ModelMaker.wrap(view)) {
+		add(new AjaxLink<>("next", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = 1349414335138202154L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				initiativeService.selectNext(getModelObject());
@@ -97,22 +109,29 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 
 		});
 
-		add(new ListView<InitiativeParticipantCondition>("conditions", createConditionsModel()) {
+		add(new ListView<>("conditions", createConditionsModel()) {
+			private static final long serialVersionUID = 52404040479457513L;
+
 			@Override
 			protected void populateItem(ListItem<InitiativeParticipantCondition> item) {
 				InitiativeParticipantCondition condition = item.getModelObject();
 				Integer turnsRemaining = condition.getTurnsRemaining();
 
-				AjaxLink<InitiativeParticipantCondition> link = new AjaxLink<InitiativeParticipantCondition>("condition") {
+				AjaxLink<InitiativeParticipantCondition> link = new AjaxLink<InitiativeParticipantCondition>(
+					"condition") {
+					private static final long serialVersionUID = 4773340861141521781L;
+
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						callback.createModalWindow(target, InitiativeParticipantConditionEditWindow::new, item.getModelObject());
+						callback.createModalWindow(target,
+							InitiativeParticipantConditionEditWindow::new, item.getModelObject());
 
 					}
 				};
 
 				link.add(new Label("description", condition.getDescription()));
-				link.add(new Label("count", turnsRemaining).setVisible(turnsRemaining != null));
+				link.add(new Label("count", turnsRemaining)
+					.setVisible(turnsRemaining != null));
 
 				item.add(link);
 			}
@@ -120,10 +139,14 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 
 		IModel<InitiativeParticipant> conditionModel = createConditionModel();
 
-		add(new AjaxLink<InitiativeParticipant>("condition", conditionModel) {
+		add(new AjaxLink<>("condition", conditionModel) {
+			private static final long serialVersionUID = -290823527226125069L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, InitiativeParticipantConditionCreateWindow::new, currentParticipantModel.getObject());
+				callback.createModalWindow(target,
+					InitiativeParticipantConditionCreateWindow::new,
+					currentParticipantModel.getObject());
 			}
 
 			@Override
@@ -136,13 +159,13 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 	}
 
 	private IModel<InitiativeParticipant> createConditionModel() {
-		return new LoadableDetachableModel<InitiativeParticipant>() {
+		return new LoadableDetachableModel<>() {
+			private static final long serialVersionUID = 8258325180493805150L;
+
 			@Override
 			protected InitiativeParticipant load() {
-				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter()
-						.view(getModelObject())
-						.selected(true))
-						.getOrNull();
+				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter().view(getModelObject())
+						.selected(true)).getOrNull();
 			}
 		};
 	}

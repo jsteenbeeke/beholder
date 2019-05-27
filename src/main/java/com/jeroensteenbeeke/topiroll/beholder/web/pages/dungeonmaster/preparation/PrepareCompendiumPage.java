@@ -30,28 +30,38 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 		filter.author(getUser());
 		filter.title().orderBy(true);
 
-		add(entryView = new DataView<CompendiumEntry>("entries", FilterDataProvider.of(filter, compendiumEntryDAO)) {
+		add(entryView = new DataView<>("entries",
+			FilterDataProvider.of(filter, compendiumEntryDAO)) {
+			private static final long serialVersionUID = -3399820060777345883L;
+
 			@Override
 			protected void populateItem(Item<CompendiumEntry> item) {
 				item.add(new Label("title", item.getModelObject().getTitle()));
-				item.add(new IconLink<CompendiumEntry>("edit", item.getModel(), FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
+					private static final long serialVersionUID = 8837136535113695402L;
+
 					@Override
 					public void onClick() {
 						setResponsePage(new CompendiumEditorPage(item.getModelObject()));
 					}
 				});
-				item.add(new IconLink<CompendiumEntry>("delete", item.getModel(), FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(),
+					FontAwesome.trash) {
+					private static final long serialVersionUID = -4536436282162364701L;
+
 					@Override
 					public void onClick() {
-						setResponsePage(new ConfirmationPage("Confirm deletion", String.format("Are you sure you wish to delete the article titled \"%s\"", getModelObject().getTitle()),
-								ConfirmationPage.ColorScheme.INVERTED, yes -> {
-							if (yes) {
-								compendiumEntryDAO.delete(item.getModelObject());
-							}
+						setResponsePage(new ConfirmationPage("Confirm deletion",
+							String.format(
+								"Are you sure you wish to delete the article titled \"%s\"",
+								getModelObject().getTitle()), ConfirmationPage.ColorScheme.INVERTED,
+							yes -> {
+								if (yes) {
+									compendiumEntryDAO.delete(item.getModelObject());
+								}
 
-							setResponsePage(new PrepareCompendiumPage());
-						}
-						));
+								setResponsePage(new PrepareCompendiumPage());
+							}));
 					}
 				});
 			}
@@ -59,6 +69,8 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 		add(new BootstrapPagingNavigator("entriesnav", entryView));
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = -2560260394292931999L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());
@@ -66,6 +78,8 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("addentry") {
+			private static final long serialVersionUID = 4337138900456370963L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new CompendiumEditorPage(new CompendiumEntry()));

@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 
 public class RollbarClientListener implements
 		IHeaderContributor {
+	private static final long serialVersionUID = 817261889164561772L;
 	private final String environment;
 
 	private final String clientKey;

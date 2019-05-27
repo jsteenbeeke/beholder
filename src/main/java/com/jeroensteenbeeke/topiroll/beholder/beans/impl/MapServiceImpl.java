@@ -189,15 +189,6 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public void unselectMap(@Nonnull MapView view) {
-		view.setSelectedMap(null);
-		viewDAO.update(view);
-
-		refreshView(view);
-	}
-
-	@Override
-	@Transactional
 	public void delete(@Nonnull MapView view) {
 		view.getVisibilities().forEach(visibilityDAO::delete);
 		viewDAO.delete(view);

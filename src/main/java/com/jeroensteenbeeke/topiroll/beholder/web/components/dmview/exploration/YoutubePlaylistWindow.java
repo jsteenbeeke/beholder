@@ -33,15 +33,16 @@ public class YoutubePlaylistWindow extends DMModalWindow<MapView> {
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
 		playlistFilter.owner(view.getOwner()).name().orderBy(true);
 
-		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
-				FilterDataProvider.of(playlistFilter,
-						playlistDAO)) {
+		DataView<YouTubePlaylist> playlistView = new DataView<>("playlists",
+			FilterDataProvider.of(playlistFilter, playlistDAO)) {
+			private static final long serialVersionUID = 5740854845633916486L;
+
 			@Override
 			protected void populateItem(Item<YouTubePlaylist> item) {
 				YouTubePlaylist playlist = item.getModelObject();
 
 				item.add(new Label("name", playlist.getName()));
-				item.add(new AjaxIconLink<YouTubePlaylist>("play", item.getModel(), FontAwesome.play) {
+				item.add(new AjaxIconLink<>("play", item.getModel(), FontAwesome.play) {
 					private static final long serialVersionUID = -5537769023779195576L;
 
 					@Override
@@ -58,13 +59,13 @@ public class YoutubePlaylistWindow extends DMModalWindow<MapView> {
 						}
 
 						if (playlist.getNumberOfEntries() != null) {
-							url = url.concat("&amp;index=")
-									.concat(Integer.toString(new Random().nextInt(playlist.getNumberOfEntries())));
+							url = url.concat("&amp;index=").concat(Integer
+								.toString(new Random().nextInt(playlist.getNumberOfEntries())));
 						}
 
-						BeholderRegistry.instance
-								.sendToView(YoutubePlaylistWindow.this.getModelObject().getId(), r -> !r.isPreviewMode(),
-										new JSPlaylist(url));
+						BeholderRegistry.instance.sendToView(
+							YoutubePlaylistWindow.this.getModelObject().getId(),
+							r -> !r.isPreviewMode(), new JSPlaylist(url));
 					}
 				});
 

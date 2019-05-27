@@ -50,6 +50,8 @@ public class BeholderNavBar extends org.apache.wicket.markup.html.panel.Panel {
 		add(brandLink);
 
 		add(new Link<Void>("prepare") {
+			private static final long serialVersionUID = 7525798483831866821L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());
@@ -57,6 +59,8 @@ public class BeholderNavBar extends org.apache.wicket.markup.html.panel.Panel {
 		});
 
 		add(new Link<Void>("run") {
+			private static final long serialVersionUID = -1332593238915006341L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new RunSessionPage());

@@ -137,6 +137,8 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 
 		final AbstractMapPreview previewImage =
 				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+					private static final long serialVersionUID = 3418451888522969514L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						getMap().getAllShapes().stream()

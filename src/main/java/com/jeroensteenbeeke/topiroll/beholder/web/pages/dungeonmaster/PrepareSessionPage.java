@@ -17,19 +17,13 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CampaignFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.*;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.authorization.AuthorizationException;
-import org.apache.wicket.authorization.UnauthorizedActionException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.LambdaModel;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.xml.crypto.Data;
 
 public class PrepareSessionPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -62,16 +56,18 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					item.add(new Label("active", "Active")
 								 .add(AttributeModifier.replace("class", "badge badge-success")));
 				} else {
-					item.add(new IconTextLink<Campaign>("active", item.getModel(), FontAwesome.check_circle, c -> "Activate") {
+					item.add(new IconTextLink<>("active", item.getModel(),
+						FontAwesome.check_circle, c -> "Activate") {
 						private static final long serialVersionUID = -8605604961132113879L;
 
 						@Override
 						public void onClick() {
-							user().map(user -> campaignService.setActiveCampaign(user, getModelObject()))
-								  .peek(result -> {
-									  result.ifOk(() -> PrepareSessionPage.this.setResponsePage(new PrepareSessionPage()));
-									  result.ifNotOk(this::error);
-								  });
+							user().map(user -> campaignService
+								.setActiveCampaign(user, getModelObject())).peek(result -> {
+								result.ifOk(() -> PrepareSessionPage.this
+									.setResponsePage(new PrepareSessionPage()));
+								result.ifNotOk(this::error);
+							});
 						}
 					});
 				}
@@ -137,7 +133,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 		viewFilter.identifier().orderBy(true);
 
 		DataView<MapView> viewView = new DataView<MapView>("views",
-														   FilterDataProvider.of(viewFilter, mapViewDAO)) {
+				FilterDataProvider.of(viewFilter, mapViewDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -148,9 +144,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				item.add(new Label("width", mapView.getWidth()));
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",
-								   mapView.getScreenDiagonalInInches()));
-				item.add(new IconLink<MapView>("edit", item.getModel(),
-											   FontAwesome.edit) {
+						mapView.getScreenDiagonalInInches()));
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -159,19 +154,16 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						MapView view = getModelObject();
 						final String oldIdentifier = view.getIdentifier();
 
-						setResponsePage(new BSEntityFormPage<MapView>(
-							edit(view).onPage("Edit View")
-									  .using(mapViewDAO)) {
+						setResponsePage(new BSEntityFormPage<>(
+							edit(view).onPage("Edit View").using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
 
 							@Nonnull
 							@Override
-							protected ActionResult validateEntity(
-								@Nonnull MapView entity) {
+							protected ActionResult validateEntity(@Nonnull MapView entity) {
 
-								ActionResult result =
-									validateMapView(entity,
-													!oldIdentifier.equals(entity.getIdentifier()));
+								ActionResult result = validateMapView(entity,
+									!oldIdentifier.equals(entity.getIdentifier()));
 
 								if (!result.isOk()) {
 									return result;
@@ -194,8 +186,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 					}
 				});
-				item.add(new IconLink<MapView>("delete", item.getModel(),
-											   FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -207,13 +198,11 @@ public class PrepareSessionPage extends AuthenticatedPage {
 						MapView mapView = item.getModelObject();
 
 						setResponsePage(new ConfirmationPage("Confirm Deletion",
-															 String.format(
-																 "Are you sure you wish to delete view \"%s\"",
-																 mapView.getIdentifier()),
-															 ConfirmationPage.ColorScheme.INVERTED, answer -> {
+							String.format(
+								"Are you sure you wish to delete view \"%s\"",
+								mapView.getIdentifier()), ConfirmationPage.ColorScheme.INVERTED, answer -> {
 							if (answer) {
-								mapService
-									.delete(item.getModelObject());
+								mapService.delete(item.getModelObject());
 							}
 
 							setResponsePage(new PrepareSessionPage());
@@ -232,7 +221,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 
 		Link<MapView> l;
-		add(l = new Link<MapView>("addview") {
+		add(l = new Link<>("addview") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -241,8 +230,8 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				view.setWidth(1920);
 				view.setHeight(1080);
 
-				setResponsePage(new BSEntityFormPage<MapView>(create(view)
-																  .onPage("Create Map View").using(mapViewDAO)) {
+				setResponsePage(new BSEntityFormPage<>(
+					create(view).onPage("Create Map View").using(mapViewDAO)) {
 					private static final long serialVersionUID = 1L;
 
 					@Nonnull
@@ -359,7 +348,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 	private ActionResult validateMapView(MapView entity, boolean checkIdentifier) {
 		if (!entity.getIdentifier().matches("[a-zA-Z0-9]+")) {
 			return ActionResult.error(
-				"Identifiers may only contain alphanumeric characters");
+					"Identifiers may only contain alphanumeric characters");
 		}
 
 		MapViewFilter filter = new MapViewFilter();
@@ -367,7 +356,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 
 		if (checkIdentifier && mapViewDAO.countByFilter(filter) > 0) {
 			return ActionResult.error("Identifier '%s' already in use",
-									  entity.getIdentifier());
+					entity.getIdentifier());
 		}
 
 		return ActionResult.ok();

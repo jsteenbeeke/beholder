@@ -52,7 +52,7 @@ public class EditGroupPage extends AuthenticatedPage {
 	public EditGroupPage(FogOfWarGroup group) {
 		super("Edit Group");
 
-		add(new Link<ScaledMap>("back", ModelMaker.wrap(group.getMap())) {
+		add(new Link<>("back", ModelMaker.wrap(group.getMap())) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -111,7 +111,7 @@ public class EditGroupPage extends AuthenticatedPage {
 
 					FogOfWarShape shape = i.getModelObject();
 
-					if (checked != null && checked.booleanValue()) {
+					if (checked != null && checked) {
 
 
 						keep.add(shape);

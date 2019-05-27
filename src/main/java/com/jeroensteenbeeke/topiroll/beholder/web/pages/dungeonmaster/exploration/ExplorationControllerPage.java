@@ -229,7 +229,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			}
 		};
 
-		preview.add(new ListView<TokenInstance>("tokens", tokenModel) {
+		preview.add(new ListView<>("tokens", tokenModel) {
 			private static final long serialVersionUID = 3407286207428917532L;
 
 			@Override
@@ -238,8 +238,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 				int squareSize = Optional.ofNullable(map).map(ScaledMap::getSquareSize).orElse(0);
 
-				int wh = squareSize
-					* instance.getDefinition().getDiameterInSquares();
+				int wh = squareSize * instance.getDefinition().getDiameterInSquares();
 
 				Label image = new Label(TOKEN_ID, new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = -9052475381415005280L;
@@ -249,61 +248,57 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						return object.getLabel();
 					}
 				});
-				image.add(AttributeModifier.replace("style",
-													new DependentModel<TokenInstance, String>(item.getModel()) {
-														private static final long serialVersionUID = 1L;
+				image.add(AttributeModifier.replace("style", new DependentModel<TokenInstance, String>(item.getModel()) {
+					private static final long serialVersionUID = 1L;
 
-														@Override
-														protected String load(TokenInstance i) {
-															int left = i.getOffsetX();
-															int top = i.getOffsetY();
+					@Override
+					protected String load(TokenInstance i) {
+						int left = i.getOffsetX();
+						int top = i.getOffsetY();
 
-															left = coordinateTranslator.translateToScaledImageSize(left);
-															top = coordinateTranslator.translateToScaledImageSize(top);
+						left = coordinateTranslator.translateToScaledImageSize(left);
+						top = coordinateTranslator.translateToScaledImageSize(top);
 
-															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+						int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
-															return String.format(
-																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
-																	"%3$dpx !important; " +
-																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-																	"!important; background-size: %3$dpx %3$dpx; " +
-																	"border-radius: 100%%; border: 3px " +
-																	"%6$s #%4$s; background-image: url('%5$s'); " +
-																	"display: table-cell; vertical-align: bottom; " +
-																	"color: #cccccc; text-align: center; margin: 0; padding: 0;",
-																left, top, actualWH, i
-																	.getBorderType().toHexColor(),
-																i.getDefinition().getImageUrl(),
-																i.isShow() ? "solid" : "dashed"
-															);
-														}
+						return String.format(
+							"position: absolute; left: %1$dpx; top: %2$dpx; max-width: "
+								+ "%3$dpx !important; "
+								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
+								+ "!important; background-size: %3$dpx %3$dpx; "
+								+ "border-radius: 100%%; border: 3px "
+								+ "%6$s #%4$s; background-image: url('%5$s'); "
+								+ "display: table-cell; vertical-align: bottom; "
+								+ "color: #cccccc; text-align: center; margin: 0; padding: 0;",
+							left, top, actualWH, i.getBorderType().toHexColor(),
+							i.getDefinition().getImageUrl(),
+							i.isShow() ? "solid" : "dashed");
+					}
 
-													}));
+				}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = -1407024057458015547L;
 
 					@Override
 					protected String load(TokenInstance instance) {
-						return Optional
-							.ofNullable(instance)
-							.filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
-							.map(
-								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()
-							)
-							.map(p -> String.format("%s (%d%% health)", instance.getBadge(), p))
-							.orElse(instance.getBadge());
+						return Optional.ofNullable(instance).filter(
+							i -> i.getCurrentHitpoints() != null
+								&& i.getMaxHitpoints() != null).map(
+								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()).map(p -> String
+							.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
 					}
 				}));
 
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
-				image.add(new DependentStopEnabledDraggableBehavior<TokenInstance>(item.getModel(), draggableOptions) {
+				image.add(new DependentStopEnabledDraggableBehavior<>(item.getModel(),
+					draggableOptions) {
 					private static final long serialVersionUID = -1407439608333482730L;
 
 					@Override
-					protected void onStop(AjaxRequestTarget target, TokenInstance instance, int left, int top) {
+					protected void onStop(AjaxRequestTarget target,
+						TokenInstance instance, int left, int top) {
 						left = coordinateTranslator.translateToRealImageSize(left);
 						top = coordinateTranslator.translateToRealImageSize(top);
 
@@ -313,7 +308,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					}
 				});
 
-				image.add(new DependentOnClickBehavior<TokenInstance>(item.getModel()) {
+				image.add(new DependentOnClickBehavior<>(item.getModel()) {
 					private static final long serialVersionUID = -5156716010790702323L;
 
 					@Override
@@ -348,8 +343,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			}
 		};
 
-		preview.add(new ListView<InitiativeParticipant>("participants",
-														participantModel) {
+		preview.add(new ListView<>("participants", participantModel) {
 
 			private static final long serialVersionUID = -1880525125397252346L;
 
@@ -359,93 +353,74 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				int wh = Optional.ofNullable(map).map(ScaledMap::getSquareSize).orElse(0);
 
 				Label image = new Label(PARTICIPANT_ID, participant.getName());
-				image.add(AttributeModifier.replace("style",
-													new LoadableDetachableModel<String>() {
-														private static final long serialVersionUID = 1L;
+				image.add(AttributeModifier.replace("style", new LoadableDetachableModel<String>() {
+					private static final long serialVersionUID = 1L;
 
-														@Override
-														protected String load() {
-															InitiativeParticipant participant = item.getModelObject();
+					@Override
+					protected String load() {
+						InitiativeParticipant participant = item.getModelObject();
 
+						int left = Option.of(participant.getOffsetX()).map(Math::abs).orElse(() -> Option.of(map)
+							.map(ScaledMap::getBasicWidth).map(
+								width -> (int) (width * displayFactor / 2))).getOrElse(0);
+						int top = Option.of(participant.getOffsetY()).map(Math::abs).orElse(() -> Option.of(map)
+							.map(ScaledMap::getBasicHeight).map(
+								width -> (int) (width * displayFactor / 2))).getOrElse(0);
 
-															int left = Option.of(participant.getOffsetX())
-																			 .map(Math::abs)
-																			 .orElse(() -> Option
-																				 .of(map)
-																				 .map(ScaledMap::getBasicWidth)
-																				 .map(
-																					 width -> (int) (width * displayFactor / 2)
-																				 )).getOrElse(0);
-															int top = Option.of(participant.getOffsetY())
-																			.map(Math::abs)
-																			.orElse(() -> Option
-																				.of(map)
-																				.map(ScaledMap::getBasicHeight)
-																				.map(
-																					width -> (int) (width * displayFactor / 2)
-																				)).getOrElse(0);
+						left = coordinateTranslator.translateToScaledImageSize(left);
+						top = coordinateTranslator.translateToScaledImageSize(top);
 
-															left = coordinateTranslator.translateToScaledImageSize(left);
-															top = coordinateTranslator.translateToScaledImageSize(top);
+						int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
-															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+						return String.format(
+							"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;"
+								+ " "
+								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
+								+ "!important; border-radius: 100%%; border: 1px "
+								+ "solid" + " "
+								+ "#00ff00; text-align: center; word-break: "
+								+ "break-all; vertical-align: middle; display: "
+								+ "table-cell; color: #cccccc; "
+								+ "background-image: url('%4$s'); background-size: "
+								+ "%3$dpx %3$dpx;", left, top, actualWH,
+							UrlUtils.rewriteToContextRelative("img/player.png",
+								RequestCycle.get()));
+					}
 
-
-															return String.format(
-																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;" +
-																	" " +
-																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-																	"!important; border-radius: 100%%; border: 1px " +
-																	"solid" +
-																	" " +
-																	"#00ff00; text-align: center; word-break: " +
-																	"break-all; vertical-align: middle; display: " +
-																	"table-cell; color: #cccccc; " +
-																	"background-image: url('%4$s'); background-size: " +
-																	"%3$dpx %3$dpx;",
-																left, top, actualWH,
-																UrlUtils.rewriteToContextRelative("img/player.png",
-																								  RequestCycle.get()));
-														}
-
-													}));
+				}));
 				image.add(AttributeModifier.replace("title", participant.getName()));
-
 
 				Options draggableOptions = new Options();
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new
 
-							  DraggableBehavior(draggableOptions,
-												new DraggableAdapter() {
-													private static final long serialVersionUID = 1L;
+					DraggableBehavior(draggableOptions, new DraggableAdapter() {
+					private static final long serialVersionUID = 1L;
 
-													@Override
-													public boolean isStopEventEnabled() {
+					@Override
+					public boolean isStopEventEnabled() {
 
-														return true;
-													}
+						return true;
+					}
 
-													@Override
-													public void onDragStop(AjaxRequestTarget target,
-																		   int top, int left) {
-														super.onDragStop(target, top, left);
+					@Override
+					public void onDragStop(AjaxRequestTarget target, int top,
+						int left) {
+						super.onDragStop(target, top, left);
 
+						// TODO: Service method?
+						InitiativeParticipant participant = item.getModelObject();
+						participant.setOffsetX((int) (left / displayFactor));
+						participant.setOffsetY((int) (top / displayFactor));
+						participantDAO.update(participant);
 
-														// TODO: Service method?
-														InitiativeParticipant participant = item.getModelObject();
-														participant.setOffsetX((int) (left / displayFactor));
-														participant.setOffsetY((int) (top / displayFactor));
-														participantDAO.update(participant);
-
-													}
-												})).add(new OnClickBehavior() {
+					}
+				})).add(new OnClickBehavior() {
 					private static final long serialVersionUID = 5502865667110141675L;
 
 					@Override
-					protected void onClick(AjaxRequestTarget target,
-										   ClickEvent event) {
+					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 						// TODO: What happens when clicking a player marker
 					}
 				});
@@ -510,26 +485,30 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 		};
 
 
-		explorationNavigator.add(new ListView<CompendiumEntry>("pinnedEntries", pinnedEntryModel) {
+		explorationNavigator.add(
+			new ListView<>("pinnedEntries", pinnedEntryModel) {
 
-			private static final long serialVersionUID = -3883519466730219132L;
+				private static final long serialVersionUID = -3883519466730219132L;
 
-			@Override
-			protected void populateItem(ListItem<CompendiumEntry> item) {
-				AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>("entry", item.getModel()) {
-					private static final long serialVersionUID = -2462222055329944007L;
+				@Override
+				protected void populateItem(ListItem<CompendiumEntry> item) {
+					AjaxLink<CompendiumEntry> entryLink = new AjaxLink<CompendiumEntry>(
+						"entry", item.getModel()) {
+						private static final long serialVersionUID = -2462222055329944007L;
 
-					@Override
-					public void onClick(AjaxRequestTarget target) {
-						createModalWindow(target, CompendiumWindow::new, getModelObject());
+						@Override
+						public void onClick(AjaxRequestTarget target) {
+							createModalWindow(target, CompendiumWindow::new,
+								getModelObject());
 
-					}
-				};
-				entryLink.add(new Label("label", Model.of("Compendium: " + item.getModelObject().getTitle())));
-				item.add(entryLink);
+						}
+					};
+					entryLink.add(new Label("label", Model
+						.of("Compendium: " + item.getModelObject().getTitle())));
+					item.add(entryLink);
 
-			}
-		});
+				}
+			});
 
 		explorationNavigator.add(new AjaxLink<MapView>("portraits") {
 			private static final long serialVersionUID = 4682088219303952250L;

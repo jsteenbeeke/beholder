@@ -37,30 +37,30 @@ public class FogOfWarCircle extends FogOfWarShape {
 	@Column(nullable = false)
 	private int offsetX;
 
-	@Nonnull
+
 	public int getRadius() {
 		return radius;
 	}
 
-	public void setRadius(@Nonnull int radius) {
+	public void setRadius( int radius) {
 		this.radius = radius;
 	}
 
-	@Nonnull
+
 	public int getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(@Nonnull int offsetX) {
+	public void setOffsetX( int offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	@Nonnull
+
 	public int getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(@Nonnull int offsetY) {
+	public void setOffsetY( int offsetY) {
 		this.offsetY = offsetY;
 	}
 

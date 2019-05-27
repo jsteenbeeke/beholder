@@ -98,6 +98,8 @@ public class ViewMapPage extends AuthenticatedPage {
 
 		mapModel = ModelMaker.wrap(map);
 		add(new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+			private static final long serialVersionUID = -3810517727916960721L;
+
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 				getMap().getAllShapes().stream()
@@ -126,6 +128,8 @@ public class ViewMapPage extends AuthenticatedPage {
 				item.add(new MapLinkView("links", new MapLinkFilter().sourceGroup(group)));
 
 				item.add(new AbstractMapPreview("thumb", map, 128) {
+					private static final long serialVersionUID = -2603690307449210198L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						item.getModelObject().getShapes().stream()
@@ -133,8 +137,7 @@ public class ViewMapPage extends AuthenticatedPage {
 								.forEach(js::append);
 					}
 				});
-				item.add(new IconLink<FogOfWarGroup>("edit", item.getModel(),
-						FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -143,19 +146,16 @@ public class ViewMapPage extends AuthenticatedPage {
 						setResponsePage(new EditGroupPage(getModelObject()));
 					}
 				});
-				item.add(new IconLink<FogOfWarGroup>("link", item.getModel(),
-						FontAwesome.link) {
+				item.add(new IconLink<>("link", item.getModel(), FontAwesome.link) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
 
-
 						setResponsePage(new CreateLinkPage(getModelObject()));
 					}
 				});
-				item.add(new IconLink<FogOfWarGroup>("delete", item.getModel(),
-						FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -192,8 +192,7 @@ public class ViewMapPage extends AuthenticatedPage {
 					}
 				});
 
-				item.add(new IconLink<FogOfWarShape>("delete", item.getModel(),
-						FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -224,7 +223,8 @@ public class ViewMapPage extends AuthenticatedPage {
 						item.add(new Label("token", instance.getLabel()));
 						item.add(new Label("location",
 								String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
-						item.add(new IconLink<TokenInstance>("reveal", item.getModel(), FontAwesome.eye) {
+						item.add(new IconLink<>("reveal", item.getModel(),
+							FontAwesome.eye) {
 							private static final long serialVersionUID = 1L;
 
 							@Inject
@@ -236,15 +236,15 @@ public class ViewMapPage extends AuthenticatedPage {
 								setResponsePage(new ViewMapPage(mapModel.getObject()));
 							}
 						}.setVisible(!instance.isShow()));
-						item.add(new IconLink<TokenInstance>("edit", item.getModel(),
-								FontAwesome.edit) {
+						item.add(new IconLink<>("edit", item.getModel(),
+							FontAwesome.edit) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							public void onClick() {
 								BSEntityFormPage<TokenInstance> page = new BSEntityFormPage<TokenInstance>(
-										edit(getModelObject()).onPage("Edit Token").withoutDelete()
-												.using(tokenInstanceDAO)) {
+									edit(getModelObject()).onPage("Edit Token").withoutDelete()
+										.using(tokenInstanceDAO)) {
 
 									private static final long serialVersionUID = 1L;
 
@@ -258,15 +258,16 @@ public class ViewMapPage extends AuthenticatedPage {
 										setResponsePage(new ViewMapPage(mapModel.getObject()));
 									}
 
-
 								};
-								page.setChoices(TokenInstance_.borderType, Lists.newArrayList(TokenBorderType.values()));
+								page.setChoices(TokenInstance_.borderType, Lists
+									.newArrayList(TokenBorderType.values()));
 
 								setResponsePage(page);
 
 							}
 						});
-						item.add(new IconLink<TokenInstance>("delete", item.getModel(), FontAwesome.trash) {
+						item.add(new IconLink<>("delete", item.getModel(),
+							FontAwesome.trash) {
 							private static final long serialVersionUID = 1L;
 
 							@Override
@@ -282,7 +283,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		add(new BootstrapPagingNavigator("tokennav", tokenView));
 
 
-		add(new Link<ScaledMap>("addcircle", mapModel) {
+		add(new Link<>("addcircle", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -292,7 +293,7 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		});
 
-		add(new Link<ScaledMap>("addrect", mapModel) {
+		add(new Link<>("addrect", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -302,7 +303,7 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		});
 
-		add(new Link<ScaledMap>("addtriangle", mapModel) {
+		add(new Link<>("addtriangle", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -312,7 +313,7 @@ public class ViewMapPage extends AuthenticatedPage {
 			}
 		});
 
-		add(new Link<ScaledMap>("group", mapModel) {
+		add(new Link<>("group", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -325,7 +326,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.owner().equalTo(getUser());
 
-		add(new Link<ScaledMap>("addtokens", mapModel) {
+		add(new Link<>("addtokens", mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override

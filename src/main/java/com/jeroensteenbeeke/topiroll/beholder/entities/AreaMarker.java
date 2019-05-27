@@ -84,39 +84,38 @@ public abstract class AreaMarker extends BaseDomainObject {
 		this.view = view;
 	}
 
-	@Nonnull
 	public int getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(@Nonnull int offsetX) {
+	public void setOffsetX(int offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	@Nonnull
+
 	public int getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(@Nonnull int offsetY) {
+	public void setOffsetY( int offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	@Nonnull
+
 	public int getExtent() {
 		return extent;
 	}
 
-	public void setExtent(@Nonnull int extent) {
+	public void setExtent( int extent) {
 		this.extent = extent;
 	}
 
-	@Nonnull
+
 	public String getColor() {
 		return color;
 	}
 
-	public void setColor(@Nonnull String color) {
+	public void setColor( String color) {
 		this.color = color;
 	}
 

@@ -87,6 +87,8 @@ public class AddCircleFogOfWarPage extends AuthenticatedPage {
 
 		final AbstractMapPreview previewImage =
 				new AbstractMapPreview("preview", map, Math.min(1024, map.getBasicWidth())) {
+					private static final long serialVersionUID = 117047744683586159L;
+
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						getMap().getAllShapes().stream()

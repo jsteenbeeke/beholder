@@ -156,6 +156,8 @@ public abstract class OnClickBehavior extends JQueryUIBehavior
 
 	public static class ClickEvent extends JQueryEvent implements Serializable {
 
+		private static final long serialVersionUID = 8377447935056799904L;
+
 		private int top;
 
 		private int left;

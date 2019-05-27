@@ -34,15 +34,15 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 			@Override
 			protected void decorateFolderFilter(
-				@Nonnull
-					MapFolderFilter folderFilter) {
+					@Nonnull
+							MapFolderFilter folderFilter) {
 				folderFilter.parent().isNull();
 			}
 
 			@Override
 			protected void decorateMapFilter(
-				@Nonnull
-					ScaledMapFilter mapFilter) {
+					@Nonnull
+							ScaledMapFilter mapFilter) {
 				mapFilter.folder().isNull();
 			}
 		});
@@ -64,8 +64,10 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<MapFolder>(
+				setResponsePage(new BSEntityFormPage<>(
 					create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+
+					private static final long serialVersionUID = -6729242615987686357L;
 
 					@Override
 					protected void onSaved(MapFolder entity) {
@@ -81,6 +83,8 @@ public class PrepareMapsPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 6407103598598058000L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());

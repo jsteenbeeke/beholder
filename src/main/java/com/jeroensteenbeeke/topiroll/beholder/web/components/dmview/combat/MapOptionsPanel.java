@@ -86,7 +86,7 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 
 			@Override
 			public boolean isVisible() {
-				return super.isVisible() && callback.getPreviousClickedLocation() != null;
+				return super.isVisible() && callback.getPreviousClickedLocation().isPresent();
 			}
 		});
 
@@ -100,7 +100,7 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 
 			@Override
 			public boolean isVisible() {
-				return super.isVisible() && callback.getPreviousClickedLocation() != null;
+				return super.isVisible() && callback.getPreviousClickedLocation().isPresent();
 			}
 
 		});

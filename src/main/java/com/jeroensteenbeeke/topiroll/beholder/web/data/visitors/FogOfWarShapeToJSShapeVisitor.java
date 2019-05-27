@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FogOfWarShapeToJSShapeVisitor implements FogOfWarShapeVisitor<JSShape> {
+	private static final long serialVersionUID = 4073967800384578318L;
 	private final double factor;
 
 	public FogOfWarShapeToJSShapeVisitor(double factor) {

@@ -32,17 +32,15 @@ public class LineMarker extends AreaMarker {
 	private static final long serialVersionUID = 1L;
 
 	public static final int LINE_ANGLE = 3;
-	private static final int LINE_MARKER_CUTOFF = 15;
 
 	@Column(nullable = false)
 	private int theta;
 
-	@Nonnull
 	public int getTheta() {
 		return theta;
 	}
 
-	public void setTheta(@Nonnull int theta) {
+	public void setTheta(int theta) {
 		this.theta = theta;
 	}
 

@@ -152,17 +152,22 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 						conditionItem.add(new Label("description", condition.getDescription()));
 						conditionItem.add(new Label("turns", condition.getTurnsRemaining()).setVisible(condition.getTurnsRemaining() != null));
-						conditionItem.add(new AjaxIconLink<InitiativeParticipantCondition>("edit", conditionItem.getModel(), FontAwesome.edit) {
-							private static final long serialVersionUID = -7034858499613853766L;
+						conditionItem.add(
+							new AjaxIconLink<>("edit", conditionItem.getModel(),
+								FontAwesome.edit) {
+								private static final long serialVersionUID = -7034858499613853766L;
 
-							@Override
-							public void onClick(AjaxRequestTarget target) {
-								callback.removeModal(target);
+								@Override
+								public void onClick(AjaxRequestTarget target) {
+									callback.removeModal(target);
 
-								callback.createModalWindow(target, InitiativeParticipantConditionEditWindow::new, getModelObject());
-							}
-						});
-						conditionItem.add(new AjaxIconLink<InitiativeParticipantCondition>("delete", conditionItem.getModel(), FontAwesome.trash) {
+									callback.createModalWindow(target,
+										InitiativeParticipantConditionEditWindow::new,
+										getModelObject());
+								}
+							});
+						conditionItem.add(new AjaxIconLink<>("delete",
+							conditionItem.getModel(), FontAwesome.trash) {
 							private static final long serialVersionUID = -4100298936998032360L;
 
 							@Override
@@ -174,8 +179,8 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 					}
 				});
 
-				item.add(new AjaxIconLink<InitiativeParticipant>("select",
-						item.getModel(), FontAwesome.location_arrow) {
+				item.add(new AjaxIconLink<>("select", item.getModel(),
+					FontAwesome.location_arrow) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -186,8 +191,7 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 						callback.refreshMenus(target);
 					}
 				}.setVisible(!participant.isSelected()));
-				item.add(new AjaxIconLink<InitiativeParticipant>("up",
-						item.getModel(), FontAwesome.arrow_up) {
+				item.add(new AjaxIconLink<>("up", item.getModel(), FontAwesome.arrow_up) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -200,12 +204,10 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 					@Override
 					public boolean isVisible() {
-						return super.isVisible() && initiativeService
-								.canMoveUp(item.getModelObject());
+						return super.isVisible() && initiativeService.canMoveUp(item.getModelObject());
 					}
 				});
-				item.add(new AjaxIconLink<InitiativeParticipant>("down",
-						item.getModel(), FontAwesome.arrow_down) {
+				item.add(new AjaxIconLink<>("down", item.getModel(), FontAwesome.arrow_down) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -218,12 +220,11 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 					@Override
 					public boolean isVisible() {
-						return super.isVisible() && initiativeService
-								.canMoveDown(item.getModelObject());
+						return super.isVisible() && initiativeService.canMoveDown(item.getModelObject());
 					}
 				});
-				item.add(new AjaxIconLink<InitiativeParticipant>("player",
-						item.getModel(), FontAwesome.user) {
+				item.add(new AjaxIconLink<>("player", item.getModel(),
+					FontAwesome.user) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -239,8 +240,8 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 						return super.isVisible() && !item.getModelObject().isPlayer();
 					}
 				});
-				item.add(new AjaxIconLink<InitiativeParticipant>("nonplayer",
-						item.getModel(), FontAwesome.chess_rook) {
+				item.add(new AjaxIconLink<>("nonplayer", item.getModel(),
+					FontAwesome.chess_rook) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -258,8 +259,8 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 					}
 				});
-				item.add(new AjaxIconLink<InitiativeParticipant>("condition",
-						item.getModel(), FontAwesome.paperclip) {
+				item.add(new AjaxIconLink<>("condition", item.getModel(),
+					FontAwesome.paperclip) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -268,20 +269,21 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 						InitiativeOrderWindow.this.setVisible(false);
 						target.add(InitiativeOrderWindow.this);
 
-						callback.createModalWindow(target, InitiativeParticipantConditionCreateWindow::new, getModelObject());
+						callback.createModalWindow(target,
+							InitiativeParticipantConditionCreateWindow::new,
+							getModelObject());
 						callback.refreshMenus(target);
 					}
 
 				});
-				item.add(new AjaxIconLink<InitiativeParticipant>("delete",
-						item.getModel(), FontAwesome.trash) {
+				item.add(new AjaxIconLink<>("delete", item.getModel(),
+					FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						initiativeService
-								.removeParticipant(item.getModelObject());
+						initiativeService.removeParticipant(item.getModelObject());
 						target.add(container);
 						callback.refreshMenus(target);
 					}

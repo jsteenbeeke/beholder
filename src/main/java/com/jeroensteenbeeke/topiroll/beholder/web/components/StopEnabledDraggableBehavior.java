@@ -7,6 +7,8 @@ import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 public abstract class StopEnabledDraggableBehavior extends DraggableBehavior {
+	private static final long serialVersionUID = 1604277314065355628L;
+
 	public StopEnabledDraggableBehavior(Options options) {
 		super(options, new StopEnabledDraggableAdapter());
 	}
@@ -23,6 +25,8 @@ public abstract class StopEnabledDraggableBehavior extends DraggableBehavior {
 	protected abstract void onStop(AjaxRequestTarget target, int left, int top);
 
 	private static class StopEnabledDraggableAdapter extends DraggableAdapter {
+		private static final long serialVersionUID = 135491738554139810L;
+
 		@Override
 		public boolean isStopEventEnabled() {
 			return true;

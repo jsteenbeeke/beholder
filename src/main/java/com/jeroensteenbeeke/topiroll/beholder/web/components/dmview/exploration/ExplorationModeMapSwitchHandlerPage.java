@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 public class ExplorationModeMapSwitchHandlerPage extends AuthenticatedPage {
 
+	private static final long serialVersionUID = -7800933386967525745L;
 	@Inject
 	private FogOfWarGroupDAO groupDAO;
 

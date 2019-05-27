@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.List;
 
 public class FogOfWarShapeContainsVisitor implements FogOfWarShapeVisitor<Boolean> {
+	private static final long serialVersionUID = 6741879149524777874L;
 	private final int x;
 
 	private final int y;

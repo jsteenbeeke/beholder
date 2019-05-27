@@ -55,8 +55,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 								definition.getDiameterInSquares())));
 				item.add(new ContextImage("thumb",
 						definition.getImageUrl()));
-				item.add(new IconLink<TokenDefinition>("edit", item.getModel(),
-						FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -65,17 +64,15 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 						BSEntityPageSettings<TokenDefinition> settings =
 								tokenDefinition.getInstances().isEmpty() ?
-										edit(tokenDefinition).onPage("Edit Token")
-												.using(tokenDAO) :
-										edit(tokenDefinition).onPage("Edit Token").withoutDelete()
-												.using(tokenDAO);
-						setResponsePage(new BSEntityFormPage<TokenDefinition>(
-								settings) {
+									edit(tokenDefinition).onPage("Edit Token").using(tokenDAO) :
+									edit(tokenDefinition).onPage("Edit Token").withoutDelete().using(tokenDAO);
+						setResponsePage(new BSEntityFormPage<>(settings) {
 
 							private static final long serialVersionUID = 1L;
 
 							@Override
-							protected ActionResult onBeforeDelete(TokenDefinition entity) {
+							protected ActionResult onBeforeDelete(
+								TokenDefinition entity) {
 								if (entity.getAmazonKey() != null) {
 									return amazon.removeImage(entity.getAmazonKey());
 								}
@@ -123,6 +120,8 @@ public class PrepareTokensPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = -8753319554186657206L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());

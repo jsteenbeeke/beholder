@@ -53,7 +53,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 		this.sourceModel = ModelMaker.wrap(source);
 
-		add(new Link<ScaledMap>("back", sourceModel.map(FogOfWarGroup::getMap)) {
+		add(new Link<>("back", sourceModel.map(FogOfWarGroup::getMap)) {
 
 			private static final long serialVersionUID = 8195565526321875207L;
 
@@ -112,8 +112,8 @@ public class CreateLinkPage extends AuthenticatedPage {
 		targetSelect.setNullValid(false);
 
 		Seq<ScaledMap> mapOptions = mapDAO.findByFilter(mapFilter);
-		mapSelect = new AjaxDropDownChoice<ScaledMap>("map", ModelMaker.wrap(ScaledMap.class),
-				ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
+		mapSelect = new AjaxDropDownChoice<>("map", ModelMaker.wrap(ScaledMap.class),
+			ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -146,7 +146,9 @@ public class CreateLinkPage extends AuthenticatedPage {
 						actualOptions = actualOptions.remove(link.getTargetGroup());
 					}
 
-					targetSelect.setChoices(ModelMaker.wrapList(actualOptions.nonEmpty() ? actualOptions.toJavaList() : allOptions.toJavaList()));
+					targetSelect.setChoices(ModelMaker.wrapList(actualOptions.nonEmpty() ?
+						actualOptions.toJavaList() :
+						allOptions.toJavaList()));
 					targetSelect.setModel(ModelMaker.wrap(FogOfWarGroup.class));
 					targetSelect.setEnabled(actualOptions.nonEmpty());
 				}
@@ -159,7 +161,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 		mapSelect.setRequired(true);
 		mapSelect.setNullValid(false);
 
-		add(form = new Form<MapLink>("linkForm") {
+		add(form = new Form<>("linkForm") {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -172,7 +174,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 					error("Invalid selection");
 					return;
 				}
-				
+
 				mapService.createLink(source, target);
 				if (bidirectionalCheckbox.getModelObject()) {
 					mapService.createLink(target, source);

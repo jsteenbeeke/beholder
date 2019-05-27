@@ -47,7 +47,7 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 
 		List<MapFolder> sortedFolders = determineFolders(view.getOwner());
 
-		add(new ListView<MapFolder>("folders", ModelMaker.wrapList(sortedFolders)) {
+		add(new ListView<>("folders", ModelMaker.wrapList(sortedFolders)) {
 
 			private static final long serialVersionUID = 2840801737582014664L;
 
@@ -61,7 +61,8 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 				folderFilter.folder(folder);
 				folderFilter.name().orderBy(true);
 
-				item.add(new MapDataView("maps", MapSelectWindow.this.getModelObject(), folderFilter, mapDAO));
+				item.add(new MapDataView("maps", MapSelectWindow.this.getModelObject(), folderFilter,
+					mapDAO));
 			}
 		});
 

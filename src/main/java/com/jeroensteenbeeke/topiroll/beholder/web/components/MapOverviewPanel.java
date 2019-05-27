@@ -66,7 +66,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 						setResponsePage(new ViewFolderPage(item.getModelObject()));
 					}
 				}.setBody(Model.of(folder.getName())));
-				item.add(new IconLink<MapFolder>("delete", item.getModel(), FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 					private static final long serialVersionUID = 5167833998763041541L;
 
 					@Override
@@ -113,8 +113,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 					}
 				});
-				item.add(new IconLink<ScaledMap>("view", item.getModel(),
-						FontAwesome.eye) {
+				item.add(new IconLink<>("view", item.getModel(), FontAwesome.eye) {
 
 					private static final long serialVersionUID = 1L;
 
@@ -126,8 +125,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 					}
 				});
-				item.add(new IconLink<ScaledMap>("delete", item.getModel(),
-						FontAwesome.trash) {
+				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 
 					private static final long serialVersionUID = 1L;
 

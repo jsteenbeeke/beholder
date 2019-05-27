@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 
 public class TokenStatusPanel extends DMViewPanel<MapView> {
+	private static final long serialVersionUID = -8492464952582731118L;
 	@Inject
 	private MapService mapService;
 
@@ -23,6 +24,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		super(id);
 
 		add(new Label("name", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 8620654515880977294L;
+
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getSelectedToken()).map(TokenInstance::getBadge)
@@ -31,6 +34,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		}));
 
 		add(new Label("hp", new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = 7864740562747972618L;
+
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getSelectedToken()).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
@@ -40,6 +45,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		}));
 
 		add(new AjaxLink<TokenInstance>("ally") {
+			private static final long serialVersionUID = -1382377297606494906L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback
@@ -57,6 +64,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<TokenInstance>("neutral") {
+			private static final long serialVersionUID = 6875416853305545532L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType
@@ -75,6 +84,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<TokenInstance>("enemy") {
+			private static final long serialVersionUID = -562012137067519266L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType.Enemy);
@@ -92,6 +103,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		});
 
 		add(new AjaxLink<TokenInstance>("hide") {
+			private static final long serialVersionUID = -6137328974063047731L;
+
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -107,6 +120,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 
 		
 		}.setBody(new LoadableDetachableModel<String>() {
+			private static final long serialVersionUID = -2197317116485986614L;
+
 			@Override
 			protected String load() {
 				TokenInstance token = callback.getSelectedToken();
@@ -119,6 +134,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 		}));
 
 		add(new AjaxLink<TokenInstance>("delete") {
+			private static final long serialVersionUID = 4941098976543173476L;
 			@Inject
 			private TokenInstanceDAO instanceDAO;
 

@@ -9,12 +9,13 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
 
 public class InitiativeParticipantConditionEditWindow extends DMModalWindow<InitiativeParticipantCondition> {
+	private static final long serialVersionUID = -3287314849533291541L;
+
 	@Inject
 	private InitiativeParticipantConditionDAO conditionDAO;
 
@@ -27,6 +28,7 @@ public class InitiativeParticipantConditionEditWindow extends DMModalWindow<Init
 		TextField<Integer> turnsRemainingField = new TextField<>("turns", Model.of(condition.getTurnsRemaining()), Integer.class);
 
 		Form<InitiativeParticipantCondition> conditionForm = new Form<InitiativeParticipantCondition>("conditionForm") {
+			private static final long serialVersionUID = 2244472224180856931L;
 			@Inject
 			private InitiativeService initiativeService;
 

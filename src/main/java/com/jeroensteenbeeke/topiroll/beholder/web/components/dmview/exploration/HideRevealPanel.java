@@ -123,16 +123,17 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
-		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+		add(new AjaxLink<>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
 			private static final long serialVersionUID = -542296264646923581L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				callback.createModalWindow(target, CreateTokenWindow::new, getModelObject());
+				callback.createModalWindow(target, CreateTokenWindow::new,
+					getModelObject());
 			}
 		});
 
-		add(new ListView<MapLink>("links", loadLinks(callback)) {
+		add(new ListView<>("links", loadLinks(callback)) {
 			private static final long serialVersionUID = 3285783029914710847L;
 
 			@Override
@@ -142,7 +143,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 				AbstractLink link;
 
-				if (mapLink.getSourceGroup().getMap().equals(mapLink.getTargetGroup().getMap())) {
+				if (mapLink.getSourceGroup().getMap()
+					.equals(mapLink.getTargetGroup().getMap())) {
 					link = new AjaxLink<>("map", item.getModel()) {
 
 						private static final long serialVersionUID = 2468854582739384695L;
@@ -154,22 +156,22 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 							double displayFactor = group.getMap().getDisplayFactor(view);
 
-							Integer x = group.getShapes().stream()
-											 .map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
-											 .min(Comparator.naturalOrder())
-											 .map(i -> (int) (i * displayFactor))
-											 .orElse(null);
+							Integer x = group.getShapes().stream().map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+								.min(Comparator.naturalOrder())
+								.map(i -> (int) (i * displayFactor)).orElse(null);
 
-							Integer y = group.getShapes().stream()
-											 .map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
-											 .min(Comparator.naturalOrder())
-											 .map(i -> (int) (i * displayFactor))
-											 .orElse(null);
+							Integer y = group.getShapes().stream().map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+								.min(Comparator.naturalOrder())
+								.map(i -> (int) (i * displayFactor)).orElse(null);
 
 							StringBuilder script = new StringBuilder();
-							script.append("var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
-							script.append("var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);\n");
-							script.append(String.format("window.scrollTo(%d - (w / 4), %d - (h / 4));", x, y));
+							script.append(
+								"var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);\n");
+							script.append(
+								"var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);\n");
+							script.append(String.format(
+								"window.scrollTo(%d - (w / 4), %d - (h / 4));",
+								x, y));
 
 							target.appendJavaScript(script);
 
@@ -178,22 +180,18 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 						}
 					};
 
-
 				} else {
 
 					params.set("group", mapLink.getTargetGroup().getId());
 					params.set("view", viewModel.getObject().getId());
 
 					link = new BookmarkablePageLink<>("map",
-													  ExplorationModeMapSwitchHandlerPage.class, params);
+						ExplorationModeMapSwitchHandlerPage.class, params);
 				}
 
-				link.setBody(item
-								 .getModel()
-								 .map(MapLink::getTargetGroup)
-								 .map(group -> String.format("Transition to %s in %s", group.getName(), group
-									 .getMap()
-									 .getName())));
+				link.setBody(item.getModel().map(MapLink::getTargetGroup).map(
+					group -> String.format("Transition to %s in %s", group.getName(),
+						group.getMap().getName())));
 
 				item.add(link);
 			}

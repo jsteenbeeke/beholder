@@ -55,6 +55,8 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
 				FilterDataProvider.of(portraitFilter, portraitDAO)) {
+			private static final long serialVersionUID = 5900594289239505431L;
+
 			@Override
 			protected void populateItem(Item<Portrait> item) {
 				Portrait portrait = item.getModelObject();
@@ -62,15 +64,13 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 				item.add(new Label("name", portrait.getName()));
 
 				item.add(new ContextImage("thumb", portrait.getImageUrl()));
-				item.add(new IconLink<Portrait>("edit", item.getModel(),
-						FontAwesome.edit) {
+				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public void onClick() {
-						setResponsePage(new BSEntityFormPage<Portrait>(
-								edit(getModelObject()).onPage("Edit Portrait")
-										.using(portraitDAO)) {
+						setResponsePage(new BSEntityFormPage<>(
+							edit(getModelObject()).onPage("Edit Portrait").using(portraitDAO)) {
 
 							private static final long serialVersionUID = 1L;
 
@@ -82,7 +82,6 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 
 								return ActionResult.ok();
 							}
-
 
 							@Override
 							protected void onDeleted() {
@@ -120,6 +119,8 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 		});
 
 		add(new Link<Void>("back") {
+			private static final long serialVersionUID = 7726834359145906165L;
+
 			@Override
 			public void onClick() {
 				setResponsePage(new PrepareSessionPage());
