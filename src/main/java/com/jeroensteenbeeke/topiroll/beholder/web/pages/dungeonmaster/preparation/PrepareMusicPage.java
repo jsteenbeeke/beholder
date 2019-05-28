@@ -41,8 +41,8 @@ public class PrepareMusicPage extends AuthenticatedPage {
 
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
 		playlistFilter.owner(getUser()).name().orderBy(true);
-		playlistFilter.campaign().isNull();
-		user().flatMap(BeholderUser::activeCampaign).peek(playlistFilter::orCampaign);
+		playlistFilter.campaign().orderBy(true);
+		playlistFilter.name().orderBy(true);
 
 		DataView<YouTubePlaylist> playlistView = new DataView<YouTubePlaylist>("playlists",
 																			   FilterDataProvider.of(playlistFilter, playlistDAO)) {

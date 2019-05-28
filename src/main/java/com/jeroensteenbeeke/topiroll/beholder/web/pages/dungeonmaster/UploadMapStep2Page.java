@@ -88,8 +88,6 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 			}
 		});
 
-		add(new BootstrapFeedbackPanel("feedback"));
-
 		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(image);
 		if (!dimResult.isOk()) {
 			UploadMapStep1Page page = new UploadMapStep1Page(folderModel.getObject());

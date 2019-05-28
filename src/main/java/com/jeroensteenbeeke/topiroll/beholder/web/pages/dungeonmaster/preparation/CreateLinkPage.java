@@ -49,8 +49,6 @@ public class CreateLinkPage extends AuthenticatedPage {
 	public CreateLinkPage(FogOfWarGroup source) {
 		super("Create link");
 
-		add(new BootstrapFeedbackPanel("feedback"));
-
 		this.sourceModel = ModelMaker.wrap(source);
 
 		add(new Link<>("back", sourceModel.map(FogOfWarGroup::getMap)) {

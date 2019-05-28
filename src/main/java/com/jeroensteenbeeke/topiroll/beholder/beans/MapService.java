@@ -93,7 +93,7 @@ public interface MapService {
 	//endregion
 
 	//region Portraits
-	TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String name,
+	TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nullable Campaign campaign, @Nonnull String name,
 										 @Nonnull byte[] image);
 
 	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);

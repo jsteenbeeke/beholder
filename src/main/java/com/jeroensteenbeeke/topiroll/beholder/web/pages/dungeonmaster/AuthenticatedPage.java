@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.EntityFormSupport;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -37,6 +38,8 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 		super(title);
 
 		add(new BeholderNavBar("navbar"));
+
+		add(new BootstrapFeedbackPanel("feedback"));
 
 		if (getUser() == null) {
 			BeholderSession.get().invalidate();

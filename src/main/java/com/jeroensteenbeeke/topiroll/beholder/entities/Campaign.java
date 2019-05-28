@@ -36,6 +36,10 @@ public class Campaign extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "dungeonMaster")
 	private BeholderUser dungeonMaster;
+ 	@OneToMany(mappedBy="campaign", fetch=FetchType.LAZY)
+	private List<Portrait> portraits = new ArrayList<Portrait>();
+
+
 	@OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY)
 	private List<YouTubePlaylist> playlists = new ArrayList<>();
 
@@ -135,6 +139,16 @@ public class Campaign extends BaseDomainObject {
 	public void setPlaylists(@Nonnull List<YouTubePlaylist> playlists) {
 		this.playlists = playlists;
 	}
+
+	@Nonnull
+	public List<Portrait> getPortraits() {
+		return portraits;
+	}
+	public void setPortraits( @Nonnull List<Portrait> portraits) {
+		this.portraits = portraits;
+	}
+
+
 
 
 }

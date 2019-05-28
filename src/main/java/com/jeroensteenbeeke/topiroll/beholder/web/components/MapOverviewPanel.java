@@ -48,9 +48,11 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 		this.userModel = ModelMaker.wrap(user);
 
 		MapFolderFilter folderFilter = new MapFolderFilter();
-		decorateFolderFilter(folderFilter);
 		folderFilter.campaign().isNull();
-		getUser().activeCampaign().peek(folderFilter::orCampaign);
+		user.activeCampaign().peek(folderFilter::orCampaign);
+
+		decorateFolderFilter(folderFilter);
+		folderFilter.campaign().orderBy(true);
 		folderFilter.name().orderBy(true);
 
 		DataView<MapFolder> folderView = new DataView<MapFolder>("folders", FilterDataProvider.of(folderFilter, folderDAO)) {
@@ -91,9 +93,11 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.owner().set(getUser());
-		mapFilter.name().orderBy(true);
 		mapFilter.campaign().isNull();
-		getUser().activeCampaign().peek(mapFilter::orCampaign);
+		user.activeCampaign().peek(mapFilter::orCampaign);
+
+		mapFilter.campaign().orderBy(true);
+		mapFilter.name().orderBy(true);
 
 		decorateMapFilter(mapFilter);
 

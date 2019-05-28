@@ -17,10 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PreparePortraitsPage;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.form.TextField;
@@ -36,7 +41,8 @@ public class UploadPortraitStep2Page extends AuthenticatedPage {
 
 	private static final long serialVersionUID = 1L;
 
-	public UploadPortraitStep2Page(final byte[] image, final String originalName) {
+	public UploadPortraitStep2Page(final byte[] image,
+		final String originalName) {
 		super("Configure portrait");
 
 		add(new Link<BeholderUser>("back") {
@@ -50,18 +56,24 @@ public class UploadPortraitStep2Page extends AuthenticatedPage {
 		});
 
 		final TextField<String> nameField = new TextField<>("name",
-				Model.of(originalName));
+			Model.of(originalName));
 		nameField.setRequired(true);
 
-		final Image previewImage = new NonCachingImage("preview",
-				new DynamicImageResource() {
-					private static final long serialVersionUID = 1L;
+		final DropDownChoice<Campaign> campaignChoice = new DropDownChoice<>(
+			"campaign", ModelMaker.wrap(Campaign.class), new CampaignsModel(),
+			LambdaRenderer.of(Campaign::getName));
+		campaignChoice.setRequired(true);
+		campaignChoice.setNullValid(true);
 
-					@Override
-					protected byte[] getImageData(Attributes attributes) {
-						return image;
-					}
-				});
+		final Image previewImage = new NonCachingImage("preview",
+			new DynamicImageResource() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected byte[] getImageData(Attributes attributes) {
+					return image;
+				}
+			});
 		previewImage.setOutputMarkupId(true);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
@@ -72,15 +84,17 @@ public class UploadPortraitStep2Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
+				user().peek(user -> {
+					mapService
+						.createPortrait(user, campaignChoice.getModelObject(),
+							nameField.getModelObject(), image);
 
-				mapService.createPortrait(getUser(), nameField.getModelObject(),
-						 image);
-
-				setResponsePage(new PreparePortraitsPage());
+					setResponsePage(new PreparePortraitsPage());
+				});
 			}
 		};
 
-		configureForm.add(nameField);
+		configureForm.add(nameField, campaignChoice);
 
 		add(configureForm);
 

@@ -3,10 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparati
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder_;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
@@ -15,6 +12,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.Authentica
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadMapStep1Page;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewFolderPage;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.link.Link;
 
 import javax.annotation.Nonnull;
@@ -32,6 +30,10 @@ public class PrepareMapsPage extends AuthenticatedPage {
 	public PrepareMapsPage() {
 		super("Prepare maps");
 
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing folders and maps that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+		}
 
 		add(new MapOverviewPanel("maps", getUser()) {
 			private static final long serialVersionUID = 4157905527663457139L;
@@ -72,6 +74,12 @@ public class PrepareMapsPage extends AuthenticatedPage {
 					create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
 
 					private static final long serialVersionUID = -6729242615987686357L;
+
+					@Override
+					protected void onBeforeSave(MapFolder entity) {
+						super.onBeforeSave(entity);
+						user().peek(entity::setOwner);
+					}
 
 					@Override
 					protected void onSaved(MapFolder entity) {

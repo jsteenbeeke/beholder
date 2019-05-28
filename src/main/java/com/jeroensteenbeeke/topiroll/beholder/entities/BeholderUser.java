@@ -53,6 +53,10 @@ public class BeholderUser extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String username;
+ 	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
+	private List<MapFolder> mapFolders = new ArrayList<MapFolder>();
+
+
  	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="activeCampaign")
 
 	private Campaign activeCampaign;
@@ -232,4 +236,14 @@ public class BeholderUser extends BaseDomainObject {
 	public Option<Campaign> activeCampaign() {
 		return Option.of(getActiveCampaign());
 	}
+
+	@Nonnull
+	public List<MapFolder> getMapFolders() {
+		return mapFolders;
+	}
+	public void setMapFolders( @Nonnull List<MapFolder> mapFolders) {
+		this.mapFolders = mapFolders;
+	}
+
+
 }

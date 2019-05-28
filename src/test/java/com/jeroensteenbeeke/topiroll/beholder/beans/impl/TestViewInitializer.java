@@ -80,7 +80,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		byte[] portrait = ImageResource.getImageAsByteArray("random_monster.png");
 
 		for (int i = 0; i < 6; i++) {
-			mapService.createPortrait(user, "Portrait "+ i, portrait);
+			mapService.createPortrait(user, null, "Portrait "+ i, portrait);
 		}
 
 

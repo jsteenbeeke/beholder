@@ -370,7 +370,9 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
+	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user,
+		@Nullable Campaign campaign,
+		@Nonnull String
 		name, @Nonnull byte[] image) {
 		TypedResult<String> uploadResult =
 			remoteImageService.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
@@ -379,6 +381,7 @@ class MapServiceImpl implements MapService {
 
 			Portrait portrait = new Portrait();
 			portrait.setOwner(user);
+			portrait.setCampaign(campaign);
 			portrait.setName(name);
 			portrait.setAmazonKey(uploadResult.getObject());
 

@@ -6,10 +6,13 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.topiroll.beholder.dao.CompendiumEntryDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -18,6 +21,8 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import javax.inject.Inject;
 
 public class PrepareCompendiumPage extends AuthenticatedPage {
+	private static final long serialVersionUID = -969903778548420773L;
+
 	private final DataView<CompendiumEntry> entryView;
 
 	@Inject
@@ -27,6 +32,14 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 		super("User compendium");
 
 		CompendiumEntryFilter filter = new CompendiumEntryFilter();
+
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing compendium entries that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+			filter.campaign().isNull();
+			filter.orCampaign(activeCampaign.get());
+		}
+
 		filter.author(getUser());
 		filter.title().orderBy(true);
 

@@ -21,6 +21,11 @@ public class MapFolder extends BaseDomainObject {
 	@GeneratedValue(generator = "MapFolder", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
+
+	private BeholderUser owner;
+
+
 
 
 	@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
@@ -110,6 +115,16 @@ public class MapFolder extends BaseDomainObject {
 	public void setCampaign(@Nullable Campaign campaign) {
 		this.campaign = campaign;
 	}
+
+	@Nonnull
+	public BeholderUser getOwner() {
+		return owner;
+	}
+	public void setOwner( @Nonnull BeholderUser owner) {
+		this.owner = owner;
+	}
+
+
 
 
 }

@@ -11,6 +11,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
@@ -28,6 +29,12 @@ public class ViewFolderPage extends AuthenticatedPage {
 
 	public ViewFolderPage(@Nonnull MapFolder folder) {
 		super("View folder - ".concat(folder.getName()));
+
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing folders and maps that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+		}
+
 
 		this.folderModel = ModelMaker.wrap(folder);
 
@@ -89,6 +96,7 @@ public class ViewFolderPage extends AuthenticatedPage {
 						super.onBeforeSave(entity);
 						entity.setParent(folderModel.getObject());
 						entity.setCampaign(folderModel.getObject().getCampaign());
+						user().peek(entity::setOwner);
 					}
 
 					@Override

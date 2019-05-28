@@ -16,6 +16,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadTokenStep1Page;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.Link;
@@ -40,8 +41,13 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 		TokenDefinitionFilter tokenFilter = new TokenDefinitionFilter();
 		tokenFilter.owner().set(getUser());
-		tokenFilter.campaign().isNull();
-		user().flatMap(BeholderUser::activeCampaign).peek(tokenFilter::orCampaign);
+
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing tokens that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+			tokenFilter.campaign().isNull();
+			tokenFilter.orCampaign(activeCampaign.get());
+		}
 
 		tokenFilter.name().orderBy(true);
 
