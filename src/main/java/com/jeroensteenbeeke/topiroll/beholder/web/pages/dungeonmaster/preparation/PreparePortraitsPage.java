@@ -90,13 +90,13 @@ public class PreparePortraitsPage extends AuthenticatedPage {
 
 							@Override
 							protected void onSaved(Portrait entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PreparePortraitsPage());
 
 							}
 
 							@Override
 							protected void onCancel(Portrait entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PreparePortraitsPage());
 							}
 
 						});

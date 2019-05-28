@@ -11,6 +11,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
@@ -65,7 +66,8 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 					public void onClick() {
 						setResponsePage(new ViewFolderPage(item.getModelObject()));
 					}
-				}.setBody(Model.of(folder.getName())));
+				}.setBody(item.getModel().map(MapFolder::getName)));
+				item.add(new Label("campaign", item.getModel().map(MapFolder::getCampaign).map(Campaign::getName).orElse("-")));
 				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
 					private static final long serialVersionUID = 5167833998763041541L;
 
@@ -105,6 +107,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 				ScaledMap map = item.getModelObject();
 
 				item.add(new Label("name", map.getName()));
+				item.add(new Label("campaign", item.getModel().map(ScaledMap::getCampaign).map(Campaign::getName).orElse("-")));
 				item.add(new AbstractMapPreview("thumb", map, 128) {
 					private static final long serialVersionUID = -4194303736524179282L;
 

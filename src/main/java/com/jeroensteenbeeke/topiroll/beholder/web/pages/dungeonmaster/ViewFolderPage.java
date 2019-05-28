@@ -2,12 +2,14 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
+import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
-import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
@@ -24,7 +26,7 @@ public class ViewFolderPage extends AuthenticatedPage {
 
 	private IModel<MapFolder> folderModel;
 
-	public  ViewFolderPage(@Nonnull MapFolder folder) {
+	public ViewFolderPage(@Nonnull MapFolder folder) {
 		super("View folder - ".concat(folder.getName()));
 
 		this.folderModel = ModelMaker.wrap(folder);
@@ -73,8 +75,12 @@ public class ViewFolderPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<>(
-					create(new MapFolder()).onPage("Create Folder").using(mapFolderDAO)) {
+				MapFolder entity = new MapFolder();
+
+				entity.setCampaign(folderModel.getObject().getCampaign());
+
+				BSEntityFormPage<MapFolder> createPage = new BSEntityFormPage<>(
+					create(entity).onPage("Create Folder").using(mapFolderDAO)) {
 
 					private static final long serialVersionUID = 7947554551014544459L;
 
@@ -82,6 +88,7 @@ public class ViewFolderPage extends AuthenticatedPage {
 					protected void onBeforeSave(MapFolder entity) {
 						super.onBeforeSave(entity);
 						entity.setParent(folderModel.getObject());
+						entity.setCampaign(folderModel.getObject().getCampaign());
 					}
 
 					@Override
@@ -93,7 +100,15 @@ public class ViewFolderPage extends AuthenticatedPage {
 					protected void onCancel(MapFolder entity) {
 						setResponsePage(new ViewFolderPage(folderModel.getObject()));
 					}
-				});
+				}
+					.setChoicesModel(MapFolder_.campaign, new CampaignsModel())
+					.setRenderer(MapFolder_.campaign, LambdaRenderer.of(Campaign::getName));
+
+				if (entity.getCampaign() != null) {
+					createPage.setReadOnly(MapFolder_.campaign);
+				}
+
+				setResponsePage(createPage);
 			}
 		});
 	}

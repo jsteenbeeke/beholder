@@ -109,7 +109,7 @@ class MapServiceImpl implements MapService {
 	@Nonnull
 	@Override
 	@Transactional
-	public TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user,
+	public TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nullable Campaign campaign,
 											@Nonnull String name, int squareSize, @Nonnull File data,
 											@Nullable MapFolder folder) {
 		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
@@ -128,9 +128,9 @@ class MapServiceImpl implements MapService {
 			}
 
 			uploadResult =
-					remoteImageService
-							.uploadImage(RemoteImageService.ImageType.MAP, mimeType.getObject(), new
-									FileInputStream(data), data.length());
+				remoteImageService
+					.uploadImage(RemoteImageService.ImageType.MAP, mimeType.getObject(), new
+						FileInputStream(data), data.length());
 		} catch (IOException e) {
 			return TypedResult.fail("Could not open file for upload: %s", e.getMessage());
 		}
@@ -149,6 +149,9 @@ class MapServiceImpl implements MapService {
 		map.setBasicHeight((int) dimension.getHeight());
 		map.setBasicWidth((int) dimension.getWidth());
 		map.setFolder(folder);
+
+		map.setCampaign(Option.of(folder).flatMap(f -> Option.of(f.getCampaign())).getOrElse(campaign));
+
 		mapDAO.save(map);
 
 		return TypedResult.ok(map);
@@ -296,7 +299,7 @@ class MapServiceImpl implements MapService {
 		filter.group().set(group);
 
 		Option<FogOfWarGroupVisibility> optVisibility = groupVisibilityDAO
-				.getUniqueByFilter(filter);
+			.getUniqueByFilter(filter);
 
 		if (optVisibility.isEmpty()) {
 			FogOfWarGroupVisibility visibility = new FogOfWarGroupVisibility();
@@ -321,7 +324,7 @@ class MapServiceImpl implements MapService {
 		filter.shape().set(shape);
 
 		Option<FogOfWarShapeVisibility> optVisibility = shapeVisibilityDAO
-				.getUniqueByFilter(filter);
+			.getUniqueByFilter(filter);
 
 		if (optVisibility.isEmpty()) {
 			FogOfWarShapeVisibility visibility = new FogOfWarShapeVisibility();
@@ -342,12 +345,12 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
-	public TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull
-			String name,
+	public TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nullable Campaign campaign, @Nonnull
+		String name,
 													int diameter, @Nonnull byte[] image) {
 		TypedResult<String> uploadResult =
-				remoteImageService.uploadImage(RemoteImageService.ImageType.TOKEN,
-						image);
+			remoteImageService.uploadImage(RemoteImageService.ImageType.TOKEN,
+										   image);
 
 		if (uploadResult.isOk()) {
 			TokenDefinition def = new TokenDefinition();
@@ -355,6 +358,7 @@ class MapServiceImpl implements MapService {
 			def.setDiameterInSquares(diameter);
 			def.setName(name);
 			def.setAmazonKey(uploadResult.getObject());
+			def.setCampaign(campaign);
 
 			tokenDefinitionDAO.save(def);
 
@@ -367,9 +371,9 @@ class MapServiceImpl implements MapService {
 	@Override
 	@Transactional
 	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String
-			name, @Nonnull byte[] image) {
+		name, @Nonnull byte[] image) {
 		TypedResult<String> uploadResult =
-				remoteImageService.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
+			remoteImageService.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
 
 		if (uploadResult.isOk()) {
 
@@ -527,7 +531,7 @@ class MapServiceImpl implements MapService {
 		ScaledMap selectedMap = view.getSelectedMap();
 		if (selectedMap == null) {
 			BeholderRegistry.instance.sendToView(view.getId(), selector,
-					new ClearMap());
+												 new ClearMap());
 		} else {
 			updatePreview(view, selector, selectedMap);
 			updateMainView(view, selector, selectedMap);
@@ -540,11 +544,11 @@ class MapServiceImpl implements MapService {
 							   boolean previewMode) {
 		viewDAO.load(viewId).map(view -> {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
-					&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
+				&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
 			BeholderRegistry.instance
-					.sendToView(view.getId(),
+				.sendToView(view.getId(),
 							e -> e.getSessionId().equals(sessionId)
-									&& !e.isPreviewMode(),
+								&& !e.isPreviewMode(),
 							view.getInitiativeJS());
 			BeholderRegistry.instance.sendToView(view.getId(), s -> !s.isPreviewMode(), new UpdatePortraits(view));
 
@@ -564,9 +568,9 @@ class MapServiceImpl implements MapService {
 		double angle = Math.toRadians(360.0 / (double) participants.size());
 
 		int distance = Optional.ofNullable(view.getSelectedMap())
-				.map(ScaledMap::getSquareSize)
-				.map(s -> s * participants.size())
-				.orElse(view.getHeight() / 10);
+							   .map(ScaledMap::getSquareSize)
+							   .map(s -> s * participants.size())
+							   .orElse(view.getHeight() / 10);
 
 		double nextAngle = 0.0;
 
@@ -598,7 +602,7 @@ class MapServiceImpl implements MapService {
 		Dimension dimensions = map.getDisplayDimension(view);
 
 		internalUpdateView(dimensions, false,
-				selector.and(e -> !e.isPreviewMode()), view, map);
+						   selector.and(e -> !e.isPreviewMode()), view, map);
 	}
 
 	private void updatePreview(MapView view, Predicate<RegistryEntry> selector,
@@ -606,7 +610,7 @@ class MapServiceImpl implements MapService {
 		Dimension dimensions = view.getPreviewDimensions();
 
 		internalUpdateView(dimensions, true,
-				selector.and(RegistryEntry::isPreviewMode), view, map);
+						   selector.and(RegistryEntry::isPreviewMode), view, map);
 
 	}
 
@@ -616,10 +620,10 @@ class MapServiceImpl implements MapService {
 		double factor = previewMode ? map.getPreviewFactor() : map.getDisplayFactor(view);
 
 		MapRenderable renderable = mapToJS(dimensions, previewMode, view,
-				map, factor);
+										   map, factor);
 
 		BeholderRegistry.instance.sendToView(view.getId(), selector,
-				renderable);
+											 renderable);
 	}
 
 	@Override
@@ -642,22 +646,24 @@ class MapServiceImpl implements MapService {
 		double displayFactor = group.getMap().getDisplayFactor(view);
 
 		Integer x = group.getShapes().stream()
-				.map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
-				.min(Comparator.naturalOrder())
-				.map(i -> (int) (i * displayFactor))
-				.orElse(null);
+						 .map(s -> s.visit(new FogOfWarShapeXCoordinateVisitor()))
+						 .min(Comparator.naturalOrder())
+						 .map(i -> (int) (i * displayFactor))
+						 .orElse(null);
 
 		Integer y = group.getShapes().stream()
-				.map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
-				.min(Comparator.naturalOrder())
-				.map(i -> (int) (i * displayFactor))
-				.orElse(null);
+						 .map(s -> s.visit(new FogOfWarShapeYCoordinateVisitor()))
+						 .min(Comparator.naturalOrder())
+						 .map(i -> (int) (i * displayFactor))
+						 .orElse(null);
 
 		if (x != null && y != null) {
 			BeholderRegistry.instance.sendToView(view.getId(),
-					new CompoundRenderable(
-							mapToJS(group.getMap().getDisplayDimension(view), false, view, group.getMap(), displayFactor),
-							new JSScrollCommand(x, y)));
+												 new CompoundRenderable(
+													 mapToJS(group
+																 .getMap()
+																 .getDisplayDimension(view), false, view, group.getMap(), displayFactor),
+													 new JSScrollCommand(x, y)));
 		}
 	}
 
@@ -669,17 +675,20 @@ class MapServiceImpl implements MapService {
 		renderable.setHeight((int) dimensions.getHeight());
 
 		renderable.setTokens(map.getTokens().stream()
-				.filter(TokenInstance::isShow)
-				.filter(t -> t.isVisible(view, previewMode))
-				.map(t -> tokenToJS(t, factor)).collect(Collectors.toList()));
+								.filter(TokenInstance::isShow)
+								.filter(t -> t.isVisible(view, previewMode))
+								.map(t -> tokenToJS(t, factor)).collect(Collectors.toList()));
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}
 		renderable.setAreaMarkers(view.getMarkers().stream()
-				.map(a -> markerToJS(a, factor)).collect(Collectors.toList()));
-		renderable.setRevealed(map.getFogOfWarShapes().stream()
-				.filter(s -> shouldRender(s, view, previewMode))
-				.map(s -> s.visit(new FogOfWarShapeToJSShapeVisitor(factor))).collect(Collectors.toList()));
+									  .map(a -> markerToJS(a, factor)).collect(Collectors.toList()));
+		renderable.setRevealed(map
+								   .getFogOfWarShapes()
+								   .stream()
+								   .filter(s -> shouldRender(s, view, previewMode))
+								   .map(s -> s.visit(new FogOfWarShapeToJSShapeVisitor(factor)))
+								   .collect(Collectors.toList()));
 		return renderable;
 	}
 
@@ -696,15 +705,15 @@ class MapServiceImpl implements MapService {
 
 	private VisibilityStatus getStatus(FogOfWarShape shape, MapView view) {
 		return shapeVisibilityDAO.findByFilter(new FogOfWarShapeVisibilityFilter().shape(shape))
-				.find(v -> v.getView().equals(view))
-				.map(FogOfWarVisibility::getStatus)
-				.getOrElse(VisibilityStatus.INVISIBLE);
+								 .find(v -> v.getView().equals(view))
+								 .map(FogOfWarVisibility::getStatus)
+								 .getOrElse(VisibilityStatus.INVISIBLE);
 	}
 
 	private VisibilityStatus getStatus(FogOfWarGroup group, MapView view) {
 		return groupVisibilityDAO.findByFilter(new FogOfWarGroupVisibilityFilter().group(group).view(view))
-				.map(FogOfWarVisibility::getStatus)
-				.getOrElse(VisibilityStatus.INVISIBLE);
+								 .map(FogOfWarVisibility::getStatus)
+								 .getOrElse(VisibilityStatus.INVISIBLE);
 	}
 
 	private static JSAreaMarker markerToJS(AreaMarker marker, double factor) {
@@ -722,8 +731,12 @@ class MapServiceImpl implements MapService {
 		JSToken token = new JSToken();
 		token.setBorderType(instance.getBorderType().name());
 		token.setBorderIntensity(instance.getBorderIntensity().name());
-		token.setHeight((int) (instance.getMap().getSquareSize() * factor * instance.getDefinition().getDiameterInSquares()));
-		token.setWidth((int) (instance.getMap().getSquareSize() * factor * instance.getDefinition().getDiameterInSquares()));
+		token.setHeight((int) (instance.getMap().getSquareSize() * factor * instance
+			.getDefinition()
+			.getDiameterInSquares()));
+		token.setWidth((int) (instance.getMap().getSquareSize() * factor * instance
+			.getDefinition()
+			.getDiameterInSquares()));
 		token.setDiameterInSquares(instance.getDefinition().getDiameterInSquares());
 		token.setLabel(instance.getLabel());
 		// Workaround, will be transformed to URL

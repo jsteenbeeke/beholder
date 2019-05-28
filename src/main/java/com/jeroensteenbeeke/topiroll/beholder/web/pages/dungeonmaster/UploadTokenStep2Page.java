@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,11 +19,12 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import javax.inject.Inject;
 
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareTokensPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.Link;
@@ -52,23 +53,28 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 		});
 
 		final TextField<String> nameField = new TextField<>("name",
-				Model.of(originalName));
+															Model.of(originalName));
 		nameField.setRequired(true);
 
 		final NumberTextField<Integer> sizeField = new NumberTextField<>(
-				"size", Model.of(1));
+			"size", Model.of(1));
 		sizeField.setRequired(true);
 		sizeField.setMinimum(1);
 
-		final Image previewImage = new NonCachingImage("preview",
-				new DynamicImageResource() {
-					private static final long serialVersionUID = 1L;
+		final DropDownChoice<Campaign> campaignChoice = new DropDownChoice<>("campaign", ModelMaker.wrap(Campaign.class), new CampaignsModel(), LambdaRenderer
+			.of(Campaign::getName));
+		campaignChoice.setRequired(true);
+		campaignChoice.setNullValid(true);
 
-					@Override
-					protected byte[] getImageData(Attributes attributes) {
-						return image;
-					}
-				});
+		final Image previewImage = new NonCachingImage("preview",
+													   new DynamicImageResource() {
+														   private static final long serialVersionUID = 1L;
+
+														   @Override
+														   protected byte[] getImageData(Attributes attributes) {
+															   return image;
+														   }
+													   });
 		previewImage.setOutputMarkupId(true);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm") {
@@ -79,14 +85,16 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
+				user().peek(user -> {
+					mapService.createToken(user, campaignChoice.getModelObject(), nameField.getModelObject(),
+										   sizeField.getModelObject(), image);
 
-				mapService.createToken(getUser(), nameField.getModelObject(),
-						sizeField.getModelObject(), image);
-
-				setResponsePage(new PrepareTokensPage());
+					setResponsePage(new PrepareTokensPage());
+				});
 			}
 		};
 
+		configureForm.add(campaignChoice);
 		configureForm.add(sizeField);
 		configureForm.add(nameField);
 

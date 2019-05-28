@@ -24,14 +24,19 @@ import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.resizable.ResizableBehavior;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.resources.TouchPunchJavaScriptReference;
+import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.ImageContainer;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
+import io.vavr.control.Option;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,9 +45,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.NumberTextField;
-import org.apache.wicket.markup.html.form.SubmitLink;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
@@ -100,7 +103,7 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 		final int imageHeight = (int) dimensions.getHeight();
 
 		final TextField<String> nameField = new TextField<>("name",
-				Model.of(originalName));
+															Model.of(originalName));
 		nameField.setRequired(true);
 
 		final Label indicatorLabel = new Label("indicator", new LoadableDetachableModel<String>() {
@@ -136,49 +139,63 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 			}
 		});
 
+
+		Campaign folderCampaign = folderModel.map(MapFolder::getCampaign).getObject();
+
+		IModel<Campaign> selectedCampaignModel = Option
+			.of(folderCampaign)
+			.map(ModelMaker::wrap)
+			.getOrElse(() -> ModelMaker.wrap(Campaign.class));
+
+
+		final DropDownChoice<Campaign> campaignChoice = new DropDownChoice<>("campaign", selectedCampaignModel, new CampaignsModel(), LambdaRenderer.of(Campaign::getName));
+		campaignChoice.setEnabled(folderCampaign == null);
+		campaignChoice.setRequired(true);
+		campaignChoice.setNullValid(true);
+
 		final ImageContainer previewImage = new ImageContainer("preview",
-				new ResourceReference(
-						String.format("preview-%s", Randomizer.random(23))) {
-					private static final long serialVersionUID = 1L;
+															   new ResourceReference(
+																   String.format("preview-%s", Randomizer.random(23))) {
+																   private static final long serialVersionUID = 1L;
 
-					@Override
-					public IResource getResource() {
-						return new ResourceStreamResource() {
-							private static final long serialVersionUID = 5485499577981315590L;
+																   @Override
+																   public IResource getResource() {
+																	   return new ResourceStreamResource() {
+																		   private static final long serialVersionUID = 5485499577981315590L;
 
-							@Override
-							protected IResourceStream getResourceStream(Attributes attributes) {
-								return new FileResourceStream(image);
-							}
-						};
-					}
+																		   @Override
+																		   protected IResourceStream getResourceStream(Attributes attributes) {
+																			   return new FileResourceStream(image);
+																		   }
+																	   };
+																   }
 
-				}, new Dimension(imageWidth * 2, imageHeight * 2));
+															   }, new Dimension(imageWidth * 2, imageHeight * 2));
 		previewImage.setOutputMarkupId(true);
 
 		int markerSize =
-				Stream.of(squareSizeField.getModelObject() * 2, imageHeight / 10, imageWidth / 10).max
-						(Integer::compare)
-						.get();
+			Stream.of(squareSizeField.getModelObject() * 2, imageHeight / 10, imageWidth / 10).max
+				(Integer::compare)
+				  .get();
 
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 		areaMarker.add(AttributeModifier.replace("style",
-				String.format(
-						"background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
-						markerSize, markerSize, imageWidth,
-						imageHeight)));
+												 String.format(
+													 "background-color: rgba(255, 0, 0, 0.5); width: %dpx; height: %dpx; left: %dpx; top: %dpx;",
+													 markerSize, markerSize, imageWidth,
+													 imageHeight)));
 
 		Options draggableOptions = new Options();
 		draggableOptions.set("opacity", "0.5");
 		draggableOptions.set("containment", Options.asString("parent"));
 		areaMarker.add(new DraggableBehavior(draggableOptions,
-				new DraggableAdapter()));
+											 new DraggableAdapter()));
 		Options resizableOptions = new Options();
 		resizableOptions.set("containment", Options.asString("parent"));
 		resizableOptions.set("handles", Options.asString("se"));
 		resizableOptions.set("aspectRatio", "true");
 		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
-				resizableOptions, new ResizableAdapter() {
+											 resizableOptions, new ResizableAdapter() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -208,24 +225,26 @@ public class UploadMapStep2Page extends AuthenticatedPage {
 
 			@Override
 			protected void onSubmit() {
+				user().peek(user -> {
 				int squareSizeOnMap = squareSizeField.getModelObject();
 				int indicatorSize = indicatorSizeField.getModelObject();
 
 				int squareSize = 5 * squareSizeOnMap / indicatorSize;
 
-				TypedResult<ScaledMap> result = mapService.createMap(getUser(),
-						nameField.getModelObject(),
-						squareSize, image, folderModel.getObject());
+				TypedResult<ScaledMap> result = mapService.createMap(user, campaignChoice.getModelObject(),
+																	 nameField.getModelObject(),
+																	 squareSize, image, folderModel.getObject());
 				if (result.isOk()) {
 					setResponsePage(new ViewMapPage(result.getObject()));
 				} else {
 					error(result.getMessage());
 				}
+				});
 			}
 		};
 
 		configureForm.add(nameField);
-		configureForm.add(squareSizeField, indicatorSizeField);
+		configureForm.add(squareSizeField, indicatorSizeField, campaignChoice);
 
 		add(configureForm);
 		add(previewImage);

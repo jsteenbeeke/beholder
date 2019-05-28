@@ -1,4 +1,5 @@
-<html xmlns:wicket>
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
 	<div class="btn-group btn-group-justified" role="group">
 		<div class="btn-group" role="group">
@@ -9,37 +10,30 @@
 		</div>
 
 		<div class="btn-group" role="group">
-			<button type="button" wicket:id="addplaylist"
+			<button type="button" wicket:id="add"
 					class="btn btn-info btn-lg ">
-				<i class="fas fa-music"></i> Add playlist
+				<i class="fas fa-plus-circle"></i> Add Campaign
 			</button>
 		</div>
 	</div>
 
-	<h2>YouTube Playlists</h2>
-
+	<h2>Campaigns</h2>
 	<table class="table">
 		<thead>
 		<tr>
 			<th>Name</th>
-			<th>Thumbnail</th>
-			<th>Campaign</th>
+			<th>Status</th>
 			<th>Actions</th>
 		</tr>
 		</thead>
 		<tbody>
-		<tr wicket:id="playlists">
+		<tr wicket:id="campaigns">
 			<td wicket:id="name"></td>
-			<td><a wicket:id="url"></a></td>
-			<td wicket:id="campaign"></td>
-			<td><span wicket:id="edit"></span></td>
+			<td><span wicket:id="active"></span></td>
+			<td><span wicket:id="edit"></span> <span wicket:id="delete"></span></td>
 		</tr>
 		</tbody>
-		<tr>
-			<td colspan="4">
-				<div wicket:id="playlistnav"></div>
-			</td>
-		</tr>
 	</table>
+
 </wicket:extend>
 </html>

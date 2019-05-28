@@ -1,12 +1,16 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapFolderDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapFolder_;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapFolderFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.ScaledMapFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.MapOverviewPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadMapStep1Page;
@@ -34,15 +38,15 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 			@Override
 			protected void decorateFolderFilter(
-					@Nonnull
-							MapFolderFilter folderFilter) {
+				@Nonnull
+					MapFolderFilter folderFilter) {
 				folderFilter.parent().isNull();
 			}
 
 			@Override
 			protected void decorateMapFilter(
-					@Nonnull
-							ScaledMapFilter mapFilter) {
+				@Nonnull
+					ScaledMapFilter mapFilter) {
 				mapFilter.folder().isNull();
 			}
 		});
@@ -78,7 +82,8 @@ public class PrepareMapsPage extends AuthenticatedPage {
 					protected void onCancel(MapFolder entity) {
 						setResponsePage(new PrepareSessionPage());
 					}
-				});
+				}.setChoicesModel(MapFolder_.campaign, new CampaignsModel())
+				 .setRenderer(MapFolder_.campaign, LambdaRenderer.of(Campaign::getName)));
 			}
 		});
 

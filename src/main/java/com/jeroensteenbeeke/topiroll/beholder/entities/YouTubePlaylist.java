@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
 import javax.annotation.Nonnull;
@@ -27,10 +28,9 @@ public class YouTubePlaylist extends BaseDomainObject {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@SequenceGenerator(sequenceName = "SEQ_ID_YouTubePlaylist", name = "YouTubePlaylist", initialValue = 1,
-			allocationSize = 1)
+		allocationSize = 1)
 	@GeneratedValue(generator = "YouTubePlaylist", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
-
 	private Long id;
 
 	@Column(nullable = false)
@@ -40,21 +40,18 @@ public class YouTubePlaylist extends BaseDomainObject {
 	@Column(nullable = false)
 	@EntityFormField(label = "URL", required = true)
 	private String url;
- 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
 
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "campaign")
+	@EntityFormField(label = "Campaign", required = true, type = DefaultFieldType.DropDownChoice.class)
 	private Campaign campaign;
 
-
-
- 	@Column(nullable=true)
+	@Column(nullable = true)
 	@EntityFormField(label = "Number of entries", required = false)
 	private Integer numberOfEntries;
 
-
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
-
 	private BeholderUser owner;
 
 
@@ -102,7 +99,8 @@ public class YouTubePlaylist extends BaseDomainObject {
 	public Integer getNumberOfEntries() {
 		return numberOfEntries;
 	}
-	public void setNumberOfEntries( @Nullable Integer numberOfEntries) {
+
+	public void setNumberOfEntries(@Nullable Integer numberOfEntries) {
 		this.numberOfEntries = numberOfEntries;
 	}
 
@@ -110,13 +108,10 @@ public class YouTubePlaylist extends BaseDomainObject {
 	public Campaign getCampaign() {
 		return campaign;
 	}
-	public void setCampaign( @Nullable Campaign campaign) {
+
+	public void setCampaign(@Nullable Campaign campaign) {
 		this.campaign = campaign;
 	}
-
-
-
-
 
 
 }

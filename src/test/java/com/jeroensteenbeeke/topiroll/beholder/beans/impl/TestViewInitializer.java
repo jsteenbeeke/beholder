@@ -167,7 +167,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			};
 
 			for (int squares = 1; squares <= 4; squares++) {
-				TypedResult<TokenDefinition> def = mapService.createToken(user,
+				TypedResult<TokenDefinition> def = mapService.createToken(user, null,
 						names[squares - 1],
 						squares,
 						imageData);
@@ -185,7 +185,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		AtomicReference<FogOfWarGroup> e = new AtomicReference<>();
 
-		mapService.createMap(user, "temple", 18, image, null).map(map -> {
+		mapService.createMap(user, null,"temple", 18, image, null).map(map -> {
 
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
@@ -282,7 +282,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		});
 
 		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 9, image, null).map(map -> {
+		mapService.createMap(user, null,"crypt", 9, image, null).map(map -> {
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");

@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,14 +22,15 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.constraints.Null;
 
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 
 public interface MapService {
 	@Nonnull
-	TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nonnull String name,
-										   int squareSize, @Nonnull File data, @Nullable MapFolder folder);
+	TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user, @Nullable Campaign campaign, @Nonnull String name,
+									 int squareSize, @Nonnull File data, @Nullable MapFolder folder);
 
 	void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map);
 
@@ -43,12 +44,12 @@ public interface MapService {
 
 	//region Tokens
 
-	TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nonnull String name,
-								int diameter, @Nonnull byte[] image);
+	TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user, @Nullable Campaign campaign, @Nonnull String name,
+											 int diameter, @Nonnull byte[] image);
 
 
-	TokenInstance createTokenInstance(@Nonnull  TokenDefinition token, @Nonnull ScaledMap map,
-							 @Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
+	TokenInstance createTokenInstance(@Nonnull TokenDefinition token, @Nonnull ScaledMap map,
+									  @Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
 
 	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);
 
@@ -70,7 +71,7 @@ public interface MapService {
 						 int offsetY);
 
 	TypedResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
-												 @Nonnull String name, @Nonnull List<FogOfWarShape> shapes);
+										   @Nonnull String name, @Nonnull List<FogOfWarShape> shapes);
 
 	void setGroupVisibility(@Nonnull MapView view, @Nonnull FogOfWarGroup group,
 							@Nonnull VisibilityStatus status);
@@ -81,8 +82,8 @@ public interface MapService {
 	void ungroup(@Nonnull FogOfWarGroup group);
 
 	TypedResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
-											   @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
-											   @Nonnull List<FogOfWarShape> remove);
+										 @Nonnull String name, @Nonnull List<FogOfWarShape> keep,
+										 @Nonnull List<FogOfWarShape> remove);
 
 	void addFogOfWarTriangle(@Nonnull ScaledMap map, int width, int height,
 							 int offsetX, int offsetY, @Nonnull TriangleOrientation orientation);
@@ -93,7 +94,7 @@ public interface MapService {
 
 	//region Portraits
 	TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user, @Nonnull String name,
-											  @Nonnull byte[] image);
+										 @Nonnull byte[] image);
 
 	void selectPortrait(@Nonnull MapView view, @Nonnull Portrait portrait, @Nonnull PortraitVisibilityLocation location);
 

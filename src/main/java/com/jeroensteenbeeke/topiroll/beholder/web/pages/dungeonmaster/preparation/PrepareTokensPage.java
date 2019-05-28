@@ -6,11 +6,13 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadTokenStep1Page;
@@ -38,6 +40,9 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 		TokenDefinitionFilter tokenFilter = new TokenDefinitionFilter();
 		tokenFilter.owner().set(getUser());
+		tokenFilter.campaign().isNull();
+		user().flatMap(BeholderUser::activeCampaign).peek(tokenFilter::orCampaign);
+
 		tokenFilter.name().orderBy(true);
 
 		DataView<TokenDefinition> tokenView = new DataView<TokenDefinition>(
@@ -96,7 +101,8 @@ public class PrepareTokensPage extends AuthenticatedPage {
 								setResponsePage(new PrepareSessionPage());
 							}
 
-						});
+						}.setChoicesModel(TokenDefinition_.campaign, new CampaignsModel())
+						 .setRenderer(TokenDefinition_.campaign, LambdaRenderer.of(Campaign::getName)));
 
 					}
 				});

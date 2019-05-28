@@ -40,93 +40,6 @@ public class PrepareSessionPage extends AuthenticatedPage {
 	public PrepareSessionPage() {
 		super("Prepare Session");
 
-		CampaignFilter campaignFilter = new CampaignFilter();
-		campaignFilter.dungeonMaster(getUser());
-
-		add(new DataView<Campaign>("campaigns", FilterDataProvider.of(campaignFilter, campaignDAO)) {
-			private static final long serialVersionUID = -4275677503918714905L;
-
-			@Override
-			protected void populateItem(Item<Campaign> item) {
-				Campaign campaign = item.getModelObject();
-
-				item.add(new Label("name", item.getModel().map(Campaign::getName)));
-
-				if (user().flatMap(BeholderUser::activeCampaign).filter(campaign::equals).isDefined()) {
-					item.add(new Label("active", "Active")
-								 .add(AttributeModifier.replace("class", "badge badge-success")));
-				} else {
-					item.add(new IconTextLink<>("active", item.getModel(),
-						FontAwesome.check_circle, c -> "Activate") {
-						private static final long serialVersionUID = -8605604961132113879L;
-
-						@Override
-						public void onClick() {
-							user().map(user -> campaignService
-								.setActiveCampaign(user, getModelObject())).peek(result -> {
-								result.ifOk(() -> PrepareSessionPage.this
-									.setResponsePage(new PrepareSessionPage()));
-								result.ifNotOk(this::error);
-							});
-						}
-					});
-				}
-
-				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
-					private static final long serialVersionUID = 4729687836652050634L;
-
-					@Override
-					public void onClick() {
-						setResponsePage(new BSEntityFormPage<>(edit(getModelObject())
-																   .onPage("Edit Campaign")
-																   .withoutDelete()
-																   .using(campaignDAO)) {
-							private static final long serialVersionUID = 7461087755691288652L;
-
-							@Override
-							protected void onSaved(Campaign entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-							@Override
-							protected void onCancel(Campaign entity) {
-								setResponsePage(new PrepareSessionPage());
-							}
-
-
-						});
-					}
-				});
-
-				item.add(new IconLink<>("delete", item.getModel(), FontAwesome.trash) {
-					private static final long serialVersionUID = 4729687836652050634L;
-
-					@Override
-					protected void onConfigure() {
-						super.onConfigure();
-
-						setVisibilityAllowed(campaignService.isDeleteAllowed(getModelObject()));
-					}
-
-					@Override
-					public void onClick() {
-						setResponsePage(new ConfirmationPage("Delete Campaign", "Are you sure you wish to delete campaign " + getModelObject()
-							.getName(), ConfirmationPage.ColorScheme.INVERTED, answer -> {
-							if (answer) {
-								ActionResult result = campaignService.deleteCampaign(getModelObject());
-
-								result.ifOk(() -> setResponsePage(new PrepareSessionPage()));
-								result.ifNotOk(this::error);
-							} else {
-								setResponsePage(new PrepareSessionPage());
-							}
-						}));
-					}
-				});
-
-			}
-		});
-
 
 		MapViewFilter viewFilter = new MapViewFilter();
 		viewFilter.owner().set(getUser());
@@ -313,35 +226,16 @@ public class PrepareSessionPage extends AuthenticatedPage {
 			}
 		});
 
-		add(new Link<Campaign>("campaign") {
+		add(new Link<YouTubePlaylist>("campaigns") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick() {
-				setResponsePage(new BSEntityFormPage<>(create(new Campaign())
-														   .onPage("Create Campaign")
-														   .using(campaignDAO)) {
-					private static final long serialVersionUID = -9001053138608199403L;
-
-					@Override
-					protected void onBeforeSave(Campaign entity) {
-						super.onBeforeSave(entity);
-
-						entity.setDungeonMaster(user().getOrElseThrow(IllegalAccessError::new));
-					}
-
-					@Override
-					protected void onSaved(Campaign entity) {
-						PrepareSessionPage.this.setResponsePage(new PrepareSessionPage());
-					}
-
-					@Override
-					protected void onCancel(Campaign entity) {
-						PrepareSessionPage.this.setResponsePage(new PrepareSessionPage());
-					}
-				});
+				setResponsePage(new CampaignsPage());
 			}
 		});
+
+
 
 	}
 
