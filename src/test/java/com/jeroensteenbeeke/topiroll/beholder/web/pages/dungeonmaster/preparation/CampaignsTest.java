@@ -387,12 +387,47 @@ public class CampaignsTest extends AbstractPageTest {
 	private void navigate_to_tokens_page() {
 		wicketTester.clickLink("tokens");
 		wicketTester.assertRenderedPage(PrepareTokensPage.class);
+
+		wicketTester.assertLabel("tokens:1:campaign", "-");
+		wicketTester.assertLabel("tokens:2:campaign", "-");
+		wicketTester.assertLabel("tokens:3:campaign", "-");
+		wicketTester.assertLabel("tokens:4:campaign", "-");
+		wicketTester.assertNotExists("tokens:5");
 	}
 
 	private void set_token_to_active_campaign() {
+		wicketTester.clickLink("tokens:1:edit:link");
+		wicketTester.assertRenderedPage(BSEntityFormPage.class);
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"entityForm:fields:1:componentPanel:dropdown");
+		dropdown.setModelObject(dropdown.getChoices().get(0));
+		wicketTester.clickLink("submit");
+		wicketTester.assertRenderedPage(PrepareTokensPage.class);
+
+		wicketTester.assertLabel("tokens:1:campaign", "Campaign A");
+		wicketTester.assertLabel("tokens:2:campaign", "-");
+		wicketTester.assertLabel("tokens:3:campaign", "-");
+		wicketTester.assertLabel("tokens:4:campaign", "-");
+		wicketTester.assertNotExists("tokens:5");
 	}
 
 	private void set_token_to_inactive_campaign() {
+		wicketTester.clickLink("tokens:3:edit:link");
+		wicketTester.assertRenderedPage(BSEntityFormPage.class);
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"entityForm:fields:1:componentPanel:dropdown");
+		dropdown.setModelObject(dropdown.getChoices().get(1));
+		wicketTester.clickLink("submit");
+		wicketTester.assertRenderedPage(PrepareTokensPage.class);
+
+		wicketTester.assertLabel("tokens:1:campaign", "Campaign A");
+		wicketTester.assertLabel("tokens:2:campaign", "-");
+		wicketTester.assertLabel("tokens:3:campaign", "-");
+		wicketTester.assertNotExists("tokens:4");
 	}
 
 	private void navigate_to_exploration_mode() {

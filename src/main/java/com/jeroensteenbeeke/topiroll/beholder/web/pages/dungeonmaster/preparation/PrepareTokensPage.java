@@ -61,6 +61,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 				TokenDefinition definition = item.getModelObject();
 
 				item.add(new Label("name", definition.getName()));
+				item.add(new Label("campaign", item.getModel().map(TokenDefinition::getCampaign).map(Campaign::getName).orElse("-")));
 				item.add(
 						new Label("size", String.format("%d squares (diameter)",
 								definition.getDiameterInSquares())));
@@ -93,18 +94,18 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 							@Override
 							protected void onDeleted() {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 							}
 
 							@Override
 							protected void onSaved(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 
 							}
 
 							@Override
 							protected void onCancel(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 							}
 
 						}.setChoicesModel(TokenDefinition_.campaign, new CampaignsModel())
