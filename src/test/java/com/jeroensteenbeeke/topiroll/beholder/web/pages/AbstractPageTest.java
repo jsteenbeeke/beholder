@@ -6,6 +6,7 @@ import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.frontend.StartBeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.http.mock.MockHttpServletRequest;
 import org.apache.wicket.protocol.http.mock.MockHttpSession;
@@ -24,6 +25,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AbstractPageTest {
 	private static final String APPLICATION_KEY = "wicket.BeholderApplication";

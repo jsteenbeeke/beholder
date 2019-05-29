@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
 public class ExplorationControllerPage extends BootstrapBasePage implements DMViewCallback {
 	private static final long serialVersionUID = 383172566857420866L;
 
-	private static final String MODAL_ID = "modal";
+	public static final String MODAL_ID = "modal";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
 	private final WebMarkupContainer explorationNavigator;
@@ -101,6 +101,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	private final ICoordinateTranslator coordinateTranslator;
 
 	private boolean disableClickListener = false;
+	private double displayFactor;
 
 	public ExplorationControllerPage(MapView view) {
 		this(view, null);
@@ -118,7 +119,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 		ScaledMap map = view == null ? null : view.getSelectedMap();
 
-		final double displayFactor = map == null ? 1.0 : map.getDisplayFactor(view);
+		displayFactor = map == null ? 1.0 : map.getDisplayFactor(view);
 
 		if (focusGroup != null) {
 			scrollToX = focusGroup.getShapes().stream()
@@ -196,13 +197,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			@Override
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
-					previousClickedLocation = clickedLocation;
-					clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
-
-						(event
-							.getOffsetTop() / displayFactor));
-					selectedMarker = Model.of();
-					selectedToken = Model.of();
+					ExplorationControllerPage.this.onClick(event);
 
 					hideReveal.setVisible(true);
 					tokenStatusPanel.setVisible(false);
@@ -540,6 +535,16 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 		add(modal = new WebMarkupContainer(MODAL_ID));
 		modal.setOutputMarkupPlaceholderTag(true);
+	}
+
+	public void onClick(OnClickBehavior.ClickEvent event) {
+		previousClickedLocation = clickedLocation;
+		clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
+
+			(event
+				.getOffsetTop() / displayFactor));
+		selectedMarker = Model.of();
+		selectedToken = Model.of();
 	}
 
 	@Override

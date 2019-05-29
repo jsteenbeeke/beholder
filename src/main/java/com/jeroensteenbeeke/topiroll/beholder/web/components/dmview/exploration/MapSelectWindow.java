@@ -79,6 +79,9 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 
 
 		MapFolderFilter mapFolderFilter = new MapFolderFilter();
+		mapFolderFilter.campaign().isNull();
+		owner.activeCampaign().peek(mapFolderFilter::orCampaign);
+
 		mapFolderFilter.parent().isNull();
 		mapFolderFilter.name().orderBy(true);
 
