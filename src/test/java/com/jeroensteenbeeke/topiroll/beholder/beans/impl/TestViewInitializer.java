@@ -151,6 +151,14 @@ public class TestViewInitializer implements IAccountInitializer {
 				"https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbmtlOTyZ-JElmEd7VRTBpgr&controls=0&showinfo=0?ecver=2");
 		playlistDAO.save(playlist);
 
+		playlist = new YouTubePlaylist();
+		playlist.setOwner(user);
+		playlist.setName("Battle Music");
+		playlist.setNumberOfEntries(6);
+		playlist.setUrl(
+			"https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbkfsZzaD51mI8L7jRIAcOK0&controls=0&showinfo=0?ecver=2");
+		playlistDAO.save(playlist);
+
 		log.info("Test data created for user {}", user.getUsername());
 
 		TokenDefinition m = null;

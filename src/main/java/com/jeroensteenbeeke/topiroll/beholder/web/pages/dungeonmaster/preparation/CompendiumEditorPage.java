@@ -73,6 +73,8 @@ public class CompendiumEditorPage extends AuthenticatedPage {
 			protected void onSubmit() {
 				CompendiumEntry e = getModelObject();
 
+				e.setCampaign(campaignChoice.getModelObject());
+
 				if (e.isSaved()) {
 					entryDAO.update(e);
 				} else {

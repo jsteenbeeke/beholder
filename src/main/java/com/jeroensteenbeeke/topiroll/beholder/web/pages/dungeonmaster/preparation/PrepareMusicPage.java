@@ -17,6 +17,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFil
 import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -41,6 +42,14 @@ public class PrepareMusicPage extends AuthenticatedPage {
 
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
 		playlistFilter.owner(getUser()).name().orderBy(true);
+
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing playlists that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+			playlistFilter.campaign().isNull();
+			playlistFilter.orCampaign(activeCampaign.get());
+		}
+
 		playlistFilter.campaign().orderBy(true);
 		playlistFilter.name().orderBy(true);
 

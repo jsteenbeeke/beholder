@@ -33,6 +33,23 @@ public class CampaignsTest extends AbstractPageTest {
 		set_middle_portrait_to_inactive_campaign();
 
 		navigate_back_to_overview();
+		navigate_to_playlists_page();
+		set_top_playlist_to_active_campaign();
+		set_bottom_playlist_to_inactive_campaign();
+
+		navigate_back_to_overview();
+		navigate_to_compendium_page();
+		create_compendium_item_for_active_campaign();
+		create_compendium_item_for_inactive_campaign();
+
+		navigate_back_to_overview();
+		navigate_to_tokens_page();
+		set_token_to_active_campaign();
+		set_token_to_inactive_campaign();
+
+		navigate_back_to_overview();
+		navigate_to_exploration_mode();
+
 	}
 
 	private void navigate_to_campaign_page() {
@@ -150,11 +167,11 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(UploadMapStep2Page.class);
-		wicketTester.getComponentFromLastRenderedPage("configureForm:name").setDefaultModelObject("Map A");
+		wicketTester.getComponentFromLastRenderedPage("configureForm:name")
+			.setDefaultModelObject("Map A");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
-			.getComponentFromLastRenderedPage(
-				"configureForm:campaign");
+			.getComponentFromLastRenderedPage("configureForm:campaign");
 		dropdown.setModelObject(dropdown.getChoices().get(0));
 		wicketTester.clickLink("submit");
 
@@ -166,8 +183,6 @@ public class CampaignsTest extends AbstractPageTest {
 			"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("maps:folders:2");
-
-		wicketTester.debugComponentTrees();
 
 		wicketTester.assertLabel("maps:maps:1:campaign", "-");
 		wicketTester.assertLabel("maps:maps:2:campaign", "-");
@@ -188,11 +203,11 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(UploadMapStep2Page.class);
-		wicketTester.getComponentFromLastRenderedPage("configureForm:name").setDefaultModelObject("Map B");
+		wicketTester.getComponentFromLastRenderedPage("configureForm:name")
+			.setDefaultModelObject("Map B");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
-			.getComponentFromLastRenderedPage(
-				"configureForm:campaign");
+			.getComponentFromLastRenderedPage("configureForm:campaign");
 		dropdown.setModelObject(dropdown.getChoices().get(1));
 		wicketTester.clickLink("submit");
 
@@ -204,8 +219,6 @@ public class CampaignsTest extends AbstractPageTest {
 			"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("maps:folders:2");
-
-		wicketTester.debugComponentTrees();
 
 		wicketTester.assertLabel("maps:maps:1:campaign", "-");
 		wicketTester.assertLabel("maps:maps:2:campaign", "-");
@@ -270,6 +283,119 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertLabel("portraits:4:campaign", "-");
 		wicketTester.assertLabel("portraits:5:campaign", "-");
 		wicketTester.assertNotExists("portraits:6:campaign");
+	}
+
+	private void navigate_to_playlists_page() {
+		wicketTester.clickLink("playlists");
+		wicketTester.assertRenderedPage(PrepareMusicPage.class);
+
+		wicketTester.assertFeedback("feedback",
+			"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+
+		wicketTester.assertLabel("playlists:1:campaign", "-");
+		wicketTester.assertLabel("playlists:2:campaign", "-");
+		wicketTester.assertNotExists("playlists:3");
+	}
+
+	private void set_top_playlist_to_active_campaign() {
+		wicketTester.clickLink("playlists:1:edit:link");
+		wicketTester.assertRenderedPage(BSEntityFormPage.class);
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"entityForm:fields:2:componentPanel:dropdown");
+		dropdown.setModelObject(dropdown.getChoices().get(0));
+
+		wicketTester.clickLink("submit");
+		wicketTester.assertRenderedPage(PrepareMusicPage.class);
+
+		wicketTester.assertFeedback("feedback",
+			"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+
+		wicketTester.assertLabel("playlists:1:campaign", "-");
+		wicketTester.assertLabel("playlists:2:campaign", "Campaign A");
+		wicketTester.assertNotExists("playlists:3");
+	}
+
+	private void set_bottom_playlist_to_inactive_campaign() {
+		wicketTester.clickLink("playlists:1:edit:link");
+		wicketTester.assertRenderedPage(BSEntityFormPage.class);
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"entityForm:fields:2:componentPanel:dropdown");
+		dropdown.setModelObject(dropdown.getChoices().get(1));
+
+		wicketTester.clickLink("submit");
+		wicketTester.assertRenderedPage(PrepareMusicPage.class);
+
+		wicketTester.assertFeedback("feedback",
+			"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+
+		wicketTester.assertLabel("playlists:1:campaign", "Campaign A");
+		wicketTester.assertNotExists("playlists:2");
+	}
+
+	private void navigate_to_compendium_page() {
+		wicketTester.clickLink("compendium");
+		wicketTester.assertRenderedPage(PrepareCompendiumPage.class);
+	}
+
+	private void create_compendium_item_for_active_campaign() {
+		wicketTester.clickLink("addentry");
+		wicketTester.assertRenderedPage(CompendiumEditorPage.class);
+
+		FormTester formTester = wicketTester.newFormTester("editorForm");
+		formTester.setValue("title", "Compendium Entry A");
+		formTester.setValue("body", "Compendium Entry A");
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"editorForm:campaign");
+		dropdown.setModelObject(dropdown.getChoices().get(0));
+
+		wicketTester.clickLink("submit");
+
+		wicketTester.assertRenderedPage(PrepareCompendiumPage.class);
+		wicketTester.assertLabel("entries:1:title", "Compendium Entry A");
+		wicketTester.assertLabel("entries:1:campaign", "Campaign A");
+		wicketTester.assertNotExists("entries:2");
+	}
+
+	private void create_compendium_item_for_inactive_campaign() {
+		wicketTester.clickLink("addentry");
+		wicketTester.assertRenderedPage(CompendiumEditorPage.class);
+
+		FormTester formTester = wicketTester.newFormTester("editorForm");
+		formTester.setValue("title", "Compendium Entry A");
+		formTester.setValue("body", "Compendium Entry A");
+
+		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
+			.getComponentFromLastRenderedPage(
+				"editorForm:campaign");
+		dropdown.setModelObject(dropdown.getChoices().get(1));
+
+		wicketTester.clickLink("submit");
+
+		wicketTester.assertRenderedPage(PrepareCompendiumPage.class);
+
+		wicketTester.assertLabel("entries:1:title", "Compendium Entry A");
+		wicketTester.assertLabel("entries:1:campaign", "Campaign A");
+		wicketTester.assertNotExists("entries:2");
+	}
+
+	private void navigate_to_tokens_page() {
+		wicketTester.clickLink("tokens");
+		wicketTester.assertRenderedPage(PrepareTokensPage.class);
+	}
+
+	private void set_token_to_active_campaign() {
+	}
+
+	private void set_token_to_inactive_campaign() {
+	}
+
+	private void navigate_to_exploration_mode() {
 	}
 
 }
