@@ -69,6 +69,8 @@ public class AddTokenInstance1Page extends AuthenticatedPage {
 		});
 
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
+		filter.campaign().isNull();
+		user().flatMap(BeholderUser::activeCampaign).peek(filter::orCampaign);
 		filter.owner().set(getUser());
 		filter.name().orderBy(true);
 

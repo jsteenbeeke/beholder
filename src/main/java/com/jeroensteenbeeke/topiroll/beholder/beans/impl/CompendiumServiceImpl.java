@@ -59,6 +59,8 @@ class CompendiumServiceImpl implements CompendiumService {
 		filter.title().ilike(String.format("%%%s%%", query));
 		filter.author().equalToOrNull(user);
 		filter.title().orderBy(true);
+		filter.campaign().isNull();
+		user.activeCampaign().peek(filter::orCampaign);
 
 		return dao.findByFilter(filter).toJavaList();
 	}

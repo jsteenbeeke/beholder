@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.EntityFormSupport;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -24,6 +25,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.BeholderNavBar;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
+import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 
 import javax.annotation.CheckForNull;
@@ -37,6 +39,8 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 
 		add(new BeholderNavBar("navbar"));
 
+		add(new BootstrapFeedbackPanel("feedback"));
+
 		if (getUser() == null) {
 			BeholderSession.get().invalidate();
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
@@ -48,5 +52,9 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 	@CheckForNull
 	public BeholderUser getUser() {
 		return BeholderSession.get().getUser();
+	}
+
+	public Option<BeholderUser> user() {
+		return Option.of(getUser());
 	}
 }

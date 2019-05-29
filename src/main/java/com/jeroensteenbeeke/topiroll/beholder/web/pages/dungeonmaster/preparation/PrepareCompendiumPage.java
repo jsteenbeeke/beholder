@@ -6,10 +6,13 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.topiroll.beholder.dao.CompendiumEntryDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CompendiumEntryFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
@@ -18,6 +21,8 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import javax.inject.Inject;
 
 public class PrepareCompendiumPage extends AuthenticatedPage {
+	private static final long serialVersionUID = -969903778548420773L;
+
 	private final DataView<CompendiumEntry> entryView;
 
 	@Inject
@@ -27,6 +32,17 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 		super("User compendium");
 
 		CompendiumEntryFilter filter = new CompendiumEntryFilter();
+
+		Option<Campaign> activeCampaign = user()
+			.flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format(
+				"Only showing compendium entries that are tied to the currently active campaign (%s) or not campaign-specific",
+				activeCampaign.map(Campaign::getName).get()));
+			filter.campaign().isNull();
+			filter.orCampaign(activeCampaign.get());
+		}
+
 		filter.author(getUser());
 		filter.title().orderBy(true);
 
@@ -37,14 +53,20 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 			@Override
 			protected void populateItem(Item<CompendiumEntry> item) {
 				item.add(new Label("title", item.getModelObject().getTitle()));
-				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
-					private static final long serialVersionUID = 8837136535113695402L;
+				item.add(new Label("campaign",
+					item.getModel().map(CompendiumEntry::getCampaign)
+						.map(Campaign::getName).orElse("-")));
 
-					@Override
-					public void onClick() {
-						setResponsePage(new CompendiumEditorPage(item.getModelObject()));
-					}
-				});
+				item.add(
+					new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
+						private static final long serialVersionUID = 8837136535113695402L;
+
+						@Override
+						public void onClick() {
+							setResponsePage(new CompendiumEditorPage(
+								item.getModelObject()));
+						}
+					});
 				item.add(new IconLink<>("delete", item.getModel(),
 					FontAwesome.trash) {
 					private static final long serialVersionUID = -4536436282162364701L;
@@ -54,14 +76,15 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 						setResponsePage(new ConfirmationPage("Confirm deletion",
 							String.format(
 								"Are you sure you wish to delete the article titled \"%s\"",
-								getModelObject().getTitle()), ConfirmationPage.ColorScheme.INVERTED,
-							yes -> {
-								if (yes) {
-									compendiumEntryDAO.delete(item.getModelObject());
-								}
+								getModelObject().getTitle()),
+							ConfirmationPage.ColorScheme.INVERTED, yes -> {
+							if (yes) {
+								compendiumEntryDAO
+									.delete(item.getModelObject());
+							}
 
-								setResponsePage(new PrepareCompendiumPage());
-							}));
+							setResponsePage(new PrepareCompendiumPage());
+						}));
 					}
 				});
 			}
@@ -82,7 +105,8 @@ public class PrepareCompendiumPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
-				setResponsePage(new CompendiumEditorPage(new CompendiumEntry()));
+				setResponsePage(
+					new CompendiumEditorPage(new CompendiumEntry()));
 			}
 		});
 	}

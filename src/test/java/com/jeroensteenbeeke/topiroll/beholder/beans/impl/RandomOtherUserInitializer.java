@@ -76,7 +76,7 @@ public class RandomOtherUserInitializer implements IEntityPopulator {
 
 		File image = ImageResource.importImage("porridge.jpg");
 
-		mapService.createMap(user, "porridge", 4, image, null).map(map -> {
+		mapService.createMap(user, null,"porridge", 4, image, null).map(map -> {
 			FogOfWarRect rect = new FogOfWarRect();
 			rect.setOffsetX(187);
 			rect.setOffsetY(153);

@@ -1,6 +1,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
 import javax.annotation.CheckForNull;
@@ -19,8 +20,14 @@ public class MapFolder extends BaseDomainObject {
 	@SequenceGenerator(sequenceName = "SEQ_ID_MapFolder", name = "MapFolder", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(generator = "MapFolder", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
-
 	private Long id;
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=false) 	@JoinColumn(name="owner")
+
+	private BeholderUser owner;
+
+
+
+
 	@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
 	private List<ScaledMap> maps = new ArrayList<ScaledMap>();
 
@@ -34,6 +41,13 @@ public class MapFolder extends BaseDomainObject {
 	@Column(nullable = false)
 	@EntityFormField(label = "Name", required = true)
 	private String name;
+
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@JoinColumn(name = "campaign")
+	@EntityFormField(required = false, label = "Campaign", type = DefaultFieldType.DropDownChoice.class)
+	private Campaign campaign;
+
 
 	public Long getId() {
 		return id;
@@ -92,4 +106,25 @@ public class MapFolder extends BaseDomainObject {
 
 		return getName();
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+
+	public void setCampaign(@Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+	@Nonnull
+	public BeholderUser getOwner() {
+		return owner;
+	}
+	public void setOwner( @Nonnull BeholderUser owner) {
+		this.owner = owner;
+	}
+
+
+
+
 }

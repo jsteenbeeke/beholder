@@ -80,7 +80,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		byte[] portrait = ImageResource.getImageAsByteArray("random_monster.png");
 
 		for (int i = 0; i < 6; i++) {
-			mapService.createPortrait(user, "Portrait "+ i, portrait);
+			mapService.createPortrait(user, null, "Portrait "+ i, portrait);
 		}
 
 
@@ -151,6 +151,14 @@ public class TestViewInitializer implements IAccountInitializer {
 				"https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbmtlOTyZ-JElmEd7VRTBpgr&controls=0&showinfo=0?ecver=2");
 		playlistDAO.save(playlist);
 
+		playlist = new YouTubePlaylist();
+		playlist.setOwner(user);
+		playlist.setName("Battle Music");
+		playlist.setNumberOfEntries(6);
+		playlist.setUrl(
+			"https://www.youtube.com/embed/videoseries?list=PLAr9hQZcvLbkfsZzaD51mI8L7jRIAcOK0&controls=0&showinfo=0?ecver=2");
+		playlistDAO.save(playlist);
+
 		log.info("Test data created for user {}", user.getUsername());
 
 		TokenDefinition m = null;
@@ -167,7 +175,7 @@ public class TestViewInitializer implements IAccountInitializer {
 			};
 
 			for (int squares = 1; squares <= 4; squares++) {
-				TypedResult<TokenDefinition> def = mapService.createToken(user,
+				TypedResult<TokenDefinition> def = mapService.createToken(user, null,
 						names[squares - 1],
 						squares,
 						imageData);
@@ -185,7 +193,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 		AtomicReference<FogOfWarGroup> e = new AtomicReference<>();
 
-		mapService.createMap(user, "temple", 18, image, null).map(map -> {
+		mapService.createMap(user, null,"temple", 18, image, null).map(map -> {
 
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
@@ -282,7 +290,7 @@ public class TestViewInitializer implements IAccountInitializer {
 		});
 
 		image = ImageResource.importImage("hugecrypt.jpg");
-		mapService.createMap(user, "crypt", 9, image, null).map(map -> {
+		mapService.createMap(user, null,"crypt", 9, image, null).map(map -> {
 			FogOfWarGroup group = new FogOfWarGroup();
 			group.setMap(map);
 			group.setName("ALL");

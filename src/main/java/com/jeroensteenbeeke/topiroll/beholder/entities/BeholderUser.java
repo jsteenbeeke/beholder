@@ -20,11 +20,16 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import io.vavr.control.Option;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 @Entity
 public class BeholderUser extends BaseDomainObject {
@@ -48,6 +53,19 @@ public class BeholderUser extends BaseDomainObject {
 
 	@Column(nullable = false)
 	private String username;
+ 	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
+	private List<MapFolder> mapFolders = new ArrayList<MapFolder>();
+
+
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="activeCampaign")
+
+	private Campaign activeCampaign;
+
+
+ 	@OneToMany(mappedBy="dungeonMaster", fetch=FetchType.LAZY)
+	private List<Campaign> campaigns = new ArrayList<Campaign>();
+
+
  	@OneToMany(mappedBy="author", fetch=FetchType.LAZY)
 	private List<CompendiumEntry> writtenEntries = new ArrayList<CompendiumEntry>();
 
@@ -197,14 +215,35 @@ public class BeholderUser extends BaseDomainObject {
 		this.writtenEntries = writtenEntries;
 	}
 
+	@Nonnull
+	public List<Campaign> getCampaigns() {
+		return campaigns;
+	}
+	public void setCampaigns( @Nonnull List<Campaign> campaigns) {
+		this.campaigns = campaigns;
+	}
+
+	@CheckForNull
+	public Campaign getActiveCampaign() {
+		return activeCampaign;
+	}
+	public void setActiveCampaign( @Nullable Campaign activeCampaign) {
+		this.activeCampaign = activeCampaign;
+	}
 
 
+	@Transient
+	public Option<Campaign> activeCampaign() {
+		return Option.of(getActiveCampaign());
+	}
 
-
-
-
-
-
+	@Nonnull
+	public List<MapFolder> getMapFolders() {
+		return mapFolders;
+	}
+	public void setMapFolders( @Nonnull List<MapFolder> mapFolders) {
+		this.mapFolders = mapFolders;
+	}
 
 
 }

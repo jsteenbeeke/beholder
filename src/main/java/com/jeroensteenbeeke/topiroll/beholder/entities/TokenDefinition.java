@@ -44,8 +44,18 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 	@GeneratedValue(generator = "TokenDefinition",
 			strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
-
 	private Long id;
+
+	@Column(nullable = false)
+	@EntityFormField(label = "Name", required = true)
+	private String name;
+
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="campaign")
+	@EntityFormField(label = "Campaign", required = false, type = DefaultFieldType.DropDownChoice.class)
+	private Campaign campaign;
+
+
  	@Column(nullable=true, name = "amazon_key")
 	private String amazonKey;
 
@@ -54,10 +64,6 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 			type = DefaultFieldType.Number.class)
 	@Minimum(1)
 	private int diameterInSquares;
-
-	@Column(nullable = false)
-	@EntityFormField(label = "Name", required = true)
-	private String name;
 
 	@Column(nullable = true)
 	@Lob
@@ -137,6 +143,16 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 	public void setAmazonKey( @Nullable String amazonKey) {
 		this.amazonKey = amazonKey;
 	}
+
+	@CheckForNull
+	public Campaign getCampaign() {
+		return campaign;
+	}
+	public void setCampaign( @Nullable Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+
 
 
 

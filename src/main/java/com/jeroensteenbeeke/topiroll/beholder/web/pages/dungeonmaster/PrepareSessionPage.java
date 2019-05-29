@@ -2,22 +2,25 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconTextLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.ConfirmationPage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.lux.ActionResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.CampaignService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.CampaignDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.CampaignFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapViewFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.*;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.request.UrlUtils;
-import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -28,8 +31,15 @@ public class PrepareSessionPage extends AuthenticatedPage {
 	@Inject
 	private MapViewDAO mapViewDAO;
 
+	@Inject
+	private CampaignDAO campaignDAO;
+
+	@Inject
+	private CampaignService campaignService;
+
 	public PrepareSessionPage() {
 		super("Prepare Session");
+
 
 		MapViewFilter viewFilter = new MapViewFilter();
 		viewFilter.owner().set(getUser());
@@ -44,10 +54,6 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				MapView mapView = item.getModelObject();
 
 				item.add(new Label("identifier", mapView.getIdentifier()));
-				final String url = UrlUtils.rewriteToContextRelative(
-						String.format("views/%s", mapView.getIdentifier()),
-						RequestCycle.get());
-
 				item.add(new Label("width", mapView.getWidth()));
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",
@@ -219,6 +225,17 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				setResponsePage(new PrepareCompendiumPage());
 			}
 		});
+
+		add(new Link<YouTubePlaylist>("campaigns") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new CampaignsPage());
+			}
+		});
+
+
 
 	}
 

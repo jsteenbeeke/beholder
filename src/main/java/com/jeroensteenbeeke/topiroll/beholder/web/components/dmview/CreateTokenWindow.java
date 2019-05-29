@@ -54,6 +54,8 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 
 		TokenDefinitionFilter filter = new TokenDefinitionFilter();
 		filter.owner(map.getOwner());
+		filter.campaign().isNull();
+		map.getOwner().activeCampaign().peek(filter::orCampaign);
 		filter.name().orderBy(true);
 
 		final DropDownChoice<TokenDefinition> definitions = new DropDownChoice<>("type",

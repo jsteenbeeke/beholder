@@ -41,6 +41,8 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 		ScaledMapFilter rootFilter = new ScaledMapFilter();
 		rootFilter.owner(view.getOwner());
 		rootFilter.folder().isNull();
+		rootFilter.campaign().isNull();
+		view.getOwner().activeCampaign().peek(rootFilter::orCampaign);
 		rootFilter.name().orderBy(true);
 
 		add(new MapDataView("rootmaps", view, rootFilter, mapDAO));
@@ -59,6 +61,8 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 
 				ScaledMapFilter folderFilter = new ScaledMapFilter();
 				folderFilter.folder(folder);
+				folderFilter.campaign().isNull();
+				folder.getOwner().activeCampaign().peek(folderFilter::orCampaign);
 				folderFilter.name().orderBy(true);
 
 				item.add(new MapDataView("maps", MapSelectWindow.this.getModelObject(), folderFilter,
@@ -75,6 +79,9 @@ public class MapSelectWindow extends DMModalWindow<MapView> {
 
 
 		MapFolderFilter mapFolderFilter = new MapFolderFilter();
+		mapFolderFilter.campaign().isNull();
+		owner.activeCampaign().peek(mapFolderFilter::orCampaign);
+
 		mapFolderFilter.parent().isNull();
 		mapFolderFilter.name().orderBy(true);
 

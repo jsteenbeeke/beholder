@@ -6,14 +6,17 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityPageSettings;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
+import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenDefinitionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFilter;
+import com.jeroensteenbeeke.topiroll.beholder.web.model.CampaignsModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.UploadTokenStep1Page;
+import io.vavr.control.Option;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.link.Link;
@@ -38,6 +41,14 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 		TokenDefinitionFilter tokenFilter = new TokenDefinitionFilter();
 		tokenFilter.owner().set(getUser());
+
+		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
+		if (activeCampaign.isDefined()) {
+			warn(String.format("Only showing tokens that are tied to the currently active campaign (%s) or not campaign-specific", activeCampaign.map(Campaign::getName).get()));
+			tokenFilter.campaign().isNull();
+			tokenFilter.orCampaign(activeCampaign.get());
+		}
+
 		tokenFilter.name().orderBy(true);
 
 		DataView<TokenDefinition> tokenView = new DataView<TokenDefinition>(
@@ -50,6 +61,7 @@ public class PrepareTokensPage extends AuthenticatedPage {
 				TokenDefinition definition = item.getModelObject();
 
 				item.add(new Label("name", definition.getName()));
+				item.add(new Label("campaign", item.getModel().map(TokenDefinition::getCampaign).map(Campaign::getName).orElse("-")));
 				item.add(
 						new Label("size", String.format("%d squares (diameter)",
 								definition.getDiameterInSquares())));
@@ -82,21 +94,22 @@ public class PrepareTokensPage extends AuthenticatedPage {
 
 							@Override
 							protected void onDeleted() {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 							}
 
 							@Override
 							protected void onSaved(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 
 							}
 
 							@Override
 							protected void onCancel(TokenDefinition entity) {
-								setResponsePage(new PrepareSessionPage());
+								setResponsePage(new PrepareTokensPage());
 							}
 
-						});
+						}.setChoicesModel(TokenDefinition_.campaign, new CampaignsModel())
+						 .setRenderer(TokenDefinition_.campaign, LambdaRenderer.of(Campaign::getName)));
 
 					}
 				});
