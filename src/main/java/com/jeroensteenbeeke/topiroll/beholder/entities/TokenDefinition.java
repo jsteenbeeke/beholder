@@ -65,10 +65,6 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 	@Minimum(1)
 	private int diameterInSquares;
 
-	@Column(nullable = true)
-	@Lob
-	private Blob imageData;
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
 	private BeholderUser owner;
@@ -105,15 +101,6 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 
 	public void setOwner(@Nonnull BeholderUser owner) {
 		this.owner = owner;
-	}
-
-	@Nonnull
-	public Blob getImageData() {
-		return imageData;
-	}
-
-	public void setImageData(@Nonnull Blob imageData) {
-		this.imageData = imageData;
 	}
 
 	@Nonnull

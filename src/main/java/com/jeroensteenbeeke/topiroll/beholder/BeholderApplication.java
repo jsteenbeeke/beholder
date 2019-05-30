@@ -18,7 +18,6 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
-import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesomeInitializer;
 import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
 import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
@@ -29,7 +28,6 @@ import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitializeCompendiumJob;
-import com.jeroensteenbeeke.topiroll.beholder.jobs.MigrateImagesToAmazonJob;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.InternalErrorPage;
@@ -157,7 +155,6 @@ public class BeholderApplication extends WebApplication
 	}
 
 	public void onSchedulerInitialized() {
-		HyperionScheduler.getScheduler().scheduleTask(DateTime.now(), new MigrateImagesToAmazonJob());
 		HyperionScheduler.getScheduler().scheduleTask(DateTime.now(), new InitializeCompendiumJob());
 
 	}

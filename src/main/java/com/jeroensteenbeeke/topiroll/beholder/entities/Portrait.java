@@ -38,11 +38,6 @@ public class Portrait extends BaseDomainObject implements AmazonStored {
 	@OneToMany(mappedBy = "portrait", fetch = FetchType.LAZY)
 	private List<PortraitVisibility> visibilities = new ArrayList<PortraitVisibility>();
 
-
-	@Column()
-	@Lob
-	private Blob data;
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner")
 	private BeholderUser owner;
@@ -67,15 +62,6 @@ public class Portrait extends BaseDomainObject implements AmazonStored {
 
 	public void setOwner(@Nonnull BeholderUser owner) {
 		this.owner = owner;
-	}
-
-	@Nonnull
-	public Blob getData() {
-		return data;
-	}
-
-	public void setData(@Nonnull Blob data) {
-		this.data = data;
 	}
 
 	@Nonnull
