@@ -93,12 +93,18 @@ class CampaignServiceImpl implements CampaignService {
 			return Option.of("Cannot delete campaign: still has campaign-specific playlists");
 		}
 
-
 		return Option.none();
 	}
 
 	@Override
 	public boolean isDeleteAllowed(@Nonnull Campaign campaign) {
 		return determineReasonForNotDeleting(campaign).isEmpty();
+	}
+
+	@Override
+	public void deactivateCurrentCampaign(@Nonnull BeholderUser user) {
+		user.setActiveCampaign(null);
+		userDAO.update(user);
+		userDAO.flush();
 	}
 }

@@ -131,9 +131,10 @@ public class CampaignsPage extends AuthenticatedPage {
 
 			@Override
 			public void onClick() {
+
 				setResponsePage(new BSEntityFormPage<>(create(new Campaign())
-														   .onPage("Create Campaign")
-														   .using(campaignDAO)) {
+					.onPage("Create Campaign")
+					.using(campaignDAO)) {
 					private static final long serialVersionUID = -9001053138608199403L;
 
 					@Override
@@ -153,6 +154,22 @@ public class CampaignsPage extends AuthenticatedPage {
 						CampaignsPage.this.setResponsePage(new CampaignsPage());
 					}
 				});
+			}
+		});
+
+		add(new Link<Campaign>("deactivate") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				user().peek(campaignService::deactivateCurrentCampaign).peek(u -> setResponsePage(new CampaignsPage()));
+
+			}
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisibilityAllowed(user().flatMap(BeholderUser::activeCampaign).isDefined());
 			}
 		});
 

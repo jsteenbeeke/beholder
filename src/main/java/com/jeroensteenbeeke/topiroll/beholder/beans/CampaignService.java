@@ -15,4 +15,6 @@ public interface CampaignService {
 	ActionResult deleteCampaign(@Nonnull Campaign campaign);
 
 	boolean isDeleteAllowed(@Nonnull Campaign campaign);
+
+	void deactivateCurrentCampaign(@Nonnull BeholderUser user);
 }
