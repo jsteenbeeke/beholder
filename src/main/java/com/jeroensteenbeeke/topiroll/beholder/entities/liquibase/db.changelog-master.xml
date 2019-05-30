@@ -60,4 +60,6 @@
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-participantconditions.xml"/>
   
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-campaigns.xml"/>
+
+	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-cleanup-image-data.xml"/>
 </databaseChangeLog>

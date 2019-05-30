@@ -93,9 +93,6 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 	@Column(nullable = false)
 	private int squareSize;
 
-	@Column(nullable = true)
-	@Lob
-	private Blob data;
 
 	@OneToMany(mappedBy = "selectedMap", fetch = FetchType.LAZY)
 	private List<MapView> selectedBy = new ArrayList<>();
@@ -122,21 +119,11 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
 		this.selectedBy = selectedBy;
 	}
 
-	@Nonnull
-	public Blob getData() {
-		return data;
-	}
-
-	public void setData(@Nonnull Blob data) {
-		this.data = data;
-	}
-
-	@Nonnull
 	public int getSquareSize() {
 		return squareSize;
 	}
 
-	public void setSquareSize(@Nonnull int squareSize) {
+	public void setSquareSize(int squareSize) {
 		this.squareSize = squareSize;
 	}
 

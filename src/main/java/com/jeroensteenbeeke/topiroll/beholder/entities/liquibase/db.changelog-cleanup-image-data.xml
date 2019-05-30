@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-old-scaledmap-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="scaledmap" columnName="olddata" />
+		</preConditions>
+
+		<dropColumn tableName="scaledmap" columnName="olddata" />
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-scaledmap-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="scaledmap" columnName="data" />
+		</preConditions>
+
+		<dropColumn tableName="scaledmap" columnName="data" />
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-old-portrait-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="portrait" columnName="old_data" />
+		</preConditions>
+
+		<dropColumn tableName="portrait" columnName="old_data" />
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-portrait-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="portrait" columnName="data" />
+		</preConditions>
+
+		<dropColumn tableName="portrait" columnName="data" />
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-old-token-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="tokendefinition" columnName="old_imagedata" />
+		</preConditions>
+
+		<dropColumn tableName="tokendefinition" columnName="old_imagedata" />
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true"
+			   id="remove-token-data">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="tokendefinition" columnName="imagedata" />
+		</preConditions>
+
+		<dropColumn tableName="tokendefinition" columnName="imagedata" />
+	</changeSet>
+
+</databaseChangeLog>
