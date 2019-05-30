@@ -48,8 +48,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 		this.userModel = ModelMaker.wrap(user);
 
 		MapFolderFilter folderFilter = new MapFolderFilter();
-		folderFilter.campaign().isNull();
-		user.activeCampaign().peek(folderFilter::orCampaign);
+		user.activeCampaign().peek(c -> folderFilter.campaign().isNull().orCampaign(c));
 
 		decorateFolderFilter(folderFilter);
 		folderFilter.campaign().orderBy(true);
@@ -93,8 +92,7 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 		ScaledMapFilter mapFilter = new ScaledMapFilter();
 		mapFilter.owner().set(getUser());
-		mapFilter.campaign().isNull();
-		user.activeCampaign().peek(mapFilter::orCampaign);
+		user.activeCampaign().peek(c -> mapFilter.campaign().isNull().orCampaign(c));
 
 		mapFilter.campaign().orderBy(true);
 		mapFilter.name().orderBy(true);

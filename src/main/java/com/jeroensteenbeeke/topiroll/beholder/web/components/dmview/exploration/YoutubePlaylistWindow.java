@@ -32,8 +32,7 @@ public class YoutubePlaylistWindow extends DMModalWindow<MapView> {
 
 		YouTubePlaylistFilter playlistFilter = new YouTubePlaylistFilter();
 		playlistFilter.owner(view.getOwner()).name().orderBy(true);
-		playlistFilter.campaign().isNull();
-		view.getOwner().activeCampaign().peek(playlistFilter::orCampaign);
+		view.getOwner().activeCampaign().peek(c -> playlistFilter.campaign().isNull().orCampaign(c));
 
 		DataView<YouTubePlaylist> playlistView = new DataView<>("playlists",
 			FilterDataProvider.of(playlistFilter, playlistDAO)) {

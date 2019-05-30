@@ -50,8 +50,7 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 
 		PortraitFilter portraitFilter = new PortraitFilter();
 		portraitFilter.owner(view.getOwner()).name().orderBy(true);
-		portraitFilter.campaign().isNull();
-		view.getOwner().activeCampaign().peek(portraitFilter::orCampaign);
+		view.getOwner().activeCampaign().peek(c -> portraitFilter.campaign().isNull().orCampaign(c));
 
 		WebMarkupContainer container = new WebMarkupContainer("container");
 		container.setOutputMarkupId(true);
