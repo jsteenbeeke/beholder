@@ -1,65 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-  	
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-BeholderUser.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-ScaledMap.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-MapView.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarGroup.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarShape.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarRect.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarCircle.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarVisibility.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarShapeVisibility.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarGroupVisibility.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-TokenDefinition.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-TokenInstance.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-Effect.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-FogOfWarTriangle.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-AreaMarker.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CircleMarker.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-ConeMarker.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-LineMarker.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CubeMarker.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-InitiativeParticipant.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-MapFolder.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-Portrait.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-PortraitVisibility.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-YouTubePlaylist.xml"/>
-  	
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-amazon-migration.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-CompendiumEntry.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-entity-PinnedCompendiumEntry.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-maplinks.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-participantconditions.xml"/>
-  
+
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-campaigns.xml"/>
 
 	<include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-cleanup-image-data.xml"/>
+
+	<changeSet id="vacuum-on-start" author="Jeroen Steenbeeke" runAlways="true" dbms="postgresql">
+		<sql><![CDATA[
+			VACUUM
+		]]></sql>
+	</changeSet>
+
+
+
 </databaseChangeLog>
