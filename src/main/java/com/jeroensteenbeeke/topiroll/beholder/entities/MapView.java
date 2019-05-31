@@ -18,6 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.Minimum;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeRenderable;
@@ -44,8 +45,7 @@ public class MapView extends BaseDomainObject {
 	private static final int DEFAULT_MARGIN = 5;
 
 	@Id
-	@SequenceGenerator(sequenceName = "SEQ_ID_MapView", name = "MapView",
-			initialValue = 1, allocationSize = 1)
+	@SequenceGenerator(sequenceName = "SEQ_ID_MapView", name = "MapView", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(generator = "MapView", strategy = GenerationType.SEQUENCE)
 	@Access(value = AccessType.PROPERTY)
 
@@ -59,7 +59,12 @@ public class MapView extends BaseDomainObject {
 	@EntityFormField(label = "Height", required = true)
 	@Minimum(480)
 	private int height;
- 	@OneToMany(mappedBy="view", fetch=FetchType.LAZY)
+
+	@Column(nullable = false)
+	@EntityFormField(label = "Listen to doorbell", required = true, type = DefaultFieldType.CheckBox.class)
+	private boolean listenToDoorbell;
+
+	@OneToMany(mappedBy = "view", fetch = FetchType.LAZY)
 	private List<PortraitVisibility> portraitVisibilities = new ArrayList<PortraitVisibility>();
 
 	@Column(nullable = true)
@@ -100,8 +105,7 @@ public class MapView extends BaseDomainObject {
 
 	private BeholderUser owner;
 
-	public static final SerializableComparator<InitiativeParticipant> INITIATIVE_ORDER = (
-			a, b) -> {
+	public static final SerializableComparator<InitiativeParticipant> INITIATIVE_ORDER = (a, b) -> {
 		int total_a = a.getTotal() != null ? a.getTotal() : Integer.MIN_VALUE;
 		int total_b = b.getTotal() != null ? b.getTotal() : Integer.MIN_VALUE;
 
@@ -112,7 +116,7 @@ public class MapView extends BaseDomainObject {
 		}
 
 		if (c == 0 && a.getOrderOverride() != null
-				&& b.getOrderOverride() != null) {
+			&& b.getOrderOverride() != null) {
 			c = Integer.compare(a.getOrderOverride(), b.getOrderOverride());
 		}
 
@@ -211,7 +215,7 @@ public class MapView extends BaseDomainObject {
 	}
 
 	public void setVisibilities(
-			@Nonnull List<FogOfWarVisibility> visibilities) {
+		@Nonnull List<FogOfWarVisibility> visibilities) {
 		this.visibilities = visibilities;
 	}
 
@@ -239,7 +243,7 @@ public class MapView extends BaseDomainObject {
 	}
 
 	public void setInitiativeParticipants(
-			@Nonnull List<InitiativeParticipant> initiativeParticipants) {
+		@Nonnull List<InitiativeParticipant> initiativeParticipants) {
 		this.initiativeParticipants = initiativeParticipants;
 	}
 
@@ -249,7 +253,7 @@ public class MapView extends BaseDomainObject {
 	}
 
 	public void setInitiativePosition(
-			@Nullable InitiativeLocation initiativePosition) {
+		@Nullable InitiativeLocation initiativePosition) {
 		this.initiativePosition = initiativePosition;
 	}
 
@@ -262,9 +266,9 @@ public class MapView extends BaseDomainObject {
 		renderable.setPosition(pos != null ? pos.toJS() : null);
 		renderable.setMargin(margin != null ? margin : DEFAULT_MARGIN);
 
-		renderable.setParticipants(getInitiativeParticipants().stream()
-				.sorted(INITIATIVE_ORDER).map(InitiativeParticipant::toJS)
-				.collect(Collectors.toList()));
+		renderable.setParticipants(
+			getInitiativeParticipants().stream().sorted(INITIATIVE_ORDER)
+				.map(InitiativeParticipant::toJS).collect(Collectors.toList()));
 
 		return renderable;
 	}
@@ -282,11 +286,19 @@ public class MapView extends BaseDomainObject {
 	public List<PortraitVisibility> getPortraitVisibilities() {
 		return portraitVisibilities;
 	}
-	public void setPortraitVisibilities( @Nonnull List<PortraitVisibility> portraitVisibilities) {
+
+	public void setPortraitVisibilities(
+		@Nonnull List<PortraitVisibility> portraitVisibilities) {
 		this.portraitVisibilities = portraitVisibilities;
 	}
 
+	@Nonnull
+	public boolean isListenToDoorbell() {
+		return listenToDoorbell;
+	}
 
-
+	public void setListenToDoorbell(@Nonnull boolean listenToDoorbell) {
+		this.listenToDoorbell = listenToDoorbell;
+	}
 
 }

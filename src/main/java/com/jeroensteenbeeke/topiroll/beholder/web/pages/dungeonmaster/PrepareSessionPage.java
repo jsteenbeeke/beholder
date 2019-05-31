@@ -54,6 +54,7 @@ public class PrepareSessionPage extends AuthenticatedPage {
 				MapView mapView = item.getModelObject();
 
 				item.add(new Label("identifier", mapView.getIdentifier()));
+				item.add(new Label("doorbell", mapView.isListenToDoorbell() ? "Yes" : "No"));
 				item.add(new Label("width", mapView.getWidth()));
 				item.add(new Label("height", mapView.getHeight()));
 				item.add(new Label("diagonal",

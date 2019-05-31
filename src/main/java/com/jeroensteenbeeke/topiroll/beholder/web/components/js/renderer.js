@@ -65,7 +65,24 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
                 	data.renderables.forEach(function(d) {
                 		handleData(d);
                     });
-				}
+				} else if ("doorbell" === data.type) {
+
+                    let doorbellContainer = document.getElementById('doorbell');
+
+                    if (doorbellContainer) {
+                        doorbellContainer.innerText = 'Doorbell rung by '+ data.username;
+
+                        let audio = new Audio('../audio/doorbell.mp3');
+                        audio.play();
+
+                        setTimeout(function() {
+                            doorbellContainer.innerText = '';
+                        }, 30000);
+
+
+                    }
+
+                }
             }
         }
 
