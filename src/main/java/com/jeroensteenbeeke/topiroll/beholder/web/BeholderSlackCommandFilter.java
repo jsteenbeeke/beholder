@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.hyperion.social.web.filter.SlackCommandFilter;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,11 @@ import java.io.PrintWriter;
 
 public class BeholderSlackCommandFilter extends SlackCommandFilter {
 	private static final Logger log = LoggerFactory.getLogger(BeholderSlackCommandFilter.class);
+
+	@Override
+	protected String getSignatureVerificationKey() {
+		return BeholderApplication.get().getBean(BeholderSlackHandler.class).getSigningSecret();
+	}
 
 	@Override
 	public void onSlackCommand(SlackCommandContext context) {

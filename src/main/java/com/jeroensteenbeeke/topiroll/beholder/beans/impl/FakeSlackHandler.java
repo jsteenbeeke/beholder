@@ -57,7 +57,7 @@ public class FakeSlackHandler extends BeholderSlackHandler {
 	};
 
 	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
-		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), identityService);
+		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), Randomizer.random(44), identityService);
 	}
 
 	@Nonnull

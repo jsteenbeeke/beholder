@@ -126,8 +126,9 @@ public class BeholderApplicationConfig {
 	public SlackHandler regularSlackHandler(@Value("${application.baseurl}") String applicationBaseUrl,
 											@Value("${slack.clientid}") String clientId,
 											@Value("${slack.clientsecret}") String clientSecret,
+											@Value("${slack.signingsecret}") String signingSecret,
 											IdentityService identityService) {
-		return new BeholderSlackHandler(applicationBaseUrl, clientId, clientSecret, identityService);
+		return new BeholderSlackHandler(applicationBaseUrl, clientId, clientSecret, signingSecret, identityService);
 	}
 
 	@Bean

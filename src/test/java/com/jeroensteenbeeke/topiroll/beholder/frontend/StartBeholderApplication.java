@@ -17,6 +17,39 @@
  */
 /**
  * This file is part of Beholder
+ * (C) 2016-2019 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -58,11 +91,11 @@ public class StartBeholderApplication {
 	}
 
 	public static Optional<Handler> createApplicationHandler(String[] args)
-			throws Exception {
+		throws Exception {
 		SerializableConsumer<WebAppContext> initWebsockets = context -> {
 			try {
 				ServerContainer wscontainer = WebSocketServerContainerInitializer
-						.configureContext(context);
+					.configureContext(context);
 
 				wscontainer.addEndpoint(new WicketServerEndpointConfig());
 			} catch (DeploymentException | ServletException e) {
@@ -74,6 +107,8 @@ public class StartBeholderApplication {
 
 		options.addOption(null, Arguments.SLACK_CLIENT_ID, true, "Slack client ID");
 		options.addOption(null, Arguments.SLACK_CLIENT_SECRET, true, "Slack client secret");
+		options.addOption(null, Arguments.SLACK_SIGNING_SECRET, true, "Slack signing secret");
+
 		options.addOption(null, Arguments.AMAZON_CLIENT_ID, true, "Amazon client ID");
 		options.addOption(null, Arguments.AMAZON_CLIENT_SECRET, true, "Amazon client secret");
 		options.addOption(null, Arguments.AMAZON_BUCKET, true, "Amazon bucket name");
@@ -94,44 +129,55 @@ public class StartBeholderApplication {
 		}
 
 		boolean slackEnabled = cmd.hasOption(Arguments.SLACK_CLIENT_ID) && cmd.hasOption(Arguments.SLACK_CLIENT_SECRET);
-		boolean amazonEnabled = cmd.hasOption(Arguments.AMAZON_CLIENT_ID) && cmd.hasOption(Arguments.AMAZON_CLIENT_SECRET) && cmd.hasOption(Arguments.AMAZON_BUCKET) && cmd.hasOption(Arguments.AMAZON_URL_PREFIX);
-		boolean rollbarEnabled = cmd.hasOption(Arguments.ROLLBAR_CLIENT_ID) && cmd.hasOption(Arguments.ROLLBAR_CLIENT_SECRET) && cmd.hasOption(Arguments.ROLLBAR_ENVIRONMENT);
+		boolean amazonEnabled = cmd.hasOption(Arguments.AMAZON_CLIENT_ID) && cmd.hasOption(Arguments.AMAZON_CLIENT_SECRET) && cmd
+			.hasOption(Arguments.AMAZON_BUCKET) && cmd.hasOption(Arguments.AMAZON_URL_PREFIX);
+		boolean rollbarEnabled = cmd.hasOption(Arguments.ROLLBAR_CLIENT_ID) && cmd.hasOption(Arguments.ROLLBAR_CLIENT_SECRET) && cmd
+			.hasOption(Arguments.ROLLBAR_ENVIRONMENT);
 
 		InMemory.InMemoryFinalizer finalizer = InMemory.run("beholder-web").withContextPath("/beholder/")
-				.withContextConsumer(initWebsockets);
+													   .withContextConsumer(initWebsockets);
 
 
 		if (!slackEnabled) {
-			System.out.printf("Slack login disabled, please specify arguments --%1$s and --%2$s to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET).println();
+			System.out
+				.printf("Slack login disabled, please specify arguments --%1$s and --%2$s to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET)
+				.println();
 
 			System.setProperty("slack.login.disabled", "true");
 
 			final FakeSlackServer localSlackServer = new FakeSlackServer();
 
-			finalizer.withStartListener(server -> {
-				localSlackServer.start();
-				System.out.println("===================================================");
-				System.out.println("===================================================");
-				System.out.println("===          FAKE SLACK SERVER ACTIVE           ===");
-				System.out.println("===                                             ===");
-				System.out.println("=== If you want to log in using the real Slack, ===");
-				System.out.println("=== please start the application with the       ===");
-				System.out.println("=== following options:                          ===");
-				System.out.println("===                                             ===");
-				System.out.println("===    --slack-client-id                        ===");
-				System.out.println("===    --slack-client-secret                    ===");
-				System.out.println("===                                             ===");
-				System.out.println("===================================================");
-				System.out.println("===================================================");
-			}).withStopListener(server -> localSlackServer.stop());
+			finalizer
+				.withStartListener(server -> {
+					localSlackServer.start();
+					System.out.println("===================================================");
+					System.out.println("===================================================");
+					System.out.println("===          FAKE SLACK SERVER ACTIVE           ===");
+					System.out.println("===                                             ===");
+					System.out.println("=== If you want to log in using the real Slack, ===");
+					System.out.println("=== please start the application with the       ===");
+					System.out.println("=== following options:                          ===");
+					System.out.println("===                                             ===");
+					System.out.println("===    --slack-client-id                        ===");
+					System.out.println("===    --slack-client-secret                    ===");
+					System.out.println("===                                             ===");
+					System.out.println("===================================================");
+					System.out.println("===================================================");
+				})
+				.withStopListener(server -> localSlackServer.stop())
+				.withProperty("slack.signingsecret", "90ac37f5bb5617abb86e8f46f503c46d5010abd188e5c3fe58b4d9bde21b08ca");
+
 		} else {
 			finalizer.withProperty("slack.clientid", cmd.getOptionValue(Arguments.SLACK_CLIENT_ID))
-					.withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET));
+					 .withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET))
+					 .withProperty("slack.signingsecret", cmd.getOptionValue(Arguments.SLACK_SIGNING_SECRET));
 		}
 
 		if (!amazonEnabled) {
-			System.out.printf("Amazon S3 image storage disabled, please specify arguments --%1$s, --%2$s, --%3$s and --%4$s to enable",
-					Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX).println();
+			System.out
+				.printf("Amazon S3 image storage disabled, please specify arguments --%1$s, --%2$s, --%3$s and --%4$s to enable",
+						Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX)
+				.println();
 			finalizer.withProperty("remote.image.url.prefix", "http://localhost:4040/images/");
 
 			System.setProperty("amazon.images.disabled", "true");
@@ -164,9 +210,9 @@ public class StartBeholderApplication {
 			}).withStopListener(server -> localImageServer.stop());
 		} else {
 			finalizer.withProperty("amazon.clientid", cmd.getOptionValue(Arguments.AMAZON_CLIENT_ID))
-					.withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
-					.withProperty("amazon.bucketname", cmd.getOptionValue(Arguments.AMAZON_BUCKET))
-					.withProperty("remote.image.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
+					 .withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
+					 .withProperty("amazon.bucketname", cmd.getOptionValue(Arguments.AMAZON_BUCKET))
+					 .withProperty("remote.image.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
 			if (cmd.hasOption(Arguments.AMAZON_REGION)) {
 				finalizer.withProperty("amazon.region", cmd.getOptionValue(Arguments.AMAZON_REGION));
 			} else {
@@ -176,26 +222,29 @@ public class StartBeholderApplication {
 
 
 		if (!rollbarEnabled) {
-			System.out.printf("Rollbar error logging disabled, please specify arguments --%1$s, --%2$s and --%3$s to enable",
-					Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT).println();
+			System.out
+				.printf("Rollbar error logging disabled, please specify arguments --%1$s, --%2$s and --%3$s to enable",
+						Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT)
+				.println();
 
 		} else {
 			finalizer.withProperty("rollbar.server.apiKey", args[6])
-					.withProperty("rollbar.client.apiKey", args[7])
-					.withProperty("rollbar.environment", args[8]);
+					 .withProperty("rollbar.client.apiKey", args[7])
+					 .withProperty("rollbar.environment", args[8]);
 		}
 
 		return finalizer.withProperty("application.baseurl",
-				"http://localhost:8081/beholder/")
-				.withProperty("application.sourceurl",
-						"file://" + System.getProperty("user.dir"))
-				.withoutShowingSql()
-				.atPort(8081);
+									  "http://localhost:8081/beholder/")
+						.withProperty("application.sourceurl",
+									  "file://" + System.getProperty("user.dir"))
+						.withoutShowingSql()
+						.atPort(8081);
 	}
 
 	public static class Arguments {
 		static final String SLACK_CLIENT_ID = "slack-client-id";
 		static final String SLACK_CLIENT_SECRET = "slack-client-secret";
+		static final String SLACK_SIGNING_SECRET = "slack-signing-secret";
 		static final String AMAZON_CLIENT_ID = "amazon-client-id";
 		static final String AMAZON_CLIENT_SECRET = "amazon-client-secret";
 		static final String AMAZON_BUCKET = "amazon-bucket";

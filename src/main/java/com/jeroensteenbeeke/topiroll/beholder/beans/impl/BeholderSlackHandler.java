@@ -60,12 +60,15 @@ public class BeholderSlackHandler extends SlackHandler {
 
 	private String clientSecret;
 
+	private String signingSecret;
+
 	private IdentityService identityService;
 
-	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, IdentityService identityService) {
+	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, String signingSecret, IdentityService identityService) {
 		this.applicationBaseUrl = applicationBaseUrl;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
+		this.signingSecret = signingSecret;
 		this.identityService = identityService;
 	}
 
@@ -79,6 +82,11 @@ public class BeholderSlackHandler extends SlackHandler {
 	@Override
 	public String getClientSecret() {
 		return clientSecret;
+	}
+
+	@Nonnull
+	public String getSigningSecret() {
+		return signingSecret;
 	}
 
 	@Nonnull

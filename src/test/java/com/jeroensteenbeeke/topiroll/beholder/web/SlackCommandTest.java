@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web;
 
+import com.jeroensteenbeeke.hyperion.social.web.filter.SlackCommandFilter;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.topiroll.beholder.frontend.FakeSlackServer;
 import com.jeroensteenbeeke.topiroll.beholder.frontend.StartBeholderApplication;
@@ -43,10 +44,12 @@ public abstract class SlackCommandTest {
 	public static void startApplication() throws Exception {
 		handler = StartBeholderApplication
 			.createApplicationHandler(new String[0]).orElseThrow(IllegalStateException::new);
+		SlackCommandFilter.setRequireCorrectSignature(false);
 	}
 
 	@AfterClass
 	public static void stopApplication() throws Exception {
+		SlackCommandFilter.setRequireCorrectSignature(true);
 		handler.terminate();
 	}
 
@@ -81,6 +84,8 @@ public abstract class SlackCommandTest {
 		public void expectingResponse(Predicate<JSONObject> slackResponsePredicate) throws IOException, InterruptedException {
 			System.out.println("Building request");
 			Request request = new Request.Builder().url("http://127.0.0.1:8081/beholder/slack/command")
+												   .header("X-Slack-Signature", "1337")
+												   .header("X-Slack-Request-Timestamp", String.valueOf(System.currentTimeMillis()))
 												   .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),
 																			"command=" + URLEncoder.encode(command, Charset
 																				.forName("UTF-8")) +
