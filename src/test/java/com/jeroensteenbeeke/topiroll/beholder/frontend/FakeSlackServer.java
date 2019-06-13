@@ -69,12 +69,13 @@ public class FakeSlackServer {
 			return "{}";
 		});
 
-		service.after((request, response) -> {
-			System.out.printf("Slack: %s", request.url()).println();
-		});
+		service.after((request, response) -> log.info("Slack: {}", request.url()));
 
 		service.init();
 		service.awaitInitialization();
+
+		log.info("Slack server started");
+
 		return this;
 	}
 

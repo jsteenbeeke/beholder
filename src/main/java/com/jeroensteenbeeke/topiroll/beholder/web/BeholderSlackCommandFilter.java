@@ -23,8 +23,10 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 				.doorbell(context.getParameter("user_name").getOrElse("??unknown??"))
 				.peek(instances -> {
 					if (instances == 0) {
-						context.postResponse("You rang the doorbell, but nobody is listening")
-							   .ofType(SlackResponseType.Ephemeral).ifNotOk(log::error);
+						context
+							.postResponse("You rang the doorbell, but nobody is listening")
+							.ofType(SlackResponseType.Ephemeral)
+							.ifNotOk(log::error);
 					} else {
 						context
 							.postResponse("Doorbell has been rung")
@@ -34,7 +36,8 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 				})
 				.ifNotOk(msg -> context
 					.postResponse("Could not ring doorbell: " + msg)
-					.ofType(SlackResponseType.Ephemeral)).ifNotOk(log::error);
+					.ofType(SlackResponseType.Ephemeral).ifNotOk(log::error)
+				);
 			;
 
 		}
