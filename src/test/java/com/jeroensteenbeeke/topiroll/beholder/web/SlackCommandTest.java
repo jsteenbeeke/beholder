@@ -60,7 +60,7 @@ public abstract class SlackCommandTest extends AbstractPageTest {
 
 			assertTrue(response.isSuccessful());
 
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 
 			assertTrue("Slack response matches predicate", FakeSlackServer.getLastCommandResponseReceived().filter(slackResponsePredicate).isDefined());
 		}
