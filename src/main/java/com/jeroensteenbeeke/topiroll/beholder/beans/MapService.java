@@ -110,5 +110,5 @@ public interface MapService {
 
 	void focusOnGroup(@Nonnull MapView view, @Nonnull FogOfWarGroup target);
 
-	void doorbell(String username);
+	TypedResult<Integer> doorbell(String username);
 }

@@ -33,8 +33,8 @@
     </filter>
 
 	<filter>
-		<filter-name>doorbell</filter-name>
-		<filter-class>com.jeroensteenbeeke.topiroll.beholder.web.DoorbellFilter</filter-class>
+		<filter-name>slackCommands</filter-name>
+		<filter-class>com.jeroensteenbeeke.topiroll.beholder.web.BeholderSlackCommandFilter</filter-class>
 	</filter>
 
     <filter-mapping>
@@ -54,8 +54,8 @@
 	</filter-mapping>
 
 	<filter-mapping>
-		<filter-name>doorbell</filter-name>
-		<url-pattern>/doorbell</url-pattern>
+		<filter-name>slackCommands</filter-name>
+		<url-pattern>/slack/command</url-pattern>
 	</filter-mapping>
 
 

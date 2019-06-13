@@ -787,13 +787,13 @@ class MapServiceImpl implements MapService {
 	}
 
 	@Override
-	public void doorbell(@Nonnull String username) {
+	public TypedResult<Integer> doorbell(@Nonnull String username) {
 
 		MapViewFilter filter = new MapViewFilter();
 		filter.listenToDoorbell(true);
 
-		viewDAO.findByFilter(filter).map(MapView::getId).peek(
+		return TypedResult.ok(viewDAO.findByFilter(filter).map(MapView::getId).peek(
 			id -> BeholderRegistry.instance
-				.sendToView(id, new RingDoorbell(username)));
+				.sendToView(id, new RingDoorbell(username))).count(v -> true));
 	}
 }
