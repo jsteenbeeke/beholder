@@ -164,6 +164,20 @@ h2 {
 	overflow-y: scroll !important;
 }
 
+#doorbell {
+	z-index: 4;
+	position: fixed;
+	min-width: 80%;
+	width: 80%;
+	min-height: 80%;
+	height: 80%;
+	left: 10%;
+	top: 10%;
+	text-align: center;
+	font-size: 96pt;
+	color: #ff0000;
+}
+
 .facemode {
   z-index: 3;
   position: fixed;

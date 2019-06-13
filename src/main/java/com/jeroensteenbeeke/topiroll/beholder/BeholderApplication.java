@@ -1,5 +1,22 @@
 /**
  * This file is part of Beholder
+ * (C) 2016-2019 Jeroen Steenbeeke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -55,7 +72,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class BeholderApplication extends WebApplication
-		implements ApplicationContextProvider {
+	implements ApplicationContextProvider {
 	private ApplicationContext ctx;
 
 	private IWebSocketConnectionRegistry webSocketRegistry;
@@ -65,21 +82,22 @@ public class BeholderApplication extends WebApplication
 		super.init();
 
 		getComponentInstantiationListeners()
-				.add(new SpringComponentInjector(this));
+			.add(new SpringComponentInjector(this));
 		ctx = WebApplicationContextUtils
-				.getWebApplicationContext(getServletContext());
+			.getWebApplicationContext(getServletContext());
 
 		String sourceURL = ctx.getBean(URLService.class).getSourceURL();
 
 		if (sourceURL.isEmpty()) {
 			throw new IllegalStateException(
-					"This software is licensed under the Affero GPL, which requires you to provide source code to all " +
-							"users. Please input the source URL");
+				"This software is licensed under the Affero GPL, which requires you to provide source code to all "
+					+ "users. Please input the source URL");
 		}
 
-		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new StaticResourceVersion(
-				DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())
-		)));
+		getResourceSettings().setCachingStrategy(
+			new FilenameWithVersionResourceCachingStrategy(
+				new StaticResourceVersion(DateTimeFormatter.ISO_DATE_TIME
+					.format(LocalDateTime.now()))));
 
 		EntityEncapsulator.setFactory(new SolsticeEntityEncapsulatorFactory());
 
@@ -102,8 +120,8 @@ public class BeholderApplication extends WebApplication
 		RollBarData data = ctx.getBean(RollBarData.class);
 
 		if (data != null && data.getClientKey() != null) {
-//			BeholderApplication.get().getHeaderContributorListeners()
-//					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
+			//			BeholderApplication.get().getHeaderContributorListeners()
+			//					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
 		}
 
 		getApplicationListeners().add(new RollbarDeployListener(data));
@@ -111,7 +129,8 @@ public class BeholderApplication extends WebApplication
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
 		getRequestCycleListeners().add(new IRequestCycleListener() {
 			@Override
-			public IRequestHandler onException(RequestCycle cycle, Exception ex) {
+			public IRequestHandler onException(RequestCycle cycle,
+				Exception ex) {
 				RollBarReference.instance.errorCaught(ex);
 
 				return cycle.getActiveRequestHandler();
@@ -155,8 +174,8 @@ public class BeholderApplication extends WebApplication
 	}
 
 	public void onSchedulerInitialized() {
-		HyperionScheduler.getScheduler().scheduleTask(DateTime.now(), new InitializeCompendiumJob());
+		HyperionScheduler.getScheduler()
+			.scheduleTask(DateTime.now(), new InitializeCompendiumJob());
 
 	}
-
 }
