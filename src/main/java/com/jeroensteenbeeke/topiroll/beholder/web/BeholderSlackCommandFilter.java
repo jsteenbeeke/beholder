@@ -22,6 +22,7 @@ import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
+import io.vavr.control.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,9 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 	public void onSlackCommand(SlackCommandContext context) {
 		if ("/doorbell".equals(context.getCommand())) {
 			String username = context.getParameter("user_name")
-									  .getOrElse("??someone??");
+									 .getOrElse("??someone??");
+			Option<String> userid = context.getParameter("user_id");
+
 			BeholderApplication
 				.get()
 				.getBean(MapService.class)
@@ -53,8 +56,12 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 							.ofType(SlackResponseType.Ephemeral)
 							.ifNotOk(log::error);
 					} else {
+						String msg = userid
+							.map(uid -> String.format("<@%s> just rang the doorbell", uid))
+							.getOrElse(() -> String.format("%s just rang the doorbell", username));
+
 						context
-							.postResponse(String.format("**%s** just rang the doorbell", username))
+							.postResponse(msg)
 							.ofType(SlackResponseType.InChannel)
 							.ifNotOk(log::error);
 					}
