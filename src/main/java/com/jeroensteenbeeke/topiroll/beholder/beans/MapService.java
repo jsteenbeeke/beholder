@@ -43,6 +43,7 @@ import javax.validation.constraints.Null;
 
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import io.vavr.control.Option;
 
 public interface MapService {
 	@Nonnull
@@ -127,5 +128,5 @@ public interface MapService {
 
 	void focusOnGroup(@Nonnull MapView view, @Nonnull FogOfWarGroup target);
 
-	TypedResult<Integer> doorbell(String username);
+	TypedResult<Integer> doorbell(@Nonnull String username, @Nullable String message);
 }

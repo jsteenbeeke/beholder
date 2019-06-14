@@ -87,7 +87,13 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
                     let doorbellContainer = document.getElementById('doorbell');
 
                     if (doorbellContainer) {
-                        doorbellContainer.innerText = 'Doorbell rung by '+ data.username;
+                        let msg = 'Doorbell rung by '+ data.username;
+
+                        if (data.message) {
+                            msg = msg + ': '+ data.message;
+                        }
+
+                        doorbellContainer.innerText = msg;
 
                         let audio = new Audio('../audio/doorbell.mp3');
                         audio.play();

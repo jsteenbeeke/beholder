@@ -20,12 +20,19 @@ package com.jeroensteenbeeke.topiroll.beholder.web.data;
 public class RingDoorbell implements JSRenderable {
 	private final String username;
 
-	public RingDoorbell(String username) {
+	private final String message;
+
+	public RingDoorbell(String username, String message) {
 		this.username = username;
+		this.message = message;
 	}
 
 	public String getUsername() {
 		return username;
+	}
+
+	public String getMessage() {
+		return message;
 	}
 
 	@Override
