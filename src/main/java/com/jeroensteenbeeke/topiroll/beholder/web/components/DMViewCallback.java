@@ -19,6 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.topiroll.beholder.entities.AreaMarker;
+import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
@@ -60,6 +61,8 @@ public interface DMViewCallback extends Serializable {
 	Optional<Point> getClickedLocation();
 
 	Optional<Point> getPreviousClickedLocation();
+
+	MapView getView();
 
 	@FunctionalInterface
 	interface PanelConstructor<D extends DomainObject> {

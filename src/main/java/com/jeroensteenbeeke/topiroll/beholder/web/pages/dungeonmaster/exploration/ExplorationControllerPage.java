@@ -36,6 +36,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEn
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.AddToSessionLogWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeXCoordinateVisitor;
@@ -120,11 +121,11 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	private boolean disableClickListener = false;
 	private double displayFactor;
 
-	public ExplorationControllerPage(MapView view) {
+	public ExplorationControllerPage(@Nonnull MapView view) {
 		this(view, null);
 	}
 
-	public ExplorationControllerPage(MapView view, FogOfWarGroup focusGroup) {
+	public ExplorationControllerPage(@Nonnull MapView view, FogOfWarGroup focusGroup) {
 		super("Exploration Mode");
 
 		if (BeholderSession.get().getUser() == null) {
@@ -132,9 +133,9 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			throw new RestartResponseAtInterceptPageException(HomePage.class);
 		}
 
-		viewModel = view != null ? ModelMaker.wrap(view) : Model.of();
+		viewModel = ModelMaker.wrap(view);
 
-		ScaledMap map = view == null ? null : view.getSelectedMap();
+		ScaledMap map = view.getSelectedMap();
 
 		displayFactor = map == null ? 1.0 : map.getDisplayFactor(view);
 
@@ -488,6 +489,17 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			}
 
 		});
+		explorationNavigator.add(new AjaxLink<>("sessionlog", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = -5342617572033020429L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				createModalWindow(target, AddToSessionLogWindow::new, null);
+			}
+
+		});
+
 
 		PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
 		filter.pinnedBy().set(BeholderSession.get().getUser());
@@ -560,6 +572,11 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 		add(modal = new WebMarkupContainer(MODAL_ID));
 		modal.setOutputMarkupPlaceholderTag(true);
+	}
+
+	@Override
+	public MapView getView() {
+		return viewModel.getObject();
 	}
 
 	public void onClick(OnClickBehavior.ClickEvent event) {

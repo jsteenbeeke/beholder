@@ -39,6 +39,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.PrepareSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SessionLogOverviewPage;
 import org.apache.wicket.markup.html.link.Link;
 
 import javax.annotation.Nonnull;
@@ -81,6 +82,15 @@ public class BeholderNavBar extends org.apache.wicket.markup.html.panel.Panel {
 			@Override
 			public void onClick() {
 				setResponsePage(new RunSessionPage());
+			}
+		});
+
+		add(new Link<Void>("log") {
+			private static final long serialVersionUID = -1332593238915006341L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new SessionLogOverviewPage());
 			}
 		});
 

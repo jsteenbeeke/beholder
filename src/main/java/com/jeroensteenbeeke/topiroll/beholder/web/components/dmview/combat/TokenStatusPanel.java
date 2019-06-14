@@ -1,28 +1,30 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.SessionLogService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenStatusEffect;
+import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -49,7 +51,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			@Override
 			protected String load() {
 				return Optional.ofNullable(callback.getSelectedToken()).map(TokenInstance::getBadge)
-						.orElse("-");
+							   .orElse("-");
 			}
 		}));
 
@@ -58,9 +60,11 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 
 			@Override
 			protected String load() {
-				return Optional.ofNullable(callback.getSelectedToken()).filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
-						.map(i -> String.format("%d/%d HP", i.getCurrentHitpoints(), i.getMaxHitpoints()))
-						.orElse("-");
+				return Optional
+					.ofNullable(callback.getSelectedToken())
+					.filter(i -> i.getCurrentHitpoints() != null && i.getMaxHitpoints() != null)
+					.map(i -> String.format("%d/%d HP", i.getCurrentHitpoints(), i.getMaxHitpoints()))
+					.orElse("-");
 			}
 		}));
 
@@ -70,49 +74,66 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, ApplyTokenDamageWindow::new, callback
-						.getSelectedToken());
+					.getSelectedToken());
 			}
 
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
-						(TokenInstance::getMaxHitpoints).isPresent();
+					(TokenInstance::getMaxHitpoints).isPresent();
 			}
 		});
-		
+
 		add(new AjaxLink<TokenInstance>("removeStatusEffect") {
-		
+
 			private static final long serialVersionUID = 7942519721828979046L;
+
+			@Inject
+			private SessionLogService sessionLogService;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				
-				mapService.setTokenStatusEffect(callback
-						.getSelectedToken(), null);
-				callback.redrawMap(target);
+
+				TokenInstance selectedToken = callback
+					.getSelectedToken();
+
+				TokenStatusEffect statusEffect = selectedToken.getStatusEffect();
+
+				if (statusEffect != null) {
+					mapService.setTokenStatusEffect(selectedToken, null);
+					callback.redrawMap(target);
+
+					BeholderSession
+						.get()
+						.user()
+						.forEach(user -> sessionLogService.addSessionLogEntry(user, String.format("%s is no longer %s", selectedToken
+							.getLabel(), statusEffect
+																									  .name()
+																									  .toLowerCase())));
+				}
 			}
 
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
-						(TokenInstance::getStatusEffect).isPresent();
+					(TokenInstance::getStatusEffect).isPresent();
 			}
-		}.setBody(LambdaModel.<String> of(() -> "Remove Status: " + callback.getSelectedToken().getStatusEffect())));
-		
+		}.setBody(LambdaModel.<String>of(() -> "Remove Status: " + callback.getSelectedToken().getStatusEffect())));
+
 		add(new AjaxLink<TokenInstance>("addStatusEffect") {
-			
+
 			private static final long serialVersionUID = 5143438098007944274L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, SetTokenStatusEffectWindow::new, callback
-						.getSelectedToken());
+					.getSelectedToken());
 			}
 
 			@Override
 			public boolean isVisible() {
 				return super.isVisible() && !Optional.ofNullable(callback.getSelectedToken()).map
-						(TokenInstance::getStatusEffect).isPresent();
+					(TokenInstance::getStatusEffect).isPresent();
 			}
 		});
 
@@ -122,7 +143,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback
-						.getSelectedToken(), TokenBorderType.Ally);
+												  .getSelectedToken(), TokenBorderType.Ally);
 				callback.redrawMap(target);
 			}
 
@@ -130,8 +151,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
 													.filter(t -> t
-															.getBorderType()
-															!= TokenBorderType.Ally).isPresent();
+														.getBorderType()
+														!= TokenBorderType.Ally).isPresent();
 			}
 		});
 
@@ -141,7 +162,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				mapService.setTokenBorderType(callback.getSelectedToken(), TokenBorderType
-						.Neutral);
+					.Neutral);
 				callback.redrawMap(target);
 
 			}
@@ -150,8 +171,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
 													.filter(t -> t
-															.getBorderType()
-															!= TokenBorderType.Neutral).isPresent();
+														.getBorderType()
+														!= TokenBorderType.Neutral).isPresent();
 			}
 		});
 
@@ -169,8 +190,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken())
 													.filter(t -> t
-															.getBorderType()
-															!= TokenBorderType.Enemy).isPresent();
+														.getBorderType()
+														!= TokenBorderType.Enemy).isPresent();
 			}
 		});
 
@@ -190,7 +211,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 
 			}
 
-		
+
 		}.setBody(new LoadableDetachableModel<String>() {
 			private static final long serialVersionUID = -1540177023550864910L;
 

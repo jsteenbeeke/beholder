@@ -62,6 +62,15 @@ public class OverviewPage extends AuthenticatedPage {
 			}
 		});
 
+		add(new Link<>("sessionlog") {
+
+			private static final long serialVersionUID = -5462769168134949393L;
+
+			@Override
+			public void onClick() {
+				setResponsePage(new SessionLogOverviewPage());
+			}
+		});
 
 	}
 
