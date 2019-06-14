@@ -78,7 +78,7 @@ Wicket.Event.subscribe("/websocket/message", function(jqEvent, message) {
 
                         doorbellContainer.innerText = msg;
 
-                        let audio = new Audio('../audio/doorbell.mp3');
+                        let audio = new Audio('../audio/arschloch-alarm.mp3');
                         audio.play();
 
                         setTimeout(function() {
