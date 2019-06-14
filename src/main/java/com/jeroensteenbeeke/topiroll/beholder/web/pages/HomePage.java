@@ -34,13 +34,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages;
 
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.social.web.components.slack.SlackLink;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.MetaDataHeaderItem;
+import org.apache.wicket.request.UrlUtils;
 
 public class HomePage extends BootstrapBasePage {
 	private static final long serialVersionUID = 1L;
@@ -58,4 +60,9 @@ public class HomePage extends BootstrapBasePage {
 		add(new LegalPanel("legal"));
 	}
 
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		response.render(MetaDataHeaderItem.forLinkTag("icon", UrlUtils.rewriteToContextRelative("img/favicon/favicon-32x32.png", getRequestCycle())));
+		response.render(MetaDataHeaderItem.forLinkTag("icon", UrlUtils.rewriteToContextRelative("img/favicon/favicon-16x16.png", getRequestCycle())));
+	}
 }
