@@ -60,7 +60,7 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 		if ("/doorbell".equals(context.getCommand())) {
 			String username = context.getParameter("user_name")
 									 .getOrElse("??someone??");
-			String text = context.getParameter("text").filter(s -> !s.isEmpty()).map(s -> ":\n"+s).getOrNull();
+			String text = context.getParameter("text").filter(s -> !s.isEmpty()).map(s -> ":\n"+s).getOrElse("");
 			Option<String> userid = context.getParameter("user_id");
 
 			BeholderApplication
