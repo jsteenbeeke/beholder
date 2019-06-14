@@ -160,6 +160,7 @@ public class StartBeholderApplication {
 					System.out.println("===                                             ===");
 					System.out.println("===    --slack-client-id                        ===");
 					System.out.println("===    --slack-client-secret                    ===");
+					System.out.println("===    --slack-signing-secret                   ===");
 					System.out.println("===                                             ===");
 					System.out.println("===================================================");
 					System.out.println("===================================================");
