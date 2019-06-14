@@ -44,6 +44,9 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.LegalPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.MetaDataHeaderItem;
+import org.apache.wicket.request.UrlUtils;
 
 import javax.annotation.CheckForNull;
 
@@ -73,5 +76,11 @@ public abstract class AuthenticatedPage extends BootstrapBasePage
 
 	public Option<BeholderUser> user() {
 		return Option.of(getUser());
+	}
+
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		response.render(MetaDataHeaderItem.forLinkTag("icon", UrlUtils.rewriteToContextRelative("img/favicon/favicon-32x32.png", getRequestCycle())));
+		response.render(MetaDataHeaderItem.forLinkTag("icon", UrlUtils.rewriteToContextRelative("img/favicon/favicon-16x16.png", getRequestCycle())));
 	}
 }
