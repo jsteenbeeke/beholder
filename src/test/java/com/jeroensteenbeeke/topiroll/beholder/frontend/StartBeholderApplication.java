@@ -193,7 +193,7 @@ public class StartBeholderApplication {
 					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 					System.out.println("%%%          MOCK IMAGE SERVER ACTIVE           %%%");
 					System.out.println("%%%                                             %%%");
-					System.out.println("%%% If you want use Amazon S3 for images,       %%%");
+					System.out.println("%%% If you want to use Amazon S3 for images,    %%%");
 					System.out.println("%%% please start the application with the       %%%");
 					System.out.println("%%% following options:                          %%%");
 					System.out.println("%%%                                             %%%");
