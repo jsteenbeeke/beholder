@@ -40,11 +40,12 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 	@Override
 	public void onSlackCommand(SlackCommandContext context) {
 		if ("/doorbell".equals(context.getCommand())) {
+			String username = context.getParameter("user_name")
+									  .getOrElse("??someone??");
 			BeholderApplication
 				.get()
 				.getBean(MapService.class)
-				.doorbell(context.getParameter("user_name")
-								 .getOrElse("??unknown??"), context.getParameter("text").getOrNull())
+				.doorbell(username, context.getParameter("text").getOrNull())
 				.peek(instances -> {
 					if (instances == 0) {
 						context
@@ -53,8 +54,8 @@ public class BeholderSlackCommandFilter extends SlackCommandFilter {
 							.ifNotOk(log::error);
 					} else {
 						context
-							.postResponse("Doorbell has been rung")
-							.ofType(SlackResponseType.Ephemeral)
+							.postResponse(String.format("**%s** just rang the doorbell", username))
+							.ofType(SlackResponseType.InChannel)
 							.ifNotOk(log::error);
 					}
 				})
