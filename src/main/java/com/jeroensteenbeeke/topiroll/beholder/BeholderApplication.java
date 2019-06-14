@@ -44,6 +44,7 @@ import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitializeCompendiumJob;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
@@ -68,6 +69,10 @@ import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -124,6 +129,7 @@ public class BeholderApplication extends WebApplication
 			//					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
 		}
 
+		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class)));
 		getApplicationListeners().add(new RollbarDeployListener(data));
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
@@ -177,5 +183,23 @@ public class BeholderApplication extends WebApplication
 		HyperionScheduler.getScheduler()
 			.scheduleTask(DateTime.now(), new InitializeCompendiumJob());
 
+	}
+
+	public String getRevision() {
+		try (InputStream stream = RollbarDeployListener.class.getResourceAsStream("revision.txt"); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+			int i;
+
+			if (stream == null) {
+				return "Unknown";
+			}
+
+			while ((i = stream.read()) != -1) {
+				bos.write(i);
+			}
+
+			return new String(bos.toByteArray(), StandardCharsets.UTF_8).trim();
+		} catch (IOException ioe) {
+			return "Unknown";
+		}
 	}
 }
