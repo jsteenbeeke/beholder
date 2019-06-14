@@ -41,29 +41,11 @@ public class RollbarDeployListener implements IApplicationListener {
 			RollBarDeployNotifier.createNotifier().withApiKey(data.getServerKey())
 								 .withEnvironment(data.getEnvironment())
 								 .andDeployingUser(data.getLocalUsername())
-								 .notifyDeploy(getRevision(), Hyperion
+								 .notifyDeploy(BeholderApplication.get().getRevision(), Hyperion
 									 .getRevision()
 									 .map(rev -> "Hyperion version: " + rev)
 									 .getOrElse("Hyperion version: unknown")
 								 );
-		}
-	}
-
-	private String getRevision() {
-		try (InputStream stream = RollbarDeployListener.class.getResourceAsStream("revision.txt"); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-			int i;
-
-			if (stream == null) {
-				return "Unknown";
-			}
-
-			while ((i = stream.read()) != -1) {
-				bos.write(i);
-			}
-
-			return new String(bos.toByteArray(), StandardCharsets.UTF_8).trim();
-		} catch (IOException ioe) {
-			return "Unknown";
 		}
 	}
 
