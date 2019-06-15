@@ -43,6 +43,8 @@ public class JSToken  {
 	
 	private String borderIntensity;
 	
+	private String statusEffect;
+	
 	private String label;
 	
 	private int x;
@@ -86,6 +88,15 @@ public class JSToken  {
 	@JsonProperty("border_intensity")
 	public String getBorderIntensity() {
 		return borderIntensity;
+	}	
+	
+	@JsonProperty("status_effect")
+	public String getStatusEffect() {
+		return statusEffect;
+	}
+
+	public void setStatusEffect(String statusEffect) {
+		this.statusEffect = statusEffect;
 	}
 
 	public void setBorderIntensity(String borderIntensity) {

@@ -70,6 +70,8 @@ public interface MapService {
 									  @Nonnull TokenBorderType borderType, int x, int y, @Nullable String badge);
 
 	void setTokenBorderType(@Nonnull TokenInstance instance, @Nonnull TokenBorderType type);
+	
+	void setTokenStatusEffect(@Nonnull TokenInstance instance, @Nullable TokenStatusEffect statusEffect);
 
 	void showToken(@Nonnull TokenInstance instance);
 

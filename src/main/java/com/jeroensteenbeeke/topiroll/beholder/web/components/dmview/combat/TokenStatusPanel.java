@@ -22,12 +22,15 @@ import com.jeroensteenbeeke.topiroll.beholder.dao.TokenInstanceDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenBorderType;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
+import com.jeroensteenbeeke.topiroll.beholder.entities.TokenStatusEffect;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -74,6 +77,42 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 			public boolean isVisible() {
 				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
 						(TokenInstance::getMaxHitpoints).isPresent();
+			}
+		});
+		
+		add(new AjaxLink<TokenInstance>("removeStatusEffect") {
+		
+			private static final long serialVersionUID = 7942519721828979046L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				
+				mapService.setTokenStatusEffect(callback
+						.getSelectedToken(), null);
+				callback.redrawMap(target);
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && Optional.ofNullable(callback.getSelectedToken()).map
+						(TokenInstance::getStatusEffect).isPresent();
+			}
+		}.setBody(LambdaModel.<String> of(() -> "Remove Status: " + callback.getSelectedToken().getStatusEffect())));
+		
+		add(new AjaxLink<TokenInstance>("addStatusEffect") {
+			
+			private static final long serialVersionUID = 5143438098007944274L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, SetTokenStatusEffectWindow::new, callback
+						.getSelectedToken());
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && !Optional.ofNullable(callback.getSelectedToken()).map
+						(TokenInstance::getStatusEffect).isPresent();
 			}
 		});
 
