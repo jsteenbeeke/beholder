@@ -127,7 +127,7 @@ public class BeholderApplicationConfig {
 											@Value("${slack.clientid}") String clientId,
 											@Value("${slack.clientsecret}") String clientSecret,
 											@Value("${slack.signingsecret}") String signingSecret,
-											@Value("${slack.deploy.hook:}") String deployHook,
+											@Value("${slack.deploy.webhook:}") String deployHook,
 											IdentityService identityService) {
 		return new BeholderSlackHandler(applicationBaseUrl, clientId, clientSecret, signingSecret, deployHook, identityService);
 	}

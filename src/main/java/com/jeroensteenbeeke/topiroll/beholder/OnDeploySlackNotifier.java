@@ -25,7 +25,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 	@Override
 	public void onAfterInitialized(Application application) {
 		String deployWebhook = slackHandler.getDeployWebhook();
-		if (deployWebhook != null) {
+		if (deployWebhook != null && !deployWebhook.isEmpty()) {
 			String message = String.format("A new version of Beholder just deployed, revision %s (Hyperion %s)", BeholderApplication.get().getRevision(), Hyperion.getRevision());
 			Request request = new Request.Builder()
 				.post(RequestBody.create(MediaType.parse("application/json"), "{\n" +
