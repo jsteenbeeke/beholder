@@ -186,7 +186,19 @@ public class BeholderApplication extends WebApplication
 	}
 
 	public String getRevision() {
-		try (InputStream stream = RollbarDeployListener.class.getResourceAsStream("revision.txt"); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+		return readBuildMetadata("revision.txt");
+	}
+
+	public String getCommitMessage() {
+		return readBuildMetadata("commit-title.txt");
+	}
+
+	public String getCommitDetails() {
+		return readBuildMetadata("commit-notes.txt");
+	}
+
+	private String readBuildMetadata(String filename) {
+		try (InputStream stream = BeholderApplication.class.getResourceAsStream(filename); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			int i;
 
 			if (stream == null) {

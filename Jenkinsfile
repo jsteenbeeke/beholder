@@ -24,7 +24,9 @@ pipeline {
 			steps {
 			    sh 'git submodule update --init --recursive'
 			    sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
-			    sh 'mvn clean package -U'
+				sh 'echo `git log -n 1 --pretty=format:"%s"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/commit-title.txt'
+				sh 'echo `git log -n 1 --pretty=format:"%N"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/commit-notes.txt'
+				sh 'mvn clean package -U'
 			    stash name: 'beholder-war', includes: '**/*.war'
 			}
 		}
