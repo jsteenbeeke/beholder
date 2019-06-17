@@ -38,6 +38,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [%s]\n}", message, attachments);
 
 		if (deployWebhook != null && !deployWebhook.isEmpty()) {
+			log.info("Posting payload to Slack: {}", payload);
 
 			Request request = new Request.Builder()
 				.post(RequestBody.create(MediaType.parse("application/json"),
