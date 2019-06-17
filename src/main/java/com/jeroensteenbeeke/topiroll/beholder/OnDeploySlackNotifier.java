@@ -35,7 +35,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		String message = "A new version of Beholder just deployed";
 		String attachments = createAttachments();
 
-		String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [{\"blocks\": [%s]]\n}}", message, attachments);
+		String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [{\"blocks\": [%s]}]\n}", message, attachments);
 
 		if (deployWebhook != null && !deployWebhook.isEmpty()) {
 			log.info("Posting payload to Slack: {}", payload);
