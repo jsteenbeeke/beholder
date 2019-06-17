@@ -47,13 +47,11 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 				.build();
 
 
-			Response response;
-			try {
-				response = client.newCall(request).execute();
-
+			try (Response response = client.newCall(request).execute()) {
 				if (!response.isSuccessful()) {
-					log.error("Failed to post deploy message to Slack webhook: {} {}\n{}", response.code(), response.message(), response
-						.body()
+					ResponseBody body = response
+						.body();
+					log.error("Failed to post deploy message to Slack webhook: {} {}\n{}", response.code(), response.message(), body
 						.string());
 				}
 			} catch (IOException e) {
@@ -75,7 +73,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		fields = fields.append(field("plain_text", "Hyperion Revision", false));
 		fields = fields.append(field("plain_text", Hyperion.getRevision().getOrElse("unknown"), false));
 
-		if (System.getenv("DOCKER_IMAGE_ID") != null) {
+		String dockerImageID = System.getenv("DOCKER_IMAGE_ID");
+		if (dockerImageID != null && !dockerImageID.isEmpty()) {
 			fields = fields.append(field("plain_text", "Docker Image ID", false));
 			fields = fields.append(field("plain_text", System.getenv("DOCKER_IMAGE_ID"), false));
 		}
@@ -83,15 +82,20 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		sb.append(",\n\t");
 		sb.append(fields.mkString(START_FIELDS, ",\n\t\t", END_FIELDS));
 		sb.append(",\n\t");
-		sb.append(DIVIDER);
-		sb.append(",\n\t");
 
-		sb
-			.append("{\n" + "\t\t\"type\": \"section\",\n" + "\t\t\"text\": {\n" + "\t\t\t\"type\": \"mrkdwn\",\n" + "\t\t\t\"text\": \"**Commit details**\\n")
-			.append(BeholderApplication.get().getCommitDetails().replace("\n", "\\n"))
-			.append("\"\n")
-			.append("\t\t}\n")
-			.append("\t}");
+		String details = BeholderApplication.get().getCommitDetails().replace("\n", "\\n");
+
+		if (!details.isEmpty() && !details.equals("Unknown")) {
+			sb.append(DIVIDER);
+			sb.append(",\n\t");
+
+			sb
+				.append("{\n" + "\t\t\"type\": \"section\",\n" + "\t\t\"text\": {\n" + "\t\t\t\"type\": \"mrkdwn\",\n" + "\t\t\t\"text\": \"*Commit details*\\n")
+				.append(details)
+				.append("\"\n")
+				.append("\t\t}\n")
+				.append("\t}");
+		}
 
 
 		return sb.toString();
