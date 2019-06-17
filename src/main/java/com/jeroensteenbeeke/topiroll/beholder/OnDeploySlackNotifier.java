@@ -2,7 +2,6 @@ package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.hyperion.Hyperion;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
-import com.jeroensteenbeeke.topiroll.beholder.beans.impl.FakeSlackHandler;
 import io.vavr.collection.Array;
 import okhttp3.*;
 import org.apache.wicket.Application;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.stream.Stream;
 
 public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final Logger log = LoggerFactory.getLogger(OnDeploySlackNotifier.class);
@@ -62,24 +60,22 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 	private String createAttachments() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(DIVIDER);
 
 		Array<String> fields = Array.empty();
 
-		fields = fields.append(field("plain_text", "Commit Message", false));
-		fields = fields.append(field("plain_text", BeholderApplication.get().getCommitMessage(), false));
-		fields = fields.append(field("plain_text", "Beholder Revision", false));
-		fields = fields.append(field("plain_text", BeholderApplication.get().getRevision(), false));
-		fields = fields.append(field("plain_text", "Hyperion Revision", false));
-		fields = fields.append(field("plain_text", Hyperion.getRevision().getOrElse("unknown"), false));
+		fields = fields.append(field("mrkdwn", "*Commit Message*"));
+		fields = fields.append(field("plain_text", BeholderApplication.get().getCommitMessage()));
+		fields = fields.append(field("mrkdwn", "*Beholder Revision*"));
+		fields = fields.append(field("plain_text", BeholderApplication.get().getRevision()));
+		fields = fields.append(field("mrkdwn", "*Hyperion Revision*"));
+		fields = fields.append(field("plain_text", Hyperion.getRevision().getOrElse("unknown")));
 
 		String dockerImageID = System.getenv("DOCKER_IMAGE_ID");
 		if (dockerImageID != null && !dockerImageID.isEmpty()) {
-			fields = fields.append(field("plain_text", "Docker Image ID", false));
-			fields = fields.append(field("plain_text", System.getenv("DOCKER_IMAGE_ID"), false));
+			fields = fields.append(field("mrkdwn", "*Docker Image ID*"));
+			fields = fields.append(field("plain_text", System.getenv("DOCKER_IMAGE_ID")));
 		}
 
-		sb.append(",\n\t");
 		sb.append(fields.mkString(START_FIELDS, ",\n\t\t", END_FIELDS));
 
 		String details = BeholderApplication.get().getCommitDetails().replace("\n", "\\n");
@@ -101,11 +97,10 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		return sb.toString();
 	}
 
-	public String field(String type, String text, boolean emoji) {
+	public String field(String type, String text) {
 		return "{\n" +
 			"\t\t\t\t\"type\": \"" + type + "\",\n" +
-			"\t\t\t\t\"text\": \"" + text + "\",\n" +
-			"\t\t\t\t\"emoji\": " + emoji + "\n" +
+			"\t\t\t\t\"text\": \"" + text + "\"\n" +
 			"\t\t\t}";
 	}
 
