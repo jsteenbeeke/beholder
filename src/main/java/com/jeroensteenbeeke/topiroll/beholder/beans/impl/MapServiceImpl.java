@@ -795,7 +795,7 @@ class MapServiceImpl implements MapService {
 	}
 
 	private static JSToken tokenToJS(TokenInstance instance, double factor) {
-		JSToken token = new JSToken();
+		JSToken token = new JSToken();		
 		token.setBorderType(instance.getBorderType().name());
 		token.setBorderIntensity(instance.getBorderIntensity().name());
 		token.setHeight(
@@ -807,6 +807,10 @@ class MapServiceImpl implements MapService {
 		token.setDiameterInSquares(
 			instance.getDefinition().getDiameterInSquares());
 		token.setLabel(instance.getLabel());
+		
+		if (instance.getStatusEffect() != null)
+			token.setStatusEffect(instance.getStatusEffect().toString());
+		
 		// Workaround, will be transformed to URL
 		token.setSrc(instance.getDefinition().getImageUrl());
 		token.setX((int) (instance.getOffsetX() * factor));
@@ -848,5 +852,13 @@ class MapServiceImpl implements MapService {
 					.sendToView(id, new RingDoorbell(username, message));
 				return id;
 			}).count(v -> true));
+	}
+
+	@Override
+	public void setTokenStatusEffect(@Nonnull TokenInstance instance, @Nullable TokenStatusEffect statusEffect) {
+		instance.setStatusEffect(statusEffect);
+		tokenInstanceDAO.update(instance);
+
+		instance.getMap().getSelectedBy().forEach(this::refreshView);		
 	}
 }

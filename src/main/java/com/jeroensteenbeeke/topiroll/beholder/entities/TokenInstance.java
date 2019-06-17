@@ -95,6 +95,10 @@ public class TokenInstance extends BaseDomainObject {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "definition")
 	private TokenDefinition definition;
+	
+	@Column(nullable = true)
+	@EntityFormField(label = "Status effect", required = true, type = DefaultFieldType.DropDownChoice.class)
+	private TokenStatusEffect statusEffect;
 
 	public Long getId() {
 		return id;
@@ -116,6 +120,14 @@ public class TokenInstance extends BaseDomainObject {
 
 	public void setDefinition(@Nonnull TokenDefinition definition) {
 		this.definition = definition;
+	}	
+
+	public TokenStatusEffect getStatusEffect() {
+		return statusEffect;
+	}
+
+	public void setStatusEffect(TokenStatusEffect statusEffect) {
+		this.statusEffect = statusEffect;
 	}
 
 	@CheckForNull

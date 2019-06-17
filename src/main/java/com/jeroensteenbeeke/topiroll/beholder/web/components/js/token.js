@@ -173,8 +173,22 @@ function renderToken(context, token) {
             if (label) {
                 drawText(context, token);
             }
-
-            resolve();
+            
+            // Step 5: Draw status effect icon (if present)
+            if (token.status_effect) {
+            	const statusEffectUrl = '../img/statuseffects/' + token.status_effect + '.png';
+            
+    	        Images.load(statusEffectUrl, function(statusImg){
+    	        	const statusIconOffsetX = width / 4;
+    	            const statusIconOffsetY = height / 4;
+    	        	context.save();
+    	            context.drawImage(statusImg, x - statusIconOffsetX, y - statusIconOffsetY, width * 0.9, height * 0.9);
+    	            context.restore();
+    	            resolve();
+    	        });
+            } else {
+            	resolve();
+            }
         });
     });
 }

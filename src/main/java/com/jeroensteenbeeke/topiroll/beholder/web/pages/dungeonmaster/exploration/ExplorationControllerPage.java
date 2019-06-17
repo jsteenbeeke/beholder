@@ -272,6 +272,14 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						top = coordinateTranslator.translateToScaledImageSize(top);
 
 						int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+						
+						String urlFormat = "url('%1$s')";
+						String imageUrl = String.format(urlFormat, i.getDefinition().getImageUrl());
+						if (i.getStatusEffect() != null) {
+							String statusImageUrl = String.format(urlFormat, 
+									UrlUtils.rewriteToContextRelative("img/statuseffects/" + i.getStatusEffect() + ".png", RequestCycle.get()));
+							imageUrl = String.join(", ", statusImageUrl, imageUrl);
+						}
 
 						return String.format(
 							"position: absolute; left: %1$dpx; top: %2$dpx; max-width: "
@@ -279,11 +287,11 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
 								+ "!important; background-size: %3$dpx %3$dpx; "
 								+ "border-radius: 100%%; border: 3px "
-								+ "%6$s #%4$s; background-image: url('%5$s'); "
+								+ "%6$s #%4$s; background-image: %5$s; "
 								+ "display: table-cell; vertical-align: bottom; "
 								+ "color: #cccccc; text-align: center; margin: 0; padding: 0;",
 							left, top, actualWH, i.getBorderType().toHexColor(),
-							i.getDefinition().getImageUrl(),
+							imageUrl,
 							i.isShow() ? "solid" : "dashed");
 					}
 

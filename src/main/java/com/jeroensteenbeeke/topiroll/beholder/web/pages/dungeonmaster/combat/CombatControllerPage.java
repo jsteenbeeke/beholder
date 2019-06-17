@@ -217,36 +217,44 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 					}
 				});
 				image.add(AttributeModifier.replace("style",
-													new DependentModel<TokenInstance, String>(item.getModel()) {
-														private static final long serialVersionUID = 1L;
+										new DependentModel<TokenInstance, String>(item.getModel()) {
+											private static final long serialVersionUID = 1L;
 
-														@Override
-														protected String load(TokenInstance i) {
-															int left = i.getOffsetX();
-															int top = i.getOffsetY();
+											@Override
+											protected String load(TokenInstance i) {
+												int left = i.getOffsetX();
+												int top = i.getOffsetY();
 
-															left = coordinateTranslator.translateToScaledImageSize(left);
-															top = coordinateTranslator.translateToScaledImageSize(top);
+												left = coordinateTranslator.translateToScaledImageSize(left);
+												top = coordinateTranslator.translateToScaledImageSize(top);
 
-															int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+												int actualWH = coordinateTranslator.translateToScaledImageSize(wh);														
+												
+												String urlFormat = "url('%1$s')";
+												String imageUrl = String.format(urlFormat, i.getDefinition().getImageUrl());
+												if (i.getStatusEffect() != null) {
+													String statusImageUrl = String.format(urlFormat, 
+															UrlUtils.rewriteToContextRelative("img/statuseffects/" + i.getStatusEffect() + ".png", RequestCycle.get()));
+													imageUrl = String.join(", ", statusImageUrl, imageUrl);
+												}
 
-															return String.format(
-																"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
-																	"%3$dpx !important; " +
-																	"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-																	"!important; background-size: %3$dpx %3$dpx; " +
-																	"border-radius: 100%%; border: 3px " +
-																	"%6$s #%4$s; background-image: url('%5$s'); " +
-																	"display: table-cell; vertical-align: bottom; " +
-																	"color: #cccccc; text-align: center; margin: 0; padding: 0;",
-																left, top, actualWH, i
-																	.getBorderType().toHexColor(),
-																i.getDefinition().getImageUrl(),
-																i.isShow() ? "solid" : "dashed"
-															);
-														}
+												return String.format(
+													"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
+														"%3$dpx !important; " +
+														"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+														"!important; background-size: %3$dpx %3$dpx; " +
+														"border-radius: 100%%; border: 3px " +
+														"%6$s #%4$s; background-image: %5$s; " +
+														"display: table-cell; vertical-align: bottom; " +
+														"color: #cccccc; text-align: center; margin: 0; padding: 0;",
+													left, top, actualWH, i
+														.getBorderType().toHexColor(),
+													imageUrl,
+													i.isShow() ? "solid" : "dashed"
+												);
+											}
 
-													}));
+										}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = 5933238244997270769L;
 
