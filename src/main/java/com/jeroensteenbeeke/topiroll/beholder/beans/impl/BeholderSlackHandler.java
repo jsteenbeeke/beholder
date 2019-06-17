@@ -51,6 +51,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackErrorPage;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 public class BeholderSlackHandler extends SlackHandler {
@@ -62,13 +63,16 @@ public class BeholderSlackHandler extends SlackHandler {
 
 	private String signingSecret;
 
+	private String deployWebhook;
+
 	private IdentityService identityService;
 
-	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, String signingSecret, IdentityService identityService) {
+	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, String signingSecret, String deployWebhook, IdentityService identityService) {
 		this.applicationBaseUrl = applicationBaseUrl;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.signingSecret = signingSecret;
+		this.deployWebhook = deployWebhook;
 		this.identityService = identityService;
 	}
 
@@ -87,6 +91,11 @@ public class BeholderSlackHandler extends SlackHandler {
 	@Nonnull
 	public String getSigningSecret() {
 		return signingSecret;
+	}
+
+	@CheckForNull
+	public String getDeployWebhook() {
+		return deployWebhook;
 	}
 
 	@Nonnull

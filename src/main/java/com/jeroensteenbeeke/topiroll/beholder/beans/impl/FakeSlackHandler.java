@@ -39,6 +39,7 @@ import com.jeroensteenbeeke.hyperion.social.api.SlackAPI;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 public class FakeSlackHandler extends BeholderSlackHandler {
@@ -57,7 +58,13 @@ public class FakeSlackHandler extends BeholderSlackHandler {
 	};
 
 	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
-		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), Randomizer.random(44), identityService);
+		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), Randomizer.random(44), Randomizer.random(44), identityService);
+	}
+
+	@CheckForNull
+	@Override
+	public String getDeployWebhook() {
+		return null;
 	}
 
 	@Nonnull
