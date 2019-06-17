@@ -81,11 +81,11 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 		sb.append(",\n\t");
 		sb.append(fields.mkString(START_FIELDS, ",\n\t\t", END_FIELDS));
-		sb.append(",\n\t");
 
 		String details = BeholderApplication.get().getCommitDetails().replace("\n", "\\n");
 
 		if (!details.isEmpty() && !details.equals("Unknown")) {
+			sb.append(",\n\t");
 			sb.append(DIVIDER);
 			sb.append(",\n\t");
 
