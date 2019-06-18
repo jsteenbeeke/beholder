@@ -1,3 +1,4 @@
 [submodule "src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/5thsrd"]
 	path = src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/5thsrd
 	url = https://github.com/vitusventure/5thSRD.git
+	ignore = dirty
