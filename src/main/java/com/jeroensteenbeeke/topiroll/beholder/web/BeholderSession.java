@@ -37,6 +37,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
+import io.vavr.control.Option;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebSession;
@@ -66,6 +67,10 @@ public class BeholderSession extends WebSession {
 
 	public static BeholderSession get() {
 		return (BeholderSession) WebSession.get();
+	}
+
+	public Option<BeholderUser> user() {
+		return Option.of(getUser());
 	}
 
 	@CheckForNull

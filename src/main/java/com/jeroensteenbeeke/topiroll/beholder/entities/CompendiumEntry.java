@@ -41,17 +41,17 @@ public class CompendiumEntry extends BaseDomainObject {
 	private Long id;
 	@Column(nullable = false)
 	private String title;
+
 	@Column(nullable = false)
 	@Lob
 	private String body;
- 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
 
+ 	@ManyToOne(fetch=FetchType.LAZY, optional=true) 	@JoinColumn(name="campaign")
 	private Campaign campaign;
 
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "author")
-
 	private BeholderUser author;
 
 

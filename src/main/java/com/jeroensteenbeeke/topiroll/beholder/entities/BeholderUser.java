@@ -71,6 +71,14 @@ public class BeholderUser extends BaseDomainObject {
 	@Column(nullable = false)
 	private String username;
  	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
+	private List<SessionLogIndex> sessionLogIndices = new ArrayList<SessionLogIndex>();
+
+
+ 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+	private List<SessionLogItem> logItems = new ArrayList<SessionLogItem>();
+
+
+ 	@OneToMany(mappedBy="owner", fetch=FetchType.LAZY)
 	private List<MapFolder> mapFolders = new ArrayList<MapFolder>();
 
 
@@ -261,6 +269,26 @@ public class BeholderUser extends BaseDomainObject {
 	public void setMapFolders( @Nonnull List<MapFolder> mapFolders) {
 		this.mapFolders = mapFolders;
 	}
+
+	@Nonnull
+	public List<SessionLogItem> getLogItems() {
+		return logItems;
+	}
+	public void setLogItems( @Nonnull List<SessionLogItem> logItems) {
+		this.logItems = logItems;
+	}
+
+	@Nonnull
+	public List<SessionLogIndex> getSessionLogIndices() {
+		return sessionLogIndices;
+	}
+	public void setSessionLogIndices( @Nonnull List<SessionLogIndex> sessionLogIndices) {
+		this.sessionLogIndices = sessionLogIndices;
+	}
+
+
+
+
 
 
 }

@@ -36,6 +36,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilte
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.AddToSessionLogWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.InitiativePanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.MapOptionsPanel;
@@ -115,7 +116,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 	private boolean disableClickListener = false;
 
-	public CombatControllerPage(MapView view) {
+	public CombatControllerPage(@Nonnull MapView view) {
 		super("Combat Mode");
 
 		if (BeholderSession.get().getUser() == null) {
@@ -665,6 +666,16 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			}
 
 		});
+		combatNavigator.add(new AjaxLink<>("sessionlog", ModelMaker.wrap(view)) {
+			private static final long serialVersionUID = -5342617572033020429L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+
+				createModalWindow(target, AddToSessionLogWindow::new, null);
+			}
+
+		});
 
 		PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
 		filter.pinnedBy().set(BeholderSession.get().getUser());
@@ -712,6 +723,11 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 		add(modal = new WebMarkupContainer(MODAL_ID));
 		modal.setOutputMarkupPlaceholderTag(true);
+	}
+
+	@Override
+	public MapView getView() {
+		return viewModel.getObject();
 	}
 
 	private Optional<ScaledMap> getCurrentMap() {
