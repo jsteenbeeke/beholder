@@ -45,6 +45,7 @@ public class RollbarDeployListener implements IApplicationListener {
 									 .getRevision()
 									 .map(rev -> "Hyperion version: " + rev)
 									 .getOrElse("Hyperion version: unknown")
+											   .concat(Hyperion.getCommitTitle().map("; "::concat).getOrElse(""))
 								 );
 		}
 	}

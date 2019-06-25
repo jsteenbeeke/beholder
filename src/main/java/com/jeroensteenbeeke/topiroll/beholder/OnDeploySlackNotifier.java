@@ -3,6 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import com.jeroensteenbeeke.hyperion.Hyperion;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import io.vavr.collection.Array;
+import io.vavr.control.Option;
 import okhttp3.*;
 import org.apache.wicket.Application;
 import org.apache.wicket.IApplicationListener;
@@ -69,6 +70,11 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		fields = fields.append(field("plain_text", BeholderApplication.get().getRevision()));
 		fields = fields.append(field("mrkdwn", "*Hyperion Revision*"));
 		fields = fields.append(field("plain_text", Hyperion.getRevision().getOrElse("unknown")));
+		Option<String> hyperionCommitTitle = Hyperion.getCommitTitle();
+		if (hyperionCommitTitle.isDefined()) {
+			fields = fields.append(field("mrkdwn", "*Hyperion Commit Message*"));
+			fields = fields.append(field("plain_text", hyperionCommitTitle.getOrElse("unknown")));
+		}
 
 		String dockerImageID = System.getenv("DOCKER_IMAGE_ID");
 		if (dockerImageID != null && !dockerImageID.isEmpty()) {
