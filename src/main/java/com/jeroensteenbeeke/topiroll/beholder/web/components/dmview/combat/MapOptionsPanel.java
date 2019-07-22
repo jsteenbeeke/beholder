@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
-import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipant;
@@ -29,11 +28,10 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenW
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.util.Optional;
 
 public class MapOptionsPanel extends DMViewPanel<MapView> {
 	private static final long serialVersionUID = 8357448484143991994L;
@@ -41,7 +39,7 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 	public MapOptionsPanel(String id, MapView view, DMViewCallback callback) {
 		super(id);
 
-		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
+		IModel<MapView> viewModel = ModelMaker.wrap(view);
 		setModel(viewModel);
 
 		add(new Label("location", new LoadableDetachableModel<String>() {
@@ -122,7 +120,7 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 
 		});
 
-		add(new AjaxLink<ScaledMap>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+		add(new AjaxLink<>("newtoken", viewModel.map(MapView::getSelectedMap)) {
 			private static final long serialVersionUID = 2836526275140755418L;
 
 			@Override

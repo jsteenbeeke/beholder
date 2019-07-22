@@ -34,6 +34,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,8 +169,8 @@ public class BeholderSlackHandler extends SlackHandler {
 	}
 
 	@Override
-	public String getUserState() {
-		return BeholderSession.get().getState();
+	public Option<String> getUserState() {
+		return Option.of(BeholderSession.get().getState());
 	}
 
 	@Override

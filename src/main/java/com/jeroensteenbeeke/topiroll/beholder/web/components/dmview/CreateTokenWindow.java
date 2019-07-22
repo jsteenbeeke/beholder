@@ -75,8 +75,8 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 		filter.name().orderBy(true);
 
 		final DropDownChoice<TokenDefinition> definitions = new DropDownChoice<>("type",
-				ModelMaker.wrap((TokenDefinition) null, true),
-				ModelMaker.wrapList(definitionDAO.findByFilter(filter).toJavaList(), false),
+				ModelMaker.wrap(TokenDefinition.class),
+				ModelMaker.wrapList(definitionDAO.findByFilter(filter).toJavaList()),
 				LambdaRenderer.of(TokenDefinition::getName)
 				);
 		definitions.setRequired(true);

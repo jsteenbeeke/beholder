@@ -66,7 +66,7 @@ public class CompendiumWindow extends DMViewPanel<CompendiumEntry> {
 	private Label article;
 
 	public CompendiumWindow(String id, CompendiumEntry entry, DMViewCallback callback) {
-		super(id, entry != null ? ModelMaker.wrap(entry, true) : ModelMaker.wrap(CompendiumEntry.class));
+		super(id, entry != null ? ModelMaker.wrap(entry) : ModelMaker.wrap(CompendiumEntry.class));
 		setOutputMarkupId(true);
 
 		final TextField<String> queryField = new TextField<>("query", Model.of(""));

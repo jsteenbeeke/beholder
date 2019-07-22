@@ -19,8 +19,6 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparati
 
 import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.ui.form.dropdown.AjaxDropDownChoice;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
-import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -35,7 +33,6 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.FogOfWarPreviewRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewMapPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
 import io.vavr.collection.Seq;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -51,7 +48,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 	private final Form<MapLink> form;
 
-	private final IByFunctionModel<FogOfWarGroup> sourceModel;
+	private final IModel<FogOfWarGroup> sourceModel;
 
 	private final AjaxDropDownChoice<ScaledMap> mapSelect;
 

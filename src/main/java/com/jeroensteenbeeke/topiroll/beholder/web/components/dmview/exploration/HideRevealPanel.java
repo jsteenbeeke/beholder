@@ -18,7 +18,6 @@
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration;
 
 import com.google.common.collect.ImmutableList;
-import com.jeroensteenbeeke.hyperion.solstice.data.IByFunctionModel;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
@@ -55,7 +54,6 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -76,7 +74,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 	public HideRevealPanel(String id, MapView view, @Nonnull DMViewCallback callback) {
 		super(id);
 
-		IByFunctionModel<MapView> viewModel = ModelMaker.wrap(view);
+		IModel<MapView> viewModel = ModelMaker.wrap(view);
 		setModel(viewModel);
 
 		add(new Label("location", new LoadableDetachableModel<String>() {
@@ -106,7 +104,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
-		add(new ListView<HideRevealOption>("hidereveal", new HideRevealOptions(viewModel, callback)) {
+		add(new ListView<>("hidereveal", new HideRevealOptions(viewModel, callback)) {
 			private static final long serialVersionUID = -75420374360776148L;
 
 			@Override
@@ -140,7 +138,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
-		add(new AjaxLink<>("newtoken", viewModel.getProperty(MapView::getSelectedMap)) {
+		add(new AjaxLink<>("newtoken", viewModel.map(MapView::getSelectedMap)) {
 			private static final long serialVersionUID = -542296264646923581L;
 
 			@Override
