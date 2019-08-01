@@ -41,6 +41,7 @@ import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
 import com.jeroensteenbeeke.hyperion.social.Slack;
 import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsulatorFactory;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
+import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
@@ -78,6 +79,8 @@ import java.time.format.DateTimeFormatter;
 
 public class BeholderApplication extends WebApplication
 	implements ApplicationContextProvider {
+	static final String KEY_BEHOLDER_CURRENT_VERSION = "beholder.current.version";
+
 	private ApplicationContext ctx;
 
 	private IWebSocketConnectionRegistry webSocketRegistry;
@@ -129,8 +132,10 @@ public class BeholderApplication extends WebApplication
 			//					.add(new RollbarClientListener(data.getClientKey(), data.getEnvironment()));
 		}
 
-		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class)));
-		getApplicationListeners().add(new RollbarDeployListener(data));
+		ApplicationMetadataStore metadata = ctx.getBean(ApplicationMetadataStore.class);
+
+		getApplicationListeners().add(new RollbarDeployListener(data, metadata));
+		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class), metadata));
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
 		getRequestCycleListeners().add(new IRequestCycleListener() {

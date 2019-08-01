@@ -1,6 +1,8 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
 import com.jeroensteenbeeke.hyperion.Hyperion;
+import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
+import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import io.vavr.collection.Array;
 import io.vavr.control.Option;
@@ -21,41 +23,63 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final String END_FIELDS = "]}";
 
 	private final BeholderSlackHandler slackHandler;
+
+	private final ApplicationMetadataStore metadataStore;
+
 	private static final OkHttpClient client = new OkHttpClient();
 
 
-	public OnDeploySlackNotifier(BeholderSlackHandler slackHandler) {
+	public OnDeploySlackNotifier(BeholderSlackHandler slackHandler, ApplicationMetadataStore metadataStore) {
 		this.slackHandler = slackHandler;
+		this.metadataStore = metadataStore;
 	}
 
 	@Override
 	public void onAfterInitialized(Application application) {
-		String deployWebhook = slackHandler.getDeployWebhook();
-		String message = "A new version of Beholder just deployed";
-		String attachments = createAttachments();
+		final String runningApplicationHash = String.format("%s:%s:%s",
+															BeholderApplication.get().getRevision(),
+															Hyperion.getRevision().getOrElse("Unknown"),
+															Option.of(System.getenv("DOCKER_IMAGE_ID")).getOrElse("Unknown")
+		);
 
-		String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [{\"blocks\": [%s]}]\n}", message, attachments);
+		Option<String> previousApplicationHash = metadataStore.readString(BeholderApplication.KEY_BEHOLDER_CURRENT_VERSION);
 
-		if (deployWebhook != null && !deployWebhook.isEmpty()) {
-			log.info("Posting payload to Slack: {}", payload);
+		if (previousApplicationHash.isEmpty() || previousApplicationHash
+			.filter(p -> !p.equals(runningApplicationHash)).isDefined()) {
+			ActionResult writeResult = metadataStore
+				.writeString(BeholderApplication.KEY_BEHOLDER_CURRENT_VERSION, runningApplicationHash);
+			writeResult
+				.ifOk(() -> {
 
-			Request request = new Request.Builder()
-				.post(RequestBody.create(MediaType.parse("application/json"),
-										 payload))
-				.url(deployWebhook) //post in designated channel
-				.build();
+					String deployWebhook = slackHandler.getDeployWebhook();
+					String message = "A new version of Beholder just deployed";
+					String attachments = createAttachments();
+
+					String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [{\"blocks\": [%s]}]\n}", message, attachments);
+
+					if (deployWebhook != null && !deployWebhook.isEmpty()) {
+						log.info("Posting payload to Slack: {}", payload);
+
+						Request request = new Request.Builder()
+							.post(RequestBody.create(MediaType.parse("application/json"),
+													 payload))
+							.url(deployWebhook) //post in designated channel
+							.build();
 
 
-			try (Response response = client.newCall(request).execute()) {
-				if (!response.isSuccessful()) {
-					ResponseBody body = response
-						.body();
-					log.error("Failed to post deploy message to Slack webhook: {} {}\n{}", response.code(), response.message(), body
-						.string());
-				}
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
+						try (Response response = client.newCall(request).execute()) {
+							if (!response.isSuccessful()) {
+								ResponseBody body = response
+									.body();
+								log.error("Failed to post deploy message to Slack webhook: {} {}\n{}", response.code(), response
+									.message(), body
+											  .string());
+							}
+						} catch (IOException e) {
+							log.error(e.getMessage(), e);
+						}
+					}
+				});
 		}
 	}
 

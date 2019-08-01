@@ -15,56 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
 import com.jeroensteenbeeke.hyperion.solitary.InMemory;
@@ -104,6 +54,8 @@ public class StartBeholderApplication {
 		};
 
 		Options options = new Options();
+
+		options.addOption(null, Arguments.ENABLE_POSTGRES_DB, false, "Use Postgres in Docker instead of H2");
 
 		options.addOption(null, Arguments.SLACK_CLIENT_ID, true, "Slack client ID");
 		options.addOption(null, Arguments.SLACK_CLIENT_SECRET, true, "Slack client secret");
@@ -221,6 +173,9 @@ public class StartBeholderApplication {
 			}
 		}
 
+		if (cmd.hasOption(Arguments.ENABLE_POSTGRES_DB)) {
+			finalizer.withDockerizedPostgres();
+		}
 
 		if (!rollbarEnabled) {
 			System.out
@@ -254,6 +209,7 @@ public class StartBeholderApplication {
 		static final String ROLLBAR_CLIENT_ID = "rollbar-client-id";
 		static final String ROLLBAR_CLIENT_SECRET = "rollbar-client-secret";
 		static final String ROLLBAR_ENVIRONMENT = "rollbar-environment";
+		static final String ENABLE_POSTGRES_DB = "enable-postgres";
 
 		static final String HELP_SHORT = "?";
 		static final String HELP_LONG = "help";
