@@ -249,18 +249,21 @@
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateWicketBasedBackgroundJob</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPage</recipe>
 						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPanel</recipe>
+						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.standalone.CreateEntityDataviewPage</recipe>
 					</recipes>
 					<extraConfiguration>
 						<basePackage>com.jeroensteenbeeke.topiroll.beholder</basePackage>
+						<customPageParams>super String ""</customPageParams>
 						<entitySuperclass>com.jeroensteenbeeke.hyperion.data.BaseDomainObject</entitySuperclass>
 						<liquibasePackage>com.jeroensteenbeeke.topiroll.beholder.entities.liquibase</liquibasePackage>
+						<sourcePath>src/main/java</sourcePath>
 						<taskGroupEnum>com.jeroensteenbeeke.topiroll.beholder.Jobs</taskGroupEnum>
 						<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication
 						</wicketApplication>
 						<wicketBasePage>
 							com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage
 						</wicketBasePage>
-						<customPageParams>super String ""</customPageParams>
+						<wicketBasePanel>org.apache.wicket.markup.html.panel.Panel</wicketBasePanel>
 					</extraConfiguration>
 				</configuration>
 				<dependencies>
@@ -277,6 +280,11 @@
 					<dependency>
 						<groupId>com.jeroensteenbeeke</groupId>
 						<artifactId>hyperion-recipes-wicket</artifactId>
+						<version>${hyperion.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.jeroensteenbeeke</groupId>
+						<artifactId>hyperion-recipes-wicket-standalone</artifactId>
 						<version>${hyperion.version}</version>
 					</dependency>
 				</dependencies>
