@@ -135,7 +135,7 @@ public class BeholderApplication extends WebApplication
 		ApplicationMetadataStore metadata = ctx.getBean(ApplicationMetadataStore.class);
 
 		getApplicationListeners().add(new RollbarDeployListener(data, metadata));
-		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class), metadata));
+		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class), metadata, getServletContext()));
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
 		getRequestCycleListeners().add(new IRequestCycleListener() {

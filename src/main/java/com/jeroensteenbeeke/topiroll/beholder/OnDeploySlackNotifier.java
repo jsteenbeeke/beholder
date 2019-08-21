@@ -12,6 +12,7 @@ import org.apache.wicket.IApplicationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import java.io.IOException;
 
 public class OnDeploySlackNotifier implements IApplicationListener {
@@ -26,12 +27,15 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 	private final ApplicationMetadataStore metadataStore;
 
+	private final ServletContext servletContext;
+
 	private static final OkHttpClient client = new OkHttpClient();
 
 
-	public OnDeploySlackNotifier(BeholderSlackHandler slackHandler, ApplicationMetadataStore metadataStore) {
+	public OnDeploySlackNotifier(BeholderSlackHandler slackHandler, ApplicationMetadataStore metadataStore, ServletContext servletContext) {
 		this.slackHandler = slackHandler;
 		this.metadataStore = metadataStore;
+		this.servletContext = servletContext;
 	}
 
 	@Override
@@ -99,6 +103,11 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			fields = fields.append(field("mrkdwn", "*Hyperion Commit Message*"));
 			fields = fields.append(field("plain_text", hyperionCommitTitle.getOrElse("unknown")));
 		}
+
+		fields = fields.append(field("mrkdwn", "*Server Info*"));
+		fields = fields.append(field("plain_text", servletContext.getServerInfo()));
+		fields = fields.append(field("mrkdwn", "*Java Version*"));
+		fields = fields.append(field("plain_text", Runtime.version().toString()));
 
 		String dockerImageID = System.getenv("DOCKER_IMAGE_ID");
 		if (dockerImageID != null && !dockerImageID.isEmpty()) {
