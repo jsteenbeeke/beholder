@@ -43,7 +43,9 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		final String runningApplicationHash = String.format("%s:%s:%s",
 															BeholderApplication.get().getRevision(),
 															Hyperion.getRevision().getOrElse("Unknown"),
-															Option.of(System.getenv("DOCKER_IMAGE_ID")).getOrElse("Unknown")
+															Option
+																.of(System.getenv("DOCKER_IMAGE_ID"))
+																.getOrElse("Unknown")
 		);
 
 		Option<String> previousApplicationHash = metadataStore.readString(BeholderApplication.KEY_BEHOLDER_CURRENT_VERSION);
@@ -104,16 +106,21 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			fields = fields.append(field("plain_text", hyperionCommitTitle.getOrElse("unknown")));
 		}
 
-		fields = fields.append(field("mrkdwn", "*Server Info*"));
-		fields = fields.append(field("plain_text", servletContext.getServerInfo()));
-		fields = fields.append(field("mrkdwn", "*Java Version*"));
-		fields = fields.append(field("plain_text", Runtime.version().toString()));
+		String imageInfo = "";
 
 		String dockerImageID = System.getenv("DOCKER_IMAGE_ID");
 		if (dockerImageID != null && !dockerImageID.isEmpty()) {
-			fields = fields.append(field("mrkdwn", "*Docker Image ID*"));
-			fields = fields.append(field("plain_text", System.getenv("DOCKER_IMAGE_ID")));
+			imageInfo += String.format("*ID:* `%s`\\n", dockerImageID);
 		}
+
+		imageInfo += String.format("*JDK:* `%s`\\n", System.getProperty("java.vendor") + " " + Runtime
+			.version()
+			.toString());
+
+		imageInfo += String.format("*Server:* `%s`\\n", servletContext.getServerInfo());
+
+		fields = fields.append(field("mrkdwn", "*Image Info*"));
+		fields = fields.append(field("plain_text", imageInfo));
 
 		sb.append(fields.mkString(START_FIELDS, ",\n\t\t", END_FIELDS));
 
