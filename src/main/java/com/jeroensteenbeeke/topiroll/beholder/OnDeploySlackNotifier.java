@@ -120,7 +120,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		imageInfo += String.format("*Server:* `%s`\\n", servletContext.getServerInfo());
 
 		fields = fields.append(field("mrkdwn", "*Image Info*"));
-		fields = fields.append(field("plain_text", imageInfo));
+		fields = fields.append(field("mrkdwn", imageInfo));
 
 		sb.append(fields.mkString(START_FIELDS, ",\n\t\t", END_FIELDS));
 
