@@ -50,7 +50,7 @@ public interface DMViewCallback extends Serializable {
 
 	void redrawMap(AjaxRequestTarget target);
 
-	void refreshMenus(AjaxRequestTarget target);
+	void refreshMenus(@Nullable AjaxRequestTarget target);
 
 	TokenInstance getSelectedToken();
 

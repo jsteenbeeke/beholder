@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat;
+package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.combat;
 
 import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.core.Options;
@@ -46,7 +46,9 @@ import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCoordinateTranslator;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.StatefulMapControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.exploration.ExplorationControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.*;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -72,8 +74,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CombatControllerPage extends BootstrapBasePage implements DMViewCallback {
-	private static final String MODAL_ID = "modal";
+public class CombatControllerPage extends StatefulMapControllerPage {
 	private static final String MARKER_ID = "marker";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
@@ -84,19 +85,9 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 	private final WebMarkupContainer combatNavigator;
 	private final InitiativePanel initiativePanel;
 
-	private Component modal;
-
-	private IModel<TokenInstance> selectedToken = Model.of();
-
-	private IModel<AreaMarker> selectedMarker = Model.of();
-
 	private final IModel<ScaledMap> mapModel;
 
 	private final IModel<MapView> viewModel;
-
-	private Point clickedLocation = null;
-
-	private Point previousClickedLocation = null;
 
 	@Inject
 	private MapService mapService;
@@ -150,12 +141,57 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		}
 
 		preview.add(initiativePanel = new InitiativePanel("initiative", view, this));
-		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
-		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this);
-		markerStatusPanel = new MarkerStatusPanel("markerStatus", this);
-		preview.add(tokenStatusPanel.setVisible(false));
-		preview.add(mapOptionsPanel.setVisible(false));
-		preview.add(markerStatusPanel.setVisible(false));
+		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				setVisible(visit(new BooleanMapViewStateVisitor() {
+					@Override
+					public Boolean visit(TokenInstanceClickedState tokenInstanceClickedState) {
+						return true;
+					}
+				}));
+			}
+		};
+		mapOptionsPanel = new MapOptionsPanel("mapOptions", view, this) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				setVisible(visit(new BooleanMapViewStateVisitor() {
+					@Override
+					public Boolean visit(LocationClickedState locationClickedState) {
+						return true;
+					}
+				}));
+			}
+		};
+		markerStatusPanel = new MarkerStatusPanel("markerStatus", this) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				setVisible(visit(new BooleanMapViewStateVisitor() {
+					@Override
+					public Boolean visit(AreaMarkerClickedState areaMarkerClickedState) {
+						return true;
+					}
+				}));
+			}
+		};
+		preview.add(tokenStatusPanel);
+		preview.add(mapOptionsPanel);
+		preview.add(markerStatusPanel);
 
 		preview.add(new OnClickBehavior() {
 			private static final long serialVersionUID = 9004992789363069534L;
@@ -163,16 +199,10 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 			@Override
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
-					previousClickedLocation = clickedLocation;
-					clickedLocation = new Point(coordinateTranslator.translateToRealImageSize(event.getOffsetLeft()), coordinateTranslator
-						.translateToRealImageSize(event.getOffsetTop()));
-					selectedMarker = Model.of();
-					selectedToken = Model.of();
+					onLocationClicked(new Point(coordinateTranslator.translateToRealImageSize(event.getOffsetLeft()), coordinateTranslator
+						.translateToRealImageSize(event.getOffsetTop())));
 
-					mapOptionsPanel.setVisible(true);
-					tokenStatusPanel.setVisible(false);
-					markerStatusPanel.setVisible(false);
-					target.add(mapOptionsPanel, tokenStatusPanel, markerStatusPanel);
+					refreshMenus(target);
 				}
 			}
 		});
@@ -294,14 +324,8 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 					@Override
 					protected void onClick(AjaxRequestTarget target, OnClickBehavior.ClickEvent event, TokenInstance instance) {
-						selectedToken = ModelMaker.wrap(instance);
-						clickedLocation = null;
-						selectedMarker = Model.of();
-
-						mapOptionsPanel.setVisible(false);
-						tokenStatusPanel.setVisible(true);
-						markerStatusPanel.setVisible(false);
-						target.add(tokenStatusPanel, mapOptionsPanel, markerStatusPanel);
+						onTokenClicked(instance);
+						refreshMenus(target);
 					}
 				}.withoutPropagation());
 
@@ -515,20 +539,13 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 					}
 				}));
-				marker.add(new OnClickBehavior() {
+				marker.add(new DependentOnClickBehavior<AreaMarker>(item.getModel()) {
 					private static final long serialVersionUID = 6159702123104745379L;
 
 					@Override
-					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-						selectedToken = Model.of();
-						clickedLocation = null;
-						selectedMarker = ModelMaker.wrap(item.getModelObject());
-
-						mapOptionsPanel.setVisible(false);
-						tokenStatusPanel.setVisible(false);
-						markerStatusPanel.setVisible(true);
-						target.add(tokenStatusPanel, mapOptionsPanel,
-							markerStatusPanel);
+					protected void onClick(AjaxRequestTarget target, ClickEvent event, AreaMarker marker) {
+						onAreaMarkerClicked(marker);
+						refreshMenus(target);
 					}
 				}.withoutPropagation());
 
@@ -718,11 +735,7 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 		});
 		preview.add(combatNavigator);
 
-
 		add(preview);
-
-		add(modal = new WebMarkupContainer(MODAL_ID));
-		modal.setOutputMarkupPlaceholderTag(true);
 	}
 
 	@Override
@@ -736,91 +749,24 @@ public class CombatControllerPage extends BootstrapBasePage implements DMViewCal
 
 	@Override
 	public void redrawMap(AjaxRequestTarget target) {
-		clickedLocation = null;
-		previousClickedLocation = null;
+		resetState();
+
 		if (preview instanceof AbstractMapPreview) {
 			((AbstractMapPreview) preview).refresh(target);
 		}
 	}
 
 	@Override
-	public void refreshMenus(AjaxRequestTarget target) {
-		target.add(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel, initiativePanel);
+	protected List<Component> getMenuComponents() {
+		return List.of(combatNavigator, tokenStatusPanel, mapOptionsPanel, markerStatusPanel, initiativePanel);
 	}
 
-	@Override
-	public TokenInstance getSelectedToken() {
-		return selectedToken.getObject();
-	}
-
-	@Override
-	public AreaMarker getSelectedMarker() {
-		return selectedMarker.getObject();
-	}
-
-	@Override
-	public Optional<Point> getClickedLocation() {
-		return Optional.ofNullable(clickedLocation);
-	}
-
-	@Override
-	public Optional<Point> getPreviousClickedLocation() {
-		return Optional.ofNullable(previousClickedLocation);
-	}
-
-	@Override
-	public <T extends DomainObject> void createModalWindow(
-		@Nonnull
-			AjaxRequestTarget target,
-		@Nonnull
-			PanelConstructor<T> constructor,
-		@Nullable
-			T object) {
-		disableClickListener = true;
-		Component oldModal = modal;
-		try {
-			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-			target.add(modal);
-			target.appendJavaScript("$('#combat-modal').modal('show');");
-		} catch (DMModalWindow.CannotCreateModalWindowException e) {
-			// Silent ignore. This exception is a way to abort creating the window when encountering
-			// inconsistent state
-		}
-
-
-	}
-
-	@Override
-	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
-		disableClickListener = true;
-		Component oldModal = modal;
-		try {
-			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-			target.add(modal);
-			target.appendJavaScript("$('#combat-modal').modal('show');");
-		} catch (DMModalWindow.CannotCreateModalWindowException e) {
-			// Silent ignore. This exception is a way to abort creating the window when encountering
-			// inconsistent state
-		}
-
-	}
-
-	@Override
-	public void removeModal(AjaxRequestTarget target) {
-		Component oldModal = modal;
-		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID)
-			.setOutputMarkupPlaceholderTag(true)
-			.setVisible(false));
-		target.add(modal);
-	}
 
 	@Override
 	protected void onDetach() {
 		super.onDetach();
 		mapModel.detach();
 		viewModel.detach();
-		selectedMarker.detach();
-		selectedToken.detach();
 
 		disableClickListener = false;
 	}

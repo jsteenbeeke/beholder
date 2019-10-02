@@ -39,6 +39,8 @@ public class MapOptionsPanel extends DMViewPanel<MapView> {
 	public MapOptionsPanel(String id, MapView view, DMViewCallback callback) {
 		super(id);
 
+		setOutputMarkupPlaceholderTag(true);
+
 		IModel<MapView> viewModel = ModelMaker.wrap(view);
 		setModel(viewModel);
 

@@ -45,6 +45,8 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 	public TokenStatusPanel(String id, DMViewCallback callback) {
 		super(id);
 
+		setOutputMarkupPlaceholderTag(true);
+
 		add(new Label("name", new LoadableDetachableModel<String>() {
 			private static final long serialVersionUID = 7572052680274915751L;
 
