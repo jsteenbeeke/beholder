@@ -508,7 +508,7 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
 								+ "!important; border-radius: 100%%; border: 1px "
 								+ "solid" + " "
-								+ "#00ff00; text-align: center; word-break: "
+								+ "#000000; text-align: center; word-break: "
 								+ "break-all; vertical-align: middle; display: "
 								+ "table-cell; color: #cccccc; "
 								+ "background-image: url('%4$s'); background-size: "
@@ -526,6 +526,9 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 					@Override
 					protected void onClick(AjaxRequestTarget target, ClickEvent event, DungeonMasterNote note) {
 						onNoteClicked(note);
+
+						createModalWindow(target, ViewNoteWindow::new, note);
+
 						refreshMenus(target);
 					}
 				}.withoutPropagation());
