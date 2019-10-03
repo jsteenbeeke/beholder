@@ -21,8 +21,6 @@ import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.ImageResource;
 import com.jeroensteenbeeke.topiroll.beholder.entities.Campaign;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenDefinition;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.OnClickBehavior;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CompendiumWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
@@ -31,8 +29,9 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.YoutubePlaylistWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.AbstractPageTest;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.*;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration.ExplorationControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.StatefulMapControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.combat.CombatControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.exploration.ExplorationControllerPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -48,7 +47,6 @@ import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CampaignsTest extends AbstractPageTest {
 	@Test
@@ -520,9 +518,9 @@ public class CampaignsTest extends AbstractPageTest {
 	private void check_playlist_window() {
 
 		wicketTester.clickLink("preview:explorationNavigator:playlists", true);
-		wicketTester.assertComponentOnAjaxResponse(ExplorationControllerPage.MODAL_ID);
+		wicketTester.assertComponentOnAjaxResponse(StatefulMapControllerPage.MODAL_ID);
 
-		Component window = wicketTester.getComponentFromLastRenderedPage(ExplorationControllerPage.MODAL_ID);
+		Component window = wicketTester.getComponentFromLastRenderedPage(StatefulMapControllerPage.MODAL_ID);
 		assertThat(window, instanceOf(YoutubePlaylistWindow.class));
 		wicketTester.assertLabel("modal:playlists:1:name", "Battle Music");
 		wicketTester.assertNotExists("modal:playlists:2");
@@ -531,15 +529,15 @@ public class CampaignsTest extends AbstractPageTest {
 	private void check_compendium_window(String path) {
 
 		wicketTester.clickLink(path, true);
-		wicketTester.assertComponentOnAjaxResponse(ExplorationControllerPage.MODAL_ID);
+		wicketTester.assertComponentOnAjaxResponse(StatefulMapControllerPage.MODAL_ID);
 
-		Component window = wicketTester.getComponentFromLastRenderedPage(ExplorationControllerPage.MODAL_ID);
+		Component window = wicketTester.getComponentFromLastRenderedPage(StatefulMapControllerPage.MODAL_ID);
 		assertThat(window, instanceOf(CompendiumWindow.class));
 
 		FormTester formTester = wicketTester.newFormTester("modal:form");
 		formTester.setValue("query", "Compendium Entry");
 
-		formTester.submit();
+		wicketTester.executeAjaxEvent("modal:form:query", "keyup");
 
 		wicketTester.assertLabel("modal:results:options:0:title", "Compendium Entry A");
 		wicketTester.assertNotExists("modal:results:options:1");
@@ -547,9 +545,9 @@ public class CampaignsTest extends AbstractPageTest {
 
 	private void check_portraits_window() {
 		wicketTester.clickLink("preview:explorationNavigator:portraits", true);
-		wicketTester.assertComponentOnAjaxResponse(ExplorationControllerPage.MODAL_ID);
+		wicketTester.assertComponentOnAjaxResponse(StatefulMapControllerPage.MODAL_ID);
 
-		Component window = wicketTester.getComponentFromLastRenderedPage(ExplorationControllerPage.MODAL_ID);
+		Component window = wicketTester.getComponentFromLastRenderedPage(StatefulMapControllerPage.MODAL_ID);
 		assertThat(window, instanceOf(PortraitsWindow.class));
 
 
@@ -563,9 +561,9 @@ public class CampaignsTest extends AbstractPageTest {
 
 	private void check_maps_window() {
 		wicketTester.clickLink("preview:explorationNavigator:mapselect", true);
-		wicketTester.assertComponentOnAjaxResponse(ExplorationControllerPage.MODAL_ID);
+		wicketTester.assertComponentOnAjaxResponse(StatefulMapControllerPage.MODAL_ID);
 
-		Component window = wicketTester.getComponentFromLastRenderedPage(ExplorationControllerPage.MODAL_ID);
+		Component window = wicketTester.getComponentFromLastRenderedPage(StatefulMapControllerPage.MODAL_ID);
 		assertThat(window, instanceOf(MapSelectWindow.class));
 
 		wicketTester.assertLabel("modal:folders:0:foldername", "Folder A");
@@ -587,9 +585,9 @@ public class CampaignsTest extends AbstractPageTest {
 		onClickBehaviors.forEach(wicketTester::executeBehavior);
 
 		wicketTester.clickLink(path, true);
-		wicketTester.assertComponentOnAjaxResponse(ExplorationControllerPage.MODAL_ID);
+		wicketTester.assertComponentOnAjaxResponse(StatefulMapControllerPage.MODAL_ID);
 
-		Component window = wicketTester.getComponentFromLastRenderedPage(ExplorationControllerPage.MODAL_ID);
+		Component window = wicketTester.getComponentFromLastRenderedPage(StatefulMapControllerPage.MODAL_ID);
 		assertThat(window, instanceOf(CreateTokenWindow.class));
 
 		Component type = window.get("form:type");

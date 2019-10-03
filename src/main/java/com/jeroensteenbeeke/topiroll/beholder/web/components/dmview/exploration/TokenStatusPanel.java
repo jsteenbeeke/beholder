@@ -141,12 +141,7 @@ public class TokenStatusPanel extends DMViewPanel<MapView> {
 
 			@Override
 			protected String load() {
-				TokenInstance token = callback.getSelectedToken();
-				if (token.isShow()) {
-					return "Hide";
-				} else {
-					return "Reveal";
-				}
+				return Optional.ofNullable(callback.getSelectedToken()).filter(TokenInstance::isShow).map(t -> "Hide").orElse("Reveal");
 			}
 		}));
 

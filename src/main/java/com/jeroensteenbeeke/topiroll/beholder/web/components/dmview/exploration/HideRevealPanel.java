@@ -148,6 +148,16 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			}
 		});
 
+		add(new AjaxLink<>("newnote", viewModel.map(MapView::getSelectedMap)) {
+			private static final long serialVersionUID = -542296264646923581L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				callback.createModalWindow(target, CreateNoteWindow::new,
+										   getModelObject());
+			}
+		});
+
 		add(new ListView<>("links", loadLinks(callback)) {
 			private static final long serialVersionUID = 3285783029914710847L;
 

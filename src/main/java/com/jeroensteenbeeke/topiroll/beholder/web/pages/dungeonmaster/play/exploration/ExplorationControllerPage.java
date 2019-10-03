@@ -1,39 +1,36 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.exploration;
+package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.exploration;
 
 import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
+import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarShapeDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.DungeonMasterNoteFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
-import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.AddToSessionLogWindow;
@@ -45,7 +42,9 @@ import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCoordinateTranslator;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.combat.CombatControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.StatefulMapControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.combat.CombatControllerPage;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.*;
 import io.vavr.control.Option;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -59,6 +58,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -74,33 +75,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ExplorationControllerPage extends BootstrapBasePage implements DMViewCallback {
+public class ExplorationControllerPage extends StatefulMapControllerPage implements DMViewCallback {
 	private static final long serialVersionUID = 383172566857420866L;
 
-	public static final String MODAL_ID = "modal";
 	private static final String TOKEN_ID = "token";
 	private static final String PARTICIPANT_ID = "participant";
 	private final WebMarkupContainer explorationNavigator;
-	private final HideRevealPanel hideReveal;
 	private final TokenStatusPanel tokenStatusPanel;
+	private final HideRevealPanel hideReveal;
 
 	private Integer scrollToX;
 
 	private Integer scrollToY;
 
-	private Component modal;
-
-	private IModel<TokenInstance> selectedToken = Model.of();
-
-	private IModel<AreaMarker> selectedMarker = Model.of();
-
 	private final IModel<ScaledMap> mapModel;
 
 	private final IModel<MapView> viewModel;
-
-	private Point clickedLocation = null;
-
-	private Point previousClickedLocation = null;
 
 	@Inject
 	private MapService mapService;
@@ -114,11 +104,13 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	@Inject
 	private FogOfWarShapeDAO shapeDAO;
 
+	@Inject
+	private DungeonMasterNoteDAO noteDAO;
+
 	private final WebMarkupContainer preview;
 
 	private final ICoordinateTranslator coordinateTranslator;
 
-	private boolean disableClickListener = false;
 	private double displayFactor;
 
 	public ExplorationControllerPage(@Nonnull MapView view) {
@@ -203,10 +195,36 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			coordinateTranslator = (AbstractMapPreview) preview;
 		}
 
-		preview.add(hideReveal = new HideRevealPanel("reveal", viewModel.getObject(), this));
-		hideReveal.setVisible(false);
+		preview.add(hideReveal = new HideRevealPanel("reveal", viewModel.getObject(), this) {
+			private static final long serialVersionUID = 393929764983365916L;
 
-		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this);
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+				setVisible(visit(new BooleanMapViewStateVisitor() {
+					@Override
+					public Boolean visit(LocationClickedState locationClickedState) {
+						return true;
+					}
+				}));
+			}
+		});
+
+		tokenStatusPanel = new TokenStatusPanel("tokenStatus", this) {
+			private static final long serialVersionUID = 685734562214333149L;
+
+			@Override
+			protected void onConfigure() {
+				super.onConfigure();
+
+				setVisible(visit(new BooleanMapViewStateVisitor() {
+					@Override
+					public Boolean visit(TokenInstanceClickedState clickedState) {
+						return true;
+					}
+				}));
+			}
+		};
 		preview.add(tokenStatusPanel.setVisible(false));
 
 		preview.add(new OnClickBehavior() {
@@ -215,12 +233,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 			@Override
 			protected void onClick(AjaxRequestTarget target, ClickEvent event) {
 				if (!disableClickListener) {
-					ExplorationControllerPage.this.onClick(event);
-
-					hideReveal.setVisible(true);
-					tokenStatusPanel.setVisible(false);
-
-					target.add(hideReveal, tokenStatusPanel);
+					ExplorationControllerPage.this.onClick(event, target);
 				}
 			}
 		});
@@ -273,12 +286,13 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						top = coordinateTranslator.translateToScaledImageSize(top);
 
 						int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
-						
+
 						String urlFormat = "url('%1$s')";
 						String imageUrl = String.format(urlFormat, i.getDefinition().getImageUrl());
 						if (i.getStatusEffect() != null) {
-							String statusImageUrl = String.format(urlFormat, 
-									UrlUtils.rewriteToContextRelative("img/statuseffects/" + i.getStatusEffect() + ".png", RequestCycle.get()));
+							String statusImageUrl = String.format(urlFormat,
+																  UrlUtils.rewriteToContextRelative("img/statuseffects/" + i
+																	  .getStatusEffect() + ".png", RequestCycle.get()));
 							imageUrl = String.join(", ", statusImageUrl, imageUrl);
 						}
 
@@ -305,7 +319,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						return Optional.ofNullable(instance).filter(
 							i -> i.getCurrentHitpoints() != null
 								&& i.getMaxHitpoints() != null).map(
-								i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()).map(p -> String
+							i -> 100 * i.getCurrentHitpoints() / i.getMaxHitpoints()).map(p -> String
 							.format("%s (%d%% health)", instance.getBadge(), p)).orElse(instance.getBadge());
 					}
 				}));
@@ -314,12 +328,12 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				draggableOptions.set("opacity", "0.5");
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new DependentStopEnabledDraggableBehavior<>(item.getModel(),
-					draggableOptions) {
+																	  draggableOptions) {
 					private static final long serialVersionUID = -1407439608333482730L;
 
 					@Override
 					protected void onStop(AjaxRequestTarget target,
-						TokenInstance instance, int left, int top) {
+										  TokenInstance instance, int left, int top) {
 						left = coordinateTranslator.translateToRealImageSize(left);
 						top = coordinateTranslator.translateToRealImageSize(top);
 
@@ -334,13 +348,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 					@Override
 					protected void onClick(AjaxRequestTarget target, ClickEvent event, TokenInstance instance) {
-						selectedToken = ModelMaker.wrap(instance);
-						clickedLocation = null;
-						selectedMarker = Model.of();
-
-						hideReveal.setVisible(false);
-						tokenStatusPanel.setVisible(true);
-
+						onTokenClicked(instance);
 						refreshMenus(target);
 					}
 				}.withoutPropagation());
@@ -381,11 +389,15 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 					protected String load() {
 						InitiativeParticipant participant = item.getModelObject();
 
-						int left = Option.of(participant.getOffsetX()).map(Math::abs).orElse(() -> Option.of(map)
-							.map(ScaledMap::getBasicWidth).map(
+						int left = Option.of(participant.getOffsetX()).map(Math::abs).orElse(() -> Option
+							.of(map)
+							.map(ScaledMap::getBasicWidth)
+							.map(
 								width -> (int) (width * displayFactor / 2))).getOrElse(0);
-						int top = Option.of(participant.getOffsetY()).map(Math::abs).orElse(() -> Option.of(map)
-							.map(ScaledMap::getBasicHeight).map(
+						int top = Option.of(participant.getOffsetY()).map(Math::abs).orElse(() -> Option
+							.of(map)
+							.map(ScaledMap::getBasicHeight)
+							.map(
 								width -> (int) (width * displayFactor / 2))).getOrElse(0);
 
 						left = coordinateTranslator.translateToScaledImageSize(left);
@@ -405,7 +417,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 								+ "background-image: url('%4$s'); background-size: "
 								+ "%3$dpx %3$dpx;", left, top, actualWH,
 							UrlUtils.rewriteToContextRelative("img/player.png",
-								RequestCycle.get()));
+															  RequestCycle.get()));
 					}
 
 				}));
@@ -416,7 +428,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				draggableOptions.set("containment", Options.asString("parent"));
 				image.add(new
 
-					DraggableBehavior(draggableOptions, new DraggableAdapter() {
+							  DraggableBehavior(draggableOptions, new DraggableAdapter() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
@@ -427,7 +439,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 					@Override
 					public void onDragStop(AjaxRequestTarget target, int top,
-						int left) {
+										   int left) {
 						super.onDragStop(target, top, left);
 
 						// TODO: Service method?
@@ -437,18 +449,92 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						participantDAO.update(participant);
 
 					}
-				})).add(new OnClickBehavior() {
+				})).add(new DependentOnClickBehavior<>(item.getModel()) {
 					private static final long serialVersionUID = 5502865667110141675L;
 
 					@Override
-					protected void onClick(AjaxRequestTarget target, ClickEvent event) {
-						// TODO: What happens when clicking a player marker
+					protected void onClick(AjaxRequestTarget target, ClickEvent event, InitiativeParticipant participant) {
+						onParticipantClicked(participant);
+						refreshMenus(target);
 					}
 				});
 
 				item.add(image);
 			}
 		}.setReuseItems(true));
+
+		DungeonMasterNoteFilter noteFilter = new DungeonMasterNoteFilter();
+		if (map != null) {
+			noteFilter.map(map);
+		} else {
+			// Non-nullable, so empty list
+			noteFilter.map().isNull();
+		}
+
+		preview.add(new DataView<DungeonMasterNote>("notes", FilterDataProvider.of(noteFilter, noteDAO)) {
+			private static final long serialVersionUID = -4700768875775660965L;
+
+			@Override
+			protected void populateItem(Item<DungeonMasterNote> item) {
+				int wh = Optional.ofNullable(map).map(ScaledMap::getSquareSize).map(i -> i / 2).orElse(0);
+
+				Label image = new Label("note", "");
+				image.add(AttributeModifier.replace("style", new LoadableDetachableModel<String>() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected String load() {
+						DungeonMasterNote note = item.getModelObject();
+
+						int left = Option.of(note.getOffsetX()).map(Math::abs).orElse(() -> Option
+							.of(map)
+							.map(ScaledMap::getBasicWidth)
+							.map(
+								width -> (int) (width * displayFactor / 2))).getOrElse(0);
+						int top = Option.of(note.getOffsetY()).map(Math::abs).orElse(() -> Option
+							.of(map)
+							.map(ScaledMap::getBasicHeight)
+							.map(
+								width -> (int) (width * displayFactor / 2))).getOrElse(0);
+
+						left = coordinateTranslator.translateToScaledImageSize(left);
+						top = coordinateTranslator.translateToScaledImageSize(top);
+
+						int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
+
+						return String.format(
+							"position: absolute; left: %1$dpx; top: %2$dpx; max-width: %3$dpx !important;"
+								+ " "
+								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
+								+ "!important; border-radius: 100%%; border: 1px "
+								+ "solid" + " "
+								+ "#000000; text-align: center; word-break: "
+								+ "break-all; vertical-align: middle; display: "
+								+ "table-cell; color: #cccccc; "
+								+ "background-image: url('%4$s'); background-size: "
+								+ "%3$dpx %3$dpx;", left, top, actualWH,
+							UrlUtils.rewriteToContextRelative("img/note.png",
+															  RequestCycle.get()));
+					}
+
+				}));
+
+
+				image.add(new DependentOnClickBehavior<>(item.getModel()) {
+					private static final long serialVersionUID = -5156716010790702323L;
+
+					@Override
+					protected void onClick(AjaxRequestTarget target, ClickEvent event, DungeonMasterNote note) {
+						onNoteClicked(note);
+
+						createModalWindow(target, ViewNoteWindow::new, note);
+
+						refreshMenus(target);
+					}
+				}.withoutPropagation());
+				item.add(image);
+			}
+		});
 
 		explorationNavigator = new WebMarkupContainer("explorationNavigator");
 		explorationNavigator.setOutputMarkupId(true);
@@ -531,7 +617,7 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 						@Override
 						public void onClick(AjaxRequestTarget target) {
 							createModalWindow(target, CompendiumWindow::new,
-								getModelObject());
+											  getModelObject());
 
 						}
 					};
@@ -569,9 +655,6 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 
 
 		add(preview);
-
-		add(modal = new WebMarkupContainer(MODAL_ID));
-		modal.setOutputMarkupPlaceholderTag(true);
 	}
 
 	@Override
@@ -579,20 +662,16 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 		return viewModel.getObject();
 	}
 
-	public void onClick(OnClickBehavior.ClickEvent event) {
-		previousClickedLocation = clickedLocation;
-		clickedLocation = new Point((int) (event.getOffsetLeft() / displayFactor), (int)
+	public void onClick(OnClickBehavior.ClickEvent event, AjaxRequestTarget target) {
+		onLocationClicked(new Point((int) (event.getOffsetLeft() / displayFactor), (int)
+			(event.getOffsetTop() / displayFactor)));
 
-			(event
-				.getOffsetTop() / displayFactor));
-		selectedMarker = Model.of();
-		selectedToken = Model.of();
+		refreshMenus(target);
 	}
 
 	@Override
 	public void redrawMap(AjaxRequestTarget target) {
-		clickedLocation = null;
-		previousClickedLocation = null;
+		resetState();
 
 		if (preview instanceof AbstractMapPreview) {
 			((AbstractMapPreview) preview).refresh(target);
@@ -600,83 +679,16 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 	}
 
 	@Override
-	public void refreshMenus(AjaxRequestTarget target) {
-		target.add(explorationNavigator, tokenStatusPanel);
+	protected List<Component> getMenuComponents() {
+		return List.of(explorationNavigator, tokenStatusPanel, hideReveal);
 	}
 
-	@Override
-	public TokenInstance getSelectedToken() {
-		return selectedToken.getObject();
-	}
-
-	@Override
-	public AreaMarker getSelectedMarker() {
-		return selectedMarker.getObject();
-	}
-
-	@Override
-	public Optional<Point> getClickedLocation() {
-		return Optional.ofNullable(clickedLocation);
-	}
-
-	@Override
-	public Optional<Point> getPreviousClickedLocation() {
-		return Optional.ofNullable(previousClickedLocation);
-	}
-
-
-	@Override
-	public <T extends DomainObject> void createModalWindow(
-		@Nonnull
-			AjaxRequestTarget target,
-		@Nonnull
-			PanelConstructor<T> constructor,
-		@Nullable
-			T object) {
-		disableClickListener = true;
-		Component oldModal = modal;
-		try {
-			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-			target.add(modal);
-			target.appendJavaScript("$('#combat-modal').modal('show');");
-		} catch (DMModalWindow.CannotCreateModalWindowException e) {
-			// Silent ignore. This exception is a way to abort creating the window when encountering
-			// inconsistent state
-		}
-	}
-
-	@Override
-	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
-		disableClickListener = true;
-		Component oldModal = modal;
-		try {
-			oldModal.replaceWith(modal = constructor.apply(MODAL_ID, object, this));
-			target.add(modal);
-			target.appendJavaScript("$('#combat-modal').modal('show');");
-		} catch (DMModalWindow.CannotCreateModalWindowException e) {
-			// Silent ignore. This exception is a way to abort creating the window when encountering
-			// inconsistent state
-		}
-	}
-
-	@Override
-	public void removeModal(AjaxRequestTarget target) {
-		Component oldModal = modal;
-		oldModal.replaceWith(modal = new WebMarkupContainer(MODAL_ID)
-			.setOutputMarkupPlaceholderTag(true)
-			.setVisible(false));
-		target.add(modal);
-	}
 
 	@Override
 	protected void onDetach() {
 		super.onDetach();
 		mapModel.detach();
 		viewModel.detach();
-		selectedMarker.detach();
-		selectedToken.detach();
-
-		disableClickListener = false;
 	}
 
 	@Override
@@ -694,4 +706,5 @@ public class ExplorationControllerPage extends BootstrapBasePage implements DMVi
 				OnDomReadyHeaderItem.forScript(script));
 		}
 	}
+
 }
