@@ -2,7 +2,10 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import java.io.Serializable;
+import java.util.Optional;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -41,6 +44,9 @@ public class DungeonMasterNote extends BaseDomainObject implements Serializable 
 
     @Column(nullable = false)
     private String note;
+
+    @Column(nullable = true)
+    private String color;
 
     public Long getId() {
         return id;
@@ -89,5 +95,19 @@ public class DungeonMasterNote extends BaseDomainObject implements Serializable 
 
     public void setNote(@Nonnull String note) {
         this.note = note;
+    }
+
+    @CheckForNull
+    public String getColor() {
+        return color;
+    }
+
+    @Nonnull
+    public Optional<String> color() {
+        return Optional.ofNullable(color);
+    }
+
+    public void setColor(@Nullable String color) {
+        this.color = color;
     }
 }

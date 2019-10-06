@@ -17,6 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
+import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapFeedbackPanel;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapModalWindow;
 import org.apache.wicket.model.IModel;
 
@@ -27,6 +28,7 @@ public class DMModalWindow<T> extends BootstrapModalWindow {
 	protected DMModalWindow(String id, String title) {
 		super(id, title);
 		setOutputMarkupPlaceholderTag(true);
+		add(new BootstrapFeedbackPanel("feedback"));
 
 		getDialog().setMarkupId("combat-modal");
 	}
@@ -34,6 +36,7 @@ public class DMModalWindow<T> extends BootstrapModalWindow {
 	protected DMModalWindow(String id, IModel<T> model, String title) {
 		super(id, model, title);
 		setOutputMarkupPlaceholderTag(true);
+		add(new BootstrapFeedbackPanel("feedback"));
 
 		getDialog().setMarkupId("combat-modal");
 	}

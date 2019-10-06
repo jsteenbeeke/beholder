@@ -17,12 +17,13 @@ class NoteServiceImpl implements NoteService {
 
 	@Override
 	@Transactional
-	public void createNote(ScaledMap map, int x, int y, String text) {
+	public void createNote(ScaledMap map, int x, int y, String color, String text) {
 		DungeonMasterNote note = new DungeonMasterNote();
 		note.setMap(map);
 		note.setOffsetX(x);
 		note.setOffsetY(y);
 		note.setNote(text);
+		note.setColor(color.startsWith("#") ? color.substring(1) : color);
 		noteDAO.save(note);
 	}
 }

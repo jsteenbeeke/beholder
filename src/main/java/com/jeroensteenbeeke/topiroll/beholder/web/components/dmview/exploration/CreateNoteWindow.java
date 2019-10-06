@@ -7,10 +7,11 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.DungeonMasterNote;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.CreateTokenWindow;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.validation.validator.PatternValidator;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -30,6 +31,15 @@ public class CreateNoteWindow extends DMModalWindow<ScaledMap> {
 		final int y = point.y;
 
 		TextArea<String> textArea = new TextArea<>("text", Model.of(""));
+		TextField<String> colorField = new TextField<>("color", Model.of("")) {
+			private static final long serialVersionUID = -5003631731986321641L;
+
+			@Override
+			protected String[] getInputTypes() {
+				return new String[] { "color" };
+			}
+		};
+		colorField.add(new PatternValidator("^(|#[0-9a-fA-F]{6})$"));
 
 		Form<DungeonMasterNote> form = new Form<>("form") {
 
@@ -39,10 +49,11 @@ public class CreateNoteWindow extends DMModalWindow<ScaledMap> {
 			protected void onSubmit() {
 				super.onSubmit();
 
-				noteService.createNote(CreateNoteWindow.this.getModelObject(), x, y, textArea.getModelObject());
+				noteService.createNote(CreateNoteWindow.this.getModelObject(), x, y, colorField.getModelObject(), textArea.getModelObject());
 			}
 		};
 		form.add(textArea);
+		form.add(colorField);
 
 		add(form);
 

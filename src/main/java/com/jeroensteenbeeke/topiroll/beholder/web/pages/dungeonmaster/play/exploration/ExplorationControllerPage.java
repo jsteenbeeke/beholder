@@ -508,13 +508,14 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 								+ "width: %3$dpx; height: %3$dpx; max-height: %3$dpx "
 								+ "!important; border-radius: 100%%; border: 1px "
 								+ "solid" + " "
-								+ "#000000; text-align: center; word-break: "
+								+ "#%5$s; text-align: center; word-break: "
 								+ "break-all; vertical-align: middle; display: "
 								+ "table-cell; color: #cccccc; "
 								+ "background-image: url('%4$s'); background-size: "
 								+ "%3$dpx %3$dpx;", left, top, actualWH,
 							UrlUtils.rewriteToContextRelative("img/note.png",
-															  RequestCycle.get()));
+															  RequestCycle.get()),
+							note.color().orElse("000000"));
 					}
 
 				}));
