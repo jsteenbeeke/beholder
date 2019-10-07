@@ -80,7 +80,7 @@ public class UploadTokenStep2Page extends AuthenticatedPage {
 
 		final DropDownChoice<Campaign> campaignChoice = new DropDownChoice<>("campaign", ModelMaker.wrap(Campaign.class), new CampaignsModel(), LambdaRenderer
 			.of(Campaign::getName));
-		campaignChoice.setRequired(true);
+		campaignChoice.setRequired(false);
 		campaignChoice.setNullValid(true);
 
 		final Image previewImage = new NonCachingImage("preview",
