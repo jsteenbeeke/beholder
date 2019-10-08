@@ -1,17 +1,17 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,7 @@ import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRender
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.ScaledMapDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarGroup;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapLink;
 import com.jeroensteenbeeke.topiroll.beholder.entities.ScaledMap;
@@ -34,6 +35,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.Authentica
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.FogOfWarPreviewRenderer;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewMapPage;
 import io.vavr.collection.Seq;
+import io.vavr.control.Option;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.*;
@@ -79,19 +81,18 @@ public class CreateLinkPage extends AuthenticatedPage {
 		preview.setOutputMarkupId(true);
 
 		TextField<String> sourceField = new TextField<>("source", sourceModel.map(group -> String.format("%s in %s",
-				group.getName(), group.getMap().getName()
+																										 group.getName(), group
+																											 .getMap()
+																											 .getName()
 		)));
 		sourceField.setEnabled(false);
 
 		CheckBox bidirectionalCheckbox = new CheckBox("bidirectional", Model.of(true));
 
-		ScaledMapFilter mapFilter = new ScaledMapFilter();
-		mapFilter.owner(getUser());
-		mapFilter.folder().orderBy(true);
-		mapFilter.name().orderBy(true);
 
-		DropDownChoice<FogOfWarGroup> targetSelect = new AjaxDropDownChoice<FogOfWarGroup>("target", Model.of(), ModelMaker.wrapList(ImmutableList.of(source)),
-				LambdaRenderer.of(FogOfWarGroup::getName)) {
+		DropDownChoice<FogOfWarGroup> targetSelect = new AjaxDropDownChoice<FogOfWarGroup>("target", Model.of(), ModelMaker
+			.wrapList(ImmutableList.of(source)),
+																						   LambdaRenderer.of(FogOfWarGroup::getName)) {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -107,7 +108,12 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
-						groupModel.getObject().getShapes().stream().map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor))).forEach(js::append);
+						groupModel
+							.getObject()
+							.getShapes()
+							.stream()
+							.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+							.forEach(js::append);
 					}
 				};
 				newPreview.setOutputMarkupId(true);
@@ -123,9 +129,18 @@ public class CreateLinkPage extends AuthenticatedPage {
 		targetSelect.setRequired(true);
 		targetSelect.setNullValid(false);
 
+		ScaledMapFilter mapFilter = new ScaledMapFilter();
+		mapFilter.owner(getUser());
+		mapFilter.folder().orderBy(true);
+		mapFilter.name().orderBy(true);
+		Option
+			.of(getUser())
+			.flatMap(BeholderUser::activeCampaign)
+			.peek(c -> mapFilter.campaign().isNull().orCampaign(c));
+
 		Seq<ScaledMap> mapOptions = mapDAO.findByFilter(mapFilter);
 		mapSelect = new AjaxDropDownChoice<>("map", ModelMaker.wrap(ScaledMap.class),
-			ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
+											 ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -159,8 +174,8 @@ public class CreateLinkPage extends AuthenticatedPage {
 					}
 
 					targetSelect.setChoices(ModelMaker.wrapList(actualOptions.nonEmpty() ?
-						actualOptions.toJavaList() :
-						allOptions.toJavaList()));
+																	actualOptions.toJavaList() :
+																	allOptions.toJavaList()));
 					targetSelect.setModel(ModelMaker.wrap(FogOfWarGroup.class));
 					targetSelect.setEnabled(actualOptions.nonEmpty());
 				}

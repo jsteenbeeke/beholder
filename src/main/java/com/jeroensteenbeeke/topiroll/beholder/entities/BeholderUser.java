@@ -258,6 +258,7 @@ public class BeholderUser extends BaseDomainObject {
 
 
 	@Transient
+	@Nonnull
 	public Option<Campaign> activeCampaign() {
 		return Option.of(getActiveCampaign());
 	}
