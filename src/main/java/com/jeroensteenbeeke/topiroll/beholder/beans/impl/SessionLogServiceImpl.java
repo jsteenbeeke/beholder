@@ -48,7 +48,9 @@ class SessionLogServiceImpl implements SessionLogService {
 		return item;
 	}
 
+	@Nonnull
 	@Override
+	@Transactional
 	public TypedResult<SessionLogItem> addSessionLogEntry(@Nonnull BeholderUser user, @Nonnull String description, @Nonnull Option<InitiativeParticipant> participantOrCause, @Nonnull TokenInstance target, int damage, boolean lethal) {
 		return getOrCreateTodayIndex(user).map(index -> {
 			final var killDescription = lethal ? ", killing " + target.getLabel() : "";
@@ -65,6 +67,7 @@ class SessionLogServiceImpl implements SessionLogService {
 
 	@Nonnull
 	@Override
+	@Transactional
 	public ActionResult setCompleted(@Nonnull SessionLogItem logItem) {
 		logItem.setCompleted(true);
 		sessionLogItemDAO.update(logItem);
@@ -75,6 +78,7 @@ class SessionLogServiceImpl implements SessionLogService {
 
 	@Nonnull
 	@Override
+	@Transactional
 	public ActionResult setNotCompleted(@Nonnull SessionLogItem logItem) {
 		logItem.setCompleted(false);
 		sessionLogItemDAO.update(logItem);

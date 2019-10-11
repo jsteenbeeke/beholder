@@ -63,4 +63,8 @@
 			<column name="logindex"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="sessionlog-rename-userid" author="Jeroen Steenbeeke">
+		<renameColumn tableName="sessionlogitem" oldColumnName="user" newColumnName="user_id" />
+	</changeSet>
 </databaseChangeLog>

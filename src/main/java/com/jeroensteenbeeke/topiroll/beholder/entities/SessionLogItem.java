@@ -22,7 +22,7 @@ public class SessionLogItem extends BaseDomainObject {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "user")
+	@JoinColumn(name = "user_id")
 	private BeholderUser user;
  	@Column(nullable=false)
 	private boolean completed;
