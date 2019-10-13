@@ -60,7 +60,7 @@ public class YouTubePlaylist extends BaseDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "campaign")
-	@EntityFormField(label = "Campaign", required = true, type = DefaultFieldType.DropDownChoice.class)
+	@EntityFormField(label = "Campaign", required = false, type = DefaultFieldType.DropDownChoice.class)
 	private Campaign campaign;
 
 	@Column(nullable = true)
