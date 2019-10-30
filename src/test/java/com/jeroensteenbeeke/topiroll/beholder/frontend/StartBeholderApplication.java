@@ -45,7 +45,7 @@ public class StartBeholderApplication {
 		SerializableConsumer<WebAppContext> initWebsockets = context -> {
 			try {
 				ServerContainer wscontainer = WebSocketServerContainerInitializer
-					.configureContext(context);
+					.initialize(context);
 
 				wscontainer.addEndpoint(new WicketServerEndpointConfig());
 			} catch (DeploymentException | ServletException e) {

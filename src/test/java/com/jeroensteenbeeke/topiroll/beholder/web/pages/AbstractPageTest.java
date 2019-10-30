@@ -50,7 +50,7 @@ public class AbstractPageTest {
 	private static final String APPLICATION_KEY = "wicket.BeholderApplication";
 
 
-	private static InMemory.Handler handler;
+	private InMemory.Handler handler;
 
 	protected WicketTester wicketTester;
 
@@ -58,24 +58,11 @@ public class AbstractPageTest {
 
 	private EntityManagerFactory entityManagerFactory;
 
-	@BeforeClass
-	public static void startApplication() throws Exception {
+	@Before
+	public void startApplication() throws Exception {
 		handler = StartBeholderApplication
 			.createApplicationHandler(new String[0]).orElseThrow(IllegalStateException::new);
-	}
 
-	protected void login() {
-		BeholderUser beholderUser = application.getBean(IdentityService.class).getOrCreateUser(
-			new IdentityService.UserDescriptor().setAccessToken("I_bet_she_could_succubus")
-				.setAvatar("http://localhost:8081/beholder/img/logo48.png").setTeamId("31337")
-				.setTeamName("Topiroll").setUserId("1337")
-				.setUserName(System.getProperty("user.name")));
-
-		BeholderSession.get().setUser(beholderUser);
-	}
-
-	@Before
-	public void createTester() {
 		application = (BeholderApplication) Application.get(APPLICATION_KEY);
 		wicketTester = new WicketTester(application, false);
 
@@ -95,15 +82,26 @@ public class AbstractPageTest {
 		TransactionSynchronizationManager.bindResource(entityManagerFactory, emHolder);
 	}
 
+
+	protected void login() {
+		BeholderUser beholderUser = application.getBean(IdentityService.class).getOrCreateUser(
+			new IdentityService.UserDescriptor().setAccessToken("I_bet_she_could_succubus")
+				.setAvatar("http://localhost:8081/beholder/img/logo48.png").setTeamId("31337")
+				.setTeamName("Topiroll").setUserId("1337")
+				.setUserName(System.getProperty("user.name")));
+
+		BeholderSession.get().setUser(beholderUser);
+	}
+
+
 	@After
 	public void endRequest() {
 		TransactionSynchronizationManager.unbindResource(entityManagerFactory);
 
 		RequestContextHolder.resetRequestAttributes();
-	}
-
-	@AfterClass
-	public static void shutdownApplication() throws Exception {
-		handler.terminate();
+		
+		if (handler != null) {
+			handler.terminate();
+		}
 	}
 }
