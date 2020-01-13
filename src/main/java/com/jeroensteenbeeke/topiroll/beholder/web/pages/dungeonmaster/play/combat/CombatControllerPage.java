@@ -42,6 +42,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.Initi
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.MapOptionsPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.MarkerStatusPanel;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat.TokenStatusPanel;
+import com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration.YoutubePlaylistWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.model.DependentModel;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCoordinateTranslator;
@@ -692,6 +693,14 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 				createModalWindow(target, AddToSessionLogWindow::new, null);
 			}
 
+		});
+		combatNavigator.add(new AjaxLink<MapView>("playlists") {
+			private static final long serialVersionUID = 3284435177217199400L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				createModalWindow(target, YoutubePlaylistWindow::new, viewModel.getObject());
+			}
 		});
 
 		PinnedCompendiumEntryFilter filter = new PinnedCompendiumEntryFilter();
