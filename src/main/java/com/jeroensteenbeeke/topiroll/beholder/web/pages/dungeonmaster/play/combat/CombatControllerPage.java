@@ -633,12 +633,9 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 						int left) {
 						super.onDragStop(target, top, left);
 
-						// TODO: Service method?
-						InitiativeParticipant participant = item.getModelObject();
-						participant.setOffsetX((int) (left / displayFactor));
-						participant.setOffsetY((int) (top / displayFactor));
-						participantDAO.update(participant);
+						mapService.updateParticipantPosition(item.getModelObject(), (int) (left / displayFactor), (int) (top / displayFactor));
 
+						redrawMap(target);
 					}
 				})).add(new OnClickBehavior() {
 					private static final long serialVersionUID = -3342358052152683138L;

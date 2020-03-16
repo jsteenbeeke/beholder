@@ -1,17 +1,161 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016-2019 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016-2019 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016-2019 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -107,7 +251,7 @@ import java.util.stream.Collectors;
 @Scope(value = "request")
 class MapServiceImpl implements MapService {
 	private static final Logger log = LoggerFactory
-		.getLogger(MapServiceImpl.class);
+			.getLogger(MapServiceImpl.class);
 
 	@Autowired
 	private ScaledMapDAO mapDAO;
@@ -176,12 +320,12 @@ class MapServiceImpl implements MapService {
 			}
 
 			uploadResult = remoteImageService
-				.uploadImage(RemoteImageService.ImageType.MAP,
-							 mimeType.getObject(), new FileInputStream(data),
-							 data.length());
+					.uploadImage(RemoteImageService.ImageType.MAP,
+								 mimeType.getObject(), new FileInputStream(data),
+								 data.length());
 		} catch (IOException e) {
 			return TypedResult
-				.fail("Could not open file for upload: %s", e.getMessage());
+					.fail("Could not open file for upload: %s", e.getMessage());
 		}
 
 		if (!uploadResult.isOk()) {
@@ -199,8 +343,8 @@ class MapServiceImpl implements MapService {
 		map.setFolder(folder);
 
 		map.setCampaign(
-			Option.of(folder).flatMap(f -> Option.of(f.getCampaign()))
-				  .getOrElse(campaign));
+				Option.of(folder).flatMap(f -> Option.of(f.getCampaign()))
+					  .getOrElse(campaign));
 
 		mapDAO.save(map);
 
@@ -352,7 +496,7 @@ class MapServiceImpl implements MapService {
 		filter.group().set(group);
 
 		Option<FogOfWarGroupVisibility> optVisibility = groupVisibilityDAO
-			.getUniqueByFilter(filter);
+				.getUniqueByFilter(filter);
 
 		if (optVisibility.isEmpty()) {
 			FogOfWarGroupVisibility visibility = new FogOfWarGroupVisibility();
@@ -377,7 +521,7 @@ class MapServiceImpl implements MapService {
 		filter.shape().set(shape);
 
 		Option<FogOfWarShapeVisibility> optVisibility = shapeVisibilityDAO
-			.getUniqueByFilter(filter);
+				.getUniqueByFilter(filter);
 
 		if (optVisibility.isEmpty()) {
 			FogOfWarShapeVisibility visibility = new FogOfWarShapeVisibility();
@@ -401,7 +545,7 @@ class MapServiceImpl implements MapService {
 													@Nullable Campaign campaign, @Nonnull String name, int diameter,
 													@Nonnull byte[] image) {
 		TypedResult<String> uploadResult = remoteImageService
-			.uploadImage(RemoteImageService.ImageType.TOKEN, image);
+				.uploadImage(RemoteImageService.ImageType.TOKEN, image);
 
 		if (uploadResult.isOk()) {
 			TokenDefinition def = new TokenDefinition();
@@ -425,7 +569,7 @@ class MapServiceImpl implements MapService {
 												@Nullable Campaign campaign, @Nonnull String name,
 												@Nonnull byte[] image) {
 		TypedResult<String> uploadResult = remoteImageService
-			.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
+				.uploadImage(RemoteImageService.ImageType.PORTRAIT, image);
 
 		if (uploadResult.isOk()) {
 
@@ -448,7 +592,7 @@ class MapServiceImpl implements MapService {
 							   @Nonnull Portrait portrait,
 							   @Nonnull PortraitVisibilityLocation location) {
 		Set<PortraitVisibilityLocation> excludedLocations = location
-			.getExcludedLocations();
+				.getExcludedLocations();
 		removeVisibilities(view,
 						   l -> l == location || excludedLocations.contains(l));
 
@@ -462,8 +606,8 @@ class MapServiceImpl implements MapService {
 		view.getPortraitVisibilities().add(visibility);
 
 		BeholderRegistry.instance
-			.sendToView(view.getId(), s -> !s.isPreviewMode(),
-						new UpdatePortraits(view));
+				.sendToView(view.getId(), s -> !s.isPreviewMode(),
+							new UpdatePortraits(view));
 	}
 
 	private void removeVisibilities(@Nonnull MapView view,
@@ -486,8 +630,8 @@ class MapServiceImpl implements MapService {
 								 @Nonnull PortraitVisibilityLocation location) {
 		removeVisibilities(view, location::equals);
 		BeholderRegistry.instance
-			.sendToView(view.getId(), s -> !s.isPreviewMode(),
-						new UpdatePortraits(view));
+				.sendToView(view.getId(), s -> !s.isPreviewMode(),
+							new UpdatePortraits(view));
 	}
 
 	@Override
@@ -585,6 +729,16 @@ class MapServiceImpl implements MapService {
 
 	@Override
 	@Transactional
+	public void updateParticipantPosition(InitiativeParticipant participant, int x, int y) {
+		participant.setOffsetX(x);
+		participant.setOffsetY(y);
+		participantDAO.update(participant);
+
+		refreshView(participant.getView());
+	}
+
+	@Override
+	@Transactional
 	public void refreshView(@Nonnull MapView view) {
 		internalUpdateView(view, s -> true);
 	}
@@ -594,7 +748,7 @@ class MapServiceImpl implements MapService {
 		ScaledMap selectedMap = view.getSelectedMap();
 		if (selectedMap == null) {
 			BeholderRegistry.instance
-				.sendToView(view.getId(), selector, new ClearMap());
+					.sendToView(view.getId(), selector, new ClearMap());
 		} else {
 			updatePreview(view, selector, selectedMap);
 			updateMainView(view, selector, selectedMap);
@@ -607,13 +761,13 @@ class MapServiceImpl implements MapService {
 							   boolean previewMode) {
 		viewDAO.load(viewId).map(view -> {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
-				&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
+					&& Boolean.compare(e.isPreviewMode(), previewMode) == 0);
 			BeholderRegistry.instance.sendToView(view.getId(),
 												 e -> e.getSessionId().equals(sessionId) && !e.isPreviewMode(),
 												 view.getInitiativeJS());
 			BeholderRegistry.instance
-				.sendToView(view.getId(), s -> !s.isPreviewMode(),
-							new UpdatePortraits(view));
+					.sendToView(view.getId(), s -> !s.isPreviewMode(),
+								new UpdatePortraits(view));
 
 			return view;
 		});
@@ -627,7 +781,7 @@ class MapServiceImpl implements MapService {
 		filter.view(view);
 
 		Seq<InitiativeParticipant> participants = participantDAO
-			.findByFilter(filter);
+				.findByFilter(filter);
 
 		double angle = Math.toRadians(360.0 / (double) participants.size());
 
@@ -659,6 +813,8 @@ class MapServiceImpl implements MapService {
 
 			nextAngle += angle;
 		}
+
+		internalUpdateView(view, s -> !s.isPreviewMode());
 	}
 
 	private void updateMainView(MapView view, Predicate<RegistryEntry> selector,
@@ -681,14 +837,14 @@ class MapServiceImpl implements MapService {
 	private void internalUpdateView(Dimension dimensions, boolean previewMode,
 									Predicate<RegistryEntry> selector, MapView view, ScaledMap map) {
 		double factor = previewMode ?
-			map.getPreviewFactor() :
-			map.getDisplayFactor(view);
+				map.getPreviewFactor() :
+				map.getDisplayFactor(view);
 
 		MapRenderable renderable = mapToJS(dimensions, previewMode, view, map,
 										   factor);
 
 		BeholderRegistry.instance
-			.sendToView(view.getId(), selector, renderable);
+				.sendToView(view.getId(), selector, renderable);
 	}
 
 	@Override
@@ -725,9 +881,9 @@ class MapServiceImpl implements MapService {
 		if (x != null && y != null) {
 			BeholderRegistry.instance.sendToView(view.getId(),
 												 new CompoundRenderable(
-													 mapToJS(group.getMap().getDisplayDimension(view), false,
-															 view, group.getMap(), displayFactor),
-													 new JSScrollCommand(x, y)));
+														 mapToJS(group.getMap().getDisplayDimension(view), false,
+																 view, group.getMap(), displayFactor),
+														 new JSScrollCommand(x, y)));
 		}
 	}
 
@@ -738,21 +894,50 @@ class MapServiceImpl implements MapService {
 		renderable.setWidth((int) dimensions.getWidth());
 		renderable.setHeight((int) dimensions.getHeight());
 
+		List<JSToken> tokens = map.getTokens().stream().filter(TokenInstance::isShow)
+								  .filter(t -> t.isVisible(view, previewMode))
+								  .map(t -> tokenToJS(t, factor)).collect(Collectors.toList());
+		if (view.isShowPlayers()) {
+			tokens.addAll(view
+								  .getInitiativeParticipants()
+								  .stream()
+								  .filter(InitiativeParticipant::hasPosition)
+								  .filter(InitiativeParticipant::isPlayer)
+								  .map(t -> initiativeParticipantToJS(t, map.getSquareSize(), factor))
+								  .collect(Collectors.toList()));
+		}
 		renderable.setTokens(
-			map.getTokens().stream().filter(TokenInstance::isShow)
-			   .filter(t -> t.isVisible(view, previewMode))
-			   .map(t -> tokenToJS(t, factor)).collect(Collectors.toList()));
+				tokens);
 		if (previewMode) {
 			renderable.getTokens().forEach(t -> t.setLabel(null));
 		}
 		renderable.setAreaMarkers(
-			view.getMarkers().stream().map(a -> markerToJS(a, factor))
-				.collect(Collectors.toList()));
+				view.getMarkers().stream().map(a -> markerToJS(a, factor))
+					.collect(Collectors.toList()));
 		renderable.setRevealed(map.getFogOfWarShapes().stream()
 								  .filter(s -> shouldRender(s, view, previewMode))
 								  .map(s -> s.visit(new FogOfWarShapeToJSShapeVisitor(factor)))
 								  .collect(Collectors.toList()));
 		return renderable;
+	}
+
+	private JSToken initiativeParticipantToJS(InitiativeParticipant participant, int squaresize, double factor) {
+		JSToken token = new JSToken();
+		token.setBorderType(TokenBorderType.Player.name());
+		token.setBorderIntensity(TokenBorderIntensity.HEALTHY.name());
+		token.setHeight(
+				(int) (squaresize * factor));
+		token.setWidth(
+				(int) (squaresize * factor));
+		token.setDiameterInSquares(
+				squaresize);
+		token.setLabel(participant.getName());
+
+		token.setSrc("../img/player.png");
+		token.setX((int) (participant.getOffsetX() * factor));
+		token.setY((int) (participant.getOffsetY() * factor));
+
+		return token;
 	}
 
 	private boolean shouldRender(FogOfWarShape shape, MapView view,
@@ -768,15 +953,15 @@ class MapServiceImpl implements MapService {
 
 	private VisibilityStatus getStatus(FogOfWarShape shape, MapView view) {
 		return shapeVisibilityDAO
-			.findByFilter(new FogOfWarShapeVisibilityFilter().shape(shape))
-			.find(v -> v.getView().equals(view))
-			.map(FogOfWarVisibility::getStatus)
-			.getOrElse(VisibilityStatus.INVISIBLE);
+				.findByFilter(new FogOfWarShapeVisibilityFilter().shape(shape))
+				.find(v -> v.getView().equals(view))
+				.map(FogOfWarVisibility::getStatus)
+				.getOrElse(VisibilityStatus.INVISIBLE);
 	}
 
 	private VisibilityStatus getStatus(FogOfWarGroup group, MapView view) {
 		return groupVisibilityDAO.findByFilter(
-			new FogOfWarGroupVisibilityFilter().group(group).view(view))
+				new FogOfWarGroupVisibilityFilter().group(group).view(view))
 								 .map(FogOfWarVisibility::getStatus)
 								 .getOrElse(VisibilityStatus.INVISIBLE);
 	}
@@ -789,28 +974,28 @@ class MapServiceImpl implements MapService {
 		JSAreaMarker jsMarker = new JSAreaMarker();
 		jsMarker.setColor("#".concat(marker.getColor()));
 		jsMarker.setShape(marker
-							  .visit(new AreaMarkerShapeVisitor(squareSizeInPixels, factor)));
+								  .visit(new AreaMarkerShapeVisitor(squareSizeInPixels, factor)));
 
 		return jsMarker;
 	}
 
 	private static JSToken tokenToJS(TokenInstance instance, double factor) {
-		JSToken token = new JSToken();		
+		JSToken token = new JSToken();
 		token.setBorderType(instance.getBorderType().name());
 		token.setBorderIntensity(instance.getBorderIntensity().name());
 		token.setHeight(
-			(int) (instance.getMap().getSquareSize() * factor * instance
-				.getDefinition().getDiameterInSquares()));
+				(int) (instance.getMap().getSquareSize() * factor * instance
+						.getDefinition().getDiameterInSquares()));
 		token.setWidth(
-			(int) (instance.getMap().getSquareSize() * factor * instance
-				.getDefinition().getDiameterInSquares()));
+				(int) (instance.getMap().getSquareSize() * factor * instance
+						.getDefinition().getDiameterInSquares()));
 		token.setDiameterInSquares(
-			instance.getDefinition().getDiameterInSquares());
+				instance.getDefinition().getDiameterInSquares());
 		token.setLabel(instance.getLabel());
-		
+
 		if (instance.getStatusEffect() != null)
 			token.setStatusEffect(instance.getStatusEffect().toString());
-		
+
 		// Workaround, will be transformed to URL
 		token.setSrc(instance.getDefinition().getImageUrl());
 		token.setX((int) (instance.getOffsetX() * factor));
@@ -847,11 +1032,11 @@ class MapServiceImpl implements MapService {
 		filter.listenToDoorbell(true);
 
 		return TypedResult.ok(viewDAO.findByFilter(filter).map(MapView::getId).map(
-			id -> {
-				BeholderRegistry.instance
-					.sendToView(id, new RingDoorbell(username, message));
-				return id;
-			}).count(v -> true));
+				id -> {
+					BeholderRegistry.instance
+							.sendToView(id, new RingDoorbell(username, message));
+					return id;
+				}).count(v -> true));
 	}
 
 	@Override
@@ -859,6 +1044,6 @@ class MapServiceImpl implements MapService {
 		instance.setStatusEffect(statusEffect);
 		tokenInstanceDAO.update(instance);
 
-		instance.getMap().getSelectedBy().forEach(this::refreshView);		
+		instance.getMap().getSelectedBy().forEach(this::refreshView);
 	}
 }

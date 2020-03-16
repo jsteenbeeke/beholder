@@ -23,6 +23,8 @@ function determineBorderColor(type) {
         return "#00ff00";
     } else if ("Enemy" === type) {
         return "#ff0000";
+    } else if ("Player" === type) {
+        return "#ff00ff";
     }
 
     // Default to black border

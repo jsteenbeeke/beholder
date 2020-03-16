@@ -131,4 +131,6 @@ public interface MapService {
 	void focusOnGroup(@Nonnull MapView view, @Nonnull FogOfWarGroup target);
 
 	TypedResult<Integer> doorbell(@Nonnull String username, @Nullable String message);
+
+	void updateParticipantPosition(InitiativeParticipant participant, int x, int y);
 }

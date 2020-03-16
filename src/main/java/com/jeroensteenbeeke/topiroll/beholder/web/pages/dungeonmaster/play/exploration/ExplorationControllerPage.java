@@ -442,11 +442,9 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 										   int left) {
 						super.onDragStop(target, top, left);
 
-						// TODO: Service method?
-						InitiativeParticipant participant = item.getModelObject();
-						participant.setOffsetX((int) (left / displayFactor));
-						participant.setOffsetY((int) (top / displayFactor));
-						participantDAO.update(participant);
+						mapService.updateParticipantPosition(item.getModelObject(), (int) (left / displayFactor), (int) (top / displayFactor));
+
+						redrawMap(target);
 
 					}
 				})).add(new DependentOnClickBehavior<>(item.getModel()) {

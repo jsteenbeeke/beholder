@@ -60,7 +60,6 @@ import java.util.List;
 
 public class MapCanvas extends WebComponent {
 	private static final long serialVersionUID = 1L;
-
 	private IModel<MapView> viewModel;
 
 	private final boolean previewMode;
@@ -68,7 +67,7 @@ public class MapCanvas extends WebComponent {
 	private final long viewId;
 
 	public MapCanvas(String id, IModel<MapView> viewModel,
-			boolean previewMode) {
+					 boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
 		this.viewModel = viewModel;

@@ -35,6 +35,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
+import com.jeroensteenbeeke.hyperion.util.HashUtil;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRenderable;
 
 import javax.annotation.CheckForNull;
@@ -44,6 +45,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Entity
 public class InitiativeParticipant extends BaseDomainObject {
@@ -121,12 +124,11 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.name = name;
 	}
 
-	@Nonnull
 	public int getScore() {
 		return score;
 	}
 
-	public void setScore(@Nonnull int score) {
+	public void setScore(int score) {
 		this.score = score;
 	}
 
@@ -167,21 +169,19 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.orderOverride = orderOverride;
 	}
 
-	@Nonnull
 	public boolean isSelected() {
 		return selected;
 	}
 
-	public void setSelected(@Nonnull boolean selected) {
+	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 
-	@Nonnull
 	public boolean isPlayer() {
 		return player;
 	}
 
-	public void setPlayer(@Nonnull boolean player) {
+	public void setPlayer(boolean player) {
 		this.player = player;
 	}
 
@@ -213,4 +213,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.conditions = conditions;
 	}
 
+	public static boolean hasPosition(InitiativeParticipant participant) {
+		return participant.getOffsetX() != null && participant.getOffsetY() != null;
+	}
 }
