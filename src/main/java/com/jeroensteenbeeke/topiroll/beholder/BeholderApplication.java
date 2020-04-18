@@ -34,6 +34,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import com.jeroensteenbeeke.hyperion.HyperionApp;
 import com.jeroensteenbeeke.hyperion.heinlein.web.Heinlein;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesomeInitializer;
 import com.jeroensteenbeeke.hyperion.meld.web.EntityEncapsulator;
@@ -147,6 +148,7 @@ public class BeholderApplication extends WebApplication
 				return cycle.getActiveRequestHandler();
 			}
 		});
+		HyperionApp.get().setApplicationVersion(getRevision());
 	}
 
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {
