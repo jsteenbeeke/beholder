@@ -39,11 +39,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import io.vavr.control.Option;
 
 public interface MapService {
 	@Nonnull
