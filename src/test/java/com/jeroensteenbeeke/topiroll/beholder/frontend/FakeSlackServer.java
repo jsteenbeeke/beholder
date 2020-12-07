@@ -24,6 +24,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ratpack.exec.Promise;
+import ratpack.http.Request;
+import ratpack.http.TypedData;
 import ratpack.server.RatpackServer;
 import ratpack.server.ServerConfig;
 import ratpack.util.MultiValueMap;
@@ -74,16 +77,20 @@ public class FakeSlackServer {
 															  });
 															  chain.post("command/response", ctx -> {
 																  log.info("Slack received command response: ");
-																  ctx.getRequest().getBody().next(data -> {
-																	  String body = data.getText(StandardCharsets.UTF_8);
+																  try {
+																	  ctx.getRequest().getBody().then(data -> {
+																		  String body = data.getText(StandardCharsets.UTF_8);
 
-																	  log.info(body);
+																		  log.info(body);
 
-																	  commandResponsesReceived = commandResponsesReceived
-																			  .append((JSONObject) new JSONParser().parse(body));
+																		  commandResponsesReceived = commandResponsesReceived
+																				  .append((JSONObject) new JSONParser().parse(body));
 
-																	  ctx.render("{}");
-																  });
+																		  ctx.render("{}");
+																	  });
+																  } catch (Exception e) {
+																  	log.error(e.getMessage(), e);
+																  }
 															  });
 															  chain.all(ctx -> log.info("Slack: {}", ctx
 																	  .getRequest()
