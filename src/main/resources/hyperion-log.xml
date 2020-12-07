@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings>
+	<levels>
+		<level pattern="org.apache.wicket.*">INFO</level>
+		<level pattern="org.hibernate.*">INFO</level>
+		<level pattern="org.springframework.*">INFO</level>
+		<level pattern="com.jeroensteenbeeke.hyperion.*">INFO</level>
+		<level pattern="com.jeroensteenbeeke.topiroll.beholder.*">INFO</level>
+	</levels>
+	<channels>
+		<channel suppressLocally="true" pattern="org.apache.wicket.protocol.http.RequestLogger">request</channel>
+		<channel pattern="*">app</channel>
+	</channels>
+</settings>

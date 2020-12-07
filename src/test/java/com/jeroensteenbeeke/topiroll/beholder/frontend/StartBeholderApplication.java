@@ -21,20 +21,16 @@ import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
 import com.jeroensteenbeeke.imagesrv.ImageServer;
 import org.apache.commons.cli.*;
-import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
 import org.danekja.java.util.function.serializable.SerializableConsumer;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.websocket.DeploymentException;
-import javax.websocket.server.ServerContainer;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class StartBeholderApplication {
-
+	private static final Logger log = LoggerFactory.getLogger(StartBeholderApplication.class);
 
 	public static void main(String[] args) throws Exception {
 		createApplicationHandler(args).ifPresent(Handler::waitForKeyPress);
@@ -42,17 +38,6 @@ public class StartBeholderApplication {
 
 	public static Optional<Handler> createApplicationHandler(String[] args)
 		throws Exception {
-		SerializableConsumer<WebAppContext> initWebsockets = context -> {
-			try {
-				ServerContainer wscontainer = WebSocketServerContainerInitializer
-					.initialize(context);
-
-				wscontainer.addEndpoint(new WicketServerEndpointConfig());
-			} catch (DeploymentException | ServletException e) {
-				e.printStackTrace();
-			}
-		};
-
 		Options options = new Options();
 
 		options.addOption(null, Arguments.ENABLE_POSTGRES_DB, false, "Use Postgres in Docker instead of H2");
@@ -86,14 +71,10 @@ public class StartBeholderApplication {
 		boolean rollbarEnabled = cmd.hasOption(Arguments.ROLLBAR_CLIENT_ID) && cmd.hasOption(Arguments.ROLLBAR_CLIENT_SECRET) && cmd
 			.hasOption(Arguments.ROLLBAR_ENVIRONMENT);
 
-		InMemory.InMemoryFinalizer finalizer = InMemory.run("beholder-web").withContextPath("/beholder/")
-													   .withContextConsumer(initWebsockets);
-
+		InMemory.InMemoryFinalizer finalizer = InMemory.run("beholder-web").withContextPath("/beholder/");
 
 		if (!slackEnabled) {
-			System.out
-				.printf("Slack login disabled, please specify arguments --%1$s and --%2$s to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET)
-				.println();
+			log.warn("Slack login disabled, please specify arguments --{} and --{} to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET);
 
 			System.setProperty("slack.login.disabled", "true");
 
@@ -101,23 +82,33 @@ public class StartBeholderApplication {
 
 			finalizer
 				.withStartListener(server -> {
-					localSlackServer.start();
-					System.out.println("===================================================");
-					System.out.println("===================================================");
-					System.out.println("===          FAKE SLACK SERVER ACTIVE           ===");
-					System.out.println("===                                             ===");
-					System.out.println("=== If you want to log in using the real Slack, ===");
-					System.out.println("=== please start the application with the       ===");
-					System.out.println("=== following options:                          ===");
-					System.out.println("===                                             ===");
-					System.out.println("===    --slack-client-id                        ===");
-					System.out.println("===    --slack-client-secret                    ===");
-					System.out.println("===    --slack-signing-secret                   ===");
-					System.out.println("===                                             ===");
-					System.out.println("===================================================");
-					System.out.println("===================================================");
+					try {
+						localSlackServer.start();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+					log.info("===================================================");
+					log.info("===================================================");
+					log.info("===          FAKE SLACK SERVER ACTIVE           ===");
+					log.info("===                                             ===");
+					log.info("=== If you want to log in using the real Slack, ===");
+					log.info("=== please start the application with the       ===");
+					log.info("=== following options:                          ===");
+					log.info("===                                             ===");
+					log.info("===    --slack-client-id                        ===");
+					log.info("===    --slack-client-secret                    ===");
+					log.info("===    --slack-signing-secret                   ===");
+					log.info("===                                             ===");
+					log.info("===================================================");
+					log.info("===================================================");
 				})
-				.withStopListener(server -> localSlackServer.stop())
+				.withStopListener(server -> {
+					try {
+						localSlackServer.stop();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				})
 				.withProperty("slack.signingsecret", "90ac37f5bb5617abb86e8f46f503c46d5010abd188e5c3fe58b4d9bde21b08ca");
 
 		} else {
@@ -127,10 +118,8 @@ public class StartBeholderApplication {
 		}
 
 		if (!amazonEnabled) {
-			System.out
-				.printf("Amazon S3 image storage disabled, please specify arguments --%1$s, --%2$s, --%3$s and --%4$s to enable",
-						Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX)
-				.println();
+			log.warn("Amazon S3 image storage disabled, please specify arguments --{}, --{}, --{} and --{} to enable",
+						Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX);
 			finalizer.withProperty("remote.image.url.prefix", "http://localhost:4040/images/");
 
 			System.setProperty("amazon.images.disabled", "true");
@@ -140,27 +129,33 @@ public class StartBeholderApplication {
 			finalizer.withStartListener(server -> {
 				try {
 					localImageServer.start();
-
-					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-					System.out.println("%%%          MOCK IMAGE SERVER ACTIVE           %%%");
-					System.out.println("%%%                                             %%%");
-					System.out.println("%%% If you want to use Amazon S3 for images,    %%%");
-					System.out.println("%%% please start the application with the       %%%");
-					System.out.println("%%% following options:                          %%%");
-					System.out.println("%%%                                             %%%");
-					System.out.println("%%%    --amazon-client-id                       %%%");
-					System.out.println("%%%    --amazon-client-secret                   %%%");
-					System.out.println("%%%    --amazon-region                          %%%");
-					System.out.println("%%%    --amazon-bucket                          %%%");
-					System.out.println("%%%    --amazon-url-prefix                      %%%");
-					System.out.println("%%%                                             %%%");
-					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-					System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-				} catch (IOException ioe) {
-					throw new RuntimeException(ioe);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
-			}).withStopListener(server -> localImageServer.stop());
+
+				log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+				log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+				log.info("%%%          MOCK IMAGE SERVER ACTIVE           %%%");
+				log.info("%%%                                             %%%");
+				log.info("%%% If you want to use Amazon S3 for images,    %%%");
+				log.info("%%% please start the application with the       %%%");
+				log.info("%%% following options:                          %%%");
+				log.info("%%%                                             %%%");
+				log.info("%%%    --amazon-client-id                       %%%");
+				log.info("%%%    --amazon-client-secret                   %%%");
+				log.info("%%%    --amazon-region                          %%%");
+				log.info("%%%    --amazon-bucket                          %%%");
+				log.info("%%%    --amazon-url-prefix                      %%%");
+				log.info("%%%                                             %%%");
+				log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+				log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+			}).withStopListener(server -> {
+				try {
+					localImageServer.stop();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
 		} else {
 			finalizer.withProperty("amazon.clientid", cmd.getOptionValue(Arguments.AMAZON_CLIENT_ID))
 					 .withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
@@ -178,10 +173,8 @@ public class StartBeholderApplication {
 		}
 
 		if (!rollbarEnabled) {
-			System.out
-				.printf("Rollbar error logging disabled, please specify arguments --%1$s, --%2$s and --%3$s to enable",
-						Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT)
-				.println();
+			log.warn("Rollbar error logging disabled, please specify arguments --{}, --{} and --{} to enable",
+						Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT);
 
 		} else {
 			finalizer.withProperty("rollbar.server.apiKey", args[6])

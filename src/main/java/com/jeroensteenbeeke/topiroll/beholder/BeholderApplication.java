@@ -66,8 +66,10 @@ import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
+import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.joda.time.DateTime;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -149,6 +151,8 @@ public class BeholderApplication extends WebApplication
 			}
 		});
 		HyperionApp.get().setApplicationVersion(getRevision());
+
+		getJavaScriptLibrarySettings().setJQueryReference(JQueryResourceReference.getV3());
 	}
 
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {
