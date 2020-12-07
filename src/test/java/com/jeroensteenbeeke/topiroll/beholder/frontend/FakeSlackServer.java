@@ -39,7 +39,7 @@ public class FakeSlackServer {
 	private RatpackServer server;
 
 	public FakeSlackServer start() throws Exception {
-		this.server = RatpackServer.start(server -> server.serverConfig(ServerConfig.builder().port(8765).build())
+		this.server = RatpackServer.start(server -> server.serverConfig(ServerConfig.builder().port(5050).build())
 														  .handlers(chain -> {
 															  chain.get("oauth/authorize", ctx -> {
 																  MultiValueMap<String, String> queryParams = ctx
