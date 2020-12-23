@@ -4,6 +4,7 @@
 		<level pattern="org.apache.wicket.*">INFO</level>
 		<level pattern="org.hibernate.*">INFO</level>
 		<level pattern="org.springframework.*">INFO</level>
+		<level pattern="org.eclipse.jetty.*">INFO</level>
 		<level pattern="com.jeroensteenbeeke.hyperion.*">INFO</level>
 		<level pattern="com.jeroensteenbeeke.topiroll.beholder.*">INFO</level>
 	</levels>
