@@ -34,10 +34,14 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.FogOfWarShape;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.FogOfWarShapeFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
-public interface FogOfWarShapeDAO extends DAO<FogOfWarShape, FogOfWarShapeFilter> {
+@Repository
+@Scope(value = "request")
+public class FogOfWarShapeDAO extends HibernateDAO<FogOfWarShape, FogOfWarShapeFilter> {
 
 }

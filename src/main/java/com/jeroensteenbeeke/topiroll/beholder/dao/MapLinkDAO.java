@@ -17,10 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.MapLinkDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapLink;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.MapLinkFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
-public interface MapLinkDAO extends DAO<MapLink, MapLinkFilter> {
+@Repository
+@Scope(value = "request")
+public class MapLinkDAO extends HibernateDAO<MapLink, MapLinkFilter> {
 
 }

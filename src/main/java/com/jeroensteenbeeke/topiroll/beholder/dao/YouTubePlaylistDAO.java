@@ -17,10 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
-public interface YouTubePlaylistDAO extends DAO<YouTubePlaylist, YouTubePlaylistFilter> {
+@Repository
+@Scope(value = "request")
+public class YouTubePlaylistDAO
+		extends HibernateDAO<YouTubePlaylist, YouTubePlaylistFilter> {
 
 }

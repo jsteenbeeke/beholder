@@ -17,10 +17,15 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.InitiativeParticipantCondition;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
-public interface InitiativeParticipantConditionDAO extends DAO<InitiativeParticipantCondition, InitiativeParticipantConditionFilter> {
+@Repository
+@Scope(value = "request")
+public class InitiativeParticipantConditionDAO extends HibernateDAO<InitiativeParticipantCondition, InitiativeParticipantConditionFilter> {
 
 }

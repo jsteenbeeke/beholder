@@ -17,10 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.PinnedCompendiumEntryDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.PinnedCompendiumEntry;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PinnedCompendiumEntryFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-public interface PinnedCompendiumEntryDAO extends DAO<PinnedCompendiumEntry, PinnedCompendiumEntryFilter> {
+@Repository
+@Scope(value = "request")
+public class PinnedCompendiumEntryDAO extends HibernateDAO<PinnedCompendiumEntry, PinnedCompendiumEntryFilter> {
 
 }

@@ -1,5 +1,6 @@
 package com.jeroensteenbeeke.topiroll.beholder;
 
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
 import com.jeroensteenbeeke.topiroll.beholder.annotation.NoTransactionRequired;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
@@ -15,10 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Method;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 public class ArchitectureTest {
 	@Test
@@ -39,20 +37,32 @@ public class ArchitectureTest {
 		JavaClasses allClasses = new ClassFileImporter()
 				.importPackages("com.jeroensteenbeeke.topiroll.beholder");
 
-		var rule = methods().that(new DescribedPredicate<>("Are not lambda methods") {
-			@Override
-			public boolean apply(JavaMethod input) {
-				String methodName = input.getName();
-				return !methodName.contains("lambda$") && !methodName.contains("$deserializeLambda$");
-			}
-		}).and()
-				.arePublic().and().areDeclaredInClassesThat()
-				.areAnnotatedWith(Service.class).or()
-				.areDeclaredInClassesThat().areAnnotatedWith(Repository.class)
-				.should().beAnnotatedWith(Transactional.class).orShould()
+		var rule = methods()
+				.that(new DescribedPredicate<>("Are not lambda methods") {
+					@Override
+					public boolean apply(JavaMethod input) {
+						String methodName = input.getName();
+						return !methodName.contains("lambda$") && !methodName
+								.contains("$deserializeLambda$");
+					}
+				}).and().arePublic().and().areDeclaredInClassesThat()
+				.areAnnotatedWith(Service.class).or().areDeclaredInClassesThat()
+				.areAnnotatedWith(Repository.class).should()
+				.beAnnotatedWith(Transactional.class).orShould()
 				.beAnnotatedWith(NoTransactionRequired.class);
 
 		rule.check(allClasses);
+	}
 
+	@Test
+	public void ensureDAOClassesAreAnnotatedAsRepository() {
+		JavaClasses allClasses = new ClassFileImporter()
+				.importPackages("com.jeroensteenbeeke.topiroll.beholder");
+
+		var rule = classes().that().areAssignableTo(HibernateDAO.class).should()
+				.beAnnotatedWith(Repository.class).andShould()
+				.notBeAnnotatedWith(Component.class);
+
+		rule.check(allClasses);
 	}
 }

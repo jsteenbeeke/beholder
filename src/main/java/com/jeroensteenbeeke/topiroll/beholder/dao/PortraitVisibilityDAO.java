@@ -17,10 +17,16 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.dao;
 
-import com.jeroensteenbeeke.hyperion.meld.DAO;
+import com.jeroensteenbeeke.hyperion.solstice.data.HibernateDAO;
+import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitVisibilityDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.PortraitVisibility;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitVisibilityFilter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-public interface PortraitVisibilityDAO extends DAO<PortraitVisibility, PortraitVisibilityFilter> {
+@Repository
+@Scope(value="request")
+public class PortraitVisibilityDAO extends HibernateDAO<PortraitVisibility, PortraitVisibilityFilter> {
 
 }
