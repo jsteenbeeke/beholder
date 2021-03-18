@@ -21,6 +21,7 @@ import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.ImageType;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

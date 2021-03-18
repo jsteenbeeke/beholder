@@ -35,26 +35,152 @@
 
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
+import com.jeroensteenbeeke.topiroll.beholder.dao.AreaMarkerDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Nonnull;
 
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-
-public interface MarkerService {
-
-	void update(@Nonnull CircleMarker marker, @Nonnull String color, int x, int y, int radius);
-
-	void update(@Nonnull ConeMarker marker, @Nonnull String color, int x, int y, int radius, int theta);
-
-	void update(@Nonnull CubeMarker marker, @Nonnull String color, int x, int y, int extent);
-
-	void update(@Nonnull LineMarker marker, @Nonnull String color, int x, int y, int extent, int theta);
-
-	void createCircle(@Nonnull MapView view,  @Nonnull String color, int x, int y, int radius);
-
-	void createCone(@Nonnull MapView view,  @Nonnull String color, int x, int y, int radius, int theta);
-
-	void createCube(@Nonnull MapView view, @Nonnull String color, int x, int y, int extent);
+@Service
+@Scope(value = "request")
+public class MarkerService {
+	@Autowired
+	private AreaMarkerDAO markerDAO;
 	
-	void createLine(@Nonnull MapView view, @Nonnull String color, int x, int y, int extent, int theta);
+	@Autowired
+	private MapService mapService;
+
+	@Transactional
+	public void update(@Nonnull CircleMarker marker, @Nonnull String color, int x, int y,
+					   int radius) {
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setExtent(radius);
+		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+	}
+
+	@Transactional
+	public void update(@Nonnull ConeMarker marker, @Nonnull String color, int x, int y,
+					   int radius, int theta) {
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setExtent(radius);
+		marker.setTheta(theta);
+		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+	}
+
+	@Transactional
+	public void update(@Nonnull CubeMarker marker, @Nonnull String color, int x, int y,
+					   int extent) {
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setExtent(extent);
+		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+
+	}
+
+	@Transactional
+	public void update(@Nonnull LineMarker marker, @Nonnull String color, int x, int y,
+					   int extent, int theta) {
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setExtent(extent);
+		marker.setTheta(theta);
+		markerDAO.update(marker);
+		
+		mapService.refreshView(marker.getView());
+
+	}
+
+	@Transactional
+	public void createCircle(@Nonnull MapView view, @Nonnull String color,
+			int x, int y, int radius) {
+
+		CircleMarker marker = new CircleMarker();
+		marker.setColor(color);
+		marker.setExtent(radius);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setView(view);
+		markerDAO.save(marker);
+
+		view.getMarkers().add(marker);
+		
+		mapService.refreshView(marker.getView());
+
+
+	}
+
+	@Transactional
+	public void createCone(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int radius, int theta) {
+
+		ConeMarker marker = new ConeMarker();
+		marker.setColor(color);
+		marker.setExtent(radius);
+		marker.setTheta(theta);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setView(view);
+		markerDAO.save(marker);
+
+		view.getMarkers().add(marker);
+
+		mapService.refreshView(marker.getView());
+
+	}
+
+	@Transactional
+	public void createCube(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int extent) {
+
+		CubeMarker marker = new CubeMarker();
+		marker.setExtent(extent);
+		marker.setColor(color);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setView(view);
+		markerDAO.save(marker);
+
+		view.getMarkers().add(marker);
+
+		mapService.refreshView(marker.getView());
+	}
+
+	@Transactional
+	public void createLine(@Nonnull MapView view, @Nonnull String color, int x,
+			int y, int extent, int theta) {
+
+		LineMarker marker = new LineMarker();
+		marker.setColor(color);
+		marker.setExtent(extent);
+		marker.setTheta(theta);
+		marker.setOffsetX(x);
+		marker.setOffsetY(y);
+		marker.setView(view);
+		markerDAO.save(marker);
+
+		view.getMarkers().add(marker);
+
+		mapService.refreshView(marker.getView());
+
+	}
 
 }

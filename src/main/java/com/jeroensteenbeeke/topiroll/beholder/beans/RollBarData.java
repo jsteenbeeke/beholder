@@ -17,12 +17,38 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-public interface RollBarData {
-	String getServerKey();
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-	String getClientKey();
+import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 
-	String getEnvironment();
+@Component
+public class RollBarData {
+	@Value("${rollbar.client.apiKey:}")
+	private String clientApiKey;
 
-	String getLocalUsername();
+	@Value("${rollbar.server.apiKey:}")
+	private String serverApiKey;
+
+	@Value("${rollbar.environment:}")
+	private String environment;
+
+	@Value("${rollbar.localuser}")
+	private String localUser;
+
+	public String getServerKey() {
+		return serverApiKey;
+	}
+
+	public String getClientKey() {
+		return clientApiKey;
+	}
+
+	public String getEnvironment() {
+		return environment;
+	}
+
+	public String getLocalUsername() {
+		return localUser;
+	}
 }

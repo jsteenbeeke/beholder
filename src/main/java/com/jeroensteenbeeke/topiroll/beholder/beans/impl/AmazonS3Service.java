@@ -28,21 +28,20 @@ import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.ImageType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.util.UUID;
 
-public class AmazonS3ServiceImpl implements RemoteImageService {
+public class AmazonS3Service implements RemoteImageService {
 	private final String amazonBucketName;
 
 	private final TransferManager transferManager;
 
 	private final AmazonS3 s3;
 
-	public AmazonS3ServiceImpl(TransferManager transferManager,
+	public AmazonS3Service(TransferManager transferManager,
 							   AmazonS3 s3,
 							   @Value("${amazon.bucketname}") String amazonBucketName) {
 		this.transferManager = transferManager;

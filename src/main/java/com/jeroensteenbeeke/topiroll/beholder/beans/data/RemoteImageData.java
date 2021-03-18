@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans;
+package com.jeroensteenbeeke.topiroll.beholder.beans.data;
 
 public class RemoteImageData {
 	private final String baseUrl;

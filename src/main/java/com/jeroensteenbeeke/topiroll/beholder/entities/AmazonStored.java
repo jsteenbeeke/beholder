@@ -18,7 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.RemoteImageData;
 
 public interface AmazonStored {
 	String getAmazonKey();

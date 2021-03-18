@@ -3,7 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import com.jeroensteenbeeke.hyperion.Hyperion;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
+import com.jeroensteenbeeke.topiroll.beholder.beans.WebHookSupplier;
 import io.vavr.collection.Array;
 import io.vavr.control.Option;
 import okhttp3.*;
@@ -23,7 +23,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		"\t\t\"fields\": [";
 	private static final String END_FIELDS = "]}";
 
-	private final BeholderSlackHandler slackHandler;
+	private final WebHookSupplier webHookSupplier;
 
 	private final ApplicationMetadataStore metadataStore;
 
@@ -32,8 +32,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final OkHttpClient client = new OkHttpClient();
 
 
-	public OnDeploySlackNotifier(BeholderSlackHandler slackHandler, ApplicationMetadataStore metadataStore, ServletContext servletContext) {
-		this.slackHandler = slackHandler;
+	public OnDeploySlackNotifier(WebHookSupplier webHookSupplier, ApplicationMetadataStore metadataStore, ServletContext servletContext) {
+		this.webHookSupplier = webHookSupplier;
 		this.metadataStore = metadataStore;
 		this.servletContext = servletContext;
 	}
@@ -57,7 +57,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			writeResult
 				.ifOk(() -> {
 
-					String deployWebhook = slackHandler.getDeployWebhook();
+					String deployWebhook = webHookSupplier.getDeployWebhook();
 					String message = "A new version of Beholder just deployed";
 					String attachments = createAttachments();
 

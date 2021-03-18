@@ -34,12 +34,46 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Nonnull;
 
-public interface URLService {
-	@Nonnull
-	String contextRelative(@Nonnull String relativePath);
+@Component
+public class URLService {
+	private static final String SOURCE_URL_CONSTANT = "${application.sourceurl}";
+
+	@Value("${application.baseurl}")
+	private String urlPrefix;
+	
+	@Value(SOURCE_URL_CONSTANT)
+	private String sourceUrl;
 
 	@Nonnull
-	String getSourceURL();
+	public String contextRelative(@Nonnull String relativePath) {
+		String prefix = urlPrefix;
+
+		while (prefix.endsWith("/")) {
+			prefix = prefix.substring(0, prefix.length() - 1);
+		}
+
+		String path = relativePath;
+		while (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+
+		return String.format("%s/%s", prefix, path);
+	}
+	
+	@Nonnull
+	public String getSourceURL() {
+		if (sourceUrl.equals(SOURCE_URL_CONSTANT)) {
+			return "";
+		}
+		
+		return sourceUrl;
+	}
 }

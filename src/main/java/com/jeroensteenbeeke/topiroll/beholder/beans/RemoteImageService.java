@@ -20,6 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder.beans;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.hyperion.util.ImageUtil;
 import com.jeroensteenbeeke.lux.TypedResult;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.ImageType;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -35,7 +36,4 @@ public interface RemoteImageService {
 
 	ActionResult removeImage(String imageKey);
 
-	enum ImageType {
-		MAP, TOKEN, PORTRAIT
-	}
 }

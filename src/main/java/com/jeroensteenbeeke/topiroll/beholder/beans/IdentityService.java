@@ -18,96 +18,79 @@
 /**
  * This file is part of Beholder
  * (C) 2016 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-import javax.annotation.Nonnull;
-
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.UserDescriptor;
+import com.jeroensteenbeeke.topiroll.beholder.dao.BeholderUserDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.BeholderUserFilter;
+import io.vavr.control.Option;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface IdentityService {
-	class UserDescriptor {
-		private String userId;
+import javax.annotation.Nonnull;
+import java.util.List;
 
-		private String teamId;
+@Service
+@Scope(value = "request")
+public class IdentityService {
+	@Autowired
+	private BeholderUserDAO userDAO;
 
-		private String userName;
-
-		private String teamName;
-
-		private String avatar;
-
-		private String accessToken;
-
-		public String getUserId() {
-			return userId;
-		}
-
-		public UserDescriptor setUserId(String userId) {
-			this.userId = userId;
-			return this;
-		}
-
-		public String getTeamId() {
-			return teamId;
-		}
-
-		public UserDescriptor setTeamId(String teamId) {
-			this.teamId = teamId;
-			return this;
-		}
-
-		public String getUserName() {
-			return userName;
-		}
-
-		public UserDescriptor setUserName(String userName) {
-			this.userName = userName;
-			return this;
-		}
-
-		public String getTeamName() {
-			return teamName;
-		}
-
-		public UserDescriptor setTeamName(String teamName) {
-			this.teamName = teamName;
-			return this;
-		}
-
-		public String getAvatar() {
-			return avatar;
-		}
-
-		public UserDescriptor setAvatar(String avatar) {
-			this.avatar = avatar;
-			return this;
-		}
-
-		public String getAccessToken() {
-			return accessToken;
-		}
-
-		public UserDescriptor setAccessToken(String accessToken) {
-			this.accessToken = accessToken;
-			return this;
-		}
-
-	}
+	@Autowired(required = false)
+	private List<IAccountInitializer> initializers;
 
 	@Nonnull
-	BeholderUser getOrCreateUser(@Nonnull UserDescriptor descriptor);
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BeholderUser getOrCreateUser(@Nonnull UserDescriptor descriptor) {
+		BeholderUserFilter filter = new BeholderUserFilter();
+		filter.userId().set(descriptor.getUserId());
+
+		Option<BeholderUser> userOption = userDAO.getUniqueByFilter(filter);
+
+		if (userOption.isEmpty()) {
+			BeholderUser user = new BeholderUser();
+			user.setAccessToken(descriptor.getAccessToken());
+			user.setAvatar(descriptor.getAvatar());
+			user.setTeamId(descriptor.getTeamId());
+			user.setUserId(descriptor.getUserId());
+			user.setUsername(descriptor.getUserName());
+			userDAO.save(user);
+			if (initializers != null) {
+				for (IAccountInitializer initializer : initializers) {
+					initializer.onAccountCreated(user);
+				}
+			}
+
+			return user;
+		} else {
+			BeholderUser user = userOption.get();
+
+			user.setAccessToken(descriptor.getAccessToken());
+			user.setAvatar(descriptor.getAvatar());
+			user.setTeamId(descriptor.getTeamId());
+			user.setUsername(descriptor.getUserName());
+			userDAO.update(user);
+
+			return user;
+		}
+	}
 }

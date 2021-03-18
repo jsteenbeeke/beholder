@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
+package com.jeroensteenbeeke.topiroll.beholder.beans;
 
 import com.jeroensteenbeeke.hyperion.rollbar.RollBarReference;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.rollbar.notifier.Rollbar;
 import com.rollbar.notifier.config.ConfigBuilder;
-import org.apache.wicket.IWicketInternalException;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

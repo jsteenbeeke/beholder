@@ -34,19 +34,17 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import com.jeroensteenbeeke.topiroll.beholder.beans.WebHookSupplier;
 import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
 import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService.UserDescriptor;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.UserDescriptor;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
@@ -55,7 +53,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackError
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-public class BeholderSlackHandler extends SlackHandler {
+public class BeholderSlackHandler extends SlackHandler implements
+		WebHookSupplier {
 	private String applicationBaseUrl;
 
 	private String clientId;
@@ -95,6 +94,7 @@ public class BeholderSlackHandler extends SlackHandler {
 	}
 
 	@CheckForNull
+	@Override
 	public String getDeployWebhook() {
 		return deployWebhook;
 	}

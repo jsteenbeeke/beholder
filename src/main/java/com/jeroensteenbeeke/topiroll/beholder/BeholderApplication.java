@@ -46,6 +46,7 @@ import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
+import com.jeroensteenbeeke.topiroll.beholder.beans.WebHookSupplier;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitializeCompendiumJob;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
@@ -138,7 +139,8 @@ public class BeholderApplication extends WebApplication
 		ApplicationMetadataStore metadata = ctx.getBean(ApplicationMetadataStore.class);
 
 		getApplicationListeners().add(new RollbarDeployListener(data, metadata));
-		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(BeholderSlackHandler.class), metadata, getServletContext()));
+		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(
+				WebHookSupplier.class), metadata, getServletContext()));
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
 		getRequestCycleListeners().add(new IRequestCycleListener() {

@@ -35,17 +35,12 @@
 package com.jeroensteenbeeke.topiroll.beholder.web;
 
 import com.jeroensteenbeeke.hyperion.social.web.filter.SlackCommandFilter;
-import com.jeroensteenbeeke.lux.TypedResult;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import io.vavr.control.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.*;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 public class BeholderSlackCommandFilter extends SlackCommandFilter {
 	private static final Logger log = LoggerFactory.getLogger(BeholderSlackCommandFilter.class);

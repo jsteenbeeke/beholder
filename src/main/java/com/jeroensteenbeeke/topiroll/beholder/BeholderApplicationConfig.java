@@ -46,9 +46,9 @@ import com.jeroensteenbeeke.hyperion.solstice.logging.EnableRemoteLogStorage;
 import com.jeroensteenbeeke.hyperion.solstice.spring.TestModeEntityPopulator;
 import com.jeroensteenbeeke.hyperion.solstice.spring.db.EnableSolstice;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RemoteImageService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.impl.AmazonS3ServiceImpl;
+import com.jeroensteenbeeke.topiroll.beholder.beans.data.RemoteImageData;
+import com.jeroensteenbeeke.topiroll.beholder.beans.impl.AmazonS3Service;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.FakeSlackHandler;
 import com.jeroensteenbeeke.topiroll.beholder.beans.impl.LocalInstanceImageService;
@@ -58,10 +58,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @ComponentScan(
-		basePackages = {"com.jeroensteenbeeke.topiroll.beholder.dao.hibernate",
-				"com.jeroensteenbeeke.topiroll.beholder.beans.impl",
+		basePackages = {"com.jeroensteenbeeke.topiroll.beholder.dao",
+				"com.jeroensteenbeeke.topiroll.beholder.beans",
 				"com.jeroensteenbeeke.topiroll.beholder.entities.populators"},
-		scopedProxy = ScopedProxyMode.INTERFACES)
+		scopedProxy = ScopedProxyMode.TARGET_CLASS)
 @EnableTransactionManagement
 @EnableRemoteLogStorage
 @EnableSolstice(entityBasePackage = "com.jeroensteenbeeke.topiroll.beholder.entities", liquibaseChangelog = "classpath:/com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-master.xml")
@@ -92,7 +92,7 @@ public class BeholderApplicationConfig {
 	@Conditional(AmazonEnabledCondition.class)
 	public RemoteImageService amazonImageService(TransferManager manager, AmazonS3 amazonS3,
 												 @Value("${amazon.bucketname}") String amazonBucketName) {
-		return new AmazonS3ServiceImpl(manager, amazonS3, amazonBucketName);
+		return new AmazonS3Service(manager, amazonS3, amazonBucketName);
 	}
 
 	@Bean
