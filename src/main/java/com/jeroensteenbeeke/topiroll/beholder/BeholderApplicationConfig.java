@@ -42,7 +42,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.jeroensteenbeeke.hyperion.social.beans.slack.SlackHandler;
-import com.jeroensteenbeeke.hyperion.solstice.logging.EnableRemoteLogStorage;
 import com.jeroensteenbeeke.hyperion.solstice.spring.TestModeEntityPopulator;
 import com.jeroensteenbeeke.hyperion.solstice.spring.db.EnableSolstice;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
@@ -63,7 +62,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 				"com.jeroensteenbeeke.topiroll.beholder.entities.populators"},
 		scopedProxy = ScopedProxyMode.TARGET_CLASS)
 @EnableTransactionManagement
-@EnableRemoteLogStorage
 @EnableSolstice(entityBasePackage = "com.jeroensteenbeeke.topiroll.beholder.entities", liquibaseChangelog = "classpath:/com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-master.xml")
 @PropertySource("file:${hyperion.configdir:${user.home}/.hyperion}/beholder-web.properties")
 public class BeholderApplicationConfig {
