@@ -48,12 +48,6 @@ public class PrepareSessionPage extends AuthenticatedPage {
 	@Inject
 	private MapViewDAO mapViewDAO;
 
-	@Inject
-	private CampaignDAO campaignDAO;
-
-	@Inject
-	private CampaignService campaignService;
-
 	public PrepareSessionPage() {
 		super("Prepare Session");
 
