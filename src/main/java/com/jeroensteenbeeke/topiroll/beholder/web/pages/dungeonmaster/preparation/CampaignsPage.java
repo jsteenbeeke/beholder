@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import javax.inject.Inject;
 
@@ -79,8 +80,7 @@ public class CampaignsPage extends AuthenticatedPage {
 								result.ifOk(() -> {
 									// Force reload of active user
 									BeholderSession.get().detach();
-									CampaignsPage.this
-										.setResponsePage(new CampaignsPage());
+									RequestCycle.get().setResponsePage(CampaignsPage.class);
 								});
 								result.ifNotOk(this::error);
 							});
