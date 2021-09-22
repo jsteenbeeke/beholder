@@ -18,13 +18,13 @@
 package com.jeroensteenbeeke.topiroll.beholder.util.compendium;
 
 import com.google.common.collect.ImmutableMap;
-import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import org.apache.wicket.util.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
