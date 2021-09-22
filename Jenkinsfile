@@ -8,14 +8,14 @@ pipeline {
 
 	triggers {
 		pollSCM('H/5 * * * *')
-		upstream (upstreamProjects: 'docker-hyperion-jetty10,hyperion/master', threshold: hudson.model.Result.SUCCESS)
+		upstream (upstreamProjects: 'docker-hyperion-jetty,hyperion/master', threshold: hudson.model.Result.SUCCESS)
 	}
 
 	stages {
 		stage('Build') {
 		   agent {
                docker {
-                   image 'maven:3.6-jdk-11'
+                   image 'maven:3.6-jdk-17'
                    label 'docker'
                }
            }
