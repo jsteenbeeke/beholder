@@ -203,7 +203,7 @@ public class BeholderApplication extends WebApplication
 	}
 
 	public String getCommitMessage() {
-		return readBuildMetadata("commit-title.txt");
+		return readBuildMetadata("commit.txt");
 	}
 
 	public String getCommitDetails() {
