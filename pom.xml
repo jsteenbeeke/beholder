@@ -158,6 +158,12 @@
 			<version>${hyperion.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-buildergen</artifactId>
+			<version>${hyperion.version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 
@@ -224,6 +230,7 @@
 							</annotationProcessor>
 							<annotationProcessor>com.jeroensteenbeeke.hyperion.filtergen.SearchFilterGenerator
 							</annotationProcessor>
+							<annotationProcessor>com.jeroensteenbeeke.hyperion.buildergen.BuilderGenerator</annotationProcessor>
 						</annotationProcessors>
 					</configuration>
 				</plugin>

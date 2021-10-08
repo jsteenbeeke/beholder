@@ -1,17 +1,49 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,6 +87,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import static com.jeroensteenbeeke.topiroll.beholder.beans.impl.BeholderSlackHandlerBuilder.aBeholderSlackHandler;
+
 @Configuration
 @ComponentScan(
 		basePackages = {"com.jeroensteenbeeke.topiroll.beholder.dao",
@@ -81,8 +115,11 @@ public class BeholderApplicationConfig {
 		AWSCredentials credentials = new BasicAWSCredentials(clientId, clientSecret);
 		AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
 
-		return TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard()
-				.withCredentials(provider).withRegion(region).build()).build();
+		return TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder
+																	  .standard()
+																	  .withCredentials(provider)
+																	  .withRegion(region)
+																	  .build()).build();
 
 	}
 
@@ -109,7 +146,11 @@ public class BeholderApplicationConfig {
 		AWSCredentials credentials = new BasicAWSCredentials(clientId, clientSecret);
 		AWSStaticCredentialsProvider provider = new AWSStaticCredentialsProvider(credentials);
 
-		return AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(provider).build();
+		return AmazonS3ClientBuilder
+				.standard()
+				.withRegion(region)
+				.withCredentials(provider)
+				.build();
 	}
 
 	@Bean
@@ -124,8 +165,18 @@ public class BeholderApplicationConfig {
 											@Value("${slack.clientsecret}") String clientSecret,
 											@Value("${slack.signingsecret}") String signingSecret,
 											@Value("${slack.deploy.webhook:}") String deployHook,
+											@Value("${rollbar.environment:localhost}") String environmentName,
+											@Value("${rollbar.localuser:${user.name}}") String deployingInstance,
 											IdentityService identityService) {
-		return new BeholderSlackHandler(applicationBaseUrl, clientId, clientSecret, signingSecret, deployHook, identityService);
+		return aBeholderSlackHandler().withApplicationBaseUrl(applicationBaseUrl)
+									  .withClientId(clientId)
+									  .withClientSecret(clientSecret)
+									  .withSigningSecret(signingSecret)
+									  .withEnvironmentName(environmentName)
+									  .withDeployingInstance(deployingInstance)
+									  .withIdentityService(identityService)
+									  .withDeployWebhook(deployHook)
+									  .build();
 	}
 
 	@Bean

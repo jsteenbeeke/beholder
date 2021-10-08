@@ -1,17 +1,33 @@
 /**
  * This file is part of Beholder
  * (C) 2016-2019 Jeroen Steenbeeke
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This file is part of Beholder
+ * (C) 2016 Jeroen Steenbeeke
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,7 +50,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
-import com.jeroensteenbeeke.topiroll.beholder.beans.WebHookSupplier;
+import com.jeroensteenbeeke.hyperion.annotation.Buildable;
+import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
 import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.json.simple.JSONObject;
@@ -52,27 +69,42 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackError
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BeholderSlackHandler extends SlackHandler implements
-		WebHookSupplier {
-	private String applicationBaseUrl;
+		DeployNotificationContext {
+	private final String applicationBaseUrl;
 
-	private String clientId;
+	private final String clientId;
 
-	private String clientSecret;
+	private final String clientSecret;
 
-	private String signingSecret;
+	private final String signingSecret;
 
-	private String deployWebhook;
+	private final String deployWebhook;
 
-	private IdentityService identityService;
+	private final String environmentName;
 
-	public BeholderSlackHandler(String applicationBaseUrl, String clientId, String clientSecret, String signingSecret, String deployWebhook, IdentityService identityService) {
+	private final String deployingInstance;
+
+	private final IdentityService identityService;
+
+	@Buildable
+	public BeholderSlackHandler(@Nonnull String applicationBaseUrl,
+								@Nonnull String clientId,
+								@Nonnull String clientSecret,
+								@Nonnull String signingSecret,
+								@Nullable String deployWebhook,
+								@Nonnull String environmentName,
+								@Nonnull String deployingInstance,
+								@Nonnull IdentityService identityService) {
 		this.applicationBaseUrl = applicationBaseUrl;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.signingSecret = signingSecret;
 		this.deployWebhook = deployWebhook;
+		this.environmentName = environmentName;
+		this.deployingInstance = deployingInstance;
 		this.identityService = identityService;
 	}
 
@@ -124,7 +156,7 @@ public class BeholderSlackHandler extends SlackHandler implements
 		String tokenString = accessToken.getAccessToken();
 
 		TypedResult<JSONObject> result = getUserInfo(service,
-				accessToken);
+													 accessToken);
 
 		if (result.isOk()) {
 			JSONObject response = result.getObject();
@@ -133,14 +165,14 @@ public class BeholderSlackHandler extends SlackHandler implements
 
 			if (ok == null || !ok) {
 				onError("Slack returned non-OK response status: "
-						.concat(response.toJSONString()));
+								.concat(response.toJSONString()));
 			} else {
 				JSONObject user = (JSONObject) response.get("user");
 				JSONObject team = (JSONObject) response.get("team");
 
 				if (user == null || team == null) {
 					onError("Slack returned incomplete JSON response: "
-							.concat(response.toJSONString()));
+									.concat(response.toJSONString()));
 				} else {
 					String userId = (String) user.get("id");
 					String teamId = (String) team.get("id");
@@ -151,9 +183,9 @@ public class BeholderSlackHandler extends SlackHandler implements
 
 					BeholderUser beholderUser = identityService.getOrCreateUser(
 							new UserDescriptor().setAccessToken(tokenString)
-									.setAvatar(avatar).setTeamId(teamId)
-									.setTeamName(teamName).setUserId(userId)
-									.setUserName(userName));
+												.setAvatar(avatar).setTeamId(teamId)
+												.setTeamName(teamName).setUserId(userId)
+												.setUserName(userName));
 
 					BeholderSession.get().setUser(beholderUser);
 
@@ -179,4 +211,15 @@ public class BeholderSlackHandler extends SlackHandler implements
 
 	}
 
+	@Nullable
+	@Override
+	public String getEnvironmentName() {
+		return environmentName;
+	}
+
+	@Nullable
+	@Override
+	public String getDeployingInstance() {
+		return deployingInstance;
+	}
 }

@@ -3,7 +3,7 @@ package com.jeroensteenbeeke.topiroll.beholder;
 import com.jeroensteenbeeke.hyperion.Hyperion;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.lux.ActionResult;
-import com.jeroensteenbeeke.topiroll.beholder.beans.WebHookSupplier;
+import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
 import io.vavr.collection.Array;
 import io.vavr.control.Option;
 import okhttp3.*;
@@ -23,7 +23,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 		"\t\t\"fields\": [";
 	private static final String END_FIELDS = "]}";
 
-	private final WebHookSupplier webHookSupplier;
+	private final DeployNotificationContext deployNotificationContext;
 
 	private final ApplicationMetadataStore metadataStore;
 
@@ -32,8 +32,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final OkHttpClient client = new OkHttpClient();
 
 
-	public OnDeploySlackNotifier(WebHookSupplier webHookSupplier, ApplicationMetadataStore metadataStore, ServletContext servletContext) {
-		this.webHookSupplier = webHookSupplier;
+	public OnDeploySlackNotifier(DeployNotificationContext deployNotificationContext, ApplicationMetadataStore metadataStore, ServletContext servletContext) {
+		this.deployNotificationContext = deployNotificationContext;
 		this.metadataStore = metadataStore;
 		this.servletContext = servletContext;
 	}
@@ -57,8 +57,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			writeResult
 				.ifOk(() -> {
 
-					String deployWebhook = webHookSupplier.getDeployWebhook();
-					String message = "A new version of Beholder just deployed";
+					String deployWebhook = deployNotificationContext.getDeployWebhook();
+					String message = "A new version of Beholder was just deployed to *%s* by *%s*".formatted(deployNotificationContext.getEnvironmentName(), deployNotificationContext.getDeployingInstance());
 					String attachments = createAttachments();
 
 					String payload = String.format("{\n\t\"text\": \"%s\",\n\t\"attachments\": [{\"blocks\": [%s]}]\n}", message, attachments);
@@ -94,6 +94,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 		Array<String> fields = Array.empty();
 
+		fields = fields.append(field("mrkdwn", "*Environment*"));
+		fields = fields.append(field("plain_text", BeholderApplication.get().getCommitMessage()));
 		fields = fields.append(field("mrkdwn", "*Commit Message*"));
 		fields = fields.append(field("plain_text", BeholderApplication.get().getCommitMessage()));
 		fields = fields.append(field("mrkdwn", "*Beholder Revision*"));
@@ -132,7 +134,12 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			sb.append(",\n\t");
 
 			sb
-				.append("{\n" + "\t\t\"type\": \"section\",\n" + "\t\t\"text\": {\n" + "\t\t\t\"type\": \"mrkdwn\",\n" + "\t\t\t\"text\": \"*Commit details*\\n")
+				.append("""
+								{
+								\t\t"type": "section",
+								\t\t"text": {
+								\t\t\t"type": "mrkdwn",
+								\t\t\t"text": "*Commit details*\\n""")
 				.append(details)
 				.append("\"\n")
 				.append("\t\t}\n")
