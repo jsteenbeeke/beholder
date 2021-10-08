@@ -1,7 +1,7 @@
 pipeline {
 	agent {
         	docker {
-                   image 'maven:3.6-jdk-11'
+                    image 'maven:3.8-openjdk-17'
 			label 'docker'
 		}
 	}
@@ -16,9 +16,8 @@ pipeline {
 		stage('Build') {
 			steps {
                 sh 'git submodule update --init --recursive'
-			    sh 'echo `git log -n 1 --pretty=format:"%H"` > '+ env.WORKSPACE +'/src/main/java/com/jeroensteenbeeke/topiroll/beholder/revision.txt'
+                addGitMetadata package: 'com.jeroensteenbeeke.topiroll.beholder'
 			    sh 'mvn clean package -U'
-			    stash name: 'war', includes: '**/*.war'
 			}
 		}
 	}
