@@ -111,12 +111,12 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 								   .withField(new PlainText(Hyperion
 																	.getRevision()
 																	.getOrElse("unknown")))
-								   .withField(new MarkdownText("*Hyperion Commit Message*"))
+				).withBlock(Section.sectionWithoutHeader(new MarkdownText("*Hyperion Commit Message*"))
 								   .withField(new PlainText(Hyperion
 																	.getCommitTitle()
 																	.getOrElse("unknown")))
+								   .withField(new MarkdownText("*Docker image ID*"))
 
-				).withBlock(Section.sectionWithoutHeader(new MarkdownText("*Docker image ID*"))
 								   .withField(new MarkdownText(Option
 																	   .of(System.getenv("DOCKER_IMAGE_ID"))
 																	   .map(this::asCode)
@@ -128,7 +128,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 								   .withField(new MarkdownText("*Server*"))
 								   .withField(new PlainText(servletContext.getServerInfo()))
 				).withBlock(new Divider())
-				.withBlock(Section.sectionWithHeader(new MarkdownText("**Commit details*\\n" + BeholderApplication
+				.withBlock(Section.sectionWithHeader(new MarkdownText("**Commit details**\\n" + BeholderApplication
 						.get()
 						.getCommitDetails()
 						.replace("\n", "\\n"))));
