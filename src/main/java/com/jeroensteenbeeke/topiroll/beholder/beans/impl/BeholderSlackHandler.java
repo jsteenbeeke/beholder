@@ -54,6 +54,7 @@ import com.jeroensteenbeeke.hyperion.annotation.Buildable;
 import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
 import io.vavr.control.Option;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
@@ -211,7 +212,7 @@ public class BeholderSlackHandler extends SlackHandler implements
 
 	}
 
-	@Nullable
+	@NotNull
 	@Override
 	public String getEnvironmentName() {
 		return environmentName;

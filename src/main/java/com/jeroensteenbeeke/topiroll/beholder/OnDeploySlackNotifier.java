@@ -67,6 +67,11 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 					.ifOk(() -> {
 
 						String deployWebhook = deployNotificationContext.getDeployWebhook();
+
+						if (deployWebhook == null) {
+							return;
+						}
+
 						String message = "A new version of Beholder was just deployed to *%s* by *%s*".formatted(deployNotificationContext.getEnvironmentName(), deployNotificationContext.getDeployingInstance());
 
 						Try<WebhookResponse> response = WebhookInvocation

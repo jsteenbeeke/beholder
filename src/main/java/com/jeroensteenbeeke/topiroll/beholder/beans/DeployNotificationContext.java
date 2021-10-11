@@ -4,7 +4,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 public interface DeployNotificationContext {
-	@Nonnull
+	@CheckForNull
 	String getDeployWebhook();
 
 	@Nonnull
