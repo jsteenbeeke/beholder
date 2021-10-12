@@ -44,6 +44,7 @@ import com.jeroensteenbeeke.hyperion.solstice.data.factory.SolsticeEntityEncapsu
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
+import com.jeroensteenbeeke.hyperion.util.ResourceUtil;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
@@ -197,32 +198,14 @@ public class BeholderApplication extends WebApplication
 	}
 
 	public String getRevision() {
-		return readBuildMetadata("revision.txt");
+		return ResourceUtil.readResourceAsString(BeholderApplication.class, "revision.txt").getOrElse("unknown");
 	}
 
 	public String getCommitMessage() {
-		return readBuildMetadata("commit.txt");
+		return ResourceUtil.readResourceAsString(BeholderApplication.class, "commit.txt").getOrElse("");
 	}
 
 	public String getCommitDetails() {
-		return readBuildMetadata("commit-notes.txt");
-	}
-
-	private String readBuildMetadata(String filename) {
-		try (InputStream stream = BeholderApplication.class.getResourceAsStream(filename); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-			int i;
-
-			if (stream == null) {
-				return "Unknown";
-			}
-
-			while ((i = stream.read()) != -1) {
-				bos.write(i);
-			}
-
-			return new String(bos.toByteArray(), StandardCharsets.UTF_8).trim();
-		} catch (IOException ioe) {
-			return "Unknown";
-		}
+		return ResourceUtil.readResourceAsString(BeholderApplication.class, "commit-notes.txt").getOrNull();
 	}
 }

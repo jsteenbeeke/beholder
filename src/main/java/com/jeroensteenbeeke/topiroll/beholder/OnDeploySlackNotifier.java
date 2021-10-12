@@ -95,7 +95,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 	}
 
 	private WebhookPayload createPayload(String message) {
-		return new WebhookPayload(message)
+		WebhookPayload payload = new WebhookPayload(message)
 				.withBlock(Section
 								   .sectionWithoutHeader(new MarkdownText("*Environment*"))
 								   .withField(new PlainText(deployNotificationContext.getEnvironmentName()))
@@ -130,13 +130,20 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 								   .withField(new MarkdownText("*Server*"))
 								   .withField(new PlainText(servletContext.getServerInfo()))
 				)
-				.withBlock(new Divider())
-				.withBlock(Section
-								   .sectionWithHeader(new MarkdownText("**Commit details**"))
-								   .withField(new PlainText(BeholderApplication
-																	.get()
-																	.getCommitDetails()
-																	.replace("\n", "\\n"))));
+				.withBlock(new Divider());
+
+		String commitDetails = BeholderApplication.get().getCommitDetails();
+
+		if (commitDetails != null) {
+			payload = payload
+					.withBlock(Section
+									   .sectionWithHeader(new MarkdownText("**Commit details**"))
+									   .withField(new PlainText(BeholderApplication
+																		.get()
+																		.getCommitDetails())));
+		}
+
+		return payload;
 
 	}
 
