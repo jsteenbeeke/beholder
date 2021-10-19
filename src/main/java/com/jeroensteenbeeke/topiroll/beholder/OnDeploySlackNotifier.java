@@ -8,29 +8,22 @@ import com.jeroensteenbeeke.hyperion.social.api.webhook.WebhookResponse;
 import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.Divider;
 import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.MarkdownText;
 import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.PlainText;
-import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.Section;
+import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.TextSection;
+import com.jeroensteenbeeke.hyperion.social.api.webhook.blockkit.FieldsSection;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.lux.ActionResult;
 import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
-import io.vavr.collection.Array;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import okhttp3.*;
 import org.apache.wicket.Application;
 import org.apache.wicket.IApplicationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
-import java.io.IOException;
 
 public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final Logger log = LoggerFactory.getLogger(OnDeploySlackNotifier.class);
-	private static final String DIVIDER = "{\n\t\t\"type\": \"divider\"\n\t}";
-	private static final String START_FIELDS = "{\n" +
-			"\t\t\"type\": \"section\",\n" +
-			"\t\t\"fields\": [";
-	private static final String END_FIELDS = "]}";
 
 	private final DeployNotificationContext deployNotificationContext;
 
@@ -96,8 +89,9 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 	private WebhookPayload createPayload(String message) {
 		WebhookPayload payload = new WebhookPayload(message)
-				.withBlock(Section
-								   .sectionWithoutHeader(new MarkdownText("*Environment*"))
+				.withBlock(new TextSection(new MarkdownText(message)))
+				.withBlock(FieldsSection
+								   .create(new MarkdownText("*Environment*"))
 								   .withField(new PlainText(deployNotificationContext.getEnvironmentName()))
 								   .withField(new MarkdownText("*Commit Message*"))
 								   .withField(new PlainText(BeholderApplication
@@ -112,8 +106,8 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 																	.getRevision()
 																	.getOrElse("unknown")))
 				)
-				.withBlock(Section
-								   .sectionWithoutHeader(new MarkdownText("*Hyperion Commit Message*"))
+				.withBlock(FieldsSection
+								   .create(new MarkdownText("*Hyperion Commit Message*"))
 								   .withField(new PlainText(Hyperion
 																	.getCommitTitle()
 																	.getOrElse("unknown")))
@@ -129,19 +123,20 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 										   .toString()))
 								   .withField(new MarkdownText("*Server*"))
 								   .withField(new PlainText(servletContext.getServerInfo()))
-				)
-				.withBlock(new Divider());
+				);
 
 		String commitDetails = BeholderApplication.get().getCommitDetails();
 
 		if (commitDetails != null) {
 			payload = payload
-					.withBlock(Section
-									   .sectionWithoutHeader(new MarkdownText("*Commit details*"))
+					.withBlock(FieldsSection
+									   .create(new MarkdownText("*Commit details*"))
 									   .withField(new PlainText(BeholderApplication
 																		.get()
 																		.getCommitDetails())));
 		}
+
+		payload = payload.withBlock(new Divider());
 
 		return payload;
 
