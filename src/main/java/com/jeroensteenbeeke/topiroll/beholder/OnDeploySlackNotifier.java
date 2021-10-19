@@ -67,13 +67,13 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 						String message = "A new version of Beholder was just deployed to *%s* by *%s*".formatted(deployNotificationContext.getEnvironmentName(), deployNotificationContext.getDeployingInstance());
 
+						WebhookPayload payload = createPayload(message);
+
+						log.info("Sending notification: {}", payload.toJson());
+
 						Try<WebhookResponse> response = WebhookInvocation
 								.invoke(deployWebhook)
-								.withPayload(
-										createPayload(message)
-
-
-								);
+								.withPayload(payload);
 
 						response.onSuccess(r -> {
 							if (r instanceof WebhookFailure failure) {
@@ -131,9 +131,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 			payload = payload
 					.withBlock(FieldsSection
 									   .create(new MarkdownText("*Commit details*"))
-									   .withField(new PlainText(BeholderApplication
-																		.get()
-																		.getCommitDetails())));
+									   .withField(new PlainText(commitDetails)));
 		}
 
 		payload = payload.withBlock(new Divider());
