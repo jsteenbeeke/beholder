@@ -127,7 +127,7 @@ public class OnDeploySlackNotifier implements IApplicationListener {
 
 		String commitDetails = BeholderApplication.get().getCommitDetails();
 
-		if (commitDetails != null) {
+		if (commitDetails != null && !commitDetails.isBlank()) {
 			payload = payload
 					.withBlock(FieldsSection
 									   .create(new MarkdownText("*Commit details*"))
