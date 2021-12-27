@@ -34,4 +34,5 @@
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-sessionlog.xml"/>
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-dmnotes.xml"/>
   <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-playerview.xml"/>
+  <include file="com/jeroensteenbeeke/topiroll/beholder/entities/liquibase/db.changelog-h2-update-required-renames.xml" />
 </databaseChangeLog>

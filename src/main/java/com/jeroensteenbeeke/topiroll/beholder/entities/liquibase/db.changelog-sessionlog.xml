@@ -5,7 +5,9 @@
 	<property dbms="postgresql" name="texttype" value="text"/>
 	<property dbms="h2" name="texttype" value="java.sql.Types.VARCHAR(8192)"/>
 
-	<changeSet author="codemonkey" failOnError="true" id="create-table-SessionLogIndex">
+	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-SessionLogIndex" dbms="postgres">
+		<validCheckSum>any</validCheckSum>
+
 		<createTable tableName="sessionlogindex">
 			<column name="id" type="bigint">
 				<constraints primaryKey="true"/>
@@ -27,7 +29,33 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-SessionLogItem">
+	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-SessionLogIndex" dbms="h2">
+		<validCheckSum>any</validCheckSum>
+
+		<createTable tableName="sessionlogindex">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="sessionday" type="DATE">
+				<constraints nullable="false"/>
+			</column>
+			<column name="owner" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_sessionlogindex" startValue="1"/>
+
+		<addForeignKeyConstraint baseColumnNames="owner" baseTableName="sessionlogindex"
+								 constraintName="fk_sessionlogindex_owner" referencedColumnNames="id"
+								 referencedTableName="beholderuser"/>
+		<createIndex indexName="idx_sessionlogindex_owner" tableName="sessionlogindex">
+			<column name="owner"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-SessionLogItem" dbms="postgres">
+		<validCheckSum>any</validCheckSum>
+
 		<createTable tableName="sessionlogitem">
 			<column name="id" type="bigint">
 				<constraints primaryKey="true"/>
@@ -64,7 +92,46 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="sessionlog-rename-userid" author="Jeroen Steenbeeke">
+	<changeSet author="Jeroen Steenbeeke" failOnError="true" id="create-table-SessionLogItem" dbms="h2">
+		<createTable tableName="sessionlogitem">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="user_id" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="eventtime" type="DATETIME">
+				<constraints nullable="false"/>
+			</column>
+			<column name="eventdescription" type="${texttype}">
+				<constraints nullable="false"/>
+			</column>
+			<column name="logindex" type="BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="completed" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<createSequence incrementBy="1" sequenceName="seq_id_sessionlogitem" startValue="1"/>
+		<addForeignKeyConstraint baseColumnNames="user_id" baseTableName="sessionlogitem"
+								 constraintName="fk_sessionlogitem_user" referencedColumnNames="id"
+								 referencedTableName="beholderuser"/>
+		<createIndex indexName="idx_sessionlogitem_user" tableName="sessionlogitem">
+			<column name="user_id"/>
+		</createIndex>
+
+		<addForeignKeyConstraint baseColumnNames="logindex" baseTableName="sessionlogitem"
+								 constraintName="fk_sessionlogitem_logindex" referencedColumnNames="id"
+								 referencedTableName="sessionlogindex"/>
+		<createIndex indexName="idx_sessionlogitem_logindex" tableName="sessionlogitem">
+			<column name="logindex"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="sessionlog-rename-userid" author="Jeroen Steenbeeke" dbms="postgres">
+		<validCheckSum>any</validCheckSum>
+
 		<renameColumn tableName="sessionlogitem" oldColumnName="user" newColumnName="user_id" />
 	</changeSet>
 </databaseChangeLog>

@@ -32,7 +32,7 @@ public class SessionLogIndex extends BaseDomainObject {
 	private Long id;
  	@OneToMany(mappedBy="logIndex", fetch=FetchType.LAZY)
 	private List<SessionLogItem> items = new ArrayList<SessionLogItem>();
- 	@Column(nullable=false)
+ 	@Column(nullable=false, name = "sessionday")
 	private LocalDate day;
 
 
