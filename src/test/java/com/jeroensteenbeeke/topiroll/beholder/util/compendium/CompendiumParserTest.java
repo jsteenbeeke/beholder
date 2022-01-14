@@ -17,10 +17,10 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.util.compendium;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CompendiumParserTest {
 	private static final String TEST_INPUT = "name: Alarm\n" +
@@ -51,10 +51,10 @@ public class CompendiumParserTest {
 		Compendium.HtmlOutput output = Compendium.textToHtml(TEST_INPUT);
 		assertEquals("Alarm", output.getTitle());
 
-		assertTrue(output.getText(), output.getText().contains("<h1>Alarm</h1>"));
-		assertTrue(output.getText(), output.getText().contains("<th>Table</th>"));
-		assertTrue(output.getText(), output.getText().contains("<th>Test</th>"));
-		assertTrue(output.getText(), output.getText().contains("<td>Cell</td>"));
+		assertTrue(output.getText().contains("<h1>Alarm</h1>"), output.getText());
+		assertTrue(output.getText().contains("<th>Table</th>"), output.getText());
+		assertTrue(output.getText().contains("<th>Test</th>"), output.getText());
+		assertTrue(output.getText().contains("<td>Cell</td>"), output.getText());
 
 		System.out.println(output.getText());
 	}

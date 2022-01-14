@@ -4,7 +4,7 @@ import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.wicket.rest.test.AbstractFrontendTest;
 import com.jeroensteenbeeke.topiroll.beholder.frontend.StartBeholderApplication;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -18,7 +18,7 @@
 package com.jeroensteenbeeke.topiroll.beholder.web;
 
 import com.jeroensteenbeeke.hyperion.annotation.Dataset;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Dataset("slackcommand")
 public class DoorbellTest extends SlackCommandTest {

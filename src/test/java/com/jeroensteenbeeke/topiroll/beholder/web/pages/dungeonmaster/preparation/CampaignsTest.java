@@ -37,16 +37,16 @@ import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.FormTester;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CampaignsTest extends AbstractPageTest {
 	@Test

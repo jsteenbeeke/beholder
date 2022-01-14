@@ -45,8 +45,8 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -54,21 +54,22 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.function.Predicate;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public abstract class SlackCommandTest {
 	private static InMemory.Handler handler;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startApplication() throws Exception {
 		handler = StartBeholderApplication
 			.createApplicationHandler(new String[0]).orElseThrow(IllegalStateException::new);
 		SlackCommandFilter.setRequireCorrectSignature(false);
 	}
 
-	@AfterClass
-	public static void stopApplication() throws Exception {
+	@AfterAll
+	public static void stopApplication() {
 		SlackCommandFilter.setRequireCorrectSignature(true);
 		handler.terminate();
 	}
@@ -123,10 +124,10 @@ public abstract class SlackCommandTest {
 			Thread.sleep(5000);
 
 			Option<JSONObject> lastCommandResponseReceived = FakeSlackServer.getLastCommandResponseReceived();
-			assertTrue(String.format("Last slack response [%s] matches predicate", lastCommandResponseReceived
-				.map(JSONAware::toJSONString)
-				.getOrElse("NOTHING")), lastCommandResponseReceived
-						   .filter(slackResponsePredicate).isDefined());
+			assertTrue(lastCommandResponseReceived
+									   .filter(slackResponsePredicate).isDefined(), String.format("Last slack response [%s] matches predicate", lastCommandResponseReceived
+							.map(JSONAware::toJSONString)
+							.getOrElse("NOTHING")));
 		}
 
 		private TypeSafeDiagnosingMatcher<Response> isSuccess() {

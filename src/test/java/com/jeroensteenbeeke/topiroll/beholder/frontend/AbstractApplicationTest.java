@@ -34,22 +34,21 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.frontend;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class AbstractApplicationTest {
 	private static Handler handler;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startApplication() throws Exception {
 		handler = StartBeholderApplication.createApplicationHandler(new String[0]).orElseThrow(
 				() -> new IllegalStateException("Could not start webserver"));
 	}
 	
-	@AfterClass
-	public static void closeApplication() throws Exception {
+	@AfterAll
+	public static void closeApplication() {
 		handler.terminate();
 	}
 }

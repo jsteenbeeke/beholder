@@ -29,8 +29,8 @@ import org.apache.wicket.protocol.http.mock.MockHttpServletRequest;
 import org.apache.wicket.protocol.http.mock.MockHttpSession;
 import org.apache.wicket.protocol.http.mock.MockServletContext;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -40,8 +40,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-
-import static org.mockito.Mockito.mock;
 
 public class AbstractPageTest {
 	private static final String APPLICATION_KEY = "wicket.BeholderApplication";
@@ -55,7 +53,7 @@ public class AbstractPageTest {
 
 	private EntityManagerFactory entityManagerFactory;
 
-	@Before
+	@BeforeEach
 	public void startApplication() throws Exception {
 		handler = StartBeholderApplication
 			.createApplicationHandler(new String[0]).orElseThrow(IllegalStateException::new);
@@ -91,7 +89,7 @@ public class AbstractPageTest {
 	}
 
 
-	@After
+	@AfterEach
 	public void endRequest() {
 		TransactionSynchronizationManager.unbindResource(entityManagerFactory);
 
