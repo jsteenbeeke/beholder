@@ -154,6 +154,8 @@ public class BeholderApplication extends WebApplication
 		HyperionApp.get().setApplicationVersion(getRevision());
 
 		getJavaScriptLibrarySettings().setJQueryReference(JQueryResourceReference.getV3());
+
+		getCspSettings().blocking().disabled();
 	}
 
 	public IWebSocketConnectionRegistry getWebSocketRegistry() {
