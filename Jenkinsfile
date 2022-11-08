@@ -19,7 +19,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'maven:3.8-openjdk-17'
+                    image 'registry.jeroensteenbeeke.nl/maven:latest'
                     label 'docker'
                 }
             }
@@ -39,7 +39,7 @@ pipeline {
             }
 
             steps {
-                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk17'
+                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk19'
                 unstash 'beholder-war'
 				script {
 					application_hash = dockerizeAndPublish image: 'registry.jeroensteenbeeke.nl/beholder:latest'
