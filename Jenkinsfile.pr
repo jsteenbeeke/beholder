@@ -1,7 +1,7 @@
 pipeline {
 	agent {
         	docker {
-                    image 'maven:3.8-openjdk-17'
+                    image 'registry.jeroensteenbeeke.nl/maven:latest'
 			label 'docker'
 		}
 	}
