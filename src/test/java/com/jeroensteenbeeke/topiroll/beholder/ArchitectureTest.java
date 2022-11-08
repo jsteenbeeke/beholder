@@ -40,7 +40,7 @@ public class ArchitectureTest {
 		var rule = methods()
 				.that(new DescribedPredicate<>("Are not lambda methods") {
 					@Override
-					public boolean apply(JavaMethod input) {
+					public boolean test(JavaMethod input) {
 						String methodName = input.getName();
 						return !methodName.contains("lambda$") && !methodName
 								.contains("$deserializeLambda$");
