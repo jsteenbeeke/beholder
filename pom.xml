@@ -424,13 +424,13 @@
 			</snapshots>
 			<id>central</id>
 			<name>libs-release</name>
-			<url>https://repo.jeroensteenbeeke.nl/artifactory/libs-release</url>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
 		</repository>
 		<repository>
 			<snapshots/>
 			<id>snapshots</id>
 			<name>libs-snapshot</name>
-			<url>https://repo.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -440,13 +440,13 @@
 			</snapshots>
 			<id>central</id>
 			<name>libs-release</name>
-			<url>https://repo.jeroensteenbeeke.nl/artifactory/libs-release</url>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
 		</pluginRepository>
 		<pluginRepository>
 			<snapshots/>
 			<id>snapshots</id>
 			<name>libs-snapshot</name>
-			<url>https://repo.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
 		</pluginRepository>
 	</pluginRepositories>
 </project>
