@@ -12,7 +12,7 @@ pipeline {
 
     triggers {
         pollSCM('H/5 * * * *')
-        upstream(upstreamProjects: 'docker-hyperion-jetty-jdk19,hyperion/v2.0.x', threshold: hudson.model.Result.SUCCESS)
+        upstream(upstreamProjects: 'docker-hyperion-jetty-jdk20,hyperion/v2.0.x', threshold: hudson.model.Result.SUCCESS)
     }
 
     stages {
@@ -39,7 +39,7 @@ pipeline {
             }
 
             steps {
-                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk19'
+                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk20'
                 unstash 'beholder-war'
 				script {
 					application_hash = dockerizeAndPublish image: 'registry.jeroensteenbeeke.nl/beholder:latest'
