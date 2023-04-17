@@ -1,4 +1,4 @@
-FROM registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk19
+FROM registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk20
 MAINTAINER Jeroen Steenbeeke,j.steenbeeke@gmail.com
 
 COPY target/beholder.war $JETTY_BASE/webapps/beholder.war
