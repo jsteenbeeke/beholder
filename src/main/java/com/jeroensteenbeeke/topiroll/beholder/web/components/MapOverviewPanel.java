@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
@@ -187,9 +187,9 @@ public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 
 	}
 
-	protected abstract void decorateFolderFilter(@Nonnull MapFolderFilter folderFilter);
+	protected abstract void decorateFolderFilter(@NotNull MapFolderFilter folderFilter);
 
-	protected abstract void decorateMapFilter(@Nonnull ScaledMapFilter mapFilter);
+	protected abstract void decorateMapFilter(@NotNull ScaledMapFilter mapFilter);
 
 	private BeholderUser getUser() {
 		return userModel.getObject();

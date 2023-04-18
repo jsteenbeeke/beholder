@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,13 +30,13 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.FetchType;
 import javax.persistence.Column;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Entity
 public class YouTubePlaylist extends BaseDomainObject {
@@ -76,7 +76,7 @@ public class YouTubePlaylist extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -85,34 +85,34 @@ public class YouTubePlaylist extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getOwner() {
 		return owner;
 	}
 
-	public void setOwner(@Nonnull BeholderUser owner) {
+	public void setOwner(@NotNull BeholderUser owner) {
 		this.owner = owner;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(@Nonnull String url) {
+	public void setUrl(@NotNull String url) {
 		this.url = url;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getNumberOfEntries() {
 		return numberOfEntries;
 	}
@@ -121,7 +121,7 @@ public class YouTubePlaylist extends BaseDomainObject {
 		this.numberOfEntries = numberOfEntries;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getCampaign() {
 		return campaign;
 	}

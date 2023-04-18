@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,27 +17,18 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration;
 
-import com.google.common.collect.Lists;
-import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
-import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.PortraitVisibilityDAO;
-import com.jeroensteenbeeke.topiroll.beholder.dao.YouTubePlaylistDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.Portrait;
 import com.jeroensteenbeeke.topiroll.beholder.entities.PortraitVisibilityLocation;
-import com.jeroensteenbeeke.topiroll.beholder.entities.YouTubePlaylist;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.PortraitVisibilityFilter;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.YouTubePlaylistFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
-import com.jeroensteenbeeke.topiroll.beholder.web.data.JSPlaylist;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -52,7 +43,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
-import java.util.Random;
+import java.util.List;
 
 public class PortraitsWindow extends DMModalWindow<MapView> {
 	private static final long serialVersionUID = -2255734962780199594L;
@@ -73,7 +64,7 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 		container.setOutputMarkupId(true);
 
 		DataView<Portrait> portraitView = new DataView<Portrait>("portraits",
-				FilterDataProvider.of(portraitFilter, portraitDAO)) {
+			FilterDataProvider.of(portraitFilter, portraitDAO)) {
 			private static final long serialVersionUID = 3427970936660497988L;
 
 			@Override
@@ -81,8 +72,8 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 				Portrait portrait = item.getModelObject();
 				item.add(new Label("name", portrait.getName()));
 				item.add(new ExternalImage("thumb",
-						portrait.getImageUrl()));
-				item.add(new ListView<>("locations", Lists.newArrayList(PortraitVisibilityLocation.values())) {
+					portrait.getImageUrl()));
+				item.add(new ListView<>("locations", List.of(PortraitVisibilityLocation.values())) {
 
 					private static final long serialVersionUID = 152264260845309393L;
 					@Inject
@@ -93,8 +84,8 @@ public class PortraitsWindow extends DMModalWindow<MapView> {
 						PortraitVisibilityLocation location = innerItem.getModelObject();
 
 						final boolean selected = visibilityDAO.findByFilter(
-							new PortraitVisibilityFilter().view(PortraitsWindow.this.getModelObject())
-								.portrait(item.getModelObject()))
+								new PortraitVisibilityFilter().view(PortraitsWindow.this.getModelObject())
+									.portrait(item.getModelObject()))
 							.find(v -> v.getLocation().equals(location)).isDefined();
 
 						AjaxLink<PortraitVisibilityLocation> link = new AjaxLink<PortraitVisibilityLocation>(

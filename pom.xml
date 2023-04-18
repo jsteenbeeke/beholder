@@ -1,55 +1,87 @@
 <?xml version="1.0"?>
+<!--
+
+    This file is part of Beholder
+    Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
 <project
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-		xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>com.jeroensteenbeeke</groupId>
-		<artifactId>hyperion-parent</artifactId>
-		<version>2.0-SNAPSHOT</version>
+		<artifactId>jeroensteenbeeke-project-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.jeroensteenbeeke.topiroll</groupId>
 	<artifactId>beholder-web</artifactId>
 	<version>1.0-SNAPSHOT</version>
+
 	<packaging>war</packaging>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>libs-release</name>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
+		</repository>
+		<repository>
+			<snapshots/>
+			<id>snapshots</id>
+			<name>libs-snapshot</name>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>libs-release</name>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots/>
+			<id>snapshots</id>
+			<name>libs-snapshot</name>
+			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<properties>
 		<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>1.11.367</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
-
 		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-native-websocket-javax</artifactId>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-wicket-standalone-deps</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-social-slack</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-icons-fontawesome</artifactId>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -59,13 +91,32 @@
 
 		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-icons-fontawesome</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-metrics-filter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
 			<artifactId>hyperion-rollbar-filter</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>hyperion-social-slack</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
 			<artifactId>imageserv</artifactId>
-			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>jeroensteenbeeke-aggregator-wicket-standalone</artifactId>
 		</dependency>
 
 		<dependency>
@@ -73,96 +124,51 @@
 			<artifactId>okhttp</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-all</artifactId>
+		</dependency>
 
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-native-websocket-javax</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+		</dependency>
+
 
 		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-metrics-filter</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.vladsch.flexmark</groupId>
-			<artifactId>flexmark-all</artifactId>
-			<version>0.62.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>io.ratpack</groupId>
-			<artifactId>ratpack-test</artifactId>
+			<artifactId>hyperion-wicket-rest-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- JSoup to make sense of the document -->
+		<dependency>
+			<groupId>com.jeroensteenbeeke</groupId>
+			<artifactId>jeroensteenbeeke-aggregator-wicket-standalone-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- JSoup to make sense of the document -->
-		<dependency>
-			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.15.3</version>
-		</dependency>
-
-		<!-- Provided by Jetty -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Testing Dependencies -->
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-wicket-frontend-test-deps</artifactId>
+			<groupId>io.ratpack</groupId>
+			<artifactId>ratpack-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Annotation Processors -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-jpamodelgen</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-filtergen</artifactId>
-			<version>${hyperion.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jeroensteenbeeke</groupId>
-			<artifactId>hyperion-buildergen</artifactId>
-			<version>${hyperion.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -220,233 +226,182 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>com.jeroensteenbeeke.andalite</groupId>
+					<artifactId>andalite-maven-plugin</artifactId>
+					<configuration>
+						<recipes>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.AddPropertyWithLiquibase</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.CreateEntityWithLiquibase</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.LinkEntityWithLiquibase</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.ExtendEntityWithLiquibase</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateSpringBean</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateTaskGroup</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateWicketBasedBackgroundJob</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPage</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPanel</recipe>
+							<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.standalone.CreateEntityDataviewPage</recipe>
+						</recipes>
+						<extraConfiguration>
+							<basePackage>com.jeroensteenbeeke.topiroll.beholder</basePackage>
+							<customPageParams>super String ""</customPageParams>
+							<entitySuperclass>com.jeroensteenbeeke.hyperion.data.BaseDomainObject</entitySuperclass>
+							<liquibasePackage>com.jeroensteenbeeke.topiroll.beholder.entities.liquibase</liquibasePackage>
+							<sourcePath>src/main/java</sourcePath>
+							<taskGroupEnum>com.jeroensteenbeeke.topiroll.beholder.Jobs</taskGroupEnum>
+							<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication</wicketApplication>
+							<wicketBasePage>com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage</wicketBasePage>
+							<wicketBasePanel>org.apache.wicket.markup.html.panel.Panel</wicketBasePanel>
+						</extraConfiguration>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>com.jeroensteenbeeke</groupId>
+							<artifactId>hyperion-recipes-hibernate</artifactId>
+							<version>${com.jeroensteenbeeke.version.hyperion.recipes}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.jeroensteenbeeke</groupId>
+							<artifactId>hyperion-recipes-spring</artifactId>
+							<version>${com.jeroensteenbeeke.version.hyperion.recipes}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.jeroensteenbeeke</groupId>
+							<artifactId>hyperion-recipes-wicket</artifactId>
+							<version>${com.jeroensteenbeeke.version.hyperion.recipes}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.jeroensteenbeeke</groupId>
+							<artifactId>hyperion-recipes-wicket-standalone</artifactId>
+							<version>${com.jeroensteenbeeke.version.hyperion.recipes}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>com.jeroensteenbeeke.maven</groupId>
+					<artifactId>fansasstic-maven-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>com.jeroensteenbeeke</groupId>
+							<artifactId>hyperion-heinlein</artifactId>
+							<version>${com.jeroensteenbeeke.version.hyperion}</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>collect-scss-sources</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>apply</goal>
+							</goals>
+							<configuration>
+								<directories>
+									<directory>src/main/scss</directory>
+								</directories>
+								<sources>
+									<source>beholder-web.scss</source>
+								</sources>
+								<destination>${project.basedir}/src/main/webapp/css</destination>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<configuration>
+						<licenseSets>
+							<licenseSet>
+								<header>header.txt</header>
+								<excludes>
+									<exclude>**/README</exclude>
+									<exclude>**/.editorconfig</exclude>
+									<exclude>**/*.sh</exclude>
+									<exclude>**/*.txt</exclude>
+									<exclude>**/*.mp3</exclude>
+									<exclude>**/*.jpg</exclude>
+									<exclude>**/*.png</exclude>
+									<exclude>**/*.scss</exclude>
+									<exclude>**/*.css</exclude>
+									<exclude>**/*.css.map</exclude>
+									<exclude>**/*.webmanifest</exclude>
+									<exclude>Dockerfile</exclude>
+									<exclude>Jenkinsfile</exclude>
+									<exclude>Jenkinsfile.pr</exclude>
+									<exclude>src/main/webapp/WEB-INF/services/org.jboss.logging.LoggerProvider</exclude>
+									<exclude>src/test/resources/**</exclude>
+									<exclude>src/main/resources/**</exclude>
+								</excludes>
+								<keywords>
+									<keyword>This file is part of Beholder</keyword>
+								</keywords>
+							</licenseSet>
+						</licenseSets>
+						<useDefaultMapping>false</useDefaultMapping>
+						<mapping>
+							<java>SLASHSTAR_STYLE</java>
+							<html>XML_STYLE</html>
+							<xml>XML_STYLE</xml>
+							<js>SLASHSTAR_STYLE</js>
+						</mapping>
+					</configuration>
+					<executions>
+						<execution>
+							<id>verify-license-header</id>
+							<phase>process-sources</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
 						<annotationProcessors>
-							<annotationProcessor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
-							</annotationProcessor>
-							<annotationProcessor>com.jeroensteenbeeke.hyperion.filtergen.SearchFilterGenerator
-							</annotationProcessor>
+							<annotationProcessor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</annotationProcessor>
+							<annotationProcessor>com.jeroensteenbeeke.hyperion.filtergen.SearchFilterGenerator</annotationProcessor>
 							<annotationProcessor>com.jeroensteenbeeke.hyperion.buildergen.BuilderGenerator</annotationProcessor>
 						</annotationProcessors>
+						<annotationProcessorPaths>
+							<dependency>
+								<groupId>org.hibernate</groupId>
+								<artifactId>hibernate-jpamodelgen</artifactId>
+								<version>${com.jeroensteenbeeke.version.hibernate}</version>
+							</dependency>
+							<dependency>
+								<groupId>com.jeroensteenbeeke</groupId>
+								<artifactId>hyperion-filtergen</artifactId>
+								<version>${com.jeroensteenbeeke.version.hyperion}</version>
+							</dependency>
+							<dependency>
+								<groupId>com.jeroensteenbeeke</groupId>
+								<artifactId>hyperion-buildergen</artifactId>
+								<version>${com.jeroensteenbeeke.version.hyperion}</version>
+							</dependency>
+						</annotationProcessorPaths>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+						<useSystemClassLoader>false</useSystemClassLoader>
+						<reuseForks>false</reuseForks>
+						<useModulePath>false</useModulePath>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
-
-			<plugin>
-				<groupId>com.jeroensteenbeeke.andalite</groupId>
-				<artifactId>andalite-maven-plugin</artifactId>
-				<configuration>
-					<recipes>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.AddPropertyWithLiquibase</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.CreateEntityWithLiquibase
-						</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.LinkEntityWithLiquibase</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.hibernate.entity.ExtendEntityWithLiquibase
-						</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateSpringBean</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateTaskGroup</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.spring.CreateWicketBasedBackgroundJob</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPage</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.CreateWicketPanel</recipe>
-						<recipe>com.jeroensteenbeeke.hyperion.recipes.wicket.standalone.CreateEntityDataviewPage</recipe>
-					</recipes>
-					<extraConfiguration>
-						<basePackage>com.jeroensteenbeeke.topiroll.beholder</basePackage>
-						<customPageParams>super String ""</customPageParams>
-						<entitySuperclass>com.jeroensteenbeeke.hyperion.data.BaseDomainObject</entitySuperclass>
-						<liquibasePackage>com.jeroensteenbeeke.topiroll.beholder.entities.liquibase</liquibasePackage>
-						<sourcePath>src/main/java</sourcePath>
-						<taskGroupEnum>com.jeroensteenbeeke.topiroll.beholder.Jobs</taskGroupEnum>
-						<wicketApplication>com.jeroensteenbeeke.topiroll.beholder.BeholderApplication
-						</wicketApplication>
-						<wicketBasePage>
-							com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage
-						</wicketBasePage>
-						<wicketBasePanel>org.apache.wicket.markup.html.panel.Panel</wicketBasePanel>
-					</extraConfiguration>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.jeroensteenbeeke</groupId>
-						<artifactId>hyperion-recipes-hibernate</artifactId>
-						<version>${hyperion.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>com.jeroensteenbeeke</groupId>
-						<artifactId>hyperion-recipes-spring</artifactId>
-						<version>${hyperion.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>com.jeroensteenbeeke</groupId>
-						<artifactId>hyperion-recipes-wicket</artifactId>
-						<version>${hyperion.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>com.jeroensteenbeeke</groupId>
-						<artifactId>hyperion-recipes-wicket-standalone</artifactId>
-						<version>${hyperion.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<header>header.txt</header>
-					<excludes>
-						<exclude>**/README</exclude>
-						<exclude>src/test/resources/**</exclude>
-						<exclude>src/main/resources/**</exclude>
-						<exclude>src/main/compile/**</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>nl.geodienstencentrum.maven</groupId>
-				<artifactId>sass-maven-plugin</artifactId>
-				<version>3.5.2</version>
-				<configuration>
-					<resources>
-						<resource>
-							<source>
-								<directory>${project.basedir}/target/generated-sources/collected-resources</directory>
-							</source>
-							<destination>${project.basedir}/src/main/webapp/css</destination>
-						</resource>
-					</resources>
-				</configuration>
-				<executions>
-					<execution>
-						<id>create-css</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>update-stylesheets</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.jeroensteenbeeke.maven</groupId>
-				<artifactId>resource-collector-maven-plugin</artifactId>
-				<version>1.0-SNAPSHOT</version>
-				<dependencies>
-					<dependency>
-						<groupId>com.jeroensteenbeeke</groupId>
-						<artifactId>hyperion-heinlein</artifactId>
-						<version>${hyperion.version}</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>collect-scss-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>collect</goal>
-						</goals>
-						<configuration>
-							<directories>
-								<directory>src/main/scss</directory>
-							</directories>
-							<extensions>
-								<extension>scss</extension>
-							</extensions>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M1</version> <!-- find the latest version at http://maven.apache.org/plugins/maven-enforcer-plugin/ -->
-				<executions>
-					<execution>
-						<id>enforce-ban-duplicate-classes</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<banDuplicateClasses>
-									<scopes>
-										<scope>compile</scope>
-										<scope>runtime</scope>
-										<scope>provided</scope>
-									</scopes>
-									<findAllDuplicates>true</findAllDuplicates>
-								</banDuplicateClasses>
-								<bannedDependencies>
-									<excludes>
-										<exclude>com.jeroensteenbeeke:hyperion-ducktape</exclude>
-									</excludes>
-								</bannedDependencies>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>extra-enforcer-rules</artifactId>
-						<version>1.0-beta-7</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-					<useSystemClassLoader>false</useSystemClassLoader>
-					<reuseForks>false</reuseForks>
-					<useModulePath>false</useModulePath>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>libs-release</name>
-			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
-		</repository>
-		<repository>
-			<snapshots/>
-			<id>snapshots</id>
-			<name>libs-snapshot</name>
-			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>libs-release</name>
-			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-release</url>
-		</pluginRepository>
-		<pluginRepository>
-			<snapshots/>
-			<id>snapshots</id>
-			<name>libs-snapshot</name>
-			<url>https://artifactory.jeroensteenbeeke.nl/artifactory/libs-snapshot</url>
-		</pluginRepository>
-	</pluginRepositories>
+
 </project>

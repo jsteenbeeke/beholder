@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ import io.vavr.control.Option;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public class ViewFolderPage extends AuthenticatedPage {
@@ -44,7 +44,7 @@ public class ViewFolderPage extends AuthenticatedPage {
 
 	private IModel<MapFolder> folderModel;
 
-	public ViewFolderPage(@Nonnull MapFolder folder) {
+	public ViewFolderPage(@NotNull MapFolder folder) {
 		super("View folder - ".concat(folder.getName()));
 
 		Option<Campaign> activeCampaign = user().flatMap(BeholderUser::activeCampaign);
@@ -59,12 +59,12 @@ public class ViewFolderPage extends AuthenticatedPage {
 			private static final long serialVersionUID = -1554085305843937316L;
 
 			@Override
-			protected void decorateFolderFilter(@Nonnull MapFolderFilter folderFilter) {
+			protected void decorateFolderFilter(@NotNull MapFolderFilter folderFilter) {
 				folderFilter.parent(folderModel.getObject());
 			}
 
 			@Override
-			protected void decorateMapFilter(@Nonnull ScaledMapFilter mapFilter) {
+			protected void decorateMapFilter(@NotNull ScaledMapFilter mapFilter) {
 				mapFilter.folder(folderModel.getObject());
 			}
 		});

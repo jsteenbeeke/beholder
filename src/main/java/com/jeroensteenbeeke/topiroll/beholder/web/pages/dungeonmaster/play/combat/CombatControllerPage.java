@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,12 +17,9 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.combat;
 
-import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.jeroensteenbeeke.hyperion.data.DomainObject;
-import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MarkerService;
@@ -49,7 +46,10 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.IdentityCo
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.RunSessionPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.StatefulMapControllerPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.exploration.ExplorationControllerPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.*;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.AreaMarkerClickedState;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.BooleanMapViewStateVisitor;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.LocationClickedState;
+import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.state.TokenInstanceClickedState;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -65,9 +65,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
@@ -108,7 +107,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 
 	private boolean disableClickListener = false;
 
-	public CombatControllerPage(@Nonnull MapView view) {
+	public CombatControllerPage(@NotNull MapView view) {
 		super("Combat Mode");
 
 		if (BeholderSession.get().getUser() == null) {
@@ -129,8 +128,9 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 				private static final long serialVersionUID = 8613385670220290868L;
 
 				@Override
-				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js,
-													   double factor) {
+				protected void addOnDomReadyJavaScript(
+					String canvasId, StringBuilder js,
+					double factor) {
 
 				}
 
@@ -224,7 +224,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 					return tokenInstanceDAO.findByFilter(filter).toJavaList();
 
 
-				}).orElseGet(ImmutableList::of);
+				}).orElseGet(List::of);
 			}
 		};
 
@@ -249,44 +249,44 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 					}
 				});
 				image.add(AttributeModifier.replace("style",
-										new DependentModel<TokenInstance, String>(item.getModel()) {
-											private static final long serialVersionUID = 1L;
+					new DependentModel<TokenInstance, String>(item.getModel()) {
+						private static final long serialVersionUID = 1L;
 
-											@Override
-											protected String load(TokenInstance i) {
-												int left = i.getOffsetX();
-												int top = i.getOffsetY();
+						@Override
+						protected String load(TokenInstance i) {
+							int left = i.getOffsetX();
+							int top = i.getOffsetY();
 
-												left = coordinateTranslator.translateToScaledImageSize(left);
-												top = coordinateTranslator.translateToScaledImageSize(top);
+							left = coordinateTranslator.translateToScaledImageSize(left);
+							top = coordinateTranslator.translateToScaledImageSize(top);
 
-												int actualWH = coordinateTranslator.translateToScaledImageSize(wh);														
-												
-												String urlFormat = "url('%1$s')";
-												String imageUrl = String.format(urlFormat, i.getDefinition().getImageUrl());
-												if (i.getStatusEffect() != null) {
-													String statusImageUrl = String.format(urlFormat, 
-															UrlUtils.rewriteToContextRelative("img/statuseffects/" + i.getStatusEffect() + ".png", RequestCycle.get()));
-													imageUrl = String.join(", ", statusImageUrl, imageUrl);
-												}
+							int actualWH = coordinateTranslator.translateToScaledImageSize(wh);
 
-												return String.format(
-													"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
-														"%3$dpx !important; " +
-														"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
-														"!important; background-size: %3$dpx %3$dpx; " +
-														"border-radius: 100%%; border: 3px " +
-														"%6$s #%4$s; background-image: %5$s; " +
-														"display: table-cell; vertical-align: bottom; " +
-														"color: #cccccc; text-align: center; margin: 0; padding: 0;",
-													left, top, actualWH, i
-														.getBorderType().toHexColor(),
-													imageUrl,
-													i.isShow() ? "solid" : "dashed"
-												);
-											}
+							String urlFormat = "url('%1$s')";
+							String imageUrl = String.format(urlFormat, i.getDefinition().getImageUrl());
+							if (i.getStatusEffect() != null) {
+								String statusImageUrl = String.format(urlFormat,
+									UrlUtils.rewriteToContextRelative("img/statuseffects/" + i.getStatusEffect() + ".png", RequestCycle.get()));
+								imageUrl = String.join(", ", statusImageUrl, imageUrl);
+							}
 
-										}));
+							return String.format(
+								"position: absolute; left: %1$dpx; top: %2$dpx; max-width: " +
+									"%3$dpx !important; " +
+									"width: %3$dpx; height: %3$dpx; max-height: %3$dpx " +
+									"!important; background-size: %3$dpx %3$dpx; " +
+									"border-radius: 100%%; border: 3px " +
+									"%6$s #%4$s; background-image: %5$s; " +
+									"display: table-cell; vertical-align: bottom; " +
+									"color: #cccccc; text-align: center; margin: 0; padding: 0;",
+								left, top, actualWH, i
+									.getBorderType().toHexColor(),
+								imageUrl,
+								i.isShow() ? "solid" : "dashed"
+							);
+						}
+
+					}));
 				image.add(AttributeModifier.replace("title", new DependentModel<TokenInstance, String>(item.getModel()) {
 					private static final long serialVersionUID = 5933238244997270769L;
 
@@ -369,7 +369,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 
 						@Override
 						public MarkerStyleModel<?> visit(
-							@Nonnull CircleMarker marker) {
+							@NotNull CircleMarker marker) {
 							return new MarkerStyleModel<>(marker, displayFactor)
 								.setX((m, factor) -> Math.round(factor * (m.getOffsetX()))).setY(
 									(m, factor) -> Math.round(factor * (m.getOffsetY())))
@@ -383,7 +383,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 
 						@Override
 						public MarkerStyleModel<?> visit(
-							@Nonnull ConeMarker marker) {
+							@NotNull ConeMarker marker) {
 							// CSS offset is interpreted as the top-left of the
 							// element,
 							// whereas the cone origin is halfway along the left border
@@ -419,7 +419,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 
 						@Override
 						public MarkerStyleModel<?> visit(
-							@Nonnull CubeMarker marker) {
+							@NotNull CubeMarker marker) {
 							return new MarkerStyleModel<>(marker, displayFactor)
 								.setX((m, factor) -> Math.round(factor * m.getOffsetX())).setY(
 									(m, factor) -> Math.round(factor * m.getOffsetY()))
@@ -432,7 +432,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 
 						@Override
 						public MarkerStyleModel<?> visit(
-							@Nonnull LineMarker marker) {
+							@NotNull LineMarker marker) {
 							// CSS offset is interpreted as the top-left of the
 							// element,
 							// whereas the cone origin is halfway along the left border
@@ -501,7 +501,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 							private static final long serialVersionUID = -8666575204421319185L;
 
 							@Override
-							public Void visit(@Nonnull CircleMarker marker) {
+							public Void visit(@NotNull CircleMarker marker) {
 
 								markerService
 									.update(marker, marker.getColor(), newX,
@@ -511,7 +511,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 							}
 
 							@Override
-							public Void visit(@Nonnull ConeMarker marker) {
+							public Void visit(@NotNull ConeMarker marker) {
 								markerService
 									.update(marker, marker.getColor(), newX - wh,
 										newY - wh, marker.getExtent(), marker.getTheta());
@@ -520,7 +520,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 							}
 
 							@Override
-							public Void visit(@Nonnull CubeMarker marker) {
+							public Void visit(@NotNull CubeMarker marker) {
 								markerService
 									.update(marker, marker.getColor(), newX,
 										newY, marker.getExtent());
@@ -529,7 +529,7 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 							}
 
 							@Override
-							public Void visit(@Nonnull LineMarker marker) {
+							public Void visit(@NotNull LineMarker marker) {
 								markerService
 									.update(marker, marker.getColor(), newX - wh,
 										newY - wh, marker.getExtent(), marker.getTheta());
@@ -629,7 +629,8 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 					}
 
 					@Override
-					public void onDragStop(AjaxRequestTarget target, int top,
+					public void onDragStop(
+						AjaxRequestTarget target, int top,
 						int left) {
 						super.onDragStop(target, top, left);
 
@@ -709,9 +710,9 @@ public class CombatControllerPage extends StatefulMapControllerPage {
 			@Override
 			protected List<CompendiumEntry> load() {
 				return compendiumEntryDAO.findByFilter(filter)
-										 .map(PinnedCompendiumEntry::getEntry)
-										 .sorted(Comparator.comparing(CompendiumEntry::getTitle))
-										 .toJavaList();
+					.map(PinnedCompendiumEntry::getEntry)
+					.sorted(Comparator.comparing(CompendiumEntry::getTitle))
+					.toJavaList();
 			}
 		};
 

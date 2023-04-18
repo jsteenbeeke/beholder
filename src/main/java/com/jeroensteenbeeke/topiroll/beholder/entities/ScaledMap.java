@@ -1,30 +1,19 @@
-/**
- * This file is part of Beholder (C) 2016-2019 Jeroen Steenbeeke
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
- * <p>This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * <p>You should have received a copy of the GNU Affero General Public License along with this
- * program. If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder (C) 2016 Jeroen Steenbeeke
- *
- * <p>This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * <p>You should have received a copy of the GNU Affero General Public License along with this
- * program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
@@ -43,9 +32,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import org.apache.wicket.model.IModel;
 
@@ -112,7 +101,7 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         return id;
     }
 
-    public void setId(@Nonnull Long id) {
+    public void setId(@NotNull Long id) {
         this.id = id;
     }
 
@@ -121,12 +110,12 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         return getId();
     }
 
-    @Nonnull
+    @NotNull
     public List<MapView> getSelectedBy() {
         return selectedBy;
     }
 
-    public void setSelectedBy(@Nonnull List<MapView> selectedBy) {
+    public void setSelectedBy(@NotNull List<MapView> selectedBy) {
         this.selectedBy = selectedBy;
     }
 
@@ -138,39 +127,39 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         this.squareSize = squareSize;
     }
 
-    @Nonnull
+    @NotNull
     public String getName() {
         return name;
     }
 
-    public void setName(@Nonnull String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
-    @Nonnull
+    @NotNull
     public BeholderUser getOwner() {
         return owner;
     }
 
-    public void setOwner(@Nonnull BeholderUser owner) {
+    public void setOwner(@NotNull BeholderUser owner) {
         this.owner = owner;
     }
 
-    @Nonnull
+    @NotNull
     public List<FogOfWarShape> getFogOfWarShapes() {
         return fogOfWarShapes;
     }
 
-    public void setFogOfWarShapes(@Nonnull List<FogOfWarShape> fogOfWarShapes) {
+    public void setFogOfWarShapes(@NotNull List<FogOfWarShape> fogOfWarShapes) {
         this.fogOfWarShapes = fogOfWarShapes;
     }
 
-    @Nonnull
+    @NotNull
     public List<FogOfWarGroup> getGroups() {
         return groups;
     }
 
-    public void setGroups(@Nonnull List<FogOfWarGroup> groups) {
+    public void setGroups(@NotNull List<FogOfWarGroup> groups) {
         this.groups = groups;
     }
 
@@ -209,34 +198,34 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
                 .onScreenWithDiagonalSize(mapView.getScreenDiagonalInInches());
     }
 
-    @Nonnull
+    @NotNull
     public int getBasicWidth() {
         return basicWidth;
     }
 
-    public void setBasicWidth(@Nonnull int basicWidth) {
+    public void setBasicWidth(@NotNull int basicWidth) {
         this.basicWidth = basicWidth;
     }
 
-    @Nonnull
+    @NotNull
     public int getBasicHeight() {
         return basicHeight;
     }
 
-    public void setBasicHeight(@Nonnull int basicHeight) {
+    public void setBasicHeight(@NotNull int basicHeight) {
         this.basicHeight = basicHeight;
     }
 
-    @Nonnull
+    @NotNull
     public List<TokenInstance> getTokens() {
         return tokens;
     }
 
-    public void setTokens(@Nonnull List<TokenInstance> tokens) {
+    public void setTokens(@NotNull List<TokenInstance> tokens) {
         this.tokens = tokens;
     }
 
-    @CheckForNull
+    @Nullable
     public MapFolder getFolder() {
         return folder;
     }
@@ -256,7 +245,7 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         return new ArrayList<>(shapes.values());
     }
 
-    @CheckForNull
+    @Nullable
     @Override
     public String getAmazonKey() {
         return amazonKey;
@@ -274,7 +263,7 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         return getName();
     }
 
-    @CheckForNull
+    @Nullable
     public Campaign getCampaign() {
         return campaign;
     }
@@ -283,12 +272,12 @@ public class ScaledMap extends BaseDomainObject implements AmazonStored {
         this.campaign = campaign;
     }
 
-    @Nonnull
+    @NotNull
     public List<DungeonMasterNote> getNotes() {
         return notes;
     }
 
-    public void setNotes(@Nonnull List<DungeonMasterNote> notes) {
+    public void setNotes(@NotNull List<DungeonMasterNote> notes) {
         this.notes = notes;
     }
 }

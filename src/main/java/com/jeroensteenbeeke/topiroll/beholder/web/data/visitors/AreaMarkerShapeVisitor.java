@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,7 +26,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSRect;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static com.jeroensteenbeeke.topiroll.beholder.entities.LineMarker.LINE_ANGLE;
 
@@ -43,7 +43,7 @@ public class AreaMarkerShapeVisitor implements AreaMarkerVisitor<JSShape> {
 	}
 
 	@Override
-	public JSShape visit(@Nonnull CircleMarker marker) {
+	public JSShape visit(@NotNull CircleMarker marker) {
 		JSCircle circle = new JSCircle();
 		int radius = (int) (marker.getExtent() * factor * squareSizeInPixels / 5);
 
@@ -58,7 +58,7 @@ public class AreaMarkerShapeVisitor implements AreaMarkerVisitor<JSShape> {
 	}
 
 	@Override
-	public JSShape visit(@Nonnull ConeMarker marker) {
+	public JSShape visit(@NotNull ConeMarker marker) {
 		JSCircle circle = new JSCircle();
 		circle.setRadius((int) (marker.getExtent() * factor * squareSizeInPixels / 5));
 		circle.setX((int) (marker.getOffsetX() * factor));
@@ -70,7 +70,7 @@ public class AreaMarkerShapeVisitor implements AreaMarkerVisitor<JSShape> {
 	}
 
 	@Override
-	public JSShape visit(@Nonnull CubeMarker marker) {
+	public JSShape visit(@NotNull CubeMarker marker) {
 		JSRect rect = new JSRect();
 		final int hw = (int) (marker.getExtent() * factor * squareSizeInPixels / 5);
 		rect.setHeight(hw);
@@ -84,7 +84,7 @@ public class AreaMarkerShapeVisitor implements AreaMarkerVisitor<JSShape> {
 	}
 
 	@Override
-	public JSShape visit(@Nonnull LineMarker marker) {
+	public JSShape visit(@NotNull LineMarker marker) {
 		JSCircle circle = new JSCircle();
 		circle.setRadius((int) (factor * (marker.getExtent() * squareSizeInPixels / 5)));
 		circle.setX((int) (marker.getOffsetX() * factor));

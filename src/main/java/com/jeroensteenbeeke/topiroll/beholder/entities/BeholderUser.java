@@ -1,23 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import io.vavr.control.Option;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Entity
 public class BeholderUser extends BaseDomainObject {
@@ -128,7 +111,7 @@ public class BeholderUser extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -137,118 +120,118 @@ public class BeholderUser extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public String getAccessToken() {
 		return accessToken;
 	}
 
-	public void setAccessToken(@Nonnull String accessToken) {
+	public void setAccessToken(@NotNull String accessToken) {
 		this.accessToken = accessToken;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(@Nonnull String userId) {
+	public void setUserId(@NotNull String userId) {
 		this.userId = userId;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getTeamId() {
 		return teamId;
 	}
 
-	public void setTeamId(@Nonnull String teamId) {
+	public void setTeamId(@NotNull String teamId) {
 		this.teamId = teamId;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(@Nonnull String username) {
+	public void setUsername(@NotNull String username) {
 		this.username = username;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(@Nonnull String avatar) {
+	public void setAvatar(@NotNull String avatar) {
 		this.avatar = avatar;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<MapView> getViews() {
 		return views;
 	}
 
-	public void setViews(@Nonnull List<MapView> views) {
+	public void setViews(@NotNull List<MapView> views) {
 		this.views = views;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<ScaledMap> getMaps() {
 		return maps;
 	}
 
-	public void setMaps(@Nonnull List<ScaledMap> maps) {
+	public void setMaps(@NotNull List<ScaledMap> maps) {
 		this.maps = maps;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<TokenDefinition> getTokens() {
 		return tokens;
 	}
-	public void setTokens( @Nonnull List<TokenDefinition> tokens) {
+	public void setTokens( @NotNull List<TokenDefinition> tokens) {
 		this.tokens = tokens;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<Portrait> getPortraits() {
 		return portraits;
 	}
-	public void setPortraits( @Nonnull List<Portrait> portraits) {
+	public void setPortraits( @NotNull List<Portrait> portraits) {
 		this.portraits = portraits;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<YouTubePlaylist> getPlaylists() {
 		return playlists;
 	}
-	public void setPlaylists( @Nonnull List<YouTubePlaylist> playlists) {
+	public void setPlaylists( @NotNull List<YouTubePlaylist> playlists) {
 		this.playlists = playlists;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<PinnedCompendiumEntry> getPinnedEntries() {
 		return pinnedEntries;
 	}
-	public void setPinnedEntries( @Nonnull List<PinnedCompendiumEntry> pinnedEntries) {
+	public void setPinnedEntries( @NotNull List<PinnedCompendiumEntry> pinnedEntries) {
 		this.pinnedEntries = pinnedEntries;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<CompendiumEntry> getWrittenEntries() {
 		return writtenEntries;
 	}
-	public void setWrittenEntries( @Nonnull List<CompendiumEntry> writtenEntries) {
+	public void setWrittenEntries( @NotNull List<CompendiumEntry> writtenEntries) {
 		this.writtenEntries = writtenEntries;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<Campaign> getCampaigns() {
 		return campaigns;
 	}
-	public void setCampaigns( @Nonnull List<Campaign> campaigns) {
+	public void setCampaigns( @NotNull List<Campaign> campaigns) {
 		this.campaigns = campaigns;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getActiveCampaign() {
 		return activeCampaign;
 	}
@@ -258,32 +241,32 @@ public class BeholderUser extends BaseDomainObject {
 
 
 	@Transient
-	@Nonnull
+	@NotNull
 	public Option<Campaign> activeCampaign() {
 		return Option.of(getActiveCampaign());
 	}
 
-	@Nonnull
+	@NotNull
 	public List<MapFolder> getMapFolders() {
 		return mapFolders;
 	}
-	public void setMapFolders( @Nonnull List<MapFolder> mapFolders) {
+	public void setMapFolders( @NotNull List<MapFolder> mapFolders) {
 		this.mapFolders = mapFolders;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<SessionLogItem> getLogItems() {
 		return logItems;
 	}
-	public void setLogItems( @Nonnull List<SessionLogItem> logItems) {
+	public void setLogItems( @NotNull List<SessionLogItem> logItems) {
 		this.logItems = logItems;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<SessionLogIndex> getSessionLogIndices() {
 		return sessionLogIndices;
 	}
-	public void setSessionLogIndices( @Nonnull List<SessionLogIndex> sessionLogIndices) {
+	public void setSessionLogIndices( @NotNull List<SessionLogIndex> sessionLogIndices) {
 		this.sessionLogIndices = sessionLogIndices;
 	}
 

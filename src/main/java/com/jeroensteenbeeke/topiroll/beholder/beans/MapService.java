@@ -1,211 +1,17 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -230,13 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -297,11 +102,11 @@ public class MapService {
 	@Autowired
 	private MapLinkDAO mapLinkDAO;
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public TypedResult<ScaledMap> createMap(@Nonnull BeholderUser user,
-											@Nullable Campaign campaign, @Nonnull String name, int squareSize,
-											@Nonnull File data, @Nullable MapFolder folder) {
+	public TypedResult<ScaledMap> createMap(@NotNull BeholderUser user,
+											@Nullable Campaign campaign, @NotNull String name, int squareSize,
+											@NotNull File data, @Nullable MapFolder folder) {
 		TypedResult<Dimension> dimResult = ImageUtil.getImageDimensions(data);
 		if (!dimResult.isOk()) {
 			return dimResult.map(d -> null);
@@ -350,8 +155,8 @@ public class MapService {
 	}
 
 	@Transactional
-	public TokenInstance createTokenInstance(@Nonnull TokenDefinition token,
-											 @Nonnull ScaledMap map, @Nonnull TokenBorderType borderType, int x,
+	public TokenInstance createTokenInstance(@NotNull TokenDefinition token,
+											 @NotNull ScaledMap map, @NotNull TokenBorderType borderType, int x,
 											 int y, String badge) {
 		TokenInstance instance = new TokenInstance();
 		instance.setBadge(badge != null && !badge.isEmpty() ? badge : null);
@@ -371,7 +176,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void selectMap(@Nonnull MapView view, @Nonnull ScaledMap map) {
+	public void selectMap(@NotNull MapView view, @NotNull ScaledMap map) {
 
 		view.setSelectedMap(map);
 		viewDAO.update(view);
@@ -382,14 +187,14 @@ public class MapService {
 	}
 
 	@Transactional
-	public void delete(@Nonnull MapView view) {
+	public void delete(@NotNull MapView view) {
 		view.getVisibilities().forEach(visibilityDAO::delete);
 		viewDAO.delete(view);
 
 	}
 
 	@Transactional
-	public void addFogOfWarCircle(@Nonnull ScaledMap map, int radius,
+	public void addFogOfWarCircle(@NotNull ScaledMap map, int radius,
 								  int offsetX, int offsetY) {
 		FogOfWarCircle circle = new FogOfWarCircle();
 		circle.setMap(map);
@@ -401,7 +206,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void addFogOfWarRect(@Nonnull ScaledMap map, int width, int height,
+	public void addFogOfWarRect(@NotNull ScaledMap map, int width, int height,
 								int offsetX, int offsetY) {
 		FogOfWarRect rect = new FogOfWarRect();
 		rect.setMap(map);
@@ -413,9 +218,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public void addFogOfWarTriangle(@Nonnull ScaledMap map, int width,
+	public void addFogOfWarTriangle(@NotNull ScaledMap map, int width,
 									int height, int offsetX, int offsetY,
-									@Nonnull TriangleOrientation orientation) {
+									@NotNull TriangleOrientation orientation) {
 		FogOfWarTriangle triangle = new FogOfWarTriangle();
 		triangle.setMap(map);
 		triangle.setVerticalSide(height);
@@ -427,8 +232,8 @@ public class MapService {
 	}
 
 	@Transactional
-	public TypedResult<FogOfWarGroup> createGroup(@Nonnull ScaledMap map,
-												  @Nonnull String name, @Nonnull List<FogOfWarShape> shapes) {
+	public TypedResult<FogOfWarGroup> createGroup(@NotNull ScaledMap map,
+												  @NotNull String name, @NotNull List<FogOfWarShape> shapes) {
 		if (shapes.isEmpty()) {
 			return TypedResult.fail("No shapes selected");
 		}
@@ -447,9 +252,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public TypedResult<FogOfWarGroup> editGroup(@Nonnull FogOfWarGroup group,
-												@Nonnull String name, @Nonnull List<FogOfWarShape> keep,
-												@Nonnull List<FogOfWarShape> remove) {
+	public TypedResult<FogOfWarGroup> editGroup(@NotNull FogOfWarGroup group,
+												@NotNull String name, @NotNull List<FogOfWarShape> keep,
+												@NotNull List<FogOfWarShape> remove) {
 		if (keep.isEmpty()) {
 			return TypedResult.fail("No shapes selected");
 		}
@@ -471,15 +276,15 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setGroupVisibility(@Nonnull MapView view,
-								   @Nonnull FogOfWarGroup group, @Nonnull VisibilityStatus status) {
+	public void setGroupVisibility(@NotNull MapView view,
+								   @NotNull FogOfWarGroup group, @NotNull VisibilityStatus status) {
 		internalSetGroupVisibility(view, group, status);
 
 		refreshView(view);
 	}
 
-	private void internalSetGroupVisibility(@Nonnull MapView view,
-											@Nonnull FogOfWarGroup group, @Nonnull VisibilityStatus status) {
+	private void internalSetGroupVisibility(@NotNull MapView view,
+											@NotNull FogOfWarGroup group, @NotNull VisibilityStatus status) {
 		FogOfWarGroupVisibilityFilter filter = new FogOfWarGroupVisibilityFilter();
 		filter.view().set(view);
 		filter.group().set(group);
@@ -502,8 +307,8 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setShapeVisibility(@Nonnull MapView view,
-								   @Nonnull FogOfWarShape shape, @Nonnull VisibilityStatus status) {
+	public void setShapeVisibility(@NotNull MapView view,
+								   @NotNull FogOfWarShape shape, @NotNull VisibilityStatus status) {
 		FogOfWarShapeVisibilityFilter filter = new FogOfWarShapeVisibilityFilter();
 		filter.view().set(view);
 		filter.shape().set(shape);
@@ -528,9 +333,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public TypedResult<TokenDefinition> createToken(@Nonnull BeholderUser user,
-													@Nullable Campaign campaign, @Nonnull String name, int diameter,
-													@Nonnull byte[] image) {
+	public TypedResult<TokenDefinition> createToken(@NotNull BeholderUser user,
+													@Nullable Campaign campaign, @NotNull String name, int diameter,
+													@NotNull byte[] image) {
 		TypedResult<String> uploadResult = remoteImageService
 				.uploadImage(ImageType.TOKEN, image);
 
@@ -551,9 +356,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public TypedResult<Portrait> createPortrait(@Nonnull BeholderUser user,
-												@Nullable Campaign campaign, @Nonnull String name,
-												@Nonnull byte[] image) {
+	public TypedResult<Portrait> createPortrait(@NotNull BeholderUser user,
+												@Nullable Campaign campaign, @NotNull String name,
+												@NotNull byte[] image) {
 		TypedResult<String> uploadResult = remoteImageService
 				.uploadImage(ImageType.PORTRAIT, image);
 
@@ -574,9 +379,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public void selectPortrait(@Nonnull MapView view,
-							   @Nonnull Portrait portrait,
-							   @Nonnull PortraitVisibilityLocation location) {
+	public void selectPortrait(@NotNull MapView view,
+							   @NotNull Portrait portrait,
+							   @NotNull PortraitVisibilityLocation location) {
 		Set<PortraitVisibilityLocation> excludedLocations = location
 				.getExcludedLocations();
 		removeVisibilities(view,
@@ -596,7 +401,7 @@ public class MapService {
 							new UpdatePortraits(view));
 	}
 
-	private void removeVisibilities(@Nonnull MapView view,
+	private void removeVisibilities(@NotNull MapView view,
 									Predicate<PortraitVisibilityLocation> locationPredicate) {
 		Set<PortraitVisibility> toDelete = new HashSet<>();
 
@@ -611,9 +416,9 @@ public class MapService {
 	}
 
 	@Transactional
-	public void unselectPortrait(@Nonnull MapView view,
-								 @Nonnull Portrait portrait,
-								 @Nonnull PortraitVisibilityLocation location) {
+	public void unselectPortrait(@NotNull MapView view,
+								 @NotNull Portrait portrait,
+								 @NotNull PortraitVisibilityLocation location) {
 		removeVisibilities(view, location::equals);
 		BeholderRegistry.instance
 				.sendToView(view.getId(), s -> !s.isPreviewMode(),
@@ -621,7 +426,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void ungroup(@Nonnull FogOfWarGroup group) {
+	public void ungroup(@NotNull FogOfWarGroup group) {
 		ScaledMap map = group.getMap();
 
 		group.getShapes().forEach(s -> {
@@ -638,7 +443,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void deleteShape(@Nonnull FogOfWarShape shape) {
+	public void deleteShape(@NotNull FogOfWarShape shape) {
 		ScaledMap map = shape.getMap();
 
 		shape.getVisibilities().forEach(shapeVisibilityDAO::delete);
@@ -649,8 +454,8 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setTokenBorderType(@Nonnull TokenInstance instance,
-								   @Nonnull TokenBorderType type) {
+	public void setTokenBorderType(@NotNull TokenInstance instance,
+								   @NotNull TokenBorderType type) {
 		instance.setBorderType(type);
 		tokenInstanceDAO.update(instance);
 
@@ -659,7 +464,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setTokenHP(@Nonnull TokenInstance instance, Integer currentHP,
+	public void setTokenHP(@NotNull TokenInstance instance, Integer currentHP,
 						   Integer maxHP) {
 		tokenInstanceDAO.load(instance.getId()).map(inst -> {
 
@@ -674,7 +479,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void showToken(@Nonnull TokenInstance instance) {
+	public void showToken(@NotNull TokenInstance instance) {
 		instance.setShow(true);
 		tokenInstanceDAO.update(instance);
 
@@ -682,7 +487,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void hideToken(@Nonnull TokenInstance instance) {
+	public void hideToken(@NotNull TokenInstance instance) {
 		instance.setShow(false);
 		tokenInstanceDAO.update(instance);
 
@@ -690,13 +495,13 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setTokenNote(@Nonnull TokenInstance instance, String note) {
+	public void setTokenNote(@NotNull TokenInstance instance, String note) {
 		instance.setNote(note);
 		tokenInstanceDAO.update(instance);
 	}
 
 	@Transactional
-	public void updateTokenLocation(@Nonnull TokenInstance instance, int x,
+	public void updateTokenLocation(@NotNull TokenInstance instance, int x,
 									int y) {
 		instance.setOffsetX(x);
 		instance.setOffsetY(y);
@@ -715,7 +520,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void refreshView(@Nonnull MapView view) {
+	public void refreshView(@NotNull MapView view) {
 		internalUpdateView(view, s -> true);
 	}
 
@@ -732,7 +537,7 @@ public class MapService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void initializeView(long viewId, @Nonnull String sessionId,
+	public void initializeView(long viewId, @NotNull String sessionId,
 							   boolean previewMode) {
 		viewDAO.load(viewId).map(view -> {
 			internalUpdateView(view, e -> e.getSessionId().equals(sessionId)
@@ -749,7 +554,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void gatherPlayerTokens(@Nonnull MapView view, int x, int y) {
+	public void gatherPlayerTokens(@NotNull MapView view, int x, int y) {
 		InitiativeParticipantFilter filter = new InitiativeParticipantFilter();
 		filter.player(true);
 		filter.view(view);
@@ -822,13 +627,13 @@ public class MapService {
 	}
 
 	@Transactional
-	public void focusOnGroup(@Nonnull MapView view, FogOfWarGroup group) {
+	public void focusOnGroup(@NotNull MapView view, FogOfWarGroup group) {
 		internalFocusOnGroup(view, group);
 	}
 
 	@Transactional
-	public void selectMapAndSetFocus(@Nonnull MapView view,
-									 @Nonnull FogOfWarGroup group) {
+	public void selectMapAndSetFocus(@NotNull MapView view,
+									 @NotNull FogOfWarGroup group) {
 		view.setSelectedMap(group.getMap());
 		viewDAO.update(view);
 		viewDAO.flush();
@@ -836,8 +641,8 @@ public class MapService {
 		internalFocusOnGroup(view, group);
 	}
 
-	private void internalFocusOnGroup(@Nonnull MapView view,
-									  @Nonnull FogOfWarGroup group) {
+	private void internalFocusOnGroup(@NotNull MapView view,
+									  @NotNull FogOfWarGroup group) {
 		internalSetGroupVisibility(view, group, VisibilityStatus.VISIBLE);
 
 		double displayFactor = group.getMap().getDisplayFactor(view);
@@ -978,10 +783,10 @@ public class MapService {
 		return token;
 	}
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public MapLink createLink(@Nonnull FogOfWarGroup source,
-							  @Nonnull FogOfWarGroup target) {
+	public MapLink createLink(@NotNull FogOfWarGroup source,
+							  @NotNull FogOfWarGroup target) {
 		MapLinkFilter filter = new MapLinkFilter();
 		filter.sourceGroup(source);
 		filter.targetGroup(target);
@@ -1000,7 +805,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public TypedResult<Integer> doorbell(@Nonnull String username, @Nullable String message) {
+	public TypedResult<Integer> doorbell(@NotNull String username, @Nullable String message) {
 
 		MapViewFilter filter = new MapViewFilter();
 		filter.listenToDoorbell(true);
@@ -1014,7 +819,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public void setTokenStatusEffect(@Nonnull TokenInstance instance, @Nullable TokenStatusEffect statusEffect) {
+	public void setTokenStatusEffect(@NotNull TokenInstance instance, @Nullable TokenStatusEffect statusEffect) {
 		instance.setStatusEffect(statusEffect);
 		tokenInstanceDAO.update(instance);
 

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,51 +12,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.annotation.NoTransactionRequired;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
-import com.jeroensteenbeeke.topiroll.beholder.entities.*;
-import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
-import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantDAO;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
+import com.jeroensteenbeeke.topiroll.beholder.entities.*;
+import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantConditionFilter;
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.InitiativeParticipantFilter;
+import io.vavr.Tuple2;
+import io.vavr.collection.Array;
+import io.vavr.collection.LinkedHashMultimap;
+import io.vavr.collection.Multimap;
+import io.vavr.collection.Traversable;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class InitiativeService {
@@ -72,26 +53,27 @@ public class InitiativeService {
 	private InitiativeParticipantConditionDAO conditionDAO;
 
 	@Transactional
-	public void hideInitiative(@Nonnull MapView view) {
+	public void hideInitiative(@NotNull MapView view) {
 		view.setInitiativePosition(null);
 		mapViewDAO.update(view);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void showInitiative(@Nonnull MapView view, @Nonnull InitiativeLocation location) {
+	public void showInitiative(@NotNull MapView view, @NotNull InitiativeLocation location) {
 		view.setInitiativePosition(location);
 		mapViewDAO.update(view);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void addInitiative(@Nonnull MapView view, @Nonnull String name, int score,
-							  @Nonnull InitiativeType type) {
+	public void addInitiative(
+		@NotNull MapView view, @NotNull String name, int score,
+		@NotNull InitiativeType type) {
 
 		InitiativeParticipant participant = new InitiativeParticipant();
 		participant.setName(name);
@@ -105,23 +87,23 @@ public class InitiativeService {
 		determineOverrideOrder(view);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void setViewInitiativeMargin(@Nonnull MapView view, @Nonnull Integer margin) {
+	public void setViewInitiativeMargin(@NotNull MapView view, @NotNull Integer margin) {
 		view.setInitiativeMargin(margin);
 		mapViewDAO.update(view);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void reroll(@Nonnull MapView view) {
+	public void reroll(@NotNull MapView view) {
 		view.getInitiativeParticipants().forEach(i -> {
 			i.setTotal(
-					i.getInitiativeType().determine(DICEMASTER, i.getScore()));
+				i.getInitiativeType().determine(DICEMASTER, i.getScore()));
 			i.setSelected(false);
 			participantDAO.update(i);
 
@@ -133,27 +115,27 @@ public class InitiativeService {
 	}
 
 	private void determineOverrideOrder(MapView view) {
-		Multimap<Integer, InitiativeParticipant> participantScores = LinkedHashMultimap
-				.create();
-		view.getInitiativeParticipants().forEach(i -> participantScores.put(i.getTotal(), i));
+		Multimap<Integer, InitiativeParticipant> participantScores =
+			view.getInitiativeParticipants().stream().collect(Array.collector())
+				.foldLeft(LinkedHashMultimap.withSeq().empty(), (scores, i) -> scores.put(i.getTotal(), i));
 
-		for (Entry<Integer, Collection<InitiativeParticipant>> entry : participantScores
-				.asMap().entrySet()) {
-			if (entry.getValue().size() > 1) {
+		for (Tuple2<Integer, Traversable<InitiativeParticipant>> entry : participantScores
+			.asMap()) {
+			if (entry._2().size() > 1) {
 				AtomicInteger i = new AtomicInteger(0);
-				entry.getValue().stream().sorted((a, b) -> {
+				entry._2().toArray().sorted((a, b) -> {
 					int c = Integer.compare(b.getScore(), a.getScore());
 					if (c == 0) {
 						c = a.getName().compareTo(b.getName());
 					}
 
 					return c;
-				}).forEachOrdered(p -> {
+				}).forEach(p -> {
 					p.setOrderOverride(i.getAndIncrement());
 					participantDAO.update(p);
 				});
 			} else {
-				entry.getValue().forEach(p -> {
+				entry._2().forEach(p -> {
 					p.setOrderOverride(null);
 					participantDAO.update(p);
 				});
@@ -163,7 +145,7 @@ public class InitiativeService {
 	}
 
 	@Transactional
-	public void removeParticipant(@Nonnull InitiativeParticipant participant) {
+	public void removeParticipant(@NotNull InitiativeParticipant participant) {
 
 		removeConditionsFromParticipant(participant);
 
@@ -173,74 +155,75 @@ public class InitiativeService {
 		determineOverrideOrder(view);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void setParticipantTotal(@Nonnull InitiativeParticipant participant, int total) {
+	public void setParticipantTotal(@NotNull InitiativeParticipant participant, int total) {
 		participant.setTotal(total);
 		participantDAO.update(participant);
 
 		MapView view = participant.getView();
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@NoTransactionRequired
-	public boolean canMoveUp(@Nonnull InitiativeParticipant participant) {
+	public boolean canMoveUp(@NotNull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
 		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
 
 		return view.getInitiativeParticipants().stream()
-				.filter(p -> Objects.equals(p.getTotal(),
-						participant.getTotal()))
-				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant))
-				.anyMatch(p -> {
-					int total = Optional.ofNullable(p.getTotal()).orElse(0);
-					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+			.filter(p -> Objects.equals(p.getTotal(),
+				participant.getTotal()))
+			.filter(p -> p.getScore() == participant.getScore())
+			.filter(p -> !p.equals(participant))
+			.anyMatch(p -> {
+				int total = Optional.ofNullable(p.getTotal()).orElse(0);
+				int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
 
-					return override < partOverride;
-				});
+				return override < partOverride;
+			});
 	}
 
 	@NoTransactionRequired
-	public boolean canMoveDown(@Nonnull InitiativeParticipant participant) {
+	public boolean canMoveDown(@NotNull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		int partTotal = Optional.ofNullable(participant.getTotal()).orElse(0);
 		int partOverride = Optional.ofNullable(participant.getOrderOverride()).orElse(partTotal);
 
 		return view.getInitiativeParticipants().stream()
-				.filter(p -> Objects.equals(p.getTotal(),
-						participant.getTotal()))
-				.filter(p -> p.getScore() == participant.getScore())
-				.filter(p -> !p.equals(participant))
-				.anyMatch(p -> {
-					int total = Optional.ofNullable(p.getTotal()).orElse(0);
-					int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
+			.filter(p -> Objects.equals(p.getTotal(),
+				participant.getTotal()))
+			.filter(p -> p.getScore() == participant.getScore())
+			.filter(p -> !p.equals(participant))
+			.anyMatch(p -> {
+				int total = Optional.ofNullable(p.getTotal()).orElse(0);
+				int override = Optional.ofNullable(p.getOrderOverride()).orElse(total);
 
-					return override < partOverride;
-				});
+				return override < partOverride;
+			});
 	}
 
 	@Transactional
-	public void moveUp(@Nonnull InitiativeParticipant participant) {
+	public void moveUp(@NotNull InitiativeParticipant participant) {
 		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) - 1);
 
 	}
 
 	@Transactional
-	public void moveDown(@Nonnull InitiativeParticipant participant) {
+	public void moveDown(@NotNull InitiativeParticipant participant) {
 		setOrderOverride(participant, Optional.ofNullable(participant.getOrderOverride()).orElse(0) + 1);
 
 	}
 
-	private void setOrderOverride(InitiativeParticipant participant,
-								  int orderOverride) {
+	private void setOrderOverride(
+		InitiativeParticipant participant,
+		int orderOverride) {
 		InitiativeParticipantFilter filter = new InitiativeParticipantFilter();
 		MapView view = participant.getView();
 		filter.view().set(view);
@@ -255,11 +238,11 @@ public class InitiativeService {
 		participantDAO.update(participant);
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void select(@Nonnull InitiativeParticipant participant) {
+	public void select(@NotNull InitiativeParticipant participant) {
 		MapView view = participant.getView();
 
 		view.getInitiativeParticipants().forEach(i -> {
@@ -297,14 +280,14 @@ public class InitiativeService {
 		participantDAO.flush();
 
 		BeholderRegistry.instance.sendToView(view.getId(),
-				view.getInitiativeJS());
+			view.getInitiativeJS());
 	}
 
 	@Transactional
-	public void selectNext(@Nonnull MapView view) {
+	public void selectNext(@NotNull MapView view) {
 		List<InitiativeParticipant> participants = view
-				.getInitiativeParticipants().stream().sorted(MapView.INITIATIVE_ORDER)
-				.collect(Collectors.toList());
+			.getInitiativeParticipants().stream().sorted(MapView.INITIATIVE_ORDER)
+			.collect(Collectors.toList());
 
 		if (participants.isEmpty()) {
 			return;
@@ -327,19 +310,19 @@ public class InitiativeService {
 	}
 
 	@Transactional
-	public void markAsPlayer(@Nonnull InitiativeParticipant participant) {
+	public void markAsPlayer(@NotNull InitiativeParticipant participant) {
 		participant.setPlayer(true);
 		participantDAO.update(participant);
 	}
 
 	@Transactional
-	public void markAsNonPlayer(@Nonnull InitiativeParticipant participant) {
+	public void markAsNonPlayer(@NotNull InitiativeParticipant participant) {
 		participant.setPlayer(false);
 		participantDAO.update(participant);
 	}
 
 	@Transactional
-	public void clearNonPlayers(@Nonnull MapView view) {
+	public void clearNonPlayers(@NotNull MapView view) {
 		Set<InitiativeParticipant> toDelete = view.getInitiativeParticipants().stream().filter(i -> !i.isPlayer()).collect(Collectors.toSet());
 
 		toDelete.forEach(this::removeConditionsFromParticipant);
@@ -348,7 +331,7 @@ public class InitiativeService {
 	}
 
 	@Transactional
-	private void removeConditionsFromParticipant(InitiativeParticipant participant) {
+	public void removeConditionsFromParticipant(InitiativeParticipant participant) {
 		InitiativeParticipantConditionFilter filter = new InitiativeParticipantConditionFilter();
 		filter.participant(participant);
 

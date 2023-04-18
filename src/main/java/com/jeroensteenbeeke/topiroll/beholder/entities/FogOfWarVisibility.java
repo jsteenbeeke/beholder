@@ -1,23 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,7 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -64,7 +47,7 @@ public abstract class FogOfWarVisibility extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -73,21 +56,21 @@ public abstract class FogOfWarVisibility extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public MapView getView() {
 		return view;
 	}
 
-	public void setView(@Nonnull MapView view) {
+	public void setView(@NotNull MapView view) {
 		this.view = view;
 	}
 
-	@Nonnull
+	@NotNull
 	public VisibilityStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(@Nonnull VisibilityStatus status) {
+	public void setStatus(@NotNull VisibilityStatus status) {
 		this.status = status;
 	}
 

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,9 +21,9 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
@@ -63,7 +63,7 @@ public class Portrait extends BaseDomainObject implements AmazonStored {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -72,35 +72,35 @@ public class Portrait extends BaseDomainObject implements AmazonStored {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getOwner() {
 		return owner;
 	}
 
-	public void setOwner(@Nonnull BeholderUser owner) {
+	public void setOwner(@NotNull BeholderUser owner) {
 		this.owner = owner;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<PortraitVisibility> getVisibilities() {
 		return visibilities;
 	}
 
 	public void setVisibilities(
-		@Nonnull List<PortraitVisibility> visibilities) {
+		@NotNull List<PortraitVisibility> visibilities) {
 		this.visibilities = visibilities;
 	}
 
-	@CheckForNull
+	@Nullable
 	@Override
 	public String getAmazonKey() {
 		return amazonKey;
@@ -110,7 +110,7 @@ public class Portrait extends BaseDomainObject implements AmazonStored {
 		this.amazonKey = amazonKey;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getCampaign() {
 		return campaign;
 	}

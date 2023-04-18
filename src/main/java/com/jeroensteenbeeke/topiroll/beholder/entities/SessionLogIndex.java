@@ -1,3 +1,20 @@
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import java.io.Serializable;
@@ -9,7 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.ArrayList;
 import javax.persistence.OneToMany;
@@ -50,7 +67,7 @@ public class SessionLogIndex extends BaseDomainObject {
 	public Long getId() {
 		return id;
 	}
-	public void setId( @Nonnull Long id) {
+	public void setId( @NotNull Long id) {
 		this.id = id;
 	}
 
@@ -59,27 +76,27 @@ public class SessionLogIndex extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public List<SessionLogItem> getItems() {
 		return items;
 	}
-	public void setItems( @Nonnull List<SessionLogItem> items) {
+	public void setItems( @NotNull List<SessionLogItem> items) {
 		this.items = items;
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getOwner() {
 		return owner;
 	}
-	public void setOwner( @Nonnull BeholderUser owner) {
+	public void setOwner( @NotNull BeholderUser owner) {
 		this.owner = owner;
 	}
 
-	@Nonnull
+	@NotNull
 	public LocalDate getDay() {
 		return day;
 	}
-	public void setDay( @Nonnull LocalDate day) {
+	public void setDay( @NotNull LocalDate day) {
 		this.day = day;
 	}
 

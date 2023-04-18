@@ -1,3 +1,20 @@
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
 import com.jeroensteenbeeke.lux.ActionResult;
@@ -13,8 +30,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -27,13 +44,13 @@ public class SessionLogService {
 	@Autowired
 	private SessionLogItemDAO sessionLogItemDAO;
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public TypedResult<SessionLogItem> addSessionLogEntry(@Nonnull BeholderUser user, @Nonnull String entry) {
+	public TypedResult<SessionLogItem> addSessionLogEntry(@NotNull BeholderUser user, @NotNull String entry) {
 		return getOrCreateTodayIndex(user).map(index -> createSessionLogItem(user, entry, index));
 	}
 
-	private SessionLogItem createSessionLogItem(@Nonnull BeholderUser user, @Nonnull String entry, SessionLogIndex index) {
+	private SessionLogItem createSessionLogItem(@NotNull BeholderUser user, @NotNull String entry, SessionLogIndex index) {
 		SessionLogItem item = new SessionLogItem();
 		item.setEventTime(LocalDateTime.now());
 		item.setEventDescription(entry);
@@ -47,9 +64,9 @@ public class SessionLogService {
 		return item;
 	}
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public TypedResult<SessionLogItem> addSessionLogEntry(@Nonnull BeholderUser user, @Nonnull String description, @Nonnull Option<InitiativeParticipant> participantOrCause, @Nonnull TokenInstance target, int damage, boolean lethal) {
+	public TypedResult<SessionLogItem> addSessionLogEntry(@NotNull BeholderUser user, @NotNull String description, @NotNull Option<InitiativeParticipant> participantOrCause, @NotNull TokenInstance target, int damage, boolean lethal) {
 		return getOrCreateTodayIndex(user).map(index -> {
 			final var killDescription = lethal ? ", killing " + target.getLabel() : "";
 
@@ -63,9 +80,9 @@ public class SessionLogService {
 		});
 	}
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public ActionResult setCompleted(@Nonnull SessionLogItem logItem) {
+	public ActionResult setCompleted(@NotNull SessionLogItem logItem) {
 		logItem.setCompleted(true);
 		sessionLogItemDAO.update(logItem);
 		sessionLogItemDAO.flush();
@@ -73,9 +90,9 @@ public class SessionLogService {
 		return ActionResult.ok();
 	}
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public ActionResult setNotCompleted(@Nonnull SessionLogItem logItem) {
+	public ActionResult setNotCompleted(@NotNull SessionLogItem logItem) {
 		logItem.setCompleted(false);
 		sessionLogItemDAO.update(logItem);
 		sessionLogItemDAO.flush();
@@ -83,7 +100,7 @@ public class SessionLogService {
 		return ActionResult.ok();
 	}
 
-	private TypedResult<SessionLogIndex> getOrCreateTodayIndex(@Nonnull BeholderUser user) {
+	private TypedResult<SessionLogIndex> getOrCreateTodayIndex(@NotNull BeholderUser user) {
 		LocalDate today = LocalDate.now();
 
 		SessionLogIndexFilter indexFilter = new SessionLogIndexFilter();

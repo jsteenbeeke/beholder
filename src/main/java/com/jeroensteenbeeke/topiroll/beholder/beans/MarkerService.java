@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,24 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.jeroensteenbeeke.topiroll.beholder.beans;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +28,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @Service
 @Scope(value = "request")
@@ -58,7 +40,7 @@ public class MarkerService {
 	private MapService mapService;
 
 	@Transactional
-	public void update(@Nonnull CircleMarker marker, @Nonnull String color, int x, int y,
+	public void update(@NotNull CircleMarker marker, @NotNull String color, int x, int y,
 					   int radius) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
@@ -70,7 +52,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void update(@Nonnull ConeMarker marker, @Nonnull String color, int x, int y,
+	public void update(@NotNull ConeMarker marker, @NotNull String color, int x, int y,
 					   int radius, int theta) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
@@ -83,7 +65,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void update(@Nonnull CubeMarker marker, @Nonnull String color, int x, int y,
+	public void update(@NotNull CubeMarker marker, @NotNull String color, int x, int y,
 					   int extent) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
@@ -96,7 +78,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void update(@Nonnull LineMarker marker, @Nonnull String color, int x, int y,
+	public void update(@NotNull LineMarker marker, @NotNull String color, int x, int y,
 					   int extent, int theta) {
 		marker.setColor(color);
 		marker.setOffsetX(x);
@@ -110,7 +92,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void createCircle(@Nonnull MapView view, @Nonnull String color,
+	public void createCircle(@NotNull MapView view, @NotNull String color,
 			int x, int y, int radius) {
 
 		CircleMarker marker = new CircleMarker();
@@ -129,7 +111,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void createCone(@Nonnull MapView view, @Nonnull String color, int x,
+	public void createCone(@NotNull MapView view, @NotNull String color, int x,
 			int y, int radius, int theta) {
 
 		ConeMarker marker = new ConeMarker();
@@ -148,7 +130,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void createCube(@Nonnull MapView view, @Nonnull String color, int x,
+	public void createCube(@NotNull MapView view, @NotNull String color, int x,
 			int y, int extent) {
 
 		CubeMarker marker = new CubeMarker();
@@ -165,7 +147,7 @@ public class MarkerService {
 	}
 
 	@Transactional
-	public void createLine(@Nonnull MapView view, @Nonnull String color, int x,
+	public void createLine(@NotNull MapView view, @NotNull String color, int x,
 			int y, int extent, int theta) {
 
 		LineMarker marker = new LineMarker();

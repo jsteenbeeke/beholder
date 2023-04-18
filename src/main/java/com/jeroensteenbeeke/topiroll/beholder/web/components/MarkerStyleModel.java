@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,8 +23,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.danekja.java.util.function.serializable.SerializableBiFunction;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 
 public class MarkerStyleModel<T extends AreaMarker> extends
@@ -168,11 +168,11 @@ public class MarkerStyleModel<T extends AreaMarker> extends
     }
 
     private <U extends Serializable> void apply(
-            @Nonnull
+            @NotNull
                     StringBuilder builder, double factor,
-            @Nonnull
+            @NotNull
                     T marker,
-            @Nonnull
+            @NotNull
                     String field,
             @Nullable
                     SerializableBiFunction<T, Double, U> input,

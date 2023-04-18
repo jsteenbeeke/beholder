@@ -1,23 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +22,7 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
@@ -47,8 +30,8 @@ import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.Minimum;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Entity
 public class TokenDefinition extends BaseDomainObject implements AmazonStored {
@@ -93,7 +76,7 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -102,43 +85,43 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public List<TokenInstance> getInstances() {
 		return instances;
 	}
 
-	public void setInstances(@Nonnull List<TokenInstance> instances) {
+	public void setInstances(@NotNull List<TokenInstance> instances) {
 		this.instances = instances;
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getOwner() {
 		return owner;
 	}
 
-	public void setOwner(@Nonnull BeholderUser owner) {
+	public void setOwner(@NotNull BeholderUser owner) {
 		this.owner = owner;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-	@Nonnull
+	@NotNull
 	public int getDiameterInSquares() {
 		return diameterInSquares;
 	}
 
-	public void setDiameterInSquares(@Nonnull int diameterInSquares) {
+	public void setDiameterInSquares(@NotNull int diameterInSquares) {
 		this.diameterInSquares = diameterInSquares;
 	}
 
-	@CheckForNull
+	@Nullable
 	@Override
 	public String getAmazonKey() {
 		return amazonKey;
@@ -148,7 +131,7 @@ public class TokenDefinition extends BaseDomainObject implements AmazonStored {
 		this.amazonKey = amazonKey;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getCampaign() {
 		return campaign;
 	}

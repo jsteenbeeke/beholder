@@ -1,39 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,18 +17,17 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
+import com.github.scribejava.apis.SlackApi;
 import com.github.scribejava.core.oauth.OAuth20Service;
-import com.jeroensteenbeeke.hyperion.social.api.SlackAPI;
 import com.jeroensteenbeeke.hyperion.util.Randomizer;
 import com.jeroensteenbeeke.topiroll.beholder.beans.IdentityService;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FakeSlackHandler extends BeholderSlackHandler {
 	public static final int PORT = 5050;
 
-	private static final SlackAPI FAKE_SLACK_API = new SlackAPI() {
+	private static final SlackApi FAKE_SLACK_API = new SlackApi() {
 		@Override
 		public String getAccessTokenEndpoint() {
 			return String.format("http://localhost:%d/oauth/access", PORT);
@@ -74,23 +40,24 @@ public class FakeSlackHandler extends BeholderSlackHandler {
 	};
 
 	public FakeSlackHandler(String applicationBaseUrl, IdentityService identityService) {
-		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), Randomizer.random(44), Randomizer.random(44), Randomizer.random(13), Randomizer.random(12), identityService);
+		super(applicationBaseUrl, Randomizer.random(12), Randomizer.random(44), Randomizer.random(44), Randomizer.random(44), Randomizer.random(13),
+			Randomizer.random(12), identityService);
 	}
 
-	@CheckForNull
+	@Nullable
 	@Override
 	public String getDeployWebhook() {
 		return null;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
-	public OAuth20Service createService(String state) {
-		return super.createService(state);
+	public OAuth20Service createService() {
+		return super.createService();
 	}
 
 	@Override
-	protected SlackAPI getSlackAPI() {
+	protected SlackApi getSlackAPI() {
 		return FAKE_SLACK_API;
 	}
 

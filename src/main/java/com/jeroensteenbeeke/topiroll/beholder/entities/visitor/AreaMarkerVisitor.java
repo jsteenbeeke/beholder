@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,15 +22,15 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.ConeMarker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.CubeMarker;
 import com.jeroensteenbeeke.topiroll.beholder.entities.LineMarker;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 
 public interface AreaMarkerVisitor<R> extends Serializable {
-	R visit(@Nonnull CircleMarker marker);
+	R visit(@NotNull CircleMarker marker);
 
-	R visit(@Nonnull ConeMarker marker);
+	R visit(@NotNull ConeMarker marker);
 
-	R visit(@Nonnull CubeMarker marker);
+	R visit(@NotNull CubeMarker marker);
 
-	R visit(@Nonnull LineMarker marker);
+	R visit(@NotNull LineMarker marker);
 }

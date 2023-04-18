@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,29 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
@@ -62,6 +44,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class AddTokenInstance2Page extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -80,8 +63,9 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 
 	private IModel<TokenDefinition> tokenModel;
 
-	public AddTokenInstance2Page(ScaledMap map, TokenDefinition token, TokenBorderType borderType,
-								 int current, int total, Integer hp) {
+	public AddTokenInstance2Page(
+		ScaledMap map, TokenDefinition token, TokenBorderType borderType,
+		int current, int total, Integer hp) {
 		super("Configure map");
 
 		this.mapModel = ModelMaker.wrap(map);
@@ -105,14 +89,14 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		badgeField = new TextField<>("badge", Model.of(String.format("%s %d", token.getName(), current)));
 
 		borderSelect = new DropDownChoice<>("border",
-				Model.of(borderType),
-				new ListModel<>(
-						Lists.newArrayList(TokenBorderType.values())),
-				LambdaRenderer.forEnum(TokenBorderType.class, Enum::name));
+			Model.of(borderType),
+			new ListModel<>(
+				List.of(TokenBorderType.values())),
+			LambdaRenderer.forEnum(TokenBorderType.class, Enum::name));
 		borderSelect.setRequired(true);
 
 		offsetXField = new NumberTextField<>("offsetX",
-				Model.of(imageWidth / 2));
+			Model.of(imageWidth / 2));
 		offsetXField.setOutputMarkupId(true);
 		offsetXField.setMinimum(0);
 		offsetXField.setMaximum(imageWidth);
@@ -120,7 +104,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		offsetXField.setEnabled(false);
 
 		offsetYField = new NumberTextField<>("offsetY",
-				Model.of(imageHeight / 2));
+			Model.of(imageHeight / 2));
 		offsetYField.setOutputMarkupId(true);
 		offsetYField.setMinimum(0);
 		offsetYField.setMaximum(imageHeight);
@@ -131,60 +115,61 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		hpField.setMinimum(0);
 
 		final AbstractMapPreview previewImage =
-				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
-					private static final long serialVersionUID = -5380324928425988146L;
+			new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+				private static final long serialVersionUID = -5380324928425988146L;
 
-					@Override
-					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
-						getMap().getTokens().stream()
-								.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
-								.forEach(js::append);
-					}
-				};
+				@Override
+				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+					getMap().getTokens().stream()
+						.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
+						.forEach(js::append);
+				}
+			};
 		previewImage.setOutputMarkupId(true);
 
 		ContextImage areaMarker = new ContextImage("areaMarker",
-				"images/token/" + token.getId());
+			"images/token/" + token.getId());
 		int wh = previewImage.translateToScaledImageSize(map.getSquareSize() * token.getDiameterInSquares());
 		areaMarker.add(AttributeModifier.replace("style", String.format(
-				"padding: 0px; width: %dpx; height: %dpx; max-width: %dpx !important; max-height:" +
-						" %dpx !important; left:" +
-						" %dpx; top: %dpx; border-radius: " +
-						"100%%; border: 1px solid #000000;",
+			"padding: 0px; width: %dpx; height: %dpx; max-width: %dpx !important; max-height:" +
+				" %dpx !important; left:" +
+				" %dpx; top: %dpx; border-radius: " +
+				"100%%; border: 1px solid #000000;",
 
-				wh, wh, wh, wh,
-				previewImage.translateToScaledImageSize(offsetXField.getModelObject()),
-				previewImage.translateToScaledImageSize(offsetYField.getModelObject()))));
+			wh, wh, wh, wh,
+			previewImage.translateToScaledImageSize(offsetXField.getModelObject()),
+			previewImage.translateToScaledImageSize(offsetYField.getModelObject()))));
 
 		Options draggableOptions = new Options();
 		draggableOptions.set("opacity", "0.5");
 		draggableOptions.set("containment", Options.asString("parent"));
 		areaMarker.add(
-				new DraggableBehavior(draggableOptions, new DraggableAdapter() {
-					private static final long serialVersionUID = 1L;
+			new DraggableBehavior(draggableOptions, new DraggableAdapter() {
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean isStopEventEnabled() {
+				@Override
+				public boolean isStopEventEnabled() {
 
-						return true;
-					}
+					return true;
+				}
 
-					@Override
-					public void onDragStop(AjaxRequestTarget target, int top,
-										   int left) {
-						super.onDragStop(target, top, left);
+				@Override
+				public void onDragStop(
+					AjaxRequestTarget target, int top,
+					int left) {
+					super.onDragStop(target, top, left);
 
-						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
-						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
+					offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+					offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
 
-						target.add(offsetXField, offsetYField);
-					}
-				}));
+					target.add(offsetXField, offsetYField);
+				}
+			}));
 
 		previewImage.add(areaMarker);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm",
-				mapModel) {
+			mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Inject
@@ -195,10 +180,10 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 				ScaledMap map = mapModel.getObject();
 
 				TokenInstance token = mapService.createTokenInstance(tokenModel.getObject(), map,
-						borderSelect.getModelObject(),
-						offsetXField.getModelObject(),
-						offsetYField.getModelObject(),
-						badgeField.getModelObject());
+					borderSelect.getModelObject(),
+					offsetXField.getModelObject(),
+					offsetYField.getModelObject(),
+					badgeField.getModelObject());
 
 				Integer enteredHp = hpField.getModelObject();
 				if (enteredHp != null) {
@@ -220,8 +205,9 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		createSubmitPanel(current, total, configureForm);
 	}
 
-	protected void createSubmitPanel(int current, int total,
-									 Form<ScaledMap> configureForm) {
+	protected void createSubmitPanel(
+		int current, int total,
+		Form<ScaledMap> configureForm) {
 		if (current == total) {
 			add(new MapEditSubmitPanel("submit", configureForm));
 		} else {
@@ -247,7 +233,7 @@ public class AddTokenInstance2Page extends AuthenticatedPage {
 		super.renderHead(response);
 
 		response.render(JavaScriptHeaderItem
-				.forReference(TouchPunchJavaScriptReference.get()));
+			.forReference(TouchPunchJavaScriptReference.get()));
 	}
 
 	@Override

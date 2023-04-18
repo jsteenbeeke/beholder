@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,23 +12,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,9 +21,9 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -104,7 +87,7 @@ public class TokenInstance extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -113,12 +96,12 @@ public class TokenInstance extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public TokenDefinition getDefinition() {
 		return definition;
 	}
 
-	public void setDefinition(@Nonnull TokenDefinition definition) {
+	public void setDefinition(@NotNull TokenDefinition definition) {
 		this.definition = definition;
 	}	
 
@@ -130,7 +113,7 @@ public class TokenInstance extends BaseDomainObject {
 		this.statusEffect = statusEffect;
 	}
 
-	@CheckForNull
+	@Nullable
 	public String getBadge() {
 		return badge;
 	}
@@ -139,30 +122,30 @@ public class TokenInstance extends BaseDomainObject {
 		this.badge = badge;
 	}
 
-	@Nonnull
+	@NotNull
 	public int getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(@Nonnull int offsetX) {
+	public void setOffsetX(@NotNull int offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	@Nonnull
+	@NotNull
 	public int getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(@Nonnull int offsetY) {
+	public void setOffsetY(@NotNull int offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	@Nonnull
+	@NotNull
 	public TokenBorderType getBorderType() {
 		return borderType;
 	}
 
-	public void setBorderType(@Nonnull TokenBorderType borderType) {
+	public void setBorderType(@NotNull TokenBorderType borderType) {
 		this.borderType = borderType;
 	}
 
@@ -193,17 +176,17 @@ public class TokenInstance extends BaseDomainObject {
 		return TokenBorderIntensity.HEALTHY;
 	}
 
-	@Nonnull
+	@NotNull
 	public ScaledMap getMap() {
 		return map;
 	}
 
-	public void setMap(@Nonnull ScaledMap map) {
+	public void setMap(@NotNull ScaledMap map) {
 		this.map = map;
 	}
 
 	@Transient
-	public boolean isVisible(@Nonnull MapView view, boolean previewMode) {
+	public boolean isVisible(@NotNull MapView view, boolean previewMode) {
 		return view.getVisibilities().stream()
 				.anyMatch(v -> v.getStatus().isVisible(previewMode)
 						&& v.containsCoordinate(getOffsetX(), getOffsetY()));
@@ -223,16 +206,16 @@ public class TokenInstance extends BaseDomainObject {
 		return label;
 	}
 
-	@Nonnull
+	@NotNull
 	public boolean isShow() {
 		return show;
 	}
 
-	public void setShow(@Nonnull boolean show) {
+	public void setShow(@NotNull boolean show) {
 		this.show = show;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getCurrentHitpoints() {
 		return currentHitpoints;
 	}
@@ -241,7 +224,7 @@ public class TokenInstance extends BaseDomainObject {
 		this.currentHitpoints = currentHitpoints;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getMaxHitpoints() {
 		return maxHitpoints;
 	}
@@ -250,7 +233,7 @@ public class TokenInstance extends BaseDomainObject {
 		this.maxHitpoints = maxHitpoints;
 	}
 
-	@CheckForNull
+	@Nullable
 	public String getNote() {
 		return note;
 	}

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,23 +12,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,9 +28,9 @@ import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationContextProvider;
 import com.jeroensteenbeeke.hyperion.solstice.spring.ApplicationMetadataStore;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.hyperion.util.ResourceUtil;
+import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
 import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.beans.URLService;
-import com.jeroensteenbeeke.topiroll.beholder.beans.DeployNotificationContext;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitializeCompendiumJob;
 import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.HomePage;
@@ -69,14 +52,9 @@ import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCac
 import org.apache.wicket.request.resource.caching.version.StaticResourceVersion;
 import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -139,12 +117,13 @@ public class BeholderApplication extends WebApplication
 
 		getApplicationListeners().add(new RollbarDeployListener(data, metadata));
 		getApplicationListeners().add(new OnDeploySlackNotifier(ctx.getBean(
-				DeployNotificationContext.class), metadata, getServletContext()));
+			DeployNotificationContext.class), metadata, getServletContext()));
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredPage.class);
 		getRequestCycleListeners().add(new IRequestCycleListener() {
 			@Override
-			public IRequestHandler onException(RequestCycle cycle,
+			public IRequestHandler onException(
+				RequestCycle cycle,
 				Exception ex) {
 				RollBarReference.instance.errorCaught(ex);
 
@@ -195,7 +174,7 @@ public class BeholderApplication extends WebApplication
 
 	public void onSchedulerInitialized() {
 		HyperionScheduler.getScheduler()
-			.scheduleTask(DateTime.now(), new InitializeCompendiumJob());
+			.scheduleTask(LocalDateTime.now(), new InitializeCompendiumJob());
 
 	}
 

@@ -1,27 +1,25 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.exploration;
 
-import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
-import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
@@ -66,8 +64,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
@@ -113,11 +111,11 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 
 	private double displayFactor;
 
-	public ExplorationControllerPage(@Nonnull MapView view) {
+	public ExplorationControllerPage(@NotNull MapView view) {
 		this(view, null);
 	}
 
-	public ExplorationControllerPage(@Nonnull MapView view, FogOfWarGroup focusGroup) {
+	public ExplorationControllerPage(@NotNull MapView view, FogOfWarGroup focusGroup) {
 		super("Exploration Mode");
 
 		if (BeholderSession.get().getUser() == null) {
@@ -251,7 +249,7 @@ public class ExplorationControllerPage extends StatefulMapControllerPage impleme
 								   .filter(t -> t.getCurrentHitpoints() == null || t.getCurrentHitpoints() > 0)
 								   .sorted(Comparator.comparing(TokenInstance::getId))
 								   .collect(Collectors.toList()))
-					.orElseGet(ImmutableList::of);
+					.orElseGet(List::of);
 			}
 		};
 

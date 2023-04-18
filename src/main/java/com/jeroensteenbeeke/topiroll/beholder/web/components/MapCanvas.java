@@ -1,23 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,10 +17,8 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.tardis.scheduler.wicket.HyperionScheduler;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
-import com.jeroensteenbeeke.topiroll.beholder.beans.RollBarData;
 import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.jobs.InitialRenderTask;
 import org.apache.wicket.AttributeModifier;
@@ -53,9 +34,8 @@ import org.apache.wicket.protocol.ws.api.WicketWebSocketJQueryResourceReference;
 import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
 import org.apache.wicket.protocol.ws.api.message.ConnectedMessage;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.joda.time.DateTime;
 
-import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MapCanvas extends WebComponent {
@@ -66,8 +46,9 @@ public class MapCanvas extends WebComponent {
 
 	private final long viewId;
 
-	public MapCanvas(String id, IModel<MapView> viewModel,
-					 boolean previewMode) {
+	public MapCanvas(
+		String id, IModel<MapView> viewModel,
+		boolean previewMode) {
 		super(id);
 		setOutputMarkupId(true);
 		this.viewModel = viewModel;
@@ -76,14 +57,14 @@ public class MapCanvas extends WebComponent {
 
 		// Hack
 		add(AttributeModifier.replace("id",
-				new LoadableDetachableModel<String>() {
-					private static final long serialVersionUID = 1L;
+			new LoadableDetachableModel<String>() {
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					protected String load() {
-						return getMarkupId();
-					}
-				}));
+				@Override
+				protected String load() {
+					return getMarkupId();
+				}
+			}));
 
 	}
 
@@ -95,7 +76,7 @@ public class MapCanvas extends WebComponent {
 		add(new WebSocketBehavior() {
 
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -104,7 +85,7 @@ public class MapCanvas extends WebComponent {
 				super.onClose(message);
 
 				BeholderRegistry.instance.removeSession(message.getSessionId(),
-						message.getKey());
+					message.getKey());
 			}
 
 			@Override
@@ -113,19 +94,19 @@ public class MapCanvas extends WebComponent {
 
 				if (previewMode) {
 					BeholderRegistry.instance
-							.addPreviewSession(message.getSessionId())
-							.withKey(message.getKey())
-							.withMarkupId(getMarkupId()).forView(viewId);
+						.addPreviewSession(message.getSessionId())
+						.withKey(message.getKey())
+						.withMarkupId(getMarkupId()).forView(viewId);
 				} else {
 					BeholderRegistry.instance
-							.addLiveSession(message.getSessionId())
-							.withKey(message.getKey())
-							.withMarkupId(getMarkupId()).forView(viewId);
+						.addLiveSession(message.getSessionId())
+						.withKey(message.getKey())
+						.withMarkupId(getMarkupId()).forView(viewId);
 				}
 
-				HyperionScheduler.getScheduler().scheduleTask(new DateTime(),
-						new InitialRenderTask(viewId, message.getSessionId(),
-								previewMode));
+				HyperionScheduler.getScheduler().scheduleTask(LocalDateTime.now(),
+					new InitialRenderTask(viewId, message.getSessionId(),
+						previewMode));
 			}
 
 		});
@@ -154,40 +135,40 @@ public class MapCanvas extends WebComponent {
 		response.render(wicketWebsocket);
 
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/images.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/images.js")));
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/multicanvas.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/multicanvas.js")));
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/geometry.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/geometry.js")));
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/initiative.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/initiative.js")));
 
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/marker.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/marker.js")));
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/token.js")));
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/token.js")));
 		response.render(JavaScriptHeaderItem.forReference(
-				new JavaScriptResourceReference(MapCanvas.class, "js/map.js")));
+			new JavaScriptResourceReference(MapCanvas.class, "js/map.js")));
 		response.render(JavaScriptHeaderItem.forReference(
-				new JavaScriptResourceReference(MapCanvas.class, "js/portrait.js")));
+			new JavaScriptResourceReference(MapCanvas.class, "js/portrait.js")));
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/renderer.js") {
-					private static final long serialVersionUID = 3687970485732264795L;
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/renderer.js") {
+				private static final long serialVersionUID = 3687970485732264795L;
 
-					@Override
-					public List<HeaderItem> getDependencies() {
-						return ImmutableList.of(wicketWebsocket);
-					}
-				}));
+				@Override
+				public List<HeaderItem> getDependencies() {
+					return List.of(wicketWebsocket);
+				}
+			}));
 
 	}
 
-	
+
 }

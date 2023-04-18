@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview;
 
-import com.google.common.collect.Lists;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
@@ -32,10 +31,8 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenDefinitionFil
 import com.jeroensteenbeeke.topiroll.beholder.entities.filter.TokenInstanceFilter;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
-import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
@@ -45,6 +42,7 @@ import org.springframework.util.StringUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.util.List;
 
 public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 	private static final long serialVersionUID = 2854668991094369943L;
@@ -75,10 +73,10 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 		filter.name().orderBy(true);
 
 		final DropDownChoice<TokenDefinition> definitions = new DropDownChoice<>("type",
-				ModelMaker.wrap(TokenDefinition.class),
-				ModelMaker.wrapList(definitionDAO.findByFilter(filter).toJavaList()),
-				LambdaRenderer.of(TokenDefinition::getName)
-				);
+			ModelMaker.wrap(TokenDefinition.class),
+			ModelMaker.wrapList(definitionDAO.findByFilter(filter).toJavaList()),
+			LambdaRenderer.of(TokenDefinition::getName)
+		);
 		definitions.setRequired(true);
 		definitions.add(new AjaxFormComponentUpdatingBehavior("change") {
 			private static final long serialVersionUID = 31162114424383849L;
@@ -92,7 +90,7 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 					filter.definition(def);
 					filter.map(CreateTokenWindow.this.getModelObject());
 
-					labelField.setModelObject(def.getName() + " "+ (1+instanceDAO.countByFilter(filter)));
+					labelField.setModelObject(def.getName() + " " + (1 + instanceDAO.countByFilter(filter)));
 
 					target.add(labelField);
 				}
@@ -100,13 +98,13 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 		});
 
 		final DropDownChoice<TokenBorderType> borderTypeSelect = new DropDownChoice<>("bordertype", Model.of(TokenBorderType.Enemy),
-				Lists.newArrayList(TokenBorderType.values()),
-				LambdaRenderer.of(TokenBorderType::name)
-				);
+			List.of(TokenBorderType.values()),
+			LambdaRenderer.of(TokenBorderType::name)
+		);
 		borderTypeSelect.setRequired(true);
 
 		final NumberTextField<Integer> hpField = new NumberTextField<>("hp", Model.of(),
-				Integer.class);
+			Integer.class);
 
 		Form<ScaledMap> tokenForm = new Form<ScaledMap>("form", ModelMaker.wrap(map)) {
 			private static final long serialVersionUID = 5345121083973575122L;
@@ -123,7 +121,7 @@ public class CreateTokenWindow extends DMModalWindow<ScaledMap> {
 				int rad = diam / 2;
 
 				TokenInstance instance = mapService.createTokenInstance(def, map,
-						type, x - rad, y - rad, label);
+					type, x - rad, y - rad, label);
 				mapService.setTokenHP(instance, hpField.getModelObject(), hpField.getModelObject());
 
 			}

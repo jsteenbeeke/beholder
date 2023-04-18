@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 public class PortraitVisibility extends BaseDomainObject {
@@ -55,7 +55,7 @@ public class PortraitVisibility extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -64,30 +64,30 @@ public class PortraitVisibility extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public Portrait getPortrait() {
 		return portrait;
 	}
 
-	public void setPortrait(@Nonnull Portrait portrait) {
+	public void setPortrait(@NotNull Portrait portrait) {
 		this.portrait = portrait;
 	}
 
-	@Nonnull
+	@NotNull
 	public MapView getView() {
 		return view;
 	}
 
-	public void setView(@Nonnull MapView view) {
+	public void setView(@NotNull MapView view) {
 		this.view = view;
 	}
 
-	@Nonnull
+	@NotNull
 	public PortraitVisibilityLocation getLocation() {
 		return location;
 	}
 
-	public void setLocation( @Nonnull PortraitVisibilityLocation location) {
+	public void setLocation( @NotNull PortraitVisibilityLocation location) {
 		this.location = location;
 	}
 

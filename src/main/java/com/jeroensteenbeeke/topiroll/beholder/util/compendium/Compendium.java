@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.util.compendium;
 
-import com.google.common.collect.ImmutableMap;
 import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -36,6 +35,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -64,7 +64,7 @@ public class Compendium {
 	}
 
 	public static Map<CompendiumIndexEntry, CompendiumArticle> scanArticles() {
-		ImmutableMap.Builder<CompendiumIndexEntry, CompendiumArticle> articles = ImmutableMap.builder();
+		Map<CompendiumIndexEntry, CompendiumArticle> articles = new HashMap<>();
 
 		ClassRelativeResourceLoader loader = new ClassRelativeResourceLoader(Compendium.class);
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(loader);
@@ -100,7 +100,7 @@ public class Compendium {
 			log.error(e.getMessage(), e);
 		}
 
-		ImmutableMap<CompendiumIndexEntry, CompendiumArticle> result = articles.build();
+		Map<CompendiumIndexEntry, CompendiumArticle> result = Map.copyOf(articles);
 
 		log.info("Found {} MD files", result.size());
 

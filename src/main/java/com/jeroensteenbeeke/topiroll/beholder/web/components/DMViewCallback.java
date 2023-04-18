@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,26 +23,26 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.MapView;
 import com.jeroensteenbeeke.topiroll.beholder.entities.TokenInstance;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Optional;
 
 public interface DMViewCallback extends Serializable {
 	<T extends DomainObject> void createModalWindow(
-			@Nonnull
+			@NotNull
 					AjaxRequestTarget target,
-			@Nonnull
+			@NotNull
 					PanelConstructor<T>
 					constructor,
 			@Nullable
 					T object);
 
 	<T extends DomainObject> void createModalWindow(
-			@Nonnull
+			@NotNull
 					AjaxRequestTarget target,
-			@Nonnull
+			@NotNull
 					WindowConstructor<T>
 					constructor,
 			@Nullable

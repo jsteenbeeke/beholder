@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,11 +17,9 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import javax.sound.sampled.Port;
-import java.util.List;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 
 public enum PortraitVisibilityLocation {
@@ -71,8 +69,8 @@ public enum PortraitVisibilityLocation {
 
 	public abstract Set<PortraitVisibilityLocation> getExcludedLocations();
 
-	protected Set<PortraitVisibilityLocation> setOf(PortraitVisibilityLocation...locations) {
-		return Sets.newEnumSet(Lists.newArrayList(locations), PortraitVisibilityLocation.class);
+	protected Set<PortraitVisibilityLocation> setOf(PortraitVisibilityLocation... locations) {
+		return EnumSet.copyOf(Arrays.asList(locations));
 	}
 
 	public String getDisplayValue() {

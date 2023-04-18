@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,11 +22,11 @@ import javax.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.ArrayList;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Entity
 public class CompendiumEntry extends BaseDomainObject {
@@ -67,7 +67,7 @@ public class CompendiumEntry extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -76,25 +76,25 @@ public class CompendiumEntry extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(@Nonnull String title) {
+	public void setTitle(@NotNull String title) {
 		this.title = title;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getBody() {
 		return body;
 	}
 
-	public void setBody(@Nonnull String body) {
+	public void setBody(@NotNull String body) {
 		this.body = body;
 	}
 
-	@CheckForNull
+	@Nullable
 	public String getOriginalPath() {
 		return originalPath;
 	}
@@ -103,16 +103,16 @@ public class CompendiumEntry extends BaseDomainObject {
 		this.originalPath = originalPath;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<PinnedCompendiumEntry> getPinnedBy() {
 		return pinnedBy;
 	}
 
-	public void setPinnedBy(@Nonnull List<PinnedCompendiumEntry> pinnedBy) {
+	public void setPinnedBy(@NotNull List<PinnedCompendiumEntry> pinnedBy) {
 		this.pinnedBy = pinnedBy;
 	}
 
-	@CheckForNull
+	@Nullable
 	public BeholderUser getAuthor() {
 		return author;
 	}
@@ -121,7 +121,7 @@ public class CompendiumEntry extends BaseDomainObject {
 		this.author = author;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getCampaign() {
 		return campaign;
 	}

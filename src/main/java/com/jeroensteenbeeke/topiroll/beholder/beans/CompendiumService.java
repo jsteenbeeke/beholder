@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Service
@@ -83,14 +83,14 @@ public class CompendiumService {
 	}
 
 	@Transactional
-	public void pinEntry(@Nullable BeholderUser user, @Nonnull CompendiumEntry entry) {
+	public void pinEntry(@Nullable BeholderUser user, @NotNull CompendiumEntry entry) {
 		if (user != null && entry.getPinnedBy().stream().map(PinnedCompendiumEntry::getPinnedBy).noneMatch(user::equals)) {
 			pinningDAO.save(new PinnedCompendiumEntry(user, entry));
 		}
 	}
 
 	@Transactional
-	public void unpinEntry(@Nullable BeholderUser user, @Nonnull CompendiumEntry entry) {
+	public void unpinEntry(@Nullable BeholderUser user, @NotNull CompendiumEntry entry) {
 		if (user != null) {
 			entry.getPinnedBy().stream().filter(pe -> user.equals(pe.getPinnedBy())).forEach(pinningDAO::delete);
 		}

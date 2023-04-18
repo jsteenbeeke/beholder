@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
-import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.AjaxIconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
@@ -34,15 +33,12 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -50,6 +46,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 	private static final long serialVersionUID = -7751191205271421987L;
@@ -84,8 +81,8 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 		for (InitiativeLocation location : InitiativeLocation.values()) {
 			addAjaxButton(target -> {
 				initiativeService.showInitiative(
-						InitiativeOrderWindow.this.getModelObject(),
-						location);
+					InitiativeOrderWindow.this.getModelObject(),
+					location);
 				callback.refreshMenus(target);
 			}).ofType(ButtonType.Success).withLabel(location.getPrettyName());
 		}
@@ -101,7 +98,7 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 		filter.name().orderBy(false);
 
 		container.add(new DataView<InitiativeParticipant>("participants",
-				FilterDataProvider.of(filter, participationDAO)) {
+			FilterDataProvider.of(filter, participationDAO)) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -114,26 +111,26 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 				Label nameLabel = new Label("name", participant.getName());
 				item.add(AttributeModifier.replace("class",
-						new LoadableDetachableModel<String>() {
-							private static final long serialVersionUID = 1L;
+					new LoadableDetachableModel<String>() {
+						private static final long serialVersionUID = 1L;
 
-							@Override
-							protected String load() {
-								if (participant.isSelected()) {
-									return "bg-success";
-								}
-								return "";
+						@Override
+						protected String load() {
+							if (participant.isSelected()) {
+								return "bg-success";
 							}
-						}));
+							return "";
+						}
+					}));
 
 				item.add(nameLabel);
 				item.add(new Label("score", participant.getInitiativeType()
-						.formatBonus(participant.getScore())));
+					.formatBonus(participant.getScore())));
 				item.add(new Label("type", participant.isPlayer() ? "Player" : "DM-controlled"));
 
 				Form<InitiativeParticipant> form = new Form<InitiativeParticipant>("total");
 				NumberTextField<Integer> initiativeField =
-						new NumberTextField<>("initiativeField", Model.of(participant.getTotal()), Integer.class);
+					new NumberTextField<>("initiativeField", Model.of(participant.getTotal()), Integer.class);
 				form.add(initiativeField);
 
 				form.add(new AjaxSubmitLink("update") {
@@ -321,13 +318,13 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 		nameField.setOutputMarkupId(true);
 
 		NumberTextField<Integer> scoreField = new NumberTextField<>("score",
-				Model.of(0));
+			Model.of(0));
 		scoreField.setOutputMarkupId(true);
 		scoreField.setRequired(true);
 
 		DropDownChoice<InitiativeType> typeField = new DropDownChoice<>("type",
-				Model.of(InitiativeType.Normal),
-				new ListModel<>(Lists.newArrayList(InitiativeType.values())));
+			Model.of(InitiativeType.Normal),
+			new ListModel<>(List.of(InitiativeType.values())));
 		typeField.setOutputMarkupId(true);
 		typeField.setRequired(true);
 
@@ -341,8 +338,8 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 				super.onSubmit(target);
 
 				initiativeService.addInitiative(getModelObject(),
-						nameField.getModelObject(), scoreField.getModelObject(),
-						typeField.getModelObject());
+					nameField.getModelObject(), scoreField.getModelObject(),
+					typeField.getModelObject());
 
 				nameField.setModel(Model.of(""));
 				scoreField.setModel(Model.of(0));
@@ -355,7 +352,7 @@ public class InitiativeOrderWindow extends DMModalWindow<MapView> {
 
 		Form<InitiativeParticipant> settingsForm = new Form<>("settingsForm");
 		NumberTextField<Integer> marginField =
-				new NumberTextField<Integer>("margin", Model.of(view.getInitiativeMargin()), Integer.class);
+			new NumberTextField<Integer>("margin", Model.of(view.getInitiativeMargin()), Integer.class);
 		settingsForm.add(marginField);
 		settingsForm.add(new AjaxSubmitLink("submit") {
 			private static final long serialVersionUID = 1L;

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,18 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This file is part of Beholder (C) 2016 Jeroen Steenbeeke <p> This program is free software: you
- * can redistribute it and/or modify it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version. <p> This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. <p> You should
- * have received a copy of the GNU Affero General Public License along with this program.  If not,
- * see <http://www.gnu.org/licenses/>.
- */
-
-
 package com.jeroensteenbeeke.topiroll.beholder.beans.impl;
 
 import com.jeroensteenbeeke.lux.TypedResult;
@@ -42,7 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,7 +70,7 @@ public class TestViewInitializer implements IAccountInitializer {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void onAccountCreated(@Nonnull BeholderUser user) {
+	public void onAccountCreated(@NotNull BeholderUser user) {
 		MapView view = new MapView();
 		view.setHeight(768);
 		view.setWidth(1360);

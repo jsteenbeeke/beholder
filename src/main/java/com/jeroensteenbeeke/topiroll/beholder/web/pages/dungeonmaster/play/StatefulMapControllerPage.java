@@ -1,3 +1,20 @@
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play;
 
 import com.jeroensteenbeeke.hyperion.data.DomainObject;
@@ -13,8 +30,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +87,7 @@ public abstract class StatefulMapControllerPage extends BootstrapBasePage implem
 		return setState(mapViewState.onAreaMarkerClicked(marker));
 	}
 
-	private IMapViewState setState(@Nonnull IMapViewState newState) {
+	private IMapViewState setState(@NotNull IMapViewState newState) {
 		this.mapViewState.detach();
 		this.mapViewState = newState;
 
@@ -104,9 +121,9 @@ public abstract class StatefulMapControllerPage extends BootstrapBasePage implem
 
 	@Override
 	public <T extends DomainObject> void createModalWindow(
-		@Nonnull
+		@NotNull
 			AjaxRequestTarget target,
-		@Nonnull
+		@NotNull
 			PanelConstructor<T> constructor,
 		@Nullable
 			T object) {
@@ -125,7 +142,7 @@ public abstract class StatefulMapControllerPage extends BootstrapBasePage implem
 	}
 
 	@Override
-	public <T extends DomainObject> void createModalWindow(@Nonnull AjaxRequestTarget target, @Nonnull WindowConstructor<T> constructor, @Nullable T object) {
+	public <T extends DomainObject> void createModalWindow(@NotNull AjaxRequestTarget target, @NotNull WindowConstructor<T> constructor, @Nullable T object) {
 		disableClickListener = true;
 		Component oldModal = modal;
 		try {

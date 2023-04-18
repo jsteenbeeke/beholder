@@ -1,23 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,9 +21,9 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.util.HashUtil;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRenderable;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -97,7 +80,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -106,21 +89,21 @@ public class InitiativeParticipant extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public MapView getView() {
 		return view;
 	}
 
-	public void setView(@Nonnull MapView view) {
+	public void setView(@NotNull MapView view) {
 		this.view = view;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
@@ -132,7 +115,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.score = score;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getTotal() {
 		return total;
 	}
@@ -151,16 +134,16 @@ public class InitiativeParticipant extends BaseDomainObject {
 		return js;
 	}
 
-	@Nonnull
+	@NotNull
 	public InitiativeType getInitiativeType() {
 		return initiativeType;
 	}
 
-	public void setInitiativeType(@Nonnull InitiativeType initiativeType) {
+	public void setInitiativeType(@NotNull InitiativeType initiativeType) {
 		this.initiativeType = initiativeType;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getOrderOverride() {
 		return orderOverride;
 	}
@@ -185,7 +168,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.player = player;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getOffsetX() {
 		return offsetX;
 	}
@@ -194,7 +177,7 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.offsetX = offsetX;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getOffsetY() {
 		return offsetY;
 	}
@@ -203,13 +186,13 @@ public class InitiativeParticipant extends BaseDomainObject {
 		this.offsetY = offsetY;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<InitiativeParticipantCondition> getConditions() {
 		return conditions;
 	}
 
 	public void setConditions(
-		@Nonnull List<InitiativeParticipantCondition> conditions) {
+		@NotNull List<InitiativeParticipantCondition> conditions) {
 		this.conditions = conditions;
 	}
 

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Scope;
 import com.jeroensteenbeeke.topiroll.beholder.beans.CampaignService;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Service
 @Scope(value = "request")
@@ -56,9 +56,9 @@ public class CampaignService {
 	@Autowired
 	private YouTubePlaylistDAO playlistDAO;
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public ActionResult setActiveCampaign(@Nonnull BeholderUser user, @Nullable Campaign campaign) {
+	public ActionResult setActiveCampaign(@NotNull BeholderUser user, @Nullable Campaign campaign) {
 		return Try.of(() -> {
 			user.setActiveCampaign(campaign);
 			userDAO.update(user);
@@ -68,9 +68,9 @@ public class CampaignService {
 		}).getOrElseGet(t -> ActionResult.error(t.getMessage()));
 	}
 
-	@Nonnull
+	@NotNull
 	@Transactional
-	public ActionResult deleteCampaign(@Nonnull Campaign campaign) {
+	public ActionResult deleteCampaign(@NotNull Campaign campaign) {
 		Option<String> reason = determineReasonForNotDeleting(campaign);
 
 		return reason.map(ActionResult::error).getOrElse(ActionResult::ok).ifOk(() -> campaignDAO.delete(campaign));
@@ -116,12 +116,12 @@ public class CampaignService {
 	}
 
 	@NoTransactionRequired
-	public boolean isDeleteAllowed(@Nonnull Campaign campaign) {
+	public boolean isDeleteAllowed(@NotNull Campaign campaign) {
 		return determineReasonForNotDeleting(campaign).isEmpty();
 	}
 
 	@Transactional
-	public void deactivateCurrentCampaign(@Nonnull BeholderUser user) {
+	public void deactivateCurrentCampaign(@NotNull BeholderUser user) {
 		user.setActiveCampaign(null);
 		userDAO.update(user);
 		userDAO.flush();

@@ -1,30 +1,19 @@
-/**
- * This file is part of Beholder (C) 2016-2019 Jeroen Steenbeeke
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
- * <p>This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * <p>You should have received a copy of the GNU Affero General Public License along with this
- * program. If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder (C) 2016 Jeroen Steenbeeke
- *
- * <p>This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * <p>You should have received a copy of the GNU Affero General Public License along with this
- * program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
@@ -39,9 +28,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import org.danekja.java.misc.serializable.SerializableComparator;
 
@@ -154,7 +143,7 @@ public class MapView extends BaseDomainObject {
         return id;
     }
 
-    public void setId(@Nonnull Long id) {
+    public void setId(@NotNull Long id) {
         this.id = id;
     }
 
@@ -163,52 +152,52 @@ public class MapView extends BaseDomainObject {
         return getId();
     }
 
-    @Nonnull
+    @NotNull
     public BeholderUser getOwner() {
         return owner;
     }
 
-    public void setOwner(@Nonnull BeholderUser owner) {
+    public void setOwner(@NotNull BeholderUser owner) {
         this.owner = owner;
     }
 
-    @Nonnull
+    @NotNull
     public String getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(@Nonnull String identifier) {
+    public void setIdentifier(@NotNull String identifier) {
         this.identifier = identifier;
     }
 
-    @Nonnull
+    @NotNull
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(@Nonnull int width) {
+    public void setWidth(@NotNull int width) {
         this.width = width;
     }
 
-    @Nonnull
+    @NotNull
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(@Nonnull int height) {
+    public void setHeight(@NotNull int height) {
         this.height = height;
     }
 
-    @Nonnull
+    @NotNull
     public int getScreenDiagonalInInches() {
         return screenDiagonalInInches;
     }
 
-    public void setScreenDiagonalInInches(@Nonnull int screenDiagonalInInches) {
+    public void setScreenDiagonalInInches(@NotNull int screenDiagonalInInches) {
         this.screenDiagonalInInches = screenDiagonalInInches;
     }
 
-    @CheckForNull
+    @Nullable
     public ScaledMap getSelectedMap() {
         return selectedMap;
     }
@@ -217,12 +206,12 @@ public class MapView extends BaseDomainObject {
         this.selectedMap = selectedMap;
     }
 
-    @Nonnull
+    @NotNull
     public long getVersion() {
         return version;
     }
 
-    public void setVersion(@Nonnull long version) {
+    public void setVersion(@NotNull long version) {
         this.version = version;
     }
 
@@ -230,12 +219,12 @@ public class MapView extends BaseDomainObject {
         return new Dimension(getWidth(), getHeight());
     }
 
-    @Nonnull
+    @NotNull
     public List<FogOfWarVisibility> getVisibilities() {
         return visibilities;
     }
 
-    public void setVisibilities(@Nonnull List<FogOfWarVisibility> visibilities) {
+    public void setVisibilities(@NotNull List<FogOfWarVisibility> visibilities) {
         this.visibilities = visibilities;
     }
 
@@ -248,26 +237,26 @@ public class MapView extends BaseDomainObject {
         return getSelectedMap().getPreviewDimension();
     }
 
-    @Nonnull
+    @NotNull
     public List<AreaMarker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(@Nonnull List<AreaMarker> markers) {
+    public void setMarkers(@NotNull List<AreaMarker> markers) {
         this.markers = markers;
     }
 
-    @Nonnull
+    @NotNull
     public List<InitiativeParticipant> getInitiativeParticipants() {
         return initiativeParticipants;
     }
 
     public void setInitiativeParticipants(
-            @Nonnull List<InitiativeParticipant> initiativeParticipants) {
+            @NotNull List<InitiativeParticipant> initiativeParticipants) {
         this.initiativeParticipants = initiativeParticipants;
     }
 
-    @CheckForNull
+    @Nullable
     public InitiativeLocation getInitiativePosition() {
         return initiativePosition;
     }
@@ -294,7 +283,7 @@ public class MapView extends BaseDomainObject {
         return renderable;
     }
 
-    @CheckForNull
+    @Nullable
     public Integer getInitiativeMargin() {
         return initiativeMargin;
     }
@@ -303,12 +292,12 @@ public class MapView extends BaseDomainObject {
         this.initiativeMargin = initiativeMargin;
     }
 
-    @Nonnull
+    @NotNull
     public List<PortraitVisibility> getPortraitVisibilities() {
         return portraitVisibilities;
     }
 
-    public void setPortraitVisibilities(@Nonnull List<PortraitVisibility> portraitVisibilities) {
+    public void setPortraitVisibilities(@NotNull List<PortraitVisibility> portraitVisibilities) {
         this.portraitVisibilities = portraitVisibilities;
     }
 

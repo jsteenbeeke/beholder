@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,29 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.google.common.collect.Lists;
 import com.googlecode.wicket.jquery.core.Options;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableAdapter;
 import com.googlecode.wicket.jquery.ui.interaction.draggable.DraggableBehavior;
@@ -64,6 +46,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;
@@ -107,7 +90,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		widthField.setEnabled(false);
 
 		heightField = new NumberTextField<>("height",
-				Model.of(imageHeight / 4));
+			Model.of(imageHeight / 4));
 		heightField.setOutputMarkupId(true);
 		heightField.setMinimum(1);
 		heightField.setMaximum(imageHeight);
@@ -116,7 +99,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 
 
 		offsetXField = new NumberTextField<>("offsetX",
-				Model.of(imageWidth / 2));
+			Model.of(imageWidth / 2));
 		offsetXField.setOutputMarkupId(true);
 		offsetXField.setMinimum(0);
 		offsetXField.setMaximum(imageWidth);
@@ -124,7 +107,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		offsetXField.setEnabled(false);
 
 		offsetYField = new NumberTextField<>("offsetY",
-				Model.of(imageHeight / 2));
+			Model.of(imageHeight / 2));
 		offsetYField.setOutputMarkupId(true);
 		offsetYField.setMinimum(0);
 		offsetYField.setMaximum(imageHeight);
@@ -134,9 +117,9 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		WebMarkupContainer areaMarker = new WebMarkupContainer("areaMarker");
 
 		orientationSelect = new DropDownChoice<>(
-				"orientation", Model.of(TriangleOrientation.TopLeft),
-				Lists.newArrayList(TriangleOrientation.values()),
-				LambdaRenderer.of(TriangleOrientation::getDescription));
+			"orientation", Model.of(TriangleOrientation.TopLeft),
+			List.of(TriangleOrientation.values()),
+			LambdaRenderer.of(TriangleOrientation::getDescription));
 
 		orientationSelect.add(new AjaxFormComponentUpdatingBehavior("change") {
 			private static final long serialVersionUID = 1L;
@@ -153,44 +136,44 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 
 
 		final AbstractMapPreview previewImage =
-				new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
-					private static final long serialVersionUID = 3418451888522969514L;
+			new AbstractMapPreview("preview", map, Math.min(1200, map.getBasicWidth())) {
+				private static final long serialVersionUID = 3418451888522969514L;
 
-					@Override
-					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
-						getMap().getAllShapes().stream()
-								.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
-								.forEach(js::append);
-					}
-				};
+				@Override
+				protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
+					getMap().getAllShapes().stream()
+						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+						.forEach(js::append);
+				}
+			};
 
 		areaMarker.add(AttributeModifier.replace("style",
-				new LoadableDetachableModel<String>() {
-					private static final long serialVersionUID = 1L;
+			new LoadableDetachableModel<String>() {
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					protected String load() {
-						StringBuilder builder = new StringBuilder();
+				@Override
+				protected String load() {
+					StringBuilder builder = new StringBuilder();
 
-						builder.append("background-color: rgba(255, 0, 0, 0.5);");
-						builder.append("left: ")
-								.append(previewImage.translateToScaledImageSize(offsetXField.getModelObject()))
-								.append("px; ");
-						builder.append("top: ")
-								.append(previewImage.translateToScaledImageSize(offsetYField.getModelObject()))
-								.append("px; ");
-						builder.append("width: ")
-								.append(previewImage.translateToScaledImageSize(widthField.getModelObject()))
-								.append("px; ");
-						builder.append("height: ")
-								.append(previewImage.translateToScaledImageSize(heightField.getModelObject()))
-								.append("px; ");
+					builder.append("background-color: rgba(255, 0, 0, 0.5);");
+					builder.append("left: ")
+						.append(previewImage.translateToScaledImageSize(offsetXField.getModelObject()))
+						.append("px; ");
+					builder.append("top: ")
+						.append(previewImage.translateToScaledImageSize(offsetYField.getModelObject()))
+						.append("px; ");
+					builder.append("width: ")
+						.append(previewImage.translateToScaledImageSize(widthField.getModelObject()))
+						.append("px; ");
+					builder.append("height: ")
+						.append(previewImage.translateToScaledImageSize(heightField.getModelObject()))
+						.append("px; ");
 
-						orientationSelect.getModelObject().renderCSS(builder);
+					orientationSelect.getModelObject().renderCSS(builder);
 
-						return builder.toString();
-					}
+					return builder.toString();
 				}
+			}
 
 		));
 
@@ -198,32 +181,33 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		draggableOptions.set("opacity", "0.5");
 		draggableOptions.set("containment", Options.asString("parent"));
 		areaMarker.add(
-				new DraggableBehavior(draggableOptions, new DraggableAdapter() {
-					private static final long serialVersionUID = 1L;
+			new DraggableBehavior(draggableOptions, new DraggableAdapter() {
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean isStopEventEnabled() {
+				@Override
+				public boolean isStopEventEnabled() {
 
-						return true;
-					}
+					return true;
+				}
 
-					@Override
-					public void onDragStop(AjaxRequestTarget target, int top,
-										   int left) {
-						super.onDragStop(target, top, left);
+				@Override
+				public void onDragStop(
+					AjaxRequestTarget target, int top,
+					int left) {
+					super.onDragStop(target, top, left);
 
-						offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
-						offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
+					offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
+					offsetYField.setModelObject(previewImage.translateToRealImageSize(top));
 
-						target.add(offsetXField, offsetYField);
-					}
-				}));
+					target.add(offsetXField, offsetYField);
+				}
+			}));
 		Options resizableOptions = new Options();
 		resizableOptions.set("containment", Options.asString("parent"));
 		resizableOptions.set("handles", Options.asString("nw, ne, sw, se"));
 		// resizableOptions.set("aspectRatio", "1.0");
 		areaMarker.add(new ResizableBehavior("#" + areaMarker.getMarkupId(),
-				resizableOptions, new ResizableAdapter() {
+			resizableOptions, new ResizableAdapter() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -232,8 +216,9 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 			}
 
 			@Override
-			public void onResizeStop(AjaxRequestTarget target, int top,
-									 int left, int width, int height) {
+			public void onResizeStop(
+				AjaxRequestTarget target, int top,
+				int left, int width, int height) {
 				super.onResizeStop(target, top, left, width, height);
 
 				offsetXField.setModelObject(previewImage.translateToRealImageSize(left));
@@ -242,7 +227,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 				heightField.setModelObject(previewImage.translateToRealImageSize(height));
 
 				target.add(offsetXField, offsetYField, widthField, heightField,
-						areaMarker);
+					areaMarker);
 
 			}
 
@@ -250,7 +235,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		previewImage.add(areaMarker);
 
 		Form<ScaledMap> configureForm = new Form<ScaledMap>("configureForm",
-				mapModel) {
+			mapModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Inject
@@ -260,8 +245,8 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 			protected void onSubmit() {
 				ScaledMap map = mapModel.getObject();
 				mapService.addFogOfWarTriangle(map, widthField.getModelObject(), heightField.getModelObject(),
-						offsetXField.getModelObject(),
-						offsetYField.getModelObject(), orientationSelect.getModelObject());
+					offsetXField.getModelObject(),
+					offsetYField.getModelObject(), orientationSelect.getModelObject());
 			}
 		};
 
@@ -281,7 +266,7 @@ public class AddTriangleFogOfWarPage extends AuthenticatedPage {
 		super.renderHead(response);
 
 		response.render(JavaScriptHeaderItem
-				.forReference(TouchPunchJavaScriptReference.get()));
+			.forReference(TouchPunchJavaScriptReference.get()));
 	}
 
 	@Override

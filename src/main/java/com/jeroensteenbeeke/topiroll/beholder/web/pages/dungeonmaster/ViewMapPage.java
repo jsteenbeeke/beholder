@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -12,40 +12,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.jeroensteenbeeke.hyperion.data.DomainObject;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.BootstrapPagingNavigator;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.IconLink;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.entity.BSEntityFormPage;
 import com.jeroensteenbeeke.hyperion.icons.fontawesome.FontAwesome;
 import com.jeroensteenbeeke.hyperion.solstice.data.FilterDataProvider;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
-import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
-import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.*;
 import com.jeroensteenbeeke.topiroll.beholder.entities.*;
@@ -53,19 +30,13 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.filter.*;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.CreateLinkPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation.PrepareMapsPage;
-import com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop.MapViewPage;
-import io.vavr.collection.Array;
-import io.vavr.collection.Seq;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
-import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 
 public class ViewMapPage extends AuthenticatedPage {
@@ -120,11 +91,11 @@ public class ViewMapPage extends AuthenticatedPage {
 			@Override
 			protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 				getMap().getAllShapes().stream()
-						.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
-						.forEach(js::append);
+					.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+					.forEach(js::append);
 				getMap().getTokens().stream()
-						.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
-						.forEach(js::append);
+					.map(t -> String.format("previewToken(%s, %s);\n", canvasId, t.toPreview(factor)))
+					.forEach(js::append);
 			}
 		});
 
@@ -133,7 +104,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		groupFilter.name().orderBy(true);
 
 		DataView<FogOfWarGroup> groupsView = new DataView<FogOfWarGroup>(
-				"groups", FilterDataProvider.of(groupFilter, groupDAO)) {
+			"groups", FilterDataProvider.of(groupFilter, groupDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -150,8 +121,8 @@ public class ViewMapPage extends AuthenticatedPage {
 					@Override
 					protected void addOnDomReadyJavaScript(String canvasId, StringBuilder js, double factor) {
 						item.getModelObject().getShapes().stream()
-								.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
-								.forEach(js::append);
+							.map(s -> s.visit(new FogOfWarPreviewRenderer(canvasId, factor)))
+							.forEach(js::append);
 					}
 				});
 				item.add(new IconLink<>("edit", item.getModel(), FontAwesome.edit) {
@@ -192,7 +163,7 @@ public class ViewMapPage extends AuthenticatedPage {
 		shapeFilter.group().isNull();
 
 		DataView<FogOfWarShape> shapesView = new DataView<FogOfWarShape>(
-				"shapes", FilterDataProvider.of(shapeFilter, shapeDAO)) {
+			"shapes", FilterDataProvider.of(shapeFilter, shapeDAO)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -230,72 +201,71 @@ public class ViewMapPage extends AuthenticatedPage {
 		tokenFilter.badge().orderBy(true);
 
 		DataView<TokenInstance> tokenView =
-				new DataView<TokenInstance>("tokens", FilterDataProvider.of(tokenFilter, tokenInstanceDAO)) {
+			new DataView<TokenInstance>("tokens", FilterDataProvider.of(tokenFilter, tokenInstanceDAO)) {
 
-					private static final long serialVersionUID = 1L;
+				private static final long serialVersionUID = 1L;
 
-					@Override
-					protected void populateItem(Item<TokenInstance> item) {
-						TokenInstance instance = item.getModelObject();
-						item.add(new Label("token", instance.getLabel()));
-						item.add(new Label("location",
-								String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
-						item.add(new IconLink<>("reveal", item.getModel(),
-							FontAwesome.eye) {
-							private static final long serialVersionUID = 1L;
+				@Override
+				protected void populateItem(Item<TokenInstance> item) {
+					TokenInstance instance = item.getModelObject();
+					item.add(new Label("token", instance.getLabel()));
+					item.add(new Label("location",
+						String.format("(%d,%d)", instance.getOffsetX(), instance.getOffsetY())));
+					item.add(new IconLink<>("reveal", item.getModel(),
+						FontAwesome.eye) {
+						private static final long serialVersionUID = 1L;
 
-							@Inject
-							private MapService mapService;
+						@Inject
+						private MapService mapService;
 
-							@Override
-							public void onClick() {
-								mapService.showToken(getModelObject());
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-						}.setVisible(!instance.isShow()));
-						item.add(new IconLink<>("edit", item.getModel(),
-							FontAwesome.edit) {
-							private static final long serialVersionUID = 1L;
+						@Override
+						public void onClick() {
+							mapService.showToken(getModelObject());
+							setResponsePage(new ViewMapPage(mapModel.getObject()));
+						}
+					}.setVisible(!instance.isShow()));
+					item.add(new IconLink<>("edit", item.getModel(),
+						FontAwesome.edit) {
+						private static final long serialVersionUID = 1L;
 
-							@Override
-							public void onClick() {
-								BSEntityFormPage<TokenInstance> page = new BSEntityFormPage<TokenInstance>(
-									edit(getModelObject()).onPage("Edit Token").withoutDelete()
-										.using(tokenInstanceDAO)) {
+						@Override
+						public void onClick() {
+							BSEntityFormPage<TokenInstance> page = new BSEntityFormPage<TokenInstance>(
+								edit(getModelObject()).onPage("Edit Token").withoutDelete()
+									.using(tokenInstanceDAO)) {
 
-									private static final long serialVersionUID = 1L;
+								private static final long serialVersionUID = 1L;
 
-									@Override
-									protected void onSaved(TokenInstance entity) {
-										setResponsePage(new ViewMapPage(mapModel.getObject()));
-									}
+								@Override
+								protected void onSaved(TokenInstance entity) {
+									setResponsePage(new ViewMapPage(mapModel.getObject()));
+								}
 
-									@Override
-									protected void onCancel(TokenInstance entity) {
-										setResponsePage(new ViewMapPage(mapModel.getObject()));
-									}
+								@Override
+								protected void onCancel(TokenInstance entity) {
+									setResponsePage(new ViewMapPage(mapModel.getObject()));
+								}
 
-								};
-								page.setChoices(TokenInstance_.borderType, Lists
-									.newArrayList(TokenBorderType.values()));
+							};
+							page.setChoices(TokenInstance_.borderType, List.of(TokenBorderType.values()));
 
-								setResponsePage(page);
+							setResponsePage(page);
 
-							}
-						});
-						item.add(new IconLink<>("delete", item.getModel(),
-							FontAwesome.trash) {
-							private static final long serialVersionUID = 1L;
+						}
+					});
+					item.add(new IconLink<>("delete", item.getModel(),
+						FontAwesome.trash) {
+						private static final long serialVersionUID = 1L;
 
-							@Override
-							public void onClick() {
-								tokenInstanceDAO.delete(getModelObject());
-								setResponsePage(new ViewMapPage(mapModel.getObject()));
-							}
-						});
+						@Override
+						public void onClick() {
+							tokenInstanceDAO.delete(getModelObject());
+							setResponsePage(new ViewMapPage(mapModel.getObject()));
+						}
+					});
 
-					}
-				};
+				}
+			};
 		add(tokenView);
 		add(new BootstrapPagingNavigator("tokennav", tokenView));
 
@@ -377,7 +347,8 @@ public class ViewMapPage extends AuthenticatedPage {
 		protected void populateItem(Item<MapLink> item) {
 			MapLink link = item.getModelObject();
 
-			item.add(new Label("map", String.format("%s in %s", link.getTargetGroup().getName(), link.getTargetGroup().getMap().getNameWithFolders())));
+			item.add(
+				new Label("map", String.format("%s in %s", link.getTargetGroup().getName(), link.getTargetGroup().getMap().getNameWithFolders())));
 			item.add(new IconLink<MapLink>("delete", item.getModel(), FontAwesome.trash) {
 				private static final long serialVersionUID = -3453872306526472488L;
 

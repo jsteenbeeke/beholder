@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
-import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.InitiativeService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.InitiativeParticipantConditionDAO;
@@ -31,7 +30,6 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -71,7 +69,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 			protected InitiativeParticipant load() {
 				MapView view = getModelObject();
 				return initiativeDAO.getUniqueByFilter(
-					new InitiativeParticipantFilter().view(view).selected(true))
+						new InitiativeParticipantFilter().view(view).selected(true))
 					.getOrNull();
 			}
 		};
@@ -83,7 +81,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 			protected String load() {
 				MapView view = getModelObject();
 				return initiativeDAO.getUniqueByFilter(
-					new InitiativeParticipantFilter().view(view).selected(true))
+						new InitiativeParticipantFilter().view(view).selected(true))
 					.map(InitiativeParticipant::getName).getOrElse(UNKNOWN);
 			}
 		};
@@ -182,7 +180,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 			@Override
 			protected InitiativeParticipant load() {
 				return initiativeDAO.getUniqueByFilter(new InitiativeParticipantFilter().view(getModelObject())
-						.selected(true)).getOrNull();
+					.selected(true)).getOrNull();
 			}
 		};
 	}
@@ -195,7 +193,7 @@ public class InitiativePanel extends DMViewPanel<MapView> {
 			filter.description().orderBy(true);
 
 			return conditionDAO.findByFilter(filter).toJavaList();
-		}).orElseGet(ImmutableList::of);
+		}).orElseGet(List::of);
 	}
 
 	@Override

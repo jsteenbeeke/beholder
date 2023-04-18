@@ -1,39 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * <p>
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * This file is part of Beholder
- * (C) 2016 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -68,12 +35,12 @@ import com.jeroensteenbeeke.topiroll.beholder.web.BeholderSession;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPage;
 import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.SlackErrorPage;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BeholderSlackHandler extends SlackHandler implements
-		DeployNotificationContext {
+	DeployNotificationContext {
 	private final String applicationBaseUrl;
 
 	private final String clientId;
@@ -91,14 +58,15 @@ public class BeholderSlackHandler extends SlackHandler implements
 	private final IdentityService identityService;
 
 	@Buildable
-	public BeholderSlackHandler(@Nonnull String applicationBaseUrl,
-								@Nonnull String clientId,
-								@Nonnull String clientSecret,
-								@Nonnull String signingSecret,
-								@Nullable String deployWebhook,
-								@Nonnull String environmentName,
-								@Nonnull String deployingInstance,
-								@Nonnull IdentityService identityService) {
+	public BeholderSlackHandler(
+		@NotNull String applicationBaseUrl,
+		@NotNull String clientId,
+		@NotNull String clientSecret,
+		@NotNull String signingSecret,
+		@Nullable String deployWebhook,
+		@NotNull String environmentName,
+		@NotNull String deployingInstance,
+		@NotNull IdentityService identityService) {
 		this.applicationBaseUrl = applicationBaseUrl;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
@@ -109,55 +77,57 @@ public class BeholderSlackHandler extends SlackHandler implements
 		this.identityService = identityService;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getClientId() {
 		return clientId;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getClientSecret() {
 		return clientSecret;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getSigningSecret() {
 		return signingSecret;
 	}
 
-	@CheckForNull
+	@Nullable
 	@Override
 	public String getDeployWebhook() {
 		return deployWebhook;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getApplicationBaseUrl() {
 		return applicationBaseUrl;
 	}
 
 	@Override
-	public void onError(@Nonnull String message) {
+	public void onError(@NotNull String message) {
 		throw new RestartResponseAtInterceptPageException(
-				new SlackErrorPage(message));
+			new SlackErrorPage(message));
 
 	}
 
-	@Nonnull
 	@Override
-	public String getScopes() {
-		return "identity.basic,identity.team,identity.avatar";
+	@NotNull
+	public List<String> getScopes() {
+		return List.of("identity.basic", "identity.team", "identity.avatar");
 	}
 
+
 	@Override
-	public void onAccessTokenReceived(@Nonnull OAuth20Service service,
-									  @Nonnull OAuth2AccessToken accessToken) {
+	public void onAccessTokenReceived(
+		@NotNull OAuth20Service service,
+		@NotNull OAuth2AccessToken accessToken) {
 		String tokenString = accessToken.getAccessToken();
 
 		TypedResult<JSONObject> result = getUserInfo(service,
-													 accessToken);
+			accessToken);
 
 		if (result.isOk()) {
 			JSONObject response = result.getObject();
@@ -166,14 +136,14 @@ public class BeholderSlackHandler extends SlackHandler implements
 
 			if (ok == null || !ok) {
 				onError("Slack returned non-OK response status: "
-								.concat(response.toJSONString()));
+					.concat(response.toJSONString()));
 			} else {
 				JSONObject user = (JSONObject) response.get("user");
 				JSONObject team = (JSONObject) response.get("team");
 
 				if (user == null || team == null) {
 					onError("Slack returned incomplete JSON response: "
-									.concat(response.toJSONString()));
+						.concat(response.toJSONString()));
 				} else {
 					String userId = (String) user.get("id");
 					String teamId = (String) team.get("id");
@@ -183,15 +153,15 @@ public class BeholderSlackHandler extends SlackHandler implements
 					String avatar = (String) user.get("image_48");
 
 					BeholderUser beholderUser = identityService.getOrCreateUser(
-							new UserDescriptor().setAccessToken(tokenString)
-												.setAvatar(avatar).setTeamId(teamId)
-												.setTeamName(teamName).setUserId(userId)
-												.setUserName(userName));
+						new UserDescriptor().setAccessToken(tokenString)
+							.setAvatar(avatar).setTeamId(teamId)
+							.setTeamName(teamName).setUserId(userId)
+							.setUserName(userName));
 
 					BeholderSession.get().setUser(beholderUser);
 
 					throw new RestartResponseAtInterceptPageException(
-							OverviewPage.class);
+						OverviewPage.class);
 				}
 			}
 
@@ -207,7 +177,7 @@ public class BeholderSlackHandler extends SlackHandler implements
 	}
 
 	@Override
-	public void setUserState(@Nonnull String state) {
+	public void setUserState(@NotNull String state) {
 		BeholderSession.get().setState(state);
 
 	}

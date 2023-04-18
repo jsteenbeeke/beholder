@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public class PrepareSessionPage extends AuthenticatedPage {
@@ -84,9 +84,9 @@ public class PrepareSessionPage extends AuthenticatedPage {
 							edit(view).onPage("Edit View").using(mapViewDAO)) {
 							private static final long serialVersionUID = 1L;
 
-							@Nonnull
+							@NotNull
 							@Override
-							protected ActionResult validateEntity(@Nonnull MapView entity) {
+							protected ActionResult validateEntity(@NotNull MapView entity) {
 
 								ActionResult result = validateMapView(entity,
 									!oldIdentifier.equals(entity.getIdentifier()));
@@ -160,9 +160,9 @@ public class PrepareSessionPage extends AuthenticatedPage {
 					create(view).onPage("Create Map View").using(mapViewDAO)) {
 					private static final long serialVersionUID = 1L;
 
-					@Nonnull
+					@NotNull
 					@Override
-					protected ActionResult validateEntity(@Nonnull MapView entity) {
+					protected ActionResult validateEntity(@NotNull MapView entity) {
 
 						ActionResult result = validateMapView(entity, true);
 

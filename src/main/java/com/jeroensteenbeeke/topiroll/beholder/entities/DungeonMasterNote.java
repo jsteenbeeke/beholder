@@ -1,11 +1,28 @@
+/*
+ * This file is part of Beholder
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import java.io.Serializable;
 import java.util.Optional;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -61,48 +78,48 @@ public class DungeonMasterNote extends BaseDomainObject implements Serializable 
         return getId();
     }
 
-    @Nonnull
+    @NotNull
     public ScaledMap getMap() {
         return map;
     }
 
-    public void setMap(@Nonnull ScaledMap map) {
+    public void setMap(@NotNull ScaledMap map) {
         this.map = map;
     }
 
-    @Nonnull
+    @NotNull
     public int getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetX(@Nonnull int offsetX) {
+    public void setOffsetX(@NotNull int offsetX) {
         this.offsetX = offsetX;
     }
 
-    @Nonnull
+    @NotNull
     public int getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetY(@Nonnull int offsetY) {
+    public void setOffsetY(@NotNull int offsetY) {
         this.offsetY = offsetY;
     }
 
-    @Nonnull
+    @NotNull
     public String getNote() {
         return note;
     }
 
-    public void setNote(@Nonnull String note) {
+    public void setNote(@NotNull String note) {
         this.note = note;
     }
 
-    @CheckForNull
+    @Nullable
     public String getColor() {
         return color;
     }
 
-    @Nonnull
+    @NotNull
     public Optional<String> color() {
         return Optional.ofNullable(color);
     }

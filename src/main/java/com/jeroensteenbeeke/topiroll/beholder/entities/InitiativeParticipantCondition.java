@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,9 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -49,7 +49,7 @@ public class InitiativeParticipantCondition extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -58,25 +58,25 @@ public class InitiativeParticipantCondition extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public InitiativeParticipant getParticipant() {
 		return participant;
 	}
 
-	public void setParticipant(@Nonnull InitiativeParticipant participant) {
+	public void setParticipant(@NotNull InitiativeParticipant participant) {
 		this.participant = participant;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(@Nonnull String description) {
+	public void setDescription(@NotNull String description) {
 		this.description = description;
 	}
 
-	@CheckForNull
+	@Nullable
 	public Integer getTurnsRemaining() {
 		return turnsRemaining;
 	}

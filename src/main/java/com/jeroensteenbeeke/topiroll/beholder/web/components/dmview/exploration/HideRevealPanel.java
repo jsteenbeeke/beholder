@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.exploration;
 
-import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.topiroll.beholder.beans.MapService;
 import com.jeroensteenbeeke.topiroll.beholder.dao.FogOfWarGroupVisibilityDAO;
@@ -47,9 +46,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
@@ -71,7 +70,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 	@Inject
 	private MapService mapService;
 
-	public HideRevealPanel(String id, MapView view, @Nonnull DMViewCallback callback) {
+	public HideRevealPanel(String id, MapView view, @NotNull DMViewCallback callback) {
 		super(id);
 
 		IModel<MapView> viewModel = ModelMaker.wrap(view);
@@ -154,7 +153,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				callback.createModalWindow(target, CreateNoteWindow::new,
-										   getModelObject());
+					getModelObject());
 			}
 		});
 
@@ -223,7 +222,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 		});
 	}
 
-	@Nonnull
+	@NotNull
 	private IModel<List<MapLink>> loadLinks(DMViewCallback callback) {
 		return () -> callback.getClickedLocation().map(location -> {
 
@@ -243,8 +242,8 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 					.toJavaList();
 			}
 
-			return ImmutableList.<MapLink>of();
-		}).orElseGet(ImmutableList::of);
+			return List.<MapLink>of();
+		}).orElseGet(List::of);
 	}
 
 
@@ -273,7 +272,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 	}
 
-	private Seq<FogOfWarShape> shapesInCurrentLocation(@Nonnull Point currentLocation, @Nullable ScaledMap map) {
+	private Seq<FogOfWarShape> shapesInCurrentLocation(@NotNull Point currentLocation, @Nullable ScaledMap map) {
 		if (map == null) {
 			return Array.empty();
 		}
@@ -307,7 +306,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 				ScaledMap map = viewModel.getObject().getSelectedMap();
 
 				if (map == null) {
-					return ImmutableList.<HideRevealOption>of();
+					return List.<HideRevealOption>of();
 				}
 
 				FogOfWarShapeFilter shapeFilter = new FogOfWarShapeFilter();
@@ -333,7 +332,7 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 						}
 					})
 					.toJavaList();
-			}).orElseGet(ImmutableList::of);
+			}).orElseGet(List::of);
 		}
 
 		@Override
@@ -350,12 +349,12 @@ public class HideRevealPanel extends DMViewPanel<MapView> {
 
 		private final boolean visible;
 
-		public HideRevealOption(@Nonnull FogOfWarGroup group, boolean visible) {
+		public HideRevealOption(@NotNull FogOfWarGroup group, boolean visible) {
 			this.groupModel = ModelMaker.wrap(group);
 			this.visible = visible;
 		}
 
-		@Nonnull
+		@NotNull
 		public FogOfWarGroup getGroup() {
 			return groupModel.getObject();
 		}

@@ -1,23 +1,22 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.preparation;
 
-import com.google.common.collect.ImmutableList;
 import com.googlecode.wicket.jquery.ui.form.dropdown.AjaxDropDownChoice;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
@@ -44,6 +43,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class CreateLinkPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 321415672754877135L;
@@ -81,9 +81,9 @@ public class CreateLinkPage extends AuthenticatedPage {
 		preview.setOutputMarkupId(true);
 
 		TextField<String> sourceField = new TextField<>("source", sourceModel.map(group -> String.format("%s in %s",
-																										 group.getName(), group
-																											 .getMap()
-																											 .getName()
+			group.getName(), group
+				.getMap()
+				.getName()
 		)));
 		sourceField.setEnabled(false);
 
@@ -91,8 +91,8 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 
 		DropDownChoice<FogOfWarGroup> targetSelect = new AjaxDropDownChoice<FogOfWarGroup>("target", Model.of(), ModelMaker
-			.wrapList(ImmutableList.of(source)),
-																						   LambdaRenderer.of(FogOfWarGroup::getName)) {
+			.wrapList(List.of(source)),
+			LambdaRenderer.of(FogOfWarGroup::getName)) {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -140,7 +140,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 		Seq<ScaledMap> mapOptions = mapDAO.findByFilter(mapFilter);
 		mapSelect = new AjaxDropDownChoice<>("map", ModelMaker.wrap(ScaledMap.class),
-											 ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
+			ModelMaker.wrapList(mapOptions.toJavaList()), LambdaRenderer.of(ScaledMap::getNameWithFolders)) {
 
 			private static final long serialVersionUID = 7704250964573457822L;
 
@@ -159,7 +159,7 @@ public class CreateLinkPage extends AuthenticatedPage {
 
 				if (selectedMap == null) {
 					targetSelect.setModel(Model.of());
-					targetSelect.setChoices(ModelMaker.wrapList(ImmutableList.of(sourceModel.getObject())));
+					targetSelect.setChoices(ModelMaker.wrapList(List.of(sourceModel.getObject())));
 					targetSelect.setEnabled(false);
 				} else {
 					FogOfWarGroupFilter groupFilter = new FogOfWarGroupFilter();
@@ -174,8 +174,8 @@ public class CreateLinkPage extends AuthenticatedPage {
 					}
 
 					targetSelect.setChoices(ModelMaker.wrapList(actualOptions.nonEmpty() ?
-																	actualOptions.toJavaList() :
-																	allOptions.toJavaList()));
+						actualOptions.toJavaList() :
+						allOptions.toJavaList()));
 					targetSelect.setModel(ModelMaker.wrap(FogOfWarGroup.class));
 					targetSelect.setEnabled(actualOptions.nonEmpty());
 				}

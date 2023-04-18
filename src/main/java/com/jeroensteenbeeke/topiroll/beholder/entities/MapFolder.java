@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,9 +21,9 @@ import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.DefaultFieldType;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class MapFolder extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -79,16 +79,16 @@ public class MapFolder extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-	@CheckForNull
+	@Nullable
 	public MapFolder getParent() {
 		return parent;
 	}
@@ -97,21 +97,21 @@ public class MapFolder extends BaseDomainObject {
 		this.parent = parent;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<MapFolder> getChildren() {
 		return children;
 	}
 
-	public void setChildren(@Nonnull List<MapFolder> children) {
+	public void setChildren(@NotNull List<MapFolder> children) {
 		this.children = children;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<ScaledMap> getMaps() {
 		return maps;
 	}
 
-	public void setMaps(@Nonnull List<ScaledMap> maps) {
+	public void setMaps(@NotNull List<ScaledMap> maps) {
 		this.maps = maps;
 	}
 
@@ -124,7 +124,7 @@ public class MapFolder extends BaseDomainObject {
 		return getName();
 	}
 
-	@CheckForNull
+	@Nullable
 	public Campaign getCampaign() {
 		return campaign;
 	}
@@ -133,11 +133,11 @@ public class MapFolder extends BaseDomainObject {
 		this.campaign = campaign;
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getOwner() {
 		return owner;
 	}
-	public void setOwner( @Nonnull BeholderUser owner) {
+	public void setOwner( @NotNull BeholderUser owner) {
 		this.owner = owner;
 	}
 

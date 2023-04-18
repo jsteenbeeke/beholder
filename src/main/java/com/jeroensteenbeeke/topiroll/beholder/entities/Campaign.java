@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@ import javax.persistence.SequenceGenerator;
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityFormField;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
@@ -85,7 +85,7 @@ public class Campaign extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -94,74 +94,74 @@ public class Campaign extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
 
-	public void setName(@Nonnull String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getDungeonMaster() {
 		return dungeonMaster;
 	}
 
-	public void setDungeonMaster(@Nonnull BeholderUser dungeonMaster) {
+	public void setDungeonMaster(@NotNull BeholderUser dungeonMaster) {
 		this.dungeonMaster = dungeonMaster;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<TokenDefinition> getTokenDefinitions() {
 		return tokenDefinitions;
 	}
 
-	public void setTokenDefinitions(@Nonnull List<TokenDefinition> tokenDefinitions) {
+	public void setTokenDefinitions(@NotNull List<TokenDefinition> tokenDefinitions) {
 		this.tokenDefinitions = tokenDefinitions;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<MapFolder> getFolders() {
 		return folders;
 	}
 
-	public void setFolders(@Nonnull List<MapFolder> folders) {
+	public void setFolders(@NotNull List<MapFolder> folders) {
 		this.folders = folders;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<ScaledMap> getMaps() {
 		return maps;
 	}
 
-	public void setMaps(@Nonnull List<ScaledMap> maps) {
+	public void setMaps(@NotNull List<ScaledMap> maps) {
 		this.maps = maps;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<CompendiumEntry> getCompendiumEntries() {
 		return compendiumEntries;
 	}
 
-	public void setCompendiumEntries(@Nonnull List<CompendiumEntry> compendiumEntries) {
+	public void setCompendiumEntries(@NotNull List<CompendiumEntry> compendiumEntries) {
 		this.compendiumEntries = compendiumEntries;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<YouTubePlaylist> getPlaylists() {
 		return playlists;
 	}
 
-	public void setPlaylists(@Nonnull List<YouTubePlaylist> playlists) {
+	public void setPlaylists(@NotNull List<YouTubePlaylist> playlists) {
 		this.playlists = playlists;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<Portrait> getPortraits() {
 		return portraits;
 	}
-	public void setPortraits( @Nonnull List<Portrait> portraits) {
+	public void setPortraits( @NotNull List<Portrait> portraits) {
 		this.portraits = portraits;
 	}
 

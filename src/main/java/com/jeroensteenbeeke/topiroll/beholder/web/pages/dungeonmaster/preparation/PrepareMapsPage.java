@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.ViewFolder
 import io.vavr.control.Option;
 import org.apache.wicket.markup.html.link.Link;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public class PrepareMapsPage extends AuthenticatedPage {
@@ -57,14 +57,14 @@ public class PrepareMapsPage extends AuthenticatedPage {
 
 			@Override
 			protected void decorateFolderFilter(
-				@Nonnull
+				@NotNull
 					MapFolderFilter folderFilter) {
 				folderFilter.parent().isNull();
 			}
 
 			@Override
 			protected void decorateMapFilter(
-				@Nonnull
+				@NotNull
 					ScaledMapFilter mapFilter) {
 				mapFilter.folder().isNull();
 			}

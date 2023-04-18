@@ -1,23 +1,22 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
- * <p>
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components.dmview.combat;
 
-import com.google.common.collect.Lists;
 import com.jeroensteenbeeke.hyperion.heinlein.web.components.ButtonType;
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;
@@ -39,6 +38,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class SetTokenStatusEffectWindow extends DMModalWindow<TokenInstance> {
 
@@ -72,11 +72,11 @@ public class SetTokenStatusEffectWindow extends DMModalWindow<TokenInstance> {
 		statusEffectDropDownChoice = new DropDownChoice<>("status",
 														  Model.of(),
 														  new ListModel<>(
-															  Lists.newArrayList(TokenStatusEffect.values())),
+															  List.of(TokenStatusEffect.values())),
 														  LambdaRenderer.forEnum(TokenStatusEffect.class, Enum::name));
 		statusEffectDropDownChoice.setRequired(true);
 
-		Form<TokenInstance> statusForm = new Form<TokenInstance>("form") {
+		Form<TokenInstance> statusForm = new Form<>("form") {
 
 			private static final long serialVersionUID = -1366400863046730385L;
 
@@ -87,11 +87,11 @@ public class SetTokenStatusEffectWindow extends DMModalWindow<TokenInstance> {
 				mapService.setTokenStatusEffect(token, statusEffect);
 
 				String entry = currentParticipant().filter(InitiativeParticipant::isPlayer)
-												   .map(InitiativeParticipant::getName)
-												   .map(name -> String.format("%s causes %s to become %s", name, token.getLabel(), statusEffect
-													   .name().toLowerCase()))
-												   .getOrElse(() -> String.format("%s becomes %s", token.getLabel(), statusEffect
-													   .name().toLowerCase()));
+					.map(InitiativeParticipant::getName)
+					.map(name -> String.format("%s causes %s to become %s", name, token.getLabel(), statusEffect
+						.name().toLowerCase()))
+					.getOrElse(() -> String.format("%s becomes %s", token.getLabel(), statusEffect
+						.name().toLowerCase()));
 				BeholderSession
 					.get()
 					.user()

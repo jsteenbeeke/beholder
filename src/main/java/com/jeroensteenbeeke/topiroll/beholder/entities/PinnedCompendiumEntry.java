@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,7 @@ import javax.persistence.SequenceGenerator;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.FetchType;
@@ -65,7 +65,7 @@ public class PinnedCompendiumEntry extends BaseDomainObject {
 		return id;
 	}
 
-	public void setId(@Nonnull Long id) {
+	public void setId(@NotNull Long id) {
 		this.id = id;
 	}
 
@@ -74,21 +74,21 @@ public class PinnedCompendiumEntry extends BaseDomainObject {
 		return getId();
 	}
 
-	@Nonnull
+	@NotNull
 	public CompendiumEntry getEntry() {
 		return entry;
 	}
 
-	public void setEntry(@Nonnull CompendiumEntry entry) {
+	public void setEntry(@NotNull CompendiumEntry entry) {
 		this.entry = entry;
 	}
 
-	@Nonnull
+	@NotNull
 	public BeholderUser getPinnedBy() {
 		return pinnedBy;
 	}
 
-	public void setPinnedBy(@Nonnull BeholderUser pinnedBy) {
+	public void setPinnedBy(@NotNull BeholderUser pinnedBy) {
 		this.pinnedBy = pinnedBy;
 	}
 

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.model;
 
-import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderApplication;
 import com.jeroensteenbeeke.topiroll.beholder.dao.CampaignDAO;
 import com.jeroensteenbeeke.topiroll.beholder.entities.BeholderUser;
@@ -45,6 +44,6 @@ public class CampaignsModel extends LoadableDetachableModel<List<Campaign>> {
 			return campaignDAO.findByFilter(filter).toJavaList();
 		}
 
-		return ImmutableList.of();
+		return List.of();
 	}
 }

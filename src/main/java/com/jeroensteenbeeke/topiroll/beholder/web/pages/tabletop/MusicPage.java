@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.tabletop;
 
-import com.google.common.collect.ImmutableList;
 import com.jeroensteenbeeke.hyperion.heinlein.web.pages.BootstrapBasePage;
 import com.jeroensteenbeeke.topiroll.beholder.BeholderRegistry;
 import com.jeroensteenbeeke.topiroll.beholder.dao.MapViewDAO;
@@ -83,7 +82,7 @@ public class MusicPage extends BootstrapBasePage {
 				super.onClose(message);
 
 				BeholderRegistry.instance.removeSession(message.getSessionId(),
-						message.getKey());
+					message.getKey());
 			}
 
 			@Override
@@ -91,9 +90,9 @@ public class MusicPage extends BootstrapBasePage {
 				super.onConnect(message);
 
 				BeholderRegistry.instance
-						.addLiveSession(message.getSessionId())
-						.withKey(message.getKey())
-						.withMarkupId("player").forView(viewId);
+					.addLiveSession(message.getSessionId())
+					.withKey(message.getKey())
+					.withMarkupId("player").forView(viewId);
 			}
 
 		});
@@ -108,14 +107,14 @@ public class MusicPage extends BootstrapBasePage {
 		response.render(wicketWebsocket);
 
 		response.render(JavaScriptHeaderItem
-				.forReference(new JavaScriptResourceReference(MapCanvas.class,
-						"js/musicplayer.js") {
-					private static final long serialVersionUID = 9156599767555964681L;
+			.forReference(new JavaScriptResourceReference(MapCanvas.class,
+				"js/musicplayer.js") {
+				private static final long serialVersionUID = 9156599767555964681L;
 
-					@Override
-					public List<HeaderItem> getDependencies() {
-						return ImmutableList.of(wicketWebsocket);
-					}
-				}));
+				@Override
+				public List<HeaderItem> getDependencies() {
+					return List.of(wicketWebsocket);
+				}
+			}));
 	}
 }

@@ -1,6 +1,6 @@
-/**
+/*
  * This file is part of Beholder
- * (C) 2016-2019 Jeroen Steenbeeke
+ * Copyright (C) 2016 - 2023 Jeroen Steenbeeke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,6 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.data;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
 public class CompoundRenderable implements JSRenderable {
@@ -28,7 +26,7 @@ public class CompoundRenderable implements JSRenderable {
 	}
 
 	public CompoundRenderable(JSRenderable... renderables) {
-		this.renderables = ImmutableList.copyOf(renderables);
+		this.renderables = List.of(renderables);
 	}
 
 	public List<JSRenderable> getRenderables() {
