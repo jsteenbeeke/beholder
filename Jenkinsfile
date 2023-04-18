@@ -12,7 +12,7 @@ pipeline {
 
     triggers {
         pollSCM('H/5 * * * *')
-        upstream(upstreamProjects: 'docker-hyperion-jetty-jdk20,hyperion/v2.0.x', threshold: hudson.model.Result.SUCCESS)
+        upstream(upstreamProjects: 'docker-hyperion-jetty-jdk20,jeroensteenbeeke-aggregators,maven-docker-image', threshold: hudson.model.Result.SUCCESS)
     }
 
     stages {
