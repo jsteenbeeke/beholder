@@ -330,6 +330,7 @@
 									<exclude>src/main/webapp/WEB-INF/services/org.jboss.logging.LoggerProvider</exclude>
 									<exclude>src/test/resources/**</exclude>
 									<exclude>src/main/resources/**</exclude>
+									<exclude>src/main/java/com/jeroensteenbeeke/topiroll/beholder/util/compendium/5thsrd/**</exclude>
 								</excludes>
 								<keywords>
 									<keyword>This file is part of Beholder</keyword>
