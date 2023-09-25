@@ -39,7 +39,7 @@ pipeline {
             }
 
             steps {
-                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-jdk20'
+                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-latest'
                 unstash 'beholder-war'
 				script {
 					application_hash = dockerizeAndPublish image: 'registry.jeroensteenbeeke.nl/beholder:latest'
