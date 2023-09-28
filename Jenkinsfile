@@ -1,6 +1,11 @@
-library 'jenkins-shared-library@main'
+@Library('jenkins-shared-library@main')
+import com.jeroensteenbeeke.hyperion.*
 
 String application_hash = null
+def hyperion = new Hyperion(this)
+Variant variant = Variant.JETTY_JAVAX
+
+def upstreams = hyperion.determineUpstreamProjects(variant)
 
 pipeline {
     agent none
@@ -12,7 +17,7 @@ pipeline {
 
     triggers {
         pollSCM('H/5 * * * *')
-        upstream(upstreamProjects: 'docker-hyperion-jetty-jdk20,jeroensteenbeeke-aggregators,maven-docker-image', threshold: hudson.model.Result.SUCCESS)
+        upstream(upstreamProjects: upstreams, threshold: hudson.model.Result.SUCCESS)
     }
 
     stages {
@@ -39,7 +44,8 @@ pipeline {
             }
 
             steps {
-                sh 'docker pull registry.jeroensteenbeeke.nl/hyperion-jetty:10-latest'
+                hyperion.pullParentImage(variant)
+                hyperion.replaceDockerFileParentImage(variant, 'Dockerfile')
                 unstash 'beholder-war'
 				script {
 					application_hash = dockerizeAndPublish image: 'registry.jeroensteenbeeke.nl/beholder:latest'
