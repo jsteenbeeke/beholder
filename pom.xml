@@ -72,6 +72,23 @@
 		<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.jeroensteenbeeke</groupId>
+				<artifactId>imageserv</artifactId>
+				<version>${com.jeroensteenbeeke.version.imageserv}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
