@@ -44,8 +44,10 @@ pipeline {
             }
 
             steps {
-                hyperion.pullParentImage(variant)
-                hyperion.replaceDockerFileParentImage(variant, 'Dockerfile')
+                script {
+                    hyperion.pullParentImage(variant)
+                    hyperion.replaceDockerFileParentImage(variant, 'Dockerfile')
+                }
                 unstash 'beholder-war'
 				script {
 					application_hash = dockerizeAndPublish image: 'registry.jeroensteenbeeke.nl/beholder:latest'
