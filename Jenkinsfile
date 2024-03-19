@@ -34,7 +34,7 @@ pipeline {
 
                 addGitMetadata package: 'com.jeroensteenbeeke.topiroll.beholder'
 
-                sh 'mvn clean package -U'
+                sh 'mvn clean package -U -B -ntp'
                 stash name: 'beholder-war', includes: '**/*.war'
             }
         }
