@@ -1,4 +1,4 @@
-@Library('jenkins-shared-library@main')
+@Library(value = 'jenkins-shared-library@main', changelog = false)
 import com.jeroensteenbeeke.hyperion.*
 
 String application_hash = null
@@ -6,6 +6,7 @@ def hyperion = new Hyperion(this)
 Variant variant = Variant.JETTY_JAVAX
 
 def upstreams = hyperion.determineUpstreamProjects(variant)
+def pollInterval = hyperion.scmPollInterval()
 
 pipeline {
     agent none
@@ -16,7 +17,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H/5 * * * *')
+        pollSCM(pollInterval)
         upstream(upstreamProjects: upstreams, threshold: hudson.model.Result.SUCCESS)
     }
 
