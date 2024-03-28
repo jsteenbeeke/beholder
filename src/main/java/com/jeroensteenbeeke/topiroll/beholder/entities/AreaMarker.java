@@ -20,7 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import java.io.Serializable;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 import org.apache.wicket.markup.html.panel.Panel;

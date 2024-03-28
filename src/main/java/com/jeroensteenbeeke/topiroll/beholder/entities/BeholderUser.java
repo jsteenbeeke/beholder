@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.jeroensteenbeeke.hyperion.data.BaseDomainObject;
 import io.vavr.control.Option;

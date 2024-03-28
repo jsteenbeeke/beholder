@@ -67,7 +67,7 @@ import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;

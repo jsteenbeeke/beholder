@@ -58,7 +58,7 @@ import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.awt.*;
 import java.io.File;
 import java.util.stream.Stream;

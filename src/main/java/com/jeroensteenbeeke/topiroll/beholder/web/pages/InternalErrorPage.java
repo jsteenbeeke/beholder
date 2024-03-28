@@ -24,7 +24,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.OverviewPa
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.http.WebResponse;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class InternalErrorPage extends BootstrapBasePage {
 

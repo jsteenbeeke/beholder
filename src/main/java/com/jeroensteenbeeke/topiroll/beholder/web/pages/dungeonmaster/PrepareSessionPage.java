@@ -40,7 +40,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class PrepareSessionPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;

@@ -35,7 +35,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class UploadPortraitStep2Page extends AuthenticatedPage {
 

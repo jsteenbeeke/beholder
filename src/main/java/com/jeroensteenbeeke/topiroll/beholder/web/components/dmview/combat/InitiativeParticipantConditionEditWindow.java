@@ -28,7 +28,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class InitiativeParticipantConditionEditWindow extends DMModalWindow<InitiativeParticipantCondition> {
 	private static final long serialVersionUID = -3287314849533291541L;

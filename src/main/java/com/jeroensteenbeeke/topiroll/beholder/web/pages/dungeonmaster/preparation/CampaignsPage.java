@@ -39,7 +39,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.request.cycle.RequestCycle;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class CampaignsPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 471020722470190200L;

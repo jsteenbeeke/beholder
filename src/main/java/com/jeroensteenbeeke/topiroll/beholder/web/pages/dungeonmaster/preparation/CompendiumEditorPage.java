@@ -34,7 +34,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class CompendiumEditorPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 7287344433060871122L;

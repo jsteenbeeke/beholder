@@ -20,8 +20,8 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 @Entity
 public class FogOfWarRect extends FogOfWarShape {

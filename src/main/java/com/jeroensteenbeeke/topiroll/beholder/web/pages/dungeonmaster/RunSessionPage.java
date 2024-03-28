@@ -33,7 +33,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class RunSessionPage extends AuthenticatedPage {
 

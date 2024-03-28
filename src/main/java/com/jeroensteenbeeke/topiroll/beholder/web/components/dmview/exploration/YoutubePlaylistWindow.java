@@ -36,7 +36,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Random;
 
 public class YoutubePlaylistWindow extends DMModalWindow<MapView> {

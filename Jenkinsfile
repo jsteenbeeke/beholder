@@ -3,7 +3,7 @@ import com.jeroensteenbeeke.hyperion.*
 
 String application_hash = null
 def hyperion = new Hyperion(this)
-Variant variant = Variant.JETTY_JAVAX
+Variant variant = Variant.JETTY_JAKARTA
 
 def upstreams = hyperion.determineUpstreamProjects(variant)
 def pollInterval = hyperion.scmPollInterval()

@@ -24,7 +24,7 @@ import com.jeroensteenbeeke.hyperion.webcomponents.entitypage.annotation.EntityF
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.ArrayList;

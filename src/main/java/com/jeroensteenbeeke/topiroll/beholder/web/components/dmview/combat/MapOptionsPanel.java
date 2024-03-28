@@ -31,7 +31,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MapOptionsPanel extends DMViewPanel<MapView> {
 	private static final long serialVersionUID = 8357448484143991994L;

@@ -21,12 +21,9 @@ import com.jeroensteenbeeke.hyperion.solitary.InMemory;
 import com.jeroensteenbeeke.hyperion.solitary.InMemory.Handler;
 import com.jeroensteenbeeke.imagesrv.ImageServer;
 import org.apache.commons.cli.*;
-import org.danekja.java.util.function.serializable.SerializableConsumer;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Optional;
 
 public class StartBeholderApplication {
@@ -74,7 +71,8 @@ public class StartBeholderApplication {
 		InMemory.InMemoryFinalizer finalizer = InMemory.run("beholder-web").withContextPath("/beholder/");
 
 		if (!slackEnabled) {
-			log.warn("Slack login disabled, please specify arguments --{} and --{} to enable", Arguments.SLACK_CLIENT_ID, Arguments.SLACK_CLIENT_SECRET);
+			log.warn("Slack login disabled, please specify arguments --{} and --{} to enable", Arguments.SLACK_CLIENT_ID,
+				Arguments.SLACK_CLIENT_SECRET);
 
 			System.setProperty("slack.login.disabled", "true");
 
@@ -113,13 +111,13 @@ public class StartBeholderApplication {
 
 		} else {
 			finalizer.withProperty("slack.clientid", cmd.getOptionValue(Arguments.SLACK_CLIENT_ID))
-					 .withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET))
-					 .withProperty("slack.signingsecret", cmd.getOptionValue(Arguments.SLACK_SIGNING_SECRET));
+				.withProperty("slack.clientsecret", cmd.getOptionValue(Arguments.SLACK_CLIENT_SECRET))
+				.withProperty("slack.signingsecret", cmd.getOptionValue(Arguments.SLACK_SIGNING_SECRET));
 		}
 
 		if (!amazonEnabled) {
 			log.warn("Amazon S3 image storage disabled, please specify arguments --{}, --{}, --{} and --{} to enable",
-						Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX);
+				Arguments.AMAZON_CLIENT_ID, Arguments.AMAZON_CLIENT_SECRET, Arguments.AMAZON_BUCKET, Arguments.AMAZON_URL_PREFIX);
 			finalizer.withProperty("remote.image.url.prefix", "http://localhost:4040/images/");
 
 			System.setProperty("amazon.images.disabled", "true");
@@ -158,9 +156,9 @@ public class StartBeholderApplication {
 			});
 		} else {
 			finalizer.withProperty("amazon.clientid", cmd.getOptionValue(Arguments.AMAZON_CLIENT_ID))
-					 .withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
-					 .withProperty("amazon.bucketname", cmd.getOptionValue(Arguments.AMAZON_BUCKET))
-					 .withProperty("remote.image.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
+				.withProperty("amazon.clientsecret", cmd.getOptionValue(Arguments.AMAZON_CLIENT_SECRET))
+				.withProperty("amazon.bucketname", cmd.getOptionValue(Arguments.AMAZON_BUCKET))
+				.withProperty("remote.image.url.prefix", cmd.getOptionValue(Arguments.AMAZON_URL_PREFIX));
 			if (cmd.hasOption(Arguments.AMAZON_REGION)) {
 				finalizer.withProperty("amazon.region", cmd.getOptionValue(Arguments.AMAZON_REGION));
 			} else {
@@ -174,20 +172,20 @@ public class StartBeholderApplication {
 
 		if (!rollbarEnabled) {
 			log.warn("Rollbar error logging disabled, please specify arguments --{}, --{} and --{} to enable",
-						Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT);
+				Arguments.ROLLBAR_CLIENT_ID, Arguments.ROLLBAR_CLIENT_SECRET, Arguments.ROLLBAR_ENVIRONMENT);
 
 		} else {
 			finalizer.withProperty("rollbar.server.apiKey", args[6])
-					 .withProperty("rollbar.client.apiKey", args[7])
-					 .withProperty("rollbar.environment", args[8]);
+				.withProperty("rollbar.client.apiKey", args[7])
+				.withProperty("rollbar.environment", args[8]);
 		}
 
 		return finalizer.withProperty("application.baseurl",
-									  "http://localhost:8081/beholder/")
-						.withProperty("application.sourceurl",
-									  "file://" + System.getProperty("user.dir"))
-						.withoutShowingSql()
-						.atPort(8081);
+				"http://localhost:8081/beholder/")
+			.withProperty("application.sourceurl",
+				"file://" + System.getProperty("user.dir"))
+			.withoutShowingSql()
+			.atPort(8081);
 	}
 
 	public static class Arguments {

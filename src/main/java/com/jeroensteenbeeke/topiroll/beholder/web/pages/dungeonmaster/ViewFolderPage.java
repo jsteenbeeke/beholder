@@ -33,7 +33,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class ViewFolderPage extends AuthenticatedPage {
 

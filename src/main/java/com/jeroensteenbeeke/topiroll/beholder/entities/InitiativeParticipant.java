@@ -24,7 +24,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.InitiativeParticipantRend
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

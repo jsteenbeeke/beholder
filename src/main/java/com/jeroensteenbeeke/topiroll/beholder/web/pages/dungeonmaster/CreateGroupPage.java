@@ -20,7 +20,7 @@ package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.jeroensteenbeeke.topiroll.beholder.web.components.AbstractMapPreview;
 import org.apache.wicket.markup.html.basic.Label;

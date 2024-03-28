@@ -37,7 +37,7 @@ import org.apache.wicket.IApplicationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class OnDeploySlackNotifier implements IApplicationListener {
 	private static final Logger log = LoggerFactory.getLogger(OnDeploySlackNotifier.class);

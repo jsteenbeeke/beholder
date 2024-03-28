@@ -36,7 +36,7 @@ import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.format.DateTimeFormatter;
 
 public class SessionLogPage extends com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.AuthenticatedPage {

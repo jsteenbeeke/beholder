@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import org.danekja.java.misc.serializable.SerializableComparator;
 
 @Entity

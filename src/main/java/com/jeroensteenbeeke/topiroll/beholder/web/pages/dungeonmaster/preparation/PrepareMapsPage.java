@@ -33,7 +33,7 @@ import io.vavr.control.Option;
 import org.apache.wicket.markup.html.link.Link;
 
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class PrepareMapsPage extends AuthenticatedPage {
 

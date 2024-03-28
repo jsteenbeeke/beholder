@@ -26,7 +26,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MarkerStatusPanel extends DMViewPanel<MapView> {
 	private static final long serialVersionUID = 2812527034678281465L;

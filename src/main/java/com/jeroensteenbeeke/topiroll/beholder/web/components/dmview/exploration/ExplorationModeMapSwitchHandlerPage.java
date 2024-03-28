@@ -29,7 +29,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster.play.explo
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class ExplorationModeMapSwitchHandlerPage extends AuthenticatedPage {
 

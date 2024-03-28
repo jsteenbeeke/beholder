@@ -21,7 +21,7 @@ import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class CircleMarker extends AreaMarker {

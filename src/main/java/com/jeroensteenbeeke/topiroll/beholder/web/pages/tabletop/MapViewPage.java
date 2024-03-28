@@ -33,7 +33,7 @@ import org.apache.wicket.request.UrlUtils;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MapViewPage extends WebPage {
 	private static final long serialVersionUID = 1L;

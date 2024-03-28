@@ -25,7 +25,7 @@ import com.jeroensteenbeeke.topiroll.beholder.web.components.DMModalWindow;
 import com.jeroensteenbeeke.topiroll.beholder.web.components.DMViewCallback;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class ViewNoteWindow extends DMModalWindow<DungeonMasterNote> {
 	private static final long serialVersionUID = 1202138887418133287L;

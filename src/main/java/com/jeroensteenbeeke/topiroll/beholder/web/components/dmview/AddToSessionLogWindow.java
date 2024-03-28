@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.Model;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class AddToSessionLogWindow extends DMModalWindow<ScaledMap> {
 	private static final long serialVersionUID = 2854668991094369943L;

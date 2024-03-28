@@ -40,7 +40,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class AddCircleFogOfWarPage extends AuthenticatedPage {
 	private static final long serialVersionUID = 1L;

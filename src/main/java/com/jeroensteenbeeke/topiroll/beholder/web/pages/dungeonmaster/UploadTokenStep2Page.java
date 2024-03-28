@@ -17,7 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.pages.dungeonmaster;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.jeroensteenbeeke.hyperion.solstice.data.ModelMaker;
 import com.jeroensteenbeeke.hyperion.webcomponents.core.form.choice.LambdaRenderer;

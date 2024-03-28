@@ -22,8 +22,8 @@ import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSCircle;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.shapes.JSShape;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 @Entity
 public class LineMarker extends AreaMarker {

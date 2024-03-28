@@ -44,7 +44,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public abstract class MapOverviewPanel extends TypedPanel<MapFolder> {
 

@@ -17,7 +17,7 @@
  */
 package com.jeroensteenbeeke.topiroll.beholder.web.components;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;

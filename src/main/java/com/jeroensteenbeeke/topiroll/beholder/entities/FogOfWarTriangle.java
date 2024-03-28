@@ -20,10 +20,10 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.FogOfWarShapeVisitor;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 public class FogOfWarTriangle extends FogOfWarShape {

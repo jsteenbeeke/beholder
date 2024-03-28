@@ -19,7 +19,7 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 
 import com.jeroensteenbeeke.topiroll.beholder.entities.visitor.AreaMarkerVisitor;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class CubeMarker extends AreaMarker {

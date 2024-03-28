@@ -34,7 +34,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.validator.PatternValidator;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.awt.*;
 import java.util.Optional;
 

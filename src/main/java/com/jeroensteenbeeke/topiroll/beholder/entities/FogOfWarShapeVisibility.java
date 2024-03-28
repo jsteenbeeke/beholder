@@ -20,10 +20,10 @@ package com.jeroensteenbeeke.topiroll.beholder.entities;
 import com.jeroensteenbeeke.topiroll.beholder.web.data.visitors.FogOfWarShapeContainsVisitor;
 
 import org.jetbrains.annotations.NotNull;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class FogOfWarShapeVisibility extends FogOfWarVisibility {

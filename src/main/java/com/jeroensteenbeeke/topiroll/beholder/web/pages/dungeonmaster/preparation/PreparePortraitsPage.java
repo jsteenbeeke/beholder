@@ -39,7 +39,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class PreparePortraitsPage extends AuthenticatedPage {
 

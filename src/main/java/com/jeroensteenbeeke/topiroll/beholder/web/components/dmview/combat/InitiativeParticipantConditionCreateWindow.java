@@ -30,7 +30,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class InitiativeParticipantConditionCreateWindow extends DMModalWindow<InitiativeParticipant> {
 	private static final long serialVersionUID = 6002209695034331901L;
