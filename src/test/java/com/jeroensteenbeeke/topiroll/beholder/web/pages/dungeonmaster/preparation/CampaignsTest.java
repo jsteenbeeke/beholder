@@ -117,8 +117,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertRenderedPage(BSEntityFormPage.class);
 
 		wicketTester.getComponentFromLastRenderedPage(
-			"entityForm:fields:0:componentPanel:text")
-					.setDefaultModelObject("Campaign A");
+				"entityForm:fields:0:componentPanel:text")
+			.setDefaultModelObject("Campaign A");
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(CampaignsPage.class);
@@ -130,8 +130,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertRenderedPage(BSEntityFormPage.class);
 
 		wicketTester.getComponentFromLastRenderedPage(
-			"entityForm:fields:0:componentPanel:text")
-					.setDefaultModelObject("Campaign B");
+				"entityForm:fields:0:componentPanel:text")
+			.setDefaultModelObject("Campaign B");
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(CampaignsPage.class);
@@ -161,8 +161,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertRenderedPage(BSEntityFormPage.class);
 
 		wicketTester.getComponentFromLastRenderedPage(
-			"entityForm:fields:0:componentPanel:text")
-					.setDefaultModelObject("Folder A");
+				"entityForm:fields:0:componentPanel:text")
+			.setDefaultModelObject("Folder A");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
 			.getComponentFromLastRenderedPage(
@@ -175,8 +175,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("back");
 
 		wicketTester.assertRenderedPage(PrepareMapsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing folders and maps that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 	}
 
@@ -185,8 +185,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertRenderedPage(BSEntityFormPage.class);
 
 		wicketTester.getComponentFromLastRenderedPage(
-			"entityForm:fields:0:componentPanel:text")
-					.setDefaultModelObject("Folder B");
+				"entityForm:fields:0:componentPanel:text")
+			.setDefaultModelObject("Folder B");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
 			.getComponentFromLastRenderedPage(
@@ -199,8 +199,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("back");
 
 		wicketTester.assertRenderedPage(PrepareMapsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing folders and maps that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("maps:folders:2");
 	}
@@ -218,7 +218,7 @@ public class CampaignsTest extends AbstractPageTest {
 
 		wicketTester.assertRenderedPage(UploadMapStep2Page.class);
 		wicketTester.getComponentFromLastRenderedPage("configureForm:name")
-					.setDefaultModelObject("Map A");
+			.setDefaultModelObject("Map A");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
 			.getComponentFromLastRenderedPage("configureForm:campaign");
@@ -229,8 +229,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("back");
 
 		wicketTester.assertRenderedPage(PrepareMapsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing folders and maps that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("maps:folders:2");
 
@@ -254,7 +254,7 @@ public class CampaignsTest extends AbstractPageTest {
 
 		wicketTester.assertRenderedPage(UploadMapStep2Page.class);
 		wicketTester.getComponentFromLastRenderedPage("configureForm:name")
-					.setDefaultModelObject("Map B");
+			.setDefaultModelObject("Map B");
 
 		@SuppressWarnings("unchecked") DropDownChoice<Campaign> dropdown = (DropDownChoice<Campaign>) wicketTester
 			.getComponentFromLastRenderedPage("configureForm:campaign");
@@ -265,8 +265,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("back");
 
 		wicketTester.assertRenderedPage(PrepareMapsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing folders and maps that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing folders and maps that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("maps:folders:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("maps:folders:2");
 
@@ -280,8 +280,8 @@ public class CampaignsTest extends AbstractPageTest {
 	private void navigate_to_portraits_page() {
 		wicketTester.clickLink("portraits");
 		wicketTester.assertRenderedPage(PreparePortraitsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing portraits that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing portraits that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("portraits:1:campaign", "-");
 		wicketTester.assertLabel("portraits:2:campaign", "-");
 		wicketTester.assertLabel("portraits:3:campaign", "-");
@@ -302,8 +302,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(PreparePortraitsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing portraits that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing portraits that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("portraits:1:campaign", "Campaign A");
 		wicketTester.assertLabel("portraits:2:campaign", "-");
 		wicketTester.assertLabel("portraits:3:campaign", "-");
@@ -325,8 +325,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 
 		wicketTester.assertRenderedPage(PreparePortraitsPage.class);
-		wicketTester.assertFeedback("feedback",
-									"Only showing portraits that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing portraits that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 		wicketTester.assertLabel("portraits:1:campaign", "Campaign A");
 		wicketTester.assertLabel("portraits:2:campaign", "-");
 		wicketTester.assertLabel("portraits:3:campaign", "-");
@@ -339,8 +339,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("playlists");
 		wicketTester.assertRenderedPage(PrepareMusicPage.class);
 
-		wicketTester.assertFeedback("feedback",
-									"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing playlists that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 
 		wicketTester.assertLabel("playlists:1:campaign", "-");
 		wicketTester.assertLabel("playlists:2:campaign", "-");
@@ -359,8 +359,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 		wicketTester.assertRenderedPage(PrepareMusicPage.class);
 
-		wicketTester.assertFeedback("feedback",
-									"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing playlists that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 
 		wicketTester.assertLabel("playlists:1:campaign", "-");
 		wicketTester.assertLabel("playlists:2:campaign", "Campaign A");
@@ -379,8 +379,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.clickLink("submit");
 		wicketTester.assertRenderedPage(PrepareMusicPage.class);
 
-		wicketTester.assertFeedback("feedback",
-									"Only showing playlists that are tied to the currently active campaign (Campaign A) or not campaign-specific");
+		wicketTester.assertContains(
+			"Only showing playlists that are tied to the currently active campaign \\(Campaign A\\) or not campaign-specific");
 
 		wicketTester.assertLabel("playlists:1:campaign", "Campaign A");
 		wicketTester.assertNotExists("playlists:2");
@@ -488,7 +488,8 @@ public class CampaignsTest extends AbstractPageTest {
 		wicketTester.assertRenderedPage(AddTokenInstance1Page.class);
 
 		@SuppressWarnings("unchecked")
-		DropDownChoice<TokenDefinition> tokenSelect = (DropDownChoice<TokenDefinition>) wicketTester.getComponentFromLastRenderedPage("configureForm:token");
+		DropDownChoice<TokenDefinition> tokenSelect = (DropDownChoice<TokenDefinition>) wicketTester.getComponentFromLastRenderedPage(
+			"configureForm:token");
 		Set<Campaign> campaigns = tokenSelect
 			.getChoices()
 			.stream()
