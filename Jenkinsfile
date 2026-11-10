@@ -57,7 +57,7 @@ pipeline {
         }
         stage('Trigger Application update') {
             steps {
-                argoUpdate repository: 'git@bitbucket.org:jsteenbeeke/home-server-infrastructure.git',
+                argoUpdate repository: 'git@ssh.bitbucket.org:jsteenbeeke/home-server-infrastructure.git',
                         folder: 'applications/beholder',
                         digests: [ application_hash ]
             }
